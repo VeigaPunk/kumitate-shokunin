@@ -292,12 +292,12 @@ The K census decision supplies both members and findings; the score is now
 
 <!-- kumitate-proxy-v1
 A=36
-A_wave=1210
+A_wave=1253
 C=46
 C1=19
 C1_total=19
-C2=227
-C2_total=227
+C2=230
+C2_total=230
 S_members=88
 S_sections=88
 R_members=92
@@ -335,7 +335,7 @@ pin.bind-oracle=c3929a97c5b24303b1acadb62ebaa4778768585597cf7fc06d2996602ec211e5
 pin.cap-spawn=1fde43fb7f68992fb5e692188cd9afd3581d1d16c720815adc8d3a1ca3c734d0
 pin.counter-rerun=c002523fc39b521f57a3ee86c3ff154e06aea8ccd6738501138460141abc369b
 pin.receipt-attest=ba5139b1290b204054c043df3140554757116e6fbaf19783b502a24ed1b2ce31
-pin.receipt-bind=37201ad0c6acd4c51b8804fa66ac9606469a181891dbed1d5ee46c56176e1bb3
+pin.receipt-bind=35f4f25e6130dd827747ceff8ced80682d96c6c04d9516f2a463ce58cc7c1fce
 pin.counter-pins=060d5d8662701340da24f483316053be86bed246510c541a0518492e7b29028e
 pin.source-capture=39bdeb39298672dd3ed81036013de542ad6925587cb84f330ab69de6799d28f5
 pin.source-dupes=ead88b22fbd1525d13dd46c67b427041dc331d202a005285adea813c32530d7a
@@ -471,6 +471,7 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
+| 89 | operability (lowest non-retired axis; integer held 9; capability acquisition `receipt-bind` v3 — **UNMET**, rejected-honest-stop by the frozen kill rule; no capability row) | `node .ufo/waves/round-89/probe/probe89-c1.mjs` at base → `C89_C1: UNMET held=27/30` exit 1 (`.ufo/waves/round-89/controls/ctl-base-v2-at-rev.txt`); the kill rule fired on three seat constructions at 30/30 (`build/K89Review/cand-probe-keyed.mjs`, `cand-skip-mode.mjs`, `build/K89Labrat/labrat-label-only.mjs`) | at M `7a8afb5f` the integrated v3 reads `C89_C1: HELD held=30/30`, but the same frozen counter scores the three constructions 30/30, so C1 is UNMET (`.ufo/waves/round-89/close/bind-final.txt` `RECEIPT_BIND: CLEAN matched=18`; `close/bind-selftest.txt` `PASS held=68/68`); routed defects K89-V1..V8 carried to round 90 (`corpus/lessons/round-89-verifier-spotcheck.md` §6). This row was absent at round 89 and is appended by round 90 as the round-89 gate repair (`round-gate` `SCORECARD_ROW_MISSING`).
 | 85 | operability (lowest non-retired axis; integer held 9 — terminal under `f_O`; capability acquisition `counter-receipt` v2) | `node .ufo/waves/round-85/probe/probe85-c1.mjs --lane .ufo/waves/round-85/controls/base --work DIR` → `C85_C1: UNMET held=1/20` exit 1 (`controls/base.txt`, the v1 tool); constant-CLEAN stub `0/20` (`controls/stub.txt`); label-keyed no-reader `1/20` (`controls/noreader.txt`); same-path content variation 0/3 on all three (`controls/cv-*.txt`); v1 could not see the r83 `ARMS = 27`/28-site disagreement at all | at M → `C85_C1: HELD held=20/20` exit 0 (`close/c1-probe.txt`); `--selftest` `PASS held=60/60`; same-path control `HELD held=3/3 distinct_sha=true`; `receipts/c1-repair.txt --src probe83-c1.mjs` → `DRIFT SOURCE_DECLARED`, `SOURCE: sites=28 declared=27 receipt=28`; independent 41-case driver `HELD 41/41`; mutant battery 11/11 mandated mutants killed, 3 survivors disclosed with non-equivalence proofs; `pin.counter-receipt` re-pinned; stanza A 908→972 (scaffolding, disclosed), C 44→45, C2 214→216 | `.ufo/waves/round-85/{plan.md,probe,controls,close}`; `corpus/knowledge/counter-receipt-discrimination.md`; `corpus/lessons/round-85.md`; Q78; S245 admit / S246 reject — **verdict C1 UNMET** (kill rule fires on post-data controls; rejected-honest-stop) |
 | 81 | operability (capability acquisition `ready-handoff`; integer held 9 — terminal under `f_O`; sourced on S236) | `node .ufo/waves/round-81/probe/probe81-c1.mjs --tool <base archive>` → `C81_C1: UNMET held=0/16` exit 1 (`controls/c1-base.txt`); constant-printer control `held=3/16` (`controls/c1-stub.txt`); no instrument judged the `.ready` + dispatch pair before the orchestrator took it | at `d140f288` → `C81_C1: HELD held=16/16` exit 0 (`close/c1-probe.txt`); this round's handoff `READY_HANDOFF: READY wave=w1 seats=14 attack=4/14 connector=1` exit 0 (`close/handoff-admission.txt`); suite 34/34; counter `pin.ready-handoff` |
 | 81 | coverage:omp (self-describing receipt; integer held 10; sourced on S237) | `node .ufo/waves/round-81/probe/probe81-c2.mjs --tool <base archive>` → `C81_C2: UNMET held=4/15` exit 1 (`controls/c2-base.txt`, Amendment 2); stub `held=5/15` (`controls/c2-stub.txt`); the receipt carried no capture instant | at `d140f288` → `C81_C2: HELD held=15/15` exit 0 (`close/c2-probe.txt`); `--shape` reads `captured=2026-11-04 age_days=0`; `--max-age 30` on a 45-day receipt → `SHAPE_STALE` exit 1; v1 `SHAPE_VERSION` exit 2; future `SHAPE_CLOCK` exit 2; proxy still `coverage_omp=10` on a stale receipt |
@@ -575,6 +576,8 @@ the frozen definitions name.
 
 
 ## Planned
+
+**Round 90 — declared claim** lives at the end of this file under `## Round 90 — declaration (2026-11-05)`.
 
 **Round 86 — declared claim, measured disposition, and round-87 pre-registration** lives at the end of
 this file under `## Round 86 — declaration and measured disposition`.
@@ -4410,3 +4413,11 @@ its own instrument claim with an arm per prefix class. (3) The `K_findings` doub
 `receipt-evidence` overlap dialect question. (6) Round-90 must not re-claim `receipt-bind` without a
 scorer that satisfies Q82 — three honest stops on this capability say the scorer, not the instrument,
 is the work.
+
+## Round 90 — declaration (2026-11-05)
+
+One claim: **C1 operability** (lowest non-retired axis; integer 9, terminal under `f_O`), capability acquisition `receipt-bind` v4 (contract `kumitate-receipt-bind-v4`). The stagnation nudge is active (saturation line 9, window N = 3; the last verified capability row is `counter-receipt` v3 in round 86, and rounds 87–89 added none), so the round is a capability move on the runnable instrument and its counter.
+
+Frozen at `b67fa9639ca6537b92021ea938f769ff1ed6c883` (plan, 47-arm blind probe `probe90-c1.mjs`, 18 pre-data controls, the control driver, and the Q82 field discipline). Predicate: `node .ufo/waves/round-90/probe/probe90-c1.mjs --lane <LANE> --work <SCRATCH> --rev <REV>` prints `C90_C1: HELD held=47/47` exit 0. Kill rule: any control — committed, the worktree twin at M, or a seat-constructed tool that skips a claimed behaviour — at 47/47 makes C1 UNMET. Do-nothing control (committed v3 at `7218699c`): `C90_C1: UNMET held=39/47`. No second claim, no exploratory claim.
+
+Motivating evidence: rounds 87, 88 and 89 each lost this capability to the same frozen kill rule; round 89's own pre-registration binds this round to a scorer that satisfies Q82 (`corpus/QUALITY.md`).

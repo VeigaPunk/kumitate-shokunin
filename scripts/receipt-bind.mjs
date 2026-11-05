@@ -2,7 +2,7 @@
 /**
  * receipt-bind.mjs — bind every close receipt in a directory to the instrument its own
  * `cmd=` names, at a judged revision.
- * Contract: kumitate-receipt-bind-v3 (round 89; v2 round 88, v1 round 87, capability `receipt-bind`).
+ * Contract: kumitate-receipt-bind-v4 (round 90; v3 round 89, v2 round 88, v1 round 87, capability `receipt-bind`).
  *
  *   node scripts/receipt-bind.mjs --dir <receipt-dir> --rev <40-hex> [--lane <dir>] [--json]
  *   node scripts/receipt-bind.mjs --selftest [--work <dir>]
@@ -57,6 +57,17 @@
  *                      one descriptor (closed in a finally), so a path swapped between the lstat
  *                      above and the read cannot substitute another file; verdicts are unchanged.
  *
+ * v4 boundary (round 90; K89-V1, the round-89 routed invisible-prefix defect):
+ *   invisible prefixes a field line (`rev=`, `cmd=`, `tool_sha256=`) may carry a LEADING run of
+ *                      invisible characters — U+FEFF, U+200B (ZWSP), U+200C (ZWNJ), U+200D (ZWJ),
+ *                      U+200E (LRM), U+00A0 (NBSP) — before its key. The run is stripped before the
+ *                      key is matched, so a duplicate field line hidden behind such a prefix is
+ *                      still counted by the AMBIGUOUS_FIELD rule (equal values included) instead of
+ *                      reading as invisible text, and a receipt whose field lines are ALL prefixed
+ *                      still parses and binds. The strip is a run directly in front of the key
+ *                      only: invisible characters inside a value stay value bytes. This subsumes
+ *                      the v3 file-leading-BOM strip. Nothing else in the verdict logic changes.
+ *
  * Output, text mode, one line on stdout:
  *   RECEIPT_BIND: CLEAN matched=<n> mismatched=0 unchecked=0 external=<e>
  *   RECEIPT_BIND: DRIFT matched=<n> mismatched=<m> unchecked=<u> external=<e> first=<file>
@@ -82,7 +93,7 @@ import { tmpdir } from 'node:os';
 import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const CONTRACT = 'kumitate-receipt-bind-v3';
+const CONTRACT = 'kumitate-receipt-bind-v4';
 const MAX_RECEIPT_BYTES = 1048576;
 const SELF = fileURLToPath(import.meta.url);
 const FULL_REV = /^[a-f0-9]{40}$/;
@@ -109,7 +120,9 @@ contract ${CONTRACT}
 Lane-relative and lane-absolute instruments are hashed from git cat-file blob <rev>:<path>; an
 absolute instrument outside the lane (judged on real paths) is hashed from the file on disk and
 counted external=. A mode-120000 instrument at the rev, or a symlinked external instrument, is
-fail-closed SYMLINK_INSTRUMENT. One leading UTF-8 BOM on a receipt is ignored.
+fail-closed SYMLINK_INSTRUMENT. A field line may carry a leading run of invisible characters
+(U+FEFF, U+200B..U+200E, U+00A0); the run is ignored, so a prefixed duplicate field is still
+AMBIGUOUS_FIELD and an all-prefixed receipt still parses.
 
 exit 0   RECEIPT_BIND: CLEAN matched=<n> mismatched=0 unchecked=0 external=<e>
 exit 1   RECEIPT_BIND: DRIFT matched=<n> mismatched=<m> unchecked=<u> external=<e> first=<file>
@@ -285,10 +298,15 @@ function bind({ dir, rev, laneArg, json }) {
     } finally {
       if (fd !== null) { try { closeSync(fd); } catch { /* already closed */ } }
     }
-    // One leading UTF-8 BOM is a signature, not content (v3): it must not hide `rev=`.
+    // One leading UTF-8 BOM is a signature, not content (v3): it must not hide `rev=`. In v4 the
+    // strip is subsumed by the field matcher below, which also drops per-line invisible prefixes.
     text = text.replace(/^\uFEFF/, '');
+    // Field lines are recognized after a leading run of invisible characters (v4, K89-V1):
+    // U+FEFF, U+200B..U+200E and U+00A0 directly in front of the key are not content, so a
+    // prefixed duplicate `cmd=`/`tool_sha256=`/`rev=` line is still counted by the duplicate rule
+    // and an all-prefixed receipt still parses.
     const field = (key) => {
-      const all = [...text.matchAll(new RegExp(`^${key}=(.*)$`, 'gm'))];
+      const all = [...text.matchAll(new RegExp(`^[\\uFEFF\\u200B-\\u200E\\u00A0]*${key}=(.*)$`, 'gm'))];
       if (all.length > 1) throw new FailClosed('AMBIGUOUS_FIELD', `${file} carries ${all.length} ${key}= lines`);
       return all.length ? all[0][1].trim() : null;
     };
@@ -672,6 +690,28 @@ function runSelftest(root) {
     const ok = r.status === 2 && obj !== null && obj.verdict === 'FAIL-CLOSED' && obj.token === 'AMBIGUOUS_FIELD';
     results.push({ name: 'json-ambiguous-field', ok, detail: `exit=${r.status} ${obj ? obj.token : 'unparsed'}` });
   }
+
+  // v4 (K89-V1): an invisible-prefix field line is still a field line. A duplicate `cmd=` hidden
+  // behind a leading U+FEFF/U+200B/U+200C/U+200D/U+200E/U+00A0 run is AMBIGUOUS_FIELD (one arm per
+  // prefix class), and a receipt whose field lines are ALL prefixed with U+200B or U+00A0 still
+  // parses and binds (the twins that kill a strip-only-FEFF or a reject-all-non-ASCII construction).
+  const dupPrefixed = {};
+  for (const [name, prefix] of [
+    ['feff', '\uFEFF'], ['zwsp', '\u200B'], ['zwnj', '\u200C'], ['zwj', '\u200D'], ['lrm', '\u200E'], ['nbsp', '\u00A0'],
+  ]) {
+    dupPrefixed[name] = mkdir({ 'a.txt': `${okA}${prefix}cmd=node scripts/beta.mjs --selftest\n` });
+  }
+  expect('ambiguous-dup-prefixed-feff', runTool(['--dir', dupPrefixed.feff, '--rev', c2]), 2, FC('AMBIGUOUS_FIELD'));
+  expect('ambiguous-dup-prefixed-zwsp', runTool(['--dir', dupPrefixed.zwsp, '--rev', c2]), 2, FC('AMBIGUOUS_FIELD'));
+  expect('ambiguous-dup-prefixed-zwnj', runTool(['--dir', dupPrefixed.zwnj, '--rev', c2]), 2, FC('AMBIGUOUS_FIELD'));
+  expect('ambiguous-dup-prefixed-zwj', runTool(['--dir', dupPrefixed.zwj, '--rev', c2]), 2, FC('AMBIGUOUS_FIELD'));
+  expect('ambiguous-dup-prefixed-lrm', runTool(['--dir', dupPrefixed.lrm, '--rev', c2]), 2, FC('AMBIGUOUS_FIELD'));
+  expect('ambiguous-dup-prefixed-nbsp', runTool(['--dir', dupPrefixed.nbsp, '--rev', c2]), 2, FC('AMBIGUOUS_FIELD'));
+  const pre = (ch) => (t) => t.replace(/^((?:rev|tool_sha256|cmd)=)/gm, `${ch}$1`);
+  const rcAllPrefixedZwsp = mkdir({ 'a.txt': pre('\u200B')(okA) });
+  const rcAllPrefixedNbsp = mkdir({ 'a.txt': pre('\u00A0')(okA) });
+  expect('single-prefixed-zwsp-parses', runTool(['--dir', rcAllPrefixedZwsp, '--rev', c2]), 0, CLE(1));
+  expect('single-prefixed-nbsp-parses', runTool(['--dir', rcAllPrefixedNbsp, '--rev', c2]), 0, CLE(1));
 
   // The judged bytes are the revision's, not the worktree's: a dirty instrument still binds the
   // committed digest, and a digest of the dirty bytes does not bind at the committed revision.

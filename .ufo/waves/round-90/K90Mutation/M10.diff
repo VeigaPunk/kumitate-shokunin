@@ -1,0 +1,19 @@
+--- base.mjs	2026-11-05 07:00:59.911043610 -0300
++++ M10.mjs	2026-11-05 07:02:08.370245528 -0300
+@@ -304,14 +304,14 @@
+     const cmdField = field('cmd');
+     const digestField = field('tool_sha256');
+     if (cmdField === null || digestField === null) {
+-      unchecked += 1;
++      matched += 1;
+       rows.push({ file, verdict: 'UNCHECKED', note: cmdField === null ? 'no cmd=' : 'no tool_sha256=' });
+       if (first === null) first = file;
+       continue;
+     }
+     const declared = digestField.toLowerCase();
+     if (!FULL_SHA.test(declared)) {
+-      unchecked += 1;
++      matched += 1;
+       rows.push({ file, verdict: 'UNCHECKED', note: 'tool_sha256= is not a 64-hex sha256' });
+       if (first === null) first = file;
+       continue;

@@ -1,0 +1,47 @@
+# K90CriticA scores: frozen probe90-c1 at rev 7218699cfbdec702ba42f35ceac0a8e52d1bd564, two independent runs per candidate
+# command: node .ufo/waves/round-90/probe/probe90-c1.mjs --lane <LANE> --work <fresh scratch> --rev 7218699cfbdec702ba42f35ceac0a8e52d1bd564 --tool <candidate>
+# node: v24.21.0
+
+## base-v3-copy
+candidate sha256: 37201ad0c6acd4c51b8804fa66ac9606469a181891dbed1d5ee46c56176e1bb3
+run1: C90_C1: UNMET held=39/47 exit=1
+run2: C90_C1: UNMET held=39/47 exit=1
+failing arms (run1): dup-feff dup-zwsp dup-zwnj dup-zwj dup-lrm dup-nbsp single-zwsp single-nbsp 
+
+## a-count-oracle
+candidate sha256: 46a2155f0d832d8290a1ad79facd479d295ed792eac52eccda99b10e6e96d1f8
+run1: C90_C1: UNMET held=13/47 exit=1
+run2: C90_C1: UNMET held=13/47 exit=1
+failing arms (run1): selftest detect-r86-at-rev detect-r86-renamed clean-r87-at-rev unchecked unresolved dir-missing rev-bad symlink-receipt worktree-forgery rev-receipt-negative untracked-instrument escape-relative symlink-dir oversize duplicate-field sweep limit-edge limit-before-read escape-inner-dotdot dup-equal-field alias-proc-root symlink-instrument symlink-instrument-space-target abs-symlink-instrument dotdot-inside-worktree alias-ancestor-worktree alias-ancestor-external-twin dup-feff dup-zwsp dup-zwnj dup-zwj dup-lrm dup-nbsp 
+
+## b-hex12-clean
+candidate sha256: c8ca085235b5501c13bbfe64095cce750e8f1f4cab6677d06e921158927ef54e
+run1: C90_C1: UNMET held=38/47 exit=1
+run2: C90_C1: UNMET held=38/47 exit=1
+failing arms (run1): dir-missing dup-feff dup-zwsp dup-zwnj dup-zwj dup-lrm dup-nbsp single-zwsp single-nbsp 
+
+## c-memo-first
+candidate sha256: a66ec9a0c82d4e8127a8fe2462b6a0b1e93bc645e9a924e8b94fca9376bed5c6
+run1: C90_C1: UNMET held=3/47 exit=1
+run2: C90_C1: UNMET held=3/47 exit=1
+failing arms (run1): selftest clean-r87-at-rev unchecked unresolved dir-missing rev-bad symlink-receipt rev-receipt-wins worktree-forgery default-rev rev-receipt-negative untracked-instrument escape-relative symlink-dir oversize duplicate-field sweep default-rev-not-head index-not-judged abs-in-lane-at-rev limit-edge limit-before-read escape-inner-dotdot dup-equal-field alias-proc-root alias-proc-root-clean bom-rev symlink-instrument symlink-instrument-space-target symlink-instrument-twin abs-symlink-instrument dotdot-inside dotdot-inside-worktree alias-ancestor alias-ancestor-worktree alias-ancestor-external-twin dup-feff dup-zwsp dup-zwnj dup-zwj dup-lrm dup-nbsp single-zwsp single-nbsp 
+
+## d-tmpdir-gated-prefix
+candidate sha256: df041e6f61f55a0ed2f2d41d1d1f63b52db6d899018b1b22b2ac4aa1578a5291
+run1: C90_C1: HELD held=47/47 exit=0
+run2: C90_C1: HELD held=47/47 exit=0
+failing arms (run1): 
+
+## e-round-path-gated-prefix
+candidate sha256: d8ab211a4a18ec54fa4b8bec12b1b8bfb094a8677061474e3610494ce26a5341
+run1: C90_C1: HELD held=47/47 exit=0
+run2: C90_C1: HELD held=47/47 exit=0
+failing arms (run1): 
+
+## ref-prefix-ungated
+candidate sha256: 48c729ec5452f12fd98eb0037481a0c5418b468f6c173570a22dfae953409924
+run1: C90_C1: HELD held=47/47 exit=0
+run2: C90_C1: HELD held=47/47 exit=0
+failing arms (run1): 
+
+KILL_RULE: FIRED (d-tmpdir-gated-prefix, e-round-path-gated-prefix: 47/47 each; the 8 K89-V1 prefix arms pass only under a context gate)

@@ -1,0 +1,259 @@
+# attacks.txt — K90Sentinel, base v3 = git show 7218699c:scripts/receipt-bind.mjs (sha256 37201ad0…)
+# fixture lane (throwaway, scratch): rev=49f0b16221a569b0e53f620c2b615f8a8fea950a
+# digests: alpha@rev=2f2d8ab6453896290e40a007f1df961cc6004062c86a0a1e6480e8ce201a58aa beta@rev=ee32ba5ac75e00d1059bc26c7573cbe41c73bd494b70ddcb701dd78a36968d0f big.bin@rev=d563c767a739c2a9066a2668341a473c4cb0dcbc106c2d533133ad8311c3c007
+# every run: node base-v3.mjs --dir <receipt-dir> --rev <rev> --lane <fixture>  (lane = fixture, never the lane)
+
+# outside (scratch, not lane): tool.sh=9dc3bf999be1bba4df1d58283e2172426a5bba07ec15dd509e5635763876f7f6 secret.txt=507b054ab4828f516e5b4157101d65399d126780ec636f51286c9ecad0ce995f marker.sh=f74bfbd55d0d3a10c02046cb1beb85a7d8cb52b3889378c91e3a3770984623b2 sparse-512m=9acca8e8c22201155389f65abbf6bc9723edc7384ead80503839f49dcc56d767 dirty/alpha.mjs=2553735170671372b05ac117557d50c552768dc2a804466cd78267df61383371
+
+## setup lane2 (dirty worktree)
+cmd:  rm -rf lane2/scripts && ln -s /fast/scratch/hyaku/kumitate-r90/K90Sentinel/outside/dirty lane2/scripts && git -C lane2 status --short
+  |  D scripts/alpha.mjs
+  |  D scripts/beta.mjs
+  |  D scripts/big.bin
+  |  D scripts/link.mjs
+  | ?? scripts
+
+## setup lane3/lane4 (blob replacement)
+cmd:  lane3: git update-ref refs/k90/env/eb2d7c53d6782eca3a0f2c08d77f5f2eb1513edc fe002ba96114e36b25cbc0ca87f6990b92469c48 ; lane4: git replace eb2d7c53d6782eca3a0f2c08d77f5f2eb1513edc fe002ba96114e36b25cbc0ca87f6990b92469c48
+  | alpha blob @rev=eb2d7c53d6782eca3a0f2c08d77f5f2eb1513edc  replacement=fe002ba96114e36b25cbc0ca87f6990b92469c48  sha256(replacement)=c935b25110b01771c46d65746aaeb4dd4bfa8ccd667d5936c56f22f51fd3c6fd
+
+# ======================= CONTROLS (expected behaviour, must hold on base) =======================
+
+## C1-clean
+note: control: relative in-lane instrument binds at rev
+cmd:  node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs --dir /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/C1 --rev 49f0b16221a569b0e53f620c2b615f8a8fea950a --lane /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane
+exit: 0  elapsed_ms: 25
+  | RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+
+## C2-committed-symlink
+note: control: committed mode-120000 instrument is SYMLINK_INSTRUMENT
+cmd:  node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs --dir /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/C2 --rev 49f0b16221a569b0e53f620c2b615f8a8fea950a --lane /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane
+exit: 2  elapsed_ms: 29
+  | RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT a.txt instrument is a symlink at 49f0b16221a569b0e53f620c2b615f8a8fea950a: scripts/link.mjs
+
+## C3-relative-escape
+note: control: relative token resolving outside lane is ESCAPES_LANE
+cmd:  node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs --dir /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/C3 --rev 49f0b16221a569b0e53f620c2b615f8a8fea950a --lane /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane
+exit: 2  elapsed_ms: 21
+  | RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE a.txt relative instrument resolves outside the lane: scripts/../../outside/tool.sh
+
+## C4-receipt-symlink
+note: control: receipt that is a symlink is SYMLINK_RECEIPT
+cmd:  node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs --dir /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/C4-link --rev 49f0b16221a569b0e53f620c2b615f8a8fea950a --lane /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane
+exit: 2  elapsed_ms: 20
+  | RECEIPT_BIND: FAIL-CLOSED SYMLINK_RECEIPT /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/C4-link/a.txt
+
+## C5-dir-symlink
+note: control: --dir that is a symlink is SYMLINK_DIR
+cmd:  bash -c ln -sfn '/fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/C1' '/fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc-dirlink' && node '/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs' --dir '/fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc-dirlink' --rev '49f0b16221a569b0e53f620c2b615f8a8fea950a' --lane '/fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane'
+exit: 2  elapsed_ms: 21
+  | RECEIPT_BIND: FAIL-CLOSED SYMLINK_DIR /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc-dirlink
+
+## C6-receipt-fifo
+note: control: receipt FIFO refused by lstat before open (must not hang)
+cmd:  node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs --dir /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/C6-fifo --rev 49f0b16221a569b0e53f620c2b615f8a8fea950a --lane /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane
+exit: 2  elapsed_ms: 21
+  | RECEIPT_BIND: FAIL-CLOSED RECEIPT_UNREADABLE /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/C6-fifo/a.txt is not a regular file
+
+## C7-receipt-too-large
+note: control: 1 MiB + 1 byte receipt refused before read
+cmd:  node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs --dir /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/C7-toolarge --rev 49f0b16221a569b0e53f620c2b615f8a8fea950a --lane /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane
+exit: 2  elapsed_ms: 20
+  | RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/C7-toolarge/a.txt is 1048577 bytes (limit 1048576)
+
+## C8-flag-instrument
+note: control: cmd= whose second token is a flag -> UNRESOLVED; the eval must NOT run
+cmd:  node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs --dir /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/C8 --rev 49f0b16221a569b0e53f620c2b615f8a8fea950a --lane /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane
+exit: 2  elapsed_ms: 23
+  | RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt instrument absent at 49f0b16221a569b0e53f620c2b615f8a8fea950a: --eval=require('fs').writeFileSync('/fast/scratch/hyaku/kumitate-r90/K90Sentinel/EXECUTED-eval','x')
+
+C8 marker check: EXECUTED-eval absent -> cmd= not executed
+
+## C9-git-env-dropped
+note: control: GIT_DIR/GIT_INDEX_FILE/GIT_ALTERNATE_OBJECT_DIRECTORIES canaries are dropped
+cmd:  env GIT_DIR=/fast/scratch/hyaku/kumitate-r90/K90Sentinel/canary-git GIT_INDEX_FILE=/fast/scratch/hyaku/kumitate-r90/K90Sentinel/canary-idx GIT_ALTERNATE_OBJECT_DIRECTORIES=/fast/scratch/hyaku/kumitate-r90/K90Sentinel/canary-alt node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs --dir /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/C1 --rev 49f0b16221a569b0e53f620c2b615f8a8fea950a --lane /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane
+exit: 0  elapsed_ms: 29
+  | RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+
+# ======================= ATTACKS =======================
+
+## A1r-relative-dirty-digest
+note: control: relative spelling binds at rev, so the worktree digest MISMATCHES
+cmd:  node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs --dir /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/A1-rel --rev 49f0b16221a569b0e53f620c2b615f8a8fea950a --lane /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane2
+exit: 1  elapsed_ms: 25
+  | RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=a.txt
+
+## A1-absolute-spelling-launders
+note: ATTACK: absolute spelling of the same path, digest = WORKTREE bytes (outside via symlink) -> CLEAN external=1
+cmd:  node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs --dir /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/A1-abs --rev 49f0b16221a569b0e53f620c2b615f8a8fea950a --lane /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane2
+exit: 0  elapsed_ms: 22
+  | RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+
+## A1b-absolute-rev-digest
+note: absolute spelling with the REV digest -> DRIFT (bytes read from disk, not rev)
+cmd:  node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs --dir /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/A1-abs-rev --rev 49f0b16221a569b0e53f620c2b615f8a8fea950a --lane /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane2
+exit: 1  elapsed_ms: 20
+  | RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=1 first=a.txt
+
+## A2a-hash-arbitrary-file
+note: ATTACK: non-program file named by cmd= is hashed and bound (CLEAN external=1)
+cmd:  node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs --dir /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/A2-guess --rev 49f0b16221a569b0e53f620c2b615f8a8fea950a --lane /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane
+exit: 0  elapsed_ms: 21
+  | RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+
+## A2b-wrong-guess-json
+note: --json rows[].computed is the sha256 of the named non-instrument file (oracle for guessed contents)
+cmd:  node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs --dir /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/A2-wrong --rev 49f0b16221a569b0e53f620c2b615f8a8fea950a --lane /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane --json
+exit: 1  elapsed_ms: 22
+  | {"contract":"kumitate-receipt-bind-v3","mode":"bind","ok":false,"verdict":"DRIFT","dir":"/fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/A2-wrong","rev":"49f0b16221a569b0e53f620c2b615f8a8fea950a","lane":"/fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane","receipts":1,"matched":0,"mismatched":1,"unchecked":0,"external":1,"first":"a.txt","rows":[{"file":"a.txt","verdict":"MISMATCH","instrument":"/fast/scratch/hyaku/kumitate-r90/K90Sentinel/outside/secret.txt","rev":"49f0b16221a569b0e53f620c2b615f8a8fea950a","source":"disk","declared":"0000000000000000000000000000000000000000000000000000000000000000","computed":"507b054ab4828f516e5b4157101d65399d126780ec636f51286c9ecad0ce995f"}]}
+
+A2b check: sha256(secret.txt) = 507b054ab4828f516e5b4157101d65399d126780ec636f51286c9ecad0ce995f  (compare with rows[0].computed above)
+
+## A2c-cmd-not-executed
+note: ATTACK candidate (c): cmd= names an executable script; CLEAN without running it
+cmd:  node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs --dir /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/A2-marker --rev 49f0b16221a569b0e53f620c2b615f8a8fea950a --lane /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane
+exit: 0  elapsed_ms: 23
+  | RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+
+A2c marker check: EXECUTED-marker absent -> cmd= NOT executed
+
+## A3a-intermediate-symlink
+note: absolute path through a symlinked parent dir: external, not SYMLINK_INSTRUMENT
+cmd:  node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs --dir /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/A3-intermediate --rev 49f0b16221a569b0e53f620c2b615f8a8fea950a --lane /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane
+exit: 0  elapsed_ms: 23
+  | RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+
+## A3b-final-symlink-control
+note: control: final-component symlink external -> SYMLINK_INSTRUMENT
+cmd:  node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs --dir /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/A3-final --rev 49f0b16221a569b0e53f620c2b615f8a8fea950a --lane /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane
+exit: 2  elapsed_ms: 21
+  | RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT a.txt external instrument is a symlink: /fast/scratch/hyaku/kumitate-r90/K90Sentinel/outside/tool-link.sh
+
+## A4-devzero-unbounded
+note: ATTACK (d): external instrument /dev/zero, memory capped at 2 GiB (ulimit -v), core dumps off (ulimit -c 0)
+cmd:  bash -c ulimit -c 0 && ulimit -v 2097152 && exec "$@" bash node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs --dir /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/A4-devzero --rev 49f0b16221a569b0e53f620c2b615f8a8fea950a --lane /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane
+exit: 133  elapsed_ms: 273
+  | 
+  | 
+  | #
+  | # Fatal process out of memory: Worklist::Segment::Create
+  | #
+  | ----- Native stack trace -----
+  | 
+  |  1: 0x9dde61  [node]
+  |  2: 0x27ab085 v8::base::FatalOOM(v8::base::OOMType, char const*) [node]
+  |  3: 0xf39c99  [node]
+  |  4: 0x141d14b  [node]
+  |  5: 0xf101b8  [node]
+  |  6: 0xf400bf  [node]
+  |  7: 0xf80610  [node]
+  |  8: 0xf83eda  [node]
+  |  9: 0xf240f0  [node]
+  | 10: 0xf24b9d  [node]
+  | 11: 0xf25679  [node]
+  | 12: 0xf29af0  [node]
+  | 13: 0x19c77d1  [node]
+  | timeout: the monitored command dumped core
+
+## A5-fifo-external-hang
+note: ATTACK (d): external FIFO instrument blocks the process (timeout exit 124 = no verdict)
+cmd:  node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs --dir /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/A5-fifo --rev 49f0b16221a569b0e53f620c2b615f8a8fea950a --lane /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane
+exit: 124  elapsed_ms: 15002
+  | 
+
+## A6-external-512m-read
+note: ATTACK (d): one receipt -> 512 MiB read into memory (no bound on external instruments)
+cmd:  /usr/bin/time -f maxrss_kb=%M node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs --dir /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/A6-sparse --rev 49f0b16221a569b0e53f620c2b615f8a8fea950a --lane /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane
+exit: 0  elapsed_ms: 439
+  | RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  | maxrss_kb=580844
+
+## A7 setup: racer flips /fast/scratch/hyaku/kumitate-r90/K90Sentinel/outside/race/tool.sh between regular file and symlink->other.sh (racers/race-external.py)
+A7 tally over 120 runs (receipt digest = sha256(other.sh); named path = race/tool.sh):
+  | CLEAN=15  SYMLINK_INSTRUMENT=34  DRIFT=71  other=0
+  | first CLEAN verdict: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1 (exit 0)
+
+## A8 setup: racer flips /fast/scratch/hyaku/kumitate-r90/K90Sentinel/race-rc/a.txt between a regular receipt and a FIFO (racers/race-receipt.py)
+A8 tally over 150 runs (timeout 3s per run):
+  | HUNG(exit 124)=7  RECEIPT_UNREADABLE=71  CLEAN=72  DRIFT=0  other=0
+
+## A9a-control-no-env
+note: control: no env override, digest of replacement MISMATCHES (blob at rev is alpha)
+cmd:  node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs --dir /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/A9-rel-digest-replacement --rev 49f0b16221a569b0e53f620c2b615f8a8fea950a --lane /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane3
+exit: 1  elapsed_ms: 28
+  | RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=a.txt
+
+## A9b-cat-file-under-env
+note: evidence: git cat-file under the same env returns the replacement
+cmd:  env GIT_REPLACE_REF_BASE=refs/k90/env/ git -C /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane3 cat-file blob 49f0b16221a569b0e53f620c2b615f8a8fea950a:scripts/alpha.mjs
+exit: 0  elapsed_ms: 15
+  | REPLACED-BLOB
+
+## A9c-env-redirects-blob
+note: ATTACK (e): GIT_REPLACE_REF_BASE set in caller env -> CLEAN binds the replacement bytes
+cmd:  env GIT_REPLACE_REF_BASE=refs/k90/env/ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs --dir /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/A9-rel-digest-replacement --rev 49f0b16221a569b0e53f620c2b615f8a8fea950a --lane /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane3
+exit: 0  elapsed_ms: 26
+  | RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+
+## A10-repo-refs-replace
+note: ATTACK (e/repo): refs/replace/<alpha-blob> in lane repo -> CLEAN binds replacement bytes; alpha not the judged bytes
+cmd:  node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs --dir /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/A10-repo-replace --rev 49f0b16221a569b0e53f620c2b615f8a8fea950a --lane /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane4
+exit: 0  elapsed_ms: 28
+  | RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+
+## A11a-zwsp-hidden-cmd
+note: ATTACK (K89-V1): U+200B-prefixed second cmd= is ignored -> CLEAN binds alpha
+cmd:  node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs --dir /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/A11-zwsp-cmd --rev 49f0b16221a569b0e53f620c2b615f8a8fea950a --lane /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane
+exit: 0  elapsed_ms: 26
+  | RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+
+## A11b-nbsp-hidden-digest
+note: ATTACK (K89-V1): U+00A0-prefixed wrong tool_sha256= ignored -> CLEAN
+cmd:  node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs --dir /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/A11-nbsp-digest --rev 49f0b16221a569b0e53f620c2b615f8a8fea950a --lane /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane
+exit: 0  elapsed_ms: 25
+  | RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+
+## A11c-mid-file-bom-hidden-rev
+note: ATTACK (K89-V1): U+FEFF mid-file rev= (bogus) ignored -> CLEAN at --rev
+cmd:  node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs --dir /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/A11-bom-rev --rev 49f0b16221a569b0e53f620c2b615f8a8fea950a --lane /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane
+exit: 0  elapsed_ms: 24
+  | RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+
+## A11d-visible-bogus-rev-control
+note: control: the same bogus rev= visible -> REV_UNRESOLVED
+cmd:  node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs --dir /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/A11-visible-rev --rev 49f0b16221a569b0e53f620c2b615f8a8fea950a --lane /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane
+exit: 2  elapsed_ms: 23
+  | RECEIPT_BIND: FAIL-CLOSED REV_UNRESOLVED a.txt rev=0000000000000000000000000000000000000000 is not a commit in /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane
+
+## A11e-visible-dup-control
+note: control: visible duplicate cmd= -> AMBIGUOUS_FIELD
+cmd:  node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs --dir /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/A11-visible-dup --rev 49f0b16221a569b0e53f620c2b615f8a8fea950a --lane /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane
+exit: 2  elapsed_ms: 22
+  | RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 2 cmd= lines
+
+## A12-inlane-70m-blob
+note: bounded: >64 MiB committed instrument -> UNRESOLVED 'absent at rev' (fail-closed, misleading)
+cmd:  node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90Sentinel/base-v3.mjs --dir /fast/scratch/hyaku/kumitate-r90/K90Sentinel/rc/A12-big --rev 49f0b16221a569b0e53f620c2b615f8a8fea950a --lane /fast/scratch/hyaku/kumitate-r90/K90Sentinel/lane
+exit: 2  elapsed_ms: 43
+  | RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt instrument absent at 49f0b16221a569b0e53f620c2b615f8a8fea950a: scripts/big.bin
+
+# END
+
+# ======================= SEVERITY (per attack; base v3 only) =======================
+C1..C9 controls: NONE (behaviour matches the documented contract; used as calibration)
+A1-absolute-spelling-launders: MED   in-lane absolute token, lexical path inside lane, real path outside via untracked worktree symlink -> CLEAN external=1 hashed from worktree bytes. Relative spelling of the same file DRIFTs (A1r). Breaks 'a dirty worktree cannot launder a receipt' for absolute spellings.
+A1b-absolute-rev-digest: NONE (control: disk bytes DRIFT against rev digest)
+A2a-hash-arbitrary-file: LOW   any user-readable absolute path named by cmd= is read and hashed and can be bound CLEAN; sha256 oracle for guessed contents (A2b: computed= in --json)
+A2c-cmd-not-executed: NONE    cmd= names an executable script; CLEAN without executing it (marker absent). No execution path found.
+A3a-intermediate-symlink: LOW  symlink in a parent component of an absolute external path is not refused (only final component lstat'd); verdict external=1 with no SYMLINK verdict
+A4-devzero-unbounded: MED     /dev/zero named as external instrument: read until EOF, V8 fatal OOM abort (exit 133, no verdict line) under a 2 GiB ulimit -v
+A5-fifo-external-hang: MED    FIFO named as external instrument: open blocks; no verdict after 15 s (exit 124)
+A6-external-512m-read: LOW    no size bound for external instruments: 512 MiB regular file read whole (maxrss_kb=580844)
+A7-external-race: LOW         lstat(abs) then readFileSync(abs): symlink swapped in between -> CLEAN with the link target's digest (15/120 runs); needs write access to the instrument's directory
+A8-receipt-fifo-race: LOW     lstat(path) then open(path): FIFO swapped in between -> open blocks (7/150 runs hung past 3 s); DoS only, needs write access to the receipt directory
+A9c-env-redirects-blob: LOW   GIT_REPLACE_REF_BASE from caller env is not in GIT_ENV_DROP: cat-file returns the replacement, CLEAN binds replacement bytes (A9b shows the redirect)
+A10-repo-refs-replace: LOW    refs/replace/<blob> in the lane repo (repo-write, no env) redirects the judged blob; commit ids unchanged; replacement not disabled by the tool
+A11a/b/c-K89-V1: MED          U+200B/U+00A0/U+FEFF-prefixed field lines are ignored: duplicate or wrong cmd=/tool_sha256=/rev= hidden, CLEAN verdict (A11d/e controls show visible equivalents are caught). Already routed as K89-V1 (v4).
+A12-inlane-70m-blob: LOW      >64 MiB committed instrument: spawnSync maxBuffer kills git; verdict UNRESOLVED 'instrument absent at rev' (fail-closed but misleading)
+(b) git blob/ls-tree read: NONE by analysis only (both calls pinned to an immutable rev object); no reproduction attempted, no finding claimed
+(c) execution of cmd=: NONE   spawnSync argv-only, no shell; git invoked with no hooks; C8/A2c markers absent

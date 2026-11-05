@@ -1,0 +1,48 @@
+ARM usage: PASS exit=64
+ARM selftest: FAIL exit=1 RECEIPT_BIND_SELFTEST: FAIL held=25/68
+ARM detect-r86-at-rev: FAIL files=10 exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED counter-oracle
+ARM detect-r86-renamed: FAIL files=10 exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED counter-oracle
+ARM clean-r87-at-rev: FAIL copied=11 exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED counter-oracle
+ARM unchecked: FAIL exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM unresolved: FAIL exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM dir-missing: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED counter-oracle
+ARM rev-bad: FAIL exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM symlink-receipt: FAIL exit=0 RECEIPT_BIND: CLEAN matched=2 mismatched=0 unchecked=0 external=0
+ARM rev-receipt-wins: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM worktree-forgery: FAIL exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM default-rev: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM rev-receipt-negative: FAIL exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM untracked-instrument: FAIL exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM escape-relative: FAIL relative exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | absolute exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM symlink-dir: FAIL link exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | real exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM oversize: FAIL 2MiB exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | 512KiB exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM duplicate-field: FAIL dup-cmd exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | dup-cmd-equal exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | dup-digest exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | dup-rev exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | single exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM sweep: FAIL scripts=33 clean exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED counter-oracle | flip=s06.txt exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED counter-oracle
+ARM default-rev-not-head: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM index-not-judged: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM abs-in-lane-at-rev: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM limit-edge: FAIL edge 1048576 exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | over 1048577 exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM limit-before-read: FAIL size=1073741824 exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM escape-inner-dotdot: FAIL exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM dup-equal-field: FAIL dup-rev-equal exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | dup-digest-equal exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM alias-proc-root: FAIL exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM alias-proc-root-clean: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM bom-rev: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM symlink-instrument: FAIL exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM symlink-instrument-space-target: FAIL exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM symlink-instrument-twin: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM abs-symlink-instrument: FAIL exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM dotdot-inside: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM dotdot-inside-worktree: FAIL exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM alias-ancestor: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM alias-ancestor-worktree: FAIL exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM alias-ancestor-external-twin: FAIL exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM dup-feff: FAIL "﻿" exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM dup-zwsp: FAIL "​" exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM dup-zwnj: FAIL "‌" exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM dup-zwj: FAIL "‍" exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM dup-lrm: FAIL "‎" exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM dup-nbsp: FAIL " " exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM single-zwsp: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM single-nbsp: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+C90_C1: UNMET held=13/47

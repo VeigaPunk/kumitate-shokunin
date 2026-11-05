@@ -41,3 +41,5 @@ scores below terminal (`ARM alias-proc-root`, `ARM symlink-instrument`, `ARM bom
 `O_NOFOLLOW` descriptor (`fstat` + read) to close the lstat-to-read swap, but a race is not
 observable from a scorer, so it carries a selftest arm and no probe arm — the claim does not rest
 on it.
+
+**Correction (round 90, K89-V6; append-only, supersedes the `recheck:` line in the front matter).** That line quotes `RECEIPT_BIND_SELFTEST: PASS held=64/64`. The committed round-89 receipt prints `held=68/68` (`.ufo/waves/round-89/close/bind-selftest.txt`, 68 arms), and the round-90 instrument (v4, `kumitate-receipt-bind-v4`) prints `held=76/76` (`.ufo/waves/round-90/K90ExecInst/selftest-v4.txt`; lane `node scripts/receipt-bind.mjs --selftest --work <scratch>` → `RECEIPT_BIND_SELFTEST: PASS held=76/76`). The boundaries described above are unchanged by v4; v4 adds the invisible-prefix field-line class (`corpus/knowledge/receipt-invisible-prefix-fields.md`).

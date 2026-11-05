@@ -1,0 +1,10 @@
+--- base.mjs	2026-11-05 07:00:59.911043610 -0300
++++ M3.mjs	2026-11-05 07:02:08.345553874 -0300
+@@ -289,7 +289,6 @@
+     text = text.replace(/^\uFEFF/, '');
+     const field = (key) => {
+       const all = [...text.matchAll(new RegExp(`^${key}=(.*)$`, 'gm'))];
+-      if (all.length > 1) throw new FailClosed('AMBIGUOUS_FIELD', `${file} carries ${all.length} ${key}= lines`);
+       return all.length ? all[0][1].trim() : null;
+     };
+ 

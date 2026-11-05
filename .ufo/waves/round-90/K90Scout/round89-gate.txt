@@ -1,0 +1,52 @@
+# K90Scout — round-89 inherited gate defects (read-only reproduction)
+# date 2026-11-05T07:03:57-03:00
+
+## CMD A: node scripts/round-gate.mjs --round 89   (run in the LANE WORKTREE at lane HEAD b67fa963)
+$ cd /home/vgpnk/Projects/shokunin/kumitate-shokunin && node scripts/round-gate.mjs --round 89 2>&1 | head -20
+ROUND_GATE: CLEAN (round=89 lane=kumitate checks=10 errors=0 warnings=0)
+
+NOTE: the lane worktree already carries an UNCOMMITTED round-90 repair of the round-89 gate defects
+      (git status: ' M LOG.md', ' M SCORECARD.md'); the defects are therefore visible only at base.
+
+## CMD B: same gate at BASE 7218699c (read-only clone under --work scratch; lane untouched)
+$ git clone --shared --no-checkout <lane> scratch/clone && git -C scratch/clone checkout --detach 7218699cfbdec702ba42f35ceac0a8e52d1bd564
+$ node scripts/round-gate.mjs --round 89 --repo <scratch/clone> --reports-dir <scratch/clone/.ufo/reports> --main-repo /home/vgpnk/Projects/shokunin
+ROUND_GATE  error  REPORT_MISSING  /fast/scratch/hyaku/kumitate-r90/K90Scout/clone/.ufo/reports/round-89/kumitate.md
+ROUND_GATE  error  SCORECARD_ROW_MISSING  no table row starting "| 89 |" in /fast/scratch/hyaku/kumitate-r90/K90Scout/clone/SCORECARD.md
+ROUND_GATE  warning  SCORECARD_PLAN_MISSING  ## Planned names no round later than 89
+ROUND_GATE  error  LOG_ENTRY_MISSING  no "- YYYY-MM-DD — round 89" line in /fast/scratch/hyaku/kumitate-r90/K90Scout/clone/LOG.md
+ROUND_GATE: DRIFT (round=89 lane=kumitate checks=5 errors=3 warnings=1)
+
+## The three routed round-89 gate defects, with the exact lines each finding quotes:
+  SCORECARD_ROW_MISSING  -> 'no table row starting "| 89 |" in <repo>/SCORECARD.md'
+  LOG_ENTRY_MISSING      -> 'no "- YYYY-MM-DD — round 89" line in <repo>/LOG.md'
+  SCORECARD_PLAN_MISSING -> '## Planned names no round later than 89'
+  (plus REPORT_MISSING, which is an artifact of the scratch clone's empty reports dir, not a lane defect)
+
+## Confirming the base really lacks the three artifacts:
+$ git show 7218699c:SCORECARD.md | grep -nE '^\|[[:space:]]*89[[:space:]]*\|'   -> rc=1 (no row)
+rc=1
+$ git show 7218699c:LOG.md | grep -nE '^- [0-9]{4}-[0-9]{2}-[0-9]{2} — round 89'   -> rc=1 (no bullet)
+rc=1
+
+## The WORKING-TREE repair (uncommitted, already applied by round 90) that closes them:
+$ git -C <lane> diff LOG.md SCORECARD.md | grep '^+' | head -20
++++ w/LOG.md
++
++- 2026-11-04 — round 89 (gate-required one-line record, appended by round 90 as the round-89 gate repair; the full entry is the section above): C1 operability — `receipt-bind` v3 **UNMET** by the frozen kill rule (three constructions at 30/30); no capabil
++
++## Round 90 — receipt-bind v4: prefix-tolerant field lines under a Q82-blind scorer (2026-11-05, attempt 1)
++
++Declared (`.ufo/waves/round-90/plan.md`, frozen at `b67fa963`): one claim, C1 operability, capability acquisition `receipt-bind` v4. Predicate `C90_C1: HELD held=47/47` exit 0 from the frozen `probe90-c1.mjs`. Do-nothing control: the committed v3 at base `721
++++ w/SCORECARD.md
++| 89 | operability (lowest non-retired axis; integer held 9; capability acquisition `receipt-bind` v3 — **UNMET**, rejected-honest-stop by the frozen kill rule; no capability row) | `node .ufo/waves/round-89/probe/probe89-c1.mjs` at base → `C89_C1: UNMET 
++**Round 90 — declared claim** lives at the end of this file under `## Round 90 — declaration (2026-11-05)`.
++
++
++## Round 90 — declaration (2026-11-05)
++
++One claim: **C1 operability** (lowest non-retired axis; integer 9, terminal under `f_O`), capability acquisition `receipt-bind` v4 (contract `kumitate-receipt-bind-v4`). The stagnation nudge is active (saturation line 9, window N = 3; the last verified capabi
++
++Frozen at `b67fa9639ca6537b92021ea938f769ff1ed6c883` (plan, 47-arm blind probe `probe90-c1.mjs`, 18 pre-data controls, the control driver, and the Q82 field discipline). Predicate: `node .ufo/waves/round-90/probe/probe90-c1.mjs --lane <LANE> --work <SCRATCH> 
++
++Motivating evidence: rounds 87, 88 and 89 each lost this capability to the same frozen kill rule; round 89's own pre-registration binds this round to a scorer that satisfies Q82 (`corpus/QUALITY.md`).

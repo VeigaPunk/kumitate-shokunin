@@ -263,6 +263,8 @@ fixture suite, `--strict` to fail on warnings.
 | `lessons/round-88-verifier-spotcheck.md` | Non-author round-88 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 | `lessons/round-89.md` | Round-89 receipt-bind v3: the 30-arm scorer, 22 pre-data controls, the probe-keyed construction at 30/30, the honest UNMET verdict, and the scorer-class mistake mined into Q82 | LOG.md round 89; `.ufo/waves/round-89/` |
 | `lessons/round-89-verifier-spotcheck.md` | Non-author round-89 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
+| `knowledge/receipt-invisible-prefix-fields.md` | Invisible-prefix field lines in receipts (v4): the six-member Cf/White_Space class, the duplicate-field bypass shape, the positive twins, and the measured 47/47 constructions that keep the claim UNMET | S258, S260, S261; `.ufo/waves/round-90/` (probe, controls, `w1/K90Reviewer.md`, `w1/K90CriticA.md`) |
+| `lessons/round-90.md` | Round-90 receipt-bind v4: the blind-scorer freeze, the 47/47 kill-rule constructions (whole-text strip; context-gated prefix), the admitted Q83, and the five mined mistakes | LOG.md round 90; `.ufo/waves/round-90/` |
 
 ## Known gaps
 

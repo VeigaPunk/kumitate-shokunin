@@ -1,0 +1,10 @@
+--- base.mjs	2026-11-05 07:00:59.911043610 -0300
++++ M7.mjs	2026-11-05 07:02:08.359245495 -0300
+@@ -297,7 +297,6 @@
+     const revField = field('rev');
+     if (revField !== null) {
+       if (!FULL_REV.test(revField)) throw new FailClosed('REV_UNRESOLVED', `${file} rev=${JSON.stringify(revField)} is not 40 lowercase hex`);
+-      receiptRev = revField;
+       if (!revOk(receiptRev)) throw new FailClosed('REV_UNRESOLVED', `${file} rev=${receiptRev} is not a commit in ${lane}`);
+     }
+ 

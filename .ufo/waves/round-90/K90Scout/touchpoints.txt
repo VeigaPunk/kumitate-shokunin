@@ -1,0 +1,169 @@
+# K90Scout touchpoints — round-90 receipt-bind v4 bump + round-90 close
+# generated 2026-11-05T07:03:43-03:00 from lane root /home/vgpnk/Projects/shokunin/kumitate-shokunin
+# base rev 7218699cfbdec702ba42f35ceac0a8e52d1bd564 ; lane HEAD b67fa9639ca6537b92021ea938f769ff1ed6c883
+
+## CMD1: grep -rn 'receipt-bind' <lane> --include='*.md' --include='*.mjs' --include='*.json' --include='*.sh' -l  (exclude .git, .ufo/waves/round-8* and earlier)
+./corpus/knowledge/receipt-lane-membership-and-link-binding.md
+./corpus/knowledge/receipt-subject-binding.md
+./corpus/lessons/round-87.md
+./corpus/lessons/round-87-verifier-spotcheck.md
+./corpus/lessons/round-88.md
+./corpus/lessons/round-88-verifier-spotcheck.md
+./corpus/lessons/round-89.md
+./corpus/lessons/round-89-verifier-spotcheck.md
+./corpus/QUALITY.md
+./corpus/README.md
+./LOG.md
+./SCORECARD.md
+./scripts/proxy-check.mjs
+./scripts/receipt-bind.mjs
+./SKILL.md
+./.ufo/waves/round-90/controls/ctl-size-oracle.mjs
+./.ufo/waves/round-90/controls/run-controls90.mjs
+./.ufo/waves/round-90/K90CriticB/v3.mjs
+./.ufo/waves/round-90/K90ExecAudit/q82-audit.mjs
+./.ufo/waves/round-90/K90ExecInst/receipt-bind-v4.mjs
+./.ufo/waves/round-90/K90Mutation/base.mjs
+./.ufo/waves/round-90/K90Mutation/M10.mjs
+./.ufo/waves/round-90/K90Mutation/M1.mjs
+./.ufo/waves/round-90/K90Mutation/M2.mjs
+./.ufo/waves/round-90/K90Mutation/M3.mjs
+./.ufo/waves/round-90/K90Mutation/M4.mjs
+./.ufo/waves/round-90/K90Mutation/M5.mjs
+./.ufo/waves/round-90/K90Mutation/M6.mjs
+./.ufo/waves/round-90/K90Mutation/M7.mjs
+./.ufo/waves/round-90/K90Mutation/M8.mjs
+./.ufo/waves/round-90/K90Mutation/M9.mjs
+./.ufo/waves/round-90/K90Reviewer/base-v3.mjs
+./.ufo/waves/round-90/K90Reviewer/cand-1-global-strip.mjs
+./.ufo/waves/round-90/K90Reviewer/cand-2-cmdrev-only.mjs
+./.ufo/waves/round-90/K90Reviewer/cand-3-single-gated.mjs
+./.ufo/waves/round-90/K90Sentinel/base-v3.mjs
+./.ufo/waves/round-90/plan.md
+./.ufo/waves/round-90/probe/probe90-c1.mjs
+./.ufo/waves/round-90/w1-dispatch.json
+./.ufo/waves/round-90/w1-spec.json
+
+## CMD2: exact lines naming the v3 CONTRACT (kumitate-receipt-bind-v3) or the v3 sha (37201ad0...) in LIVE lane files
+### grep -n 'kumitate-receipt-bind-v3' <live files>
+scripts/receipt-bind.mjs:5: * Contract: kumitate-receipt-bind-v3 (round 89; v2 round 88, v1 round 87, capability `receipt-bind`).
+scripts/receipt-bind.mjs:85:const CONTRACT = 'kumitate-receipt-bind-v3';
+SKILL.md:646:| receipt-bind | gate | `node scripts/receipt-bind.mjs --dir <receipt-dir> --rev <40-hex> [--lane <dir>] [--json]` → `RECEIPT_BIND: CLEAN\|DRIFT\|FAIL-CLOSED` (0 clean, 1 drift, 2 fail-closed, 64 usage), contract `kumitate-receipt-bind-v3` (round 89; v2 round 88, v1 round 87, routed defect R86-D1: a rece
+SKILL.md:763:- [ ] Receipt-subject binding (round 87, v2 round 88, v3 round 89; contract `kumitate-receipt-bind-v3`; the claim predicates are the frozen scorers at `.ufo/waves/round-87/probe/probe87-c1.mjs`, `.ufo/waves/round-88/probe/probe88-c1.mjs` and `.ufo/waves/round-89/probe/probe89-c1.mjs` (30 arms); this item i
+LOG.md:3050:Claim: C1 operability, capability acquisition `receipt-bind` v3 (contract `kumitate-receipt-bind-v3`),
+SCORECARD.md:4348:acquisition `receipt-bind` v3 (contract `kumitate-receipt-bind-v3`). The stagnation nudge is active
+corpus/knowledge/receipt-lane-membership-and-link-binding.md:1:source: S255 (proc_pid_root(5)), S256 (POSIX realpath(3)), S257 (gitformat-index), S258 (The Unicode Standard 15.0 ch.3) — plus the lane's own instrument at `scripts/receipt-bind.mjs` (contract `kumitate-receipt-bind-v3`)
+
+### grep -n '37201ad0' <live files>   (the v3 sha256)
+LOG.md:3066:Landed instrument: `scripts/receipt-bind.mjs` v3, sha256 `37201ad0…` — real-path lane membership on
+SCORECARD.md:338:pin.receipt-bind=37201ad0c6acd4c51b8804fa66ac9606469a181891dbed1d5ee46c56176e1bb3
+SCORECARD.md:4365:instrument integrates at the seat candidate `37201ad0…` (selftest 59 → 68 arms). No second claim, no
+corpus/lessons/round-89.md:22:The L1 integrated the wave's v3 candidate (`scripts/receipt-bind.mjs`, sha256 `37201ad0…`, selftest
+corpus/lessons/round-89-verifier-spotcheck.md:49:| instrument bytes at the judged rev | `git show 082f01a4:scripts/receipt-bind.mjs \| sha256sum` | `37201ad0c6acd4c51b8804fa66ac9606469a181891dbed1d5ee46c56176e1bb3` = `pin.receipt-bind` = the selftest receipt's `tool_sha256` | yes |
+
+## CMD3: every consumer of pin.receipt-bind (SCORECARD proxy stanza + proxy-check GATE_PINS + counter-pins registry + .ufo/pins/*.json)
+### grep -n 'pin.receipt-bind' SCORECARD.md scripts/proxy-check.mjs scripts/counter-pins.mjs
+SCORECARD.md:338:pin.receipt-bind=37201ad0c6acd4c51b8804fa66ac9606469a181891dbed1d5ee46c56176e1bb3
+SCORECARD.md:4324:| accounting | A 36, C 46, C2 222 → 224, `pin.receipt-bind` re-pinned; `PROXY: MATCH --strict` (`close/proxy.txt`) |
+SCORECARD.md:4386:| accounting | A 36, C 46, C2 224 → 227, `pin.receipt-bind` re-pinned, `pin.omp-census` and `pin.spotcheck-adopt` re-pinned; `PROXY: MATCH --strict` (`close/proxy.txt`) |
+scripts/proxy-check.mjs:561:  'pin.receipt-bind': 'scripts/receipt-bind.mjs', // round 87: receipt-to-instrument binding gate (R86-D1)
+
+### grep -n 'receipt-bind' SCORECARD.md scripts/proxy-check.mjs scripts/counter-pins.mjs
+SCORECARD.md:338:pin.receipt-bind=37201ad0c6acd4c51b8804fa66ac9606469a181891dbed1d5ee46c56176e1bb3
+SCORECARD.md:474:| 89 | operability (lowest non-retired axis; integer held 9; capability acquisition `receipt-bind` v3 — **UNMET**, rejected-honest-stop by the frozen kill rule; no capability row) | `node .ufo/waves/round-89/probe/probe89-c1.mjs` at base →
+SCORECARD.md:4228:acquisition `receipt-bind` — the lane must be able to bind a close receipt to the instrument its own
+SCORECARD.md:4274:(1) **`receipt-bind` v2 predicate**: an arm that makes the worktree and the judged revision differ (a
+SCORECARD.md:4289:acquisition `receipt-bind` v2 (contract `kumitate-receipt-bind-v2`) — re-claimed under a scorer that
+SCORECARD.md:4324:| accounting | A 36, C 46, C2 222 → 224, `pin.receipt-bind` re-pinned; `PROXY: MATCH --strict` (`close/proxy.txt`) |
+SCORECARD.md:4334:(1) **`receipt-bind` v3 scorer**: judged revision ≠ HEAD ≠ index ≠ worktree; absolute and relative in-lane
+SCORECARD.md:4348:acquisition `receipt-bind` v3 (contract `kumitate-receipt-bind-v3`). The stagnation nudge is active
+SCORECARD.md:4386:| accounting | A 36, C 46, C2 224 → 227, `pin.receipt-bind` re-pinned, `pin.omp-census` and `pin.spotcheck-adopt` re-pinned; `PROXY: MATCH --strict` (`close/proxy.txt`) |
+SCORECARD.md:4413:`receipt-evidence` overlap dialect question. (6) Round-90 must not re-claim `receipt-bind` without a
+SCORECARD.md:4419:One claim: **C1 operability** (lowest non-retired axis; integer 9, terminal under `f_O`), capability acquisition `receipt-bind` v4 (contract `kumitate-receipt-bind-v4`). The stagnation nudge is active (saturation line 9, window N = 3; the las
+scripts/proxy-check.mjs:561:  'pin.receipt-bind': 'scripts/receipt-bind.mjs', // round 87: receipt-to-instrument binding gate (R86-D1)
+
+### grep -rn 'receipt-bind' .ufo/pins/*.json   (the pin REGISTRY files)
+grep_exit=1 (1 = no hit: receipt-bind is NOT in .ufo/pins/counter-pins.json)
+
+### SCORECARD.md pin stanza context (lines 335-342)
+pin.cap-spawn=1fde43fb7f68992fb5e692188cd9afd3581d1d16c720815adc8d3a1ca3c734d0
+pin.counter-rerun=c002523fc39b521f57a3ee86c3ff154e06aea8ccd6738501138460141abc369b
+pin.receipt-attest=ba5139b1290b204054c043df3140554757116e6fbaf19783b502a24ed1b2ce31
+pin.receipt-bind=37201ad0c6acd4c51b8804fa66ac9606469a181891dbed1d5ee46c56176e1bb3
+pin.counter-pins=060d5d8662701340da24f483316053be86bed246510c541a0518492e7b29028e
+pin.source-capture=39bdeb39298672dd3ed81036013de542ad6925587cb84f330ab69de6799d28f5
+pin.source-dupes=ead88b22fbd1525d13dd46c67b427041dc331d202a005285adea813c32530d7a
+pin.readme-map=263d961c3f42ed3da2479c4c985edd6eadd06f7c151b97370a619ff6880b2afe
+
+### counter-pins.mjs: does it read SCORECARD pins or only .ufo/pins/counter-pins.json?
+10: * any seat can re-execute (planned round-53 candidate (2), SCORECARD §Round 53
+51: * pin: SCORECARD.md `kumitate-gate-pins-v1` (`pin.counter-pins`).
+62:const DEFAULT_REGISTRY = '.ufo/pins/counter-pins.json';
+122:  const isDefault = resolve(registryPath) === join(LANE, DEFAULT_REGISTRY);
+316:  let reg = join(LANE, DEFAULT_REGISTRY);
+
+## CMD4: round-90 close artifact inventory (what the round-89 close produced, and therefore what round 90 must produce)
+### the round-89 close dir (19 receipts) — the template the round-90 close mirrors:
+bind-after-checklists.txt
+bind-final.txt
+bind-selftest.txt
+bind.txt
+census.txt
+checklists.txt
+map-selftest.txt
+map.txt
+plan.txt
+probe1.txt
+probe2.txt
+proxy-selftest.txt
+proxy.txt
+ready.txt
+selftest.txt
+source-capture.txt
+sources-check.txt
+spotcheck.txt
+twin.txt
+
+### the round-89 close commit 082f01a4 touched these lane-tracked files:
+ .../waves/round-89/close/bind-after-checklists.txt |   5 +
+ LOG.md                                             |  14 ++
+ SCORECARD.md                                       |  49 ++++++
+ 21 files changed, 590 insertions(+)
+### and the round-89 integration commit 7a8afb5f touched:
+ .ufo/pins/counter-pins.json                        |    2 +-
+ .ufo/pins/readme-map.json                          |   13 +-
+ .ufo/pins/source-captures.json                     |   37 +-
+ LOG.md                                             |   40 +
+ SCORECARD.md                                       |   35 +-
+ SKILL.md                                           |    4 +-
+ corpus/QUALITY.md                                  |   34 +
+ corpus/README.md                                   |    3 +
+ corpus/SOURCES.md                                  |    5 +
+ corpus/knowledge/omp-agent-root.md                 |    2 +-
+ corpus/lessons/round-89.md                         |  100 +
+ scripts/omp-census.mjs                             |    2 +-
+ scripts/receipt-bind.mjs                           |  126 +-
+ scripts/spotcheck-adopt.mjs                        |    8 +-
+
+## CMD5: the round-90 CLOSE touches these lane files (by analogy with the round-89 integration+close commits)
+  A. the instrument bump      : scripts/receipt-bind.mjs          (CONTRACT line 85, header line 44, selftest print line 686)
+  B. the gate-pin stanza      : SCORECARD.md line 338              (pin.receipt-bind=<v4 sha>)
+  C. the proxy gate map       : scripts/proxy-check.mjs line 561   ('pin.receipt-bind': 'scripts/receipt-bind.mjs')  [path only, no sha -> no edit needed]
+  D. the SKILL gate registry  : SKILL.md line 646                  (contract kumitate-receipt-bind-v3 -> v4)
+  E. the SKILL checklist      : SKILL.md line 763                  (contract v3 -> v4; '64 cases' -> 76; 30 arms -> 47)
+  F. the SCORECARD round row  : SCORECARD.md '## Round 90 — declaration' block + a '| 90 |' table row (round-89 pattern: row at 474)
+  G. the LOG round entry      : LOG.md  '- YYYY-MM-DD — round 90' bullet + '## Round 90 — ...' section
+  H. the SOURCES frontier     : corpus/SOURCES.md  (new S### rows; next free id = S260 — highest present is S259)
+  I. the knowledge entry      : corpus/knowledge/receipt-lane-membership-and-link-binding.md (contract v3 -> v4; recheck 64/64 -> 76/76  [K89-V6])
+  J. the lesson               : corpus/lessons/round-90.md  (new; '## Mistakes' per the plan's frontier step)
+  K. the README map row       : corpus/README.md  (one row per new corpus file — readme-map.mjs enforces 1:1)
+  L. the pin registries       : .ufo/pins/readme-map.json (covered[] list), .ufo/pins/source-captures.json, .ufo/pins/counter-pins.json
+  M. the close receipts       : .ufo/waves/round-90/close/*.txt  (round-89 template: bind.txt bind-selftest.txt bind-final.txt bind-after-checklists.txt proxy.txt proxy-selftest.txt checklists.txt map.txt map-selftest.txt selftest.txt plan.txt ready.txt census.txt source-capture.txt sources-check.txt spotcheck.txt twin.txt probe1.txt probe2.txt)
+  N. the wave artifacts       : .ufo/waves/round-90/w1/*.md (seat reports) and .ufo/waves/round-90/build/<seat>/
+
+### evidence for L (the pin registries carry file lists, so a new corpus file needs a registry + README row):
+  readme-map.json 'covered' contains 'knowledge/receipt-lane-membership-and-link-binding.md' (line 61)
+  and 'knowledge/receipt-subject-binding.md' (line 62); no receipt-bind entry in counter-pins.json (grep rc=1).
+
+### highest S id now, so a new round-90 row must be S260+ :
+S259

@@ -1,0 +1,10 @@
+--- base.mjs	2026-11-05 07:00:59.911043610 -0300
++++ M5.mjs	2026-11-05 07:02:08.352245474 -0300
+@@ -286,7 +286,6 @@
+       if (fd !== null) { try { closeSync(fd); } catch { /* already closed */ } }
+     }
+     // One leading UTF-8 BOM is a signature, not content (v3): it must not hide `rev=`.
+-    text = text.replace(/^\uFEFF/, '');
+     const field = (key) => {
+       const all = [...text.matchAll(new RegExp(`^${key}=(.*)$`, 'gm'))];
+       if (all.length > 1) throw new FailClosed('AMBIGUOUS_FIELD', `${file} carries ${all.length} ${key}= lines`);

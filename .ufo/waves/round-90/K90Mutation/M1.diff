@@ -1,0 +1,11 @@
+--- base.mjs	2026-11-05 07:00:59.911043610 -0300
++++ M1.mjs	2026-11-05 07:02:08.336245428 -0300
+@@ -340,7 +340,7 @@
+       abs = resolve(lane, instrument);
+       const lr = laneRel(lane, abs);
+       if (lr.root) throw new FailClosed('UNRESOLVED', `${file} instrument resolves to the lane root: ${instrument}`);
+-      if (!lr.inside) throw new FailClosed('ESCAPES_LANE', `${file} relative instrument resolves outside the lane: ${instrument}`);
++      if (!lr.inside) fromDisk = true;
+       rel = lr.rel;
+     }
+ 

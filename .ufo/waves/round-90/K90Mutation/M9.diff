@@ -1,0 +1,10 @@
+--- base.mjs	2026-11-05 07:00:59.911043610 -0300
++++ M9.mjs	2026-11-05 07:02:08.366245516 -0300
+@@ -248,7 +248,6 @@
+   let entries;
+   let dirStat;
+   try { dirStat = lstatSync(dir); } catch (e) { throw new FailClosed('DIR_UNREADABLE', `${dir} (${e.code || 'unreadable'})`); }
+-  if (dirStat.isSymbolicLink()) throw new FailClosed('SYMLINK_DIR', dir);
+   try { entries = readdirSync(dir); } catch (e) { throw new FailClosed('DIR_UNREADABLE', `${dir} (${e.code || 'unreadable'})`); }
+   const files = entries.filter((f) => f.endsWith('.txt')).sort();
+ 

@@ -1,0 +1,20 @@
+--- base.mjs	2026-11-05 07:00:59.911043610 -0300
++++ M4.mjs	2026-11-05 07:02:08.348801033 -0300
+@@ -265,7 +265,6 @@
+     try { st = lstatSync(path); } catch (e) { throw new FailClosed('RECEIPT_UNREADABLE', `${path} (${e.code || 'lstat failed'})`); }
+     if (st.isSymbolicLink()) throw new FailClosed('SYMLINK_RECEIPT', path);
+     if (!st.isFile()) throw new FailClosed('RECEIPT_UNREADABLE', `${path} is not a regular file`);
+-    if (st.size > MAX_RECEIPT_BYTES) throw new FailClosed('RECEIPT_TOO_LARGE', `${path} is ${st.size} bytes (limit ${MAX_RECEIPT_BYTES})`);
+ 
+     // Read from ONE descriptor (v3): the regular-file and size checks are re-asserted on the opened
+     // file, so a path swapped between the lstat above and this read cannot substitute another file.
+@@ -275,9 +274,6 @@
+       fd = openSync(path, fsConstants.O_RDONLY | fsConstants.O_NOFOLLOW);
+       const fst = fstatSync(fd);
+       if (!fst.isFile()) throw new FailClosed('RECEIPT_UNREADABLE', `${path} is not a regular file`);
+-      if (fst.size > MAX_RECEIPT_BYTES) {
+-        throw new FailClosed('RECEIPT_TOO_LARGE', `${path} is ${fst.size} bytes (limit ${MAX_RECEIPT_BYTES})`);
+-      }
+       text = readFileSync(fd, 'utf8');
+     } catch (e) {
+       if (e instanceof FailClosed) throw e;

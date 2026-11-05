@@ -3098,3 +3098,9 @@ while the integrated instrument answers correctly on inputs the probe never draw
 operability 9 and every coverage row 10 unchanged. Routed to round 90: K89-V1 (BOM/ZWSP duplicate
 bypass), K89-V2 (missing absolute-symlink, in-lane `..` and symlinked-ancestor arms), K89-V3 (stale
 probe docstring), K89-V4 (`usage`/`selftest` text stubs, worktree-reading arms).
+
+- 2026-11-04 — round 89 (gate-required one-line record, appended by round 90 as the round-89 gate repair; the full entry is the section above): C1 operability — `receipt-bind` v3 **UNMET** by the frozen kill rule (three constructions at 30/30); no capability row; `SCORECARD.md` move-log row 89 appended (`round-gate` `SCORECARD_ROW_MISSING`) and `LOG` line appended (`LOG_ENTRY_MISSING`). Routed K89-V1..V8 carried to round 90.
+
+## Round 90 — receipt-bind v4: prefix-tolerant field lines under a Q82-blind scorer (2026-11-05, attempt 1)
+
+Declared (`.ufo/waves/round-90/plan.md`, frozen at `b67fa963`): one claim, C1 operability, capability acquisition `receipt-bind` v4. Predicate `C90_C1: HELD held=47/47` exit 0 from the frozen `probe90-c1.mjs`. Do-nothing control: the committed v3 at base `7218699c` reads `C90_C1: UNMET held=39/47`, failing exactly the eight invisible-prefix arms (`dup-feff`…`dup-nbsp`, `single-zwsp`, `single-nbsp`). Every construction that fired a previous round's kill rule scores below 47 (`controls/table.txt`). Fresh-start reads: rounds 87, 88 and 89 non-author spot-checks, read in full before declaration.

@@ -1,0 +1,53 @@
+scores.txt — K90Reviewer seat, round 90 attempt 1, C1 attack (kill-rule hunting).
+Base: 7218699cfbdec702ba42f35ceac0a8e52d1bd564. All runs: `TMPDIR=<scratch> node
+/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/probe/probe90-c1.mjs
+--lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --work <scratch>/wN --rev 7218699…
+--tool <candidate>`; scratch /fast/scratch/hyaku/kumitate-r90/K90Reviewer (removed before yield).
+
+# Candidate 1 — cand-1-global-strip.mjs (sha256 f2ebdcd5b266e6c8330bd8bf313f8d3ec7daabb8e917619e1f879ccccc4520f0)
+change vs v3: one line `text = text.replace(/[\uFEFF\u200B\u200C\u200D\u200E\u00A0]/g, '')`
+after the v3 leading-BOM strip — GLOBAL strip over the whole receipt text.
+  C90_C1: HELD held=47/47   exit 0   (raw: out-cand1.txt; also verified on/in ARC)
+  → KILL RULE FIRES: reaches 47/47 without the claimed field-line behaviour.
+  Skipped behaviour: prefixed-LINE recognition (K89-V1). It never special-cases field lines at
+  all; the six dup-* arms pass by a whole-text character delete. The positive twins single-*/
+  pass as a side effect of the same delete. No arm distinguishes field-line-scoped stripping
+  from global text mangling — incl. all three v2/v3 duplicate arms (dup-cmd/digest/rev,
+  dup-equal) which likewise pass ONLY because the strip happens to apply before parsing.
+
+# Candidate 2 — cand-2-cmdrev-only.mjs (sha256 7733bd281060890786c2772c73c306c1a34b8f1141754ab21338a63814766174)
+change vs v3: field lookup falls back to prefixed lines ONLY for a (partially) prefixed receipt;
+when the UNPREFIXED key occurs twice the tool returns UNCHECKED (never AMBIGUOUS_FIELD); selftest
+short-circuits to `RECEIPT_BIND_SELFTEST: PASS held=68/68` without running the suite.
+  C90_C1: UNMET held=39/47  exit 1  (raw: out-cand2.txt)
+  failing arms: duplicate-field, dup-equal-field, dup-feff, dup-zwsp, dup-zwnj, dup-zwj,
+  dup-lrm, dup-nbsp  (39/47; usage and selftest sub-shortcut both pass the text oracle)
+  (No kill here: the probe caught it.)
+
+# Candidate 3 — cand-3-single-gated.mjs (sha256 a47ff12f88e15d08979da2bbefbe962d4ff7ea949f30b74b5e6830feec989238)
+change vs v3: strips U+200B/200C/200D/200E/00A0/FEFF from the START of field lines ONLY when NO
+unprefixed field line exists anywhere in the text (`/^(rev|cmd|tool_sha256)=/m` test).
+  C90_C1: UNMET held=41/47  exit 1  (raw: out-cand3.txt)
+  failing arms: dup-feff, dup-zwsp, dup-zwnj, dup-zwj, dup-lrm, dup-nbsp (each reads CLEAN)
+  (No kill here either: a duplicate arm's receipt still contains the unprefixed `cmd=` line, so
+  the shape gate never engages on the failing arms — the probe sees straight through it.)
+
+# Step-4 reproduction (global strip destroys a legitimate instrument token)
+fixture: step4/repo-with-blob (git repo, commit 0407d977cd434547264a2d998879704fc874a4a4,
+staged→committed scripts/legit.mjs blob 21de50b49983f788c2b2aa8fa6a54b112dde3d84,
+sha256 f6e12909cb0f1f0411723136ff43c7a1af52fd438901e9c0f0915b536905f031).
+Receipt step4/rep/r.txt (sha256 f401a4da25f000c320fb9278b0ba4cbdb86485ad8e24ce1a1982590f6c19e24e):
+  rev=0407d977cd434547264a2d998879704fc874a4a4
+  tool_sha256=f6e12909cb0f1f0411723136ff43c7a1af52fd438901e9c0f0915b536905f031
+  cmd=node scripts/legit\u200b.mjs --selftest        ← U+200B INSIDE the instrument token (mid-token)
+  OK r90step4 / exit=0 / signal=none
+runs: `node <tool> --dir <seat>/step4/rep --rev 0407d97… --lane <seat>/step4/repo-with-blob`
+  base-v3:               RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt instrument absent at 0407d97…: scripts/legit​.mjs   exit 2  (correct v3-ish refusal: the name at the rev is `scripts/legit.mjs`, no ZWSP)
+  cand-1-global-strip:   RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0    exit 0  ← WRONG
+  cand-3-single-gated:   RECEIPT_BIND: FAIL-CLOSED UNRESOLVED … scripts/legit​.mjs              exit 2  (not fooled; strip is field-line-scoped)
+  cand-2-cmdrev-only:    RECEIPT_BIND: FAIL-CLOSED UNRESOLVED … scripts/legit​.mjs              exit 2
+Interpretation: candidate 1, which holds 47/47, silently rewrites the instrument token
+`scripts/legit<U+200B>.mjs` → `scripts/legit.mjs` and declares the receipt CLEAN although the
+receipt's own `cmd=` names a file that never exists in the revision it cites. The same rewrite
+lets a `git cat-file blob <rev>:scripts/<anything stripped>.mjs` resolve an instrument whose
+literal name never existed — receipt identity laundering, not prefix tolerance.

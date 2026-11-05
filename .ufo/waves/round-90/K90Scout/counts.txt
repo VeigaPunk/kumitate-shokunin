@@ -1,0 +1,52 @@
+# K90Scout — the two counts the round-90 report must cite, with the exact commands
+# date 2026-11-05T07:04:06-03:00
+
+## CMD 1 (worktree): grep -cE '^\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|' corpus/SOURCES.md
+$ cd /home/vgpnk/Projects/shokunin/kumitate-shokunin && grep -cE '^\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|' corpus/SOURCES.md
+197
+
+## CMD 2 (base): git -C <lane> show 7218699c:corpus/SOURCES.md | grep -cE '^\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|'
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 7218699cfbdec702ba42f35ceac0a8e52d1bd564:corpus/SOURCES.md | grep -cE '^\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|'
+197
+
+## CROSS-CHECK (not the required count, but the naive one the brief warns about):
+$ grep -c '^| ' SCORECARD.md
+272
+
+## Highest S-id currently present (the next S### a round-90 row must take):
+S257
+S258
+S259
+
+## Where '68' (the v3 selftest arm count) actually lives
+### CMD 3: git -C <lane> show 7218699c:scripts/receipt-bind.mjs | grep -n 'CONTRACT\|v3 boundaries\|PASS held'
+44: * v3 boundaries (round 89; the round-88 reviewer's MED/LOW-MED rows and the sentinel's TOCTOU row):
+85:const CONTRACT = 'kumitate-receipt-bind-v3';
+100:contract ${CONTRACT}
+224:      contract: CONTRACT, mode: 'bind', ok: false, verdict: 'FAIL-CLOSED', token, detail,
+384:      contract: CONTRACT, mode: 'bind', ok: clean, verdict: clean ? 'CLEAN' : 'DRIFT',
+592:    const ok = r.status === 1 && obj !== null && obj.contract === CONTRACT && obj.ok === false &&
+686:    out(`RECEIPT_BIND_SELFTEST: PASS held=${held}/${results.length}\n`);
+
+### CMD 4: does the literal '68' occur in the base instrument?  grep -c '68'
+0
+### the arm count is NOT a literal in the source: line 686 prints held=${held}/${results.length}.
+### the measured 68 is a RUNTIME fact, observed as: node scripts/receipt-bind.mjs --selftest  -> PASS held=68/68
+### (base instrument, run read-only from a scratch clone of base 7218699c)
+$ TMPDIR=<scratch> node scripts/receipt-bind.mjs --selftest --work <scratch>   # in the base clone
+RECEIPT_BIND_SELFTEST arm dirty-worktree-cannot-launder ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm worktree-bytes-not-truth ok exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=a.txt
+RECEIPT_BIND_SELFTEST: PASS held=68/68
+
+### where the literal 68 is quoted in live lane files:
+LOG.md:3070:Selftest 59 → 68 arms. Corpus: S255–S258 admitted (A, mined), S259 rejected (B), knowledge
+LOG.md:3091:byte-identical, worktree twin 15/30, selftest 68/68, close receipts `CLEAN matched=18 … external=1`
+SCORECARD.md:474:| 89 | operability (lowest non-retired axis; integer held 9; capability acquisition `receipt-bind` v3 — **UNMET**, rejected-honest-stop by the frozen kill rule; no capability row) | `node .ufo/waves/round-89/probe/probe89
+SCORECARD.md:4365:instrument integrates at the seat candidate `37201ad0…` (selftest 59 → 68 arms). No second claim, no
+SCORECARD.md:4383:| tool selftest | `RECEIPT_BIND_SELFTEST: PASS held=68/68` (`close/bind-selftest.txt`; 59 → 68) |
+corpus/lessons/round-89-verifier-spotcheck.md:50:| selftest suite size | `grep -c 'RECEIPT_BIND_SELFTEST arm' close/bind-selftest.txt`; all-pass count | 68 arms, 68 `ok`; `RECEIPT_BIND_SELFTEST: PASS held=68/68` (base 59/59 in `.ufo/waves/r
+corpus/lessons/round-89-verifier-spotcheck.md:68:| operability | `unchanged` | `close/proxy.txt` → `operability=9` at M; no capability row entered (claim UNMET); the 59 → 68 selftest arms and the three new boundaries are instrument qual
+corpus/lessons/round-89-verifier-spotcheck.md:96:  real-path membership, the mode-120000 refusal and BOM tolerance with the suite 59 → 68 arms, and four
+corpus/lessons/round-89-verifier-spotcheck.md:115:   `RECEIPT_BIND_SELFTEST: PASS held=64/64`; the instrument at the same commit prints 68/68 (my re-run,
+corpus/lessons/round-89-verifier-spotcheck.md:117:   unconditional. Fix: a named correction (append-only) carrying the measured 68/68.
+corpus/lessons/round-89.md:23:59 → 68 arms) and measured `C89_C1: HELD held=30/30` at the integration tip.

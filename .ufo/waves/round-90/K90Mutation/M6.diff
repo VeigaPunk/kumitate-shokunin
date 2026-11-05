@@ -1,0 +1,13 @@
+--- base.mjs	2026-11-05 07:00:59.911043610 -0300
++++ M6.mjs	2026-11-05 07:02:08.355245483 -0300
+@@ -331,9 +331,7 @@
+       // is the instrument's own identity, so an in-lane SYMLINK named by the token stays a symlink
+       // (SYMLINK_INSTRUMENT) instead of being followed to its target. A token whose parent is absent
+       // on disk keeps the lexical judgement; the blob read decides.
+-      let absReal = null;
+-      try { absReal = join(realpathSync(dirname(abs)), basename(abs)); } catch { /* parent absent */ }
+-      const lr = absReal !== null ? laneRel(laneReal, absReal) : laneRel(lane, abs);
++      const lr = laneRel(lane, abs);
+       if (lr.root) throw new FailClosed('UNRESOLVED', `${file} instrument names the lane root: ${instrument}`);
+       if (lr.inside) rel = lr.rel; else fromDisk = true;
+     } else {

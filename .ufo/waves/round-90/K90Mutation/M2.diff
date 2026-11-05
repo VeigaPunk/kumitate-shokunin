@@ -1,0 +1,12 @@
+--- base.mjs	2026-11-05 07:00:59.911043610 -0300
++++ M2.mjs	2026-11-05 07:02:08.341976475 -0300
+@@ -358,9 +358,6 @@
+       // the digest would bind the link text while the executed content is the target's.
+       const lsTree = git(lane, ['ls-tree', receiptRev, '--', rel]);
+       const mode = lsTree.status === 0 ? (lsTree.stdout.trim().split(/\s+/)[0] || '') : '';
+-      if (mode === '120000') {
+-        throw new FailClosed('SYMLINK_INSTRUMENT', `${file} instrument is a symlink at ${receiptRev}: ${rel}`);
+-      }
+       bytes = blobAt(lane, receiptRev, rel);
+       if (bytes === null) throw new FailClosed('UNRESOLVED', `${file} instrument absent at ${receiptRev}: ${rel}`);
+     }

@@ -1,0 +1,48 @@
+ARM usage: PASS exit=64
+ARM selftest: PASS exit=0 RECEIPT_BIND_SELFTEST: PASS held=68/68
+ARM detect-r86-at-rev: PASS files=10 exit=1 RECEIPT_BIND: DRIFT matched=1 mismatched=9 unchecked=0 external=1 first=q01-9.txt
+ARM detect-r86-renamed: PASS files=10 exit=1 RECEIPT_BIND: DRIFT matched=1 mismatched=9 unchecked=0 external=1 first=p01.txt
+ARM clean-r87-at-rev: PASS copied=11 exit=0 RECEIPT_BIND: CLEAN matched=11 mismatched=0 unchecked=0 external=0
+ARM unchecked: PASS exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=0 unchecked=1 external=0 first=r.txt
+ARM unresolved: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt instrument absent at d5c9c21166c5ec966f535248e91280339ff3c8c8: scripts/absent-bd4a47c6cc39.mjs
+ARM dir-missing: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED DIR_UNREADABLE /fast/scratch/hyaku/kumitate-r90/K90Reviewer/w3/r-3fa9d8c5/absent-bd4a47c6cc39-dir (ENOENT)
+ARM rev-bad: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED REV_UNRESOLVED --rev ffffffffffffffffffffffffffffffffffffffff is not a commit in /fast/scratch/hyaku/kumitate-r90/K90Reviewer/w3/r-3fa9d8c5/d-b617cc28
+ARM symlink-receipt: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_RECEIPT /fast/scratch/hyaku/kumitate-r90/K90Reviewer/w3/r-3fa9d8c5/d-f7d3a9ab/r.txt
+ARM rev-receipt-wins: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM worktree-forgery: PASS exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+ARM default-rev: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM rev-receipt-negative: PASS exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+ARM untracked-instrument: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt instrument absent at d5c9c21166c5ec966f535248e91280339ff3c8c8: scripts/fresh-bd4a47c6cc39.mjs
+ARM escape-relative: PASS relative exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: ../d-2e65985c/ext-bd4a47c6cc39.mjs | absolute exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+ARM symlink-dir: PASS link exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_DIR /fast/scratch/hyaku/kumitate-r90/K90Reviewer/w3/r-3fa9d8c5/lk-8e4773a2 | real exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM oversize: PASS 2MiB exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r90/K90Reviewer/w3/r-3fa9d8c5/d-cd5adb32/r.txt is 2097354 bytes (limit 1048576) | 512KiB exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM duplicate-field: PASS dup-cmd exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 cmd= lines | dup-cmd-equal exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r2.txt carries 2 cmd= lines | dup-digest exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r3.txt carries 2 tool_sha256= lines | dup-rev exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r4.txt carries 2 rev= lines | single exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM sweep: PASS scripts=33 clean exit=0 RECEIPT_BIND: CLEAN matched=33 mismatched=0 unchecked=0 external=0 | flip=s06.txt exit=1 RECEIPT_BIND: DRIFT matched=32 mismatched=1 unchecked=0 external=0 first=s06.txt
+ARM default-rev-not-head: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM index-not-judged: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM abs-in-lane-at-rev: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM limit-edge: PASS edge 1048576 exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | over 1048577 exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r90/K90Reviewer/w3/r-3fa9d8c5/d-31ad18b8/r.txt is 1048577 bytes (limit 1048576)
+ARM limit-before-read: PASS size=1073741824 exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r90/K90Reviewer/w3/r-3fa9d8c5/d-d8e6d000/r.txt is 1073741824 bytes (limit 1048576)
+ARM escape-inner-dotdot: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: scripts/../../d-85de429c/ext2-bd4a47c6cc39.mjs
+ARM dup-equal-field: PASS dup-rev-equal exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 rev= lines | dup-digest-equal exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r2.txt carries 2 tool_sha256= lines
+ARM alias-proc-root: PASS exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+ARM alias-proc-root-clean: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM bom-rev: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM symlink-instrument: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT r.txt instrument is a symlink at b7624b0104729ca81005cc2d51551d3e638d41e5: scripts/link-bd4a47c6cc39.mjs
+ARM symlink-instrument-space-target: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT r.txt instrument is a symlink at b7624b0104729ca81005cc2d51551d3e638d41e5: scripts/sp-bd4a47c6cc39.mjs
+ARM symlink-instrument-twin: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM abs-symlink-instrument: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT r.txt instrument is a symlink at b7624b0104729ca81005cc2d51551d3e638d41e5: scripts/link-bd4a47c6cc39.mjs
+ARM dotdot-inside: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM dotdot-inside-worktree: PASS exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+ARM alias-ancestor: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM alias-ancestor-worktree: PASS exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+ARM alias-ancestor-external-twin: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+ARM dup-feff: FAIL "﻿" exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM dup-zwsp: FAIL "​" exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM dup-zwnj: FAIL "‌" exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM dup-zwj: FAIL "‍" exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM dup-lrm: FAIL "‎" exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM dup-nbsp: FAIL " " exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM single-zwsp: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM single-nbsp: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+C90_C1: UNMET held=41/47

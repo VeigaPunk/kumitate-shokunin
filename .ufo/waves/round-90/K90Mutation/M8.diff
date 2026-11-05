@@ -1,0 +1,17 @@
+--- base.mjs	2026-11-05 07:00:59.911043610 -0300
++++ M8.mjs	2026-11-05 07:02:08.362245504 -0300
+@@ -272,13 +272,7 @@
+     let text;
+     let fd = null;
+     try {
+-      fd = openSync(path, fsConstants.O_RDONLY | fsConstants.O_NOFOLLOW);
+-      const fst = fstatSync(fd);
+-      if (!fst.isFile()) throw new FailClosed('RECEIPT_UNREADABLE', `${path} is not a regular file`);
+-      if (fst.size > MAX_RECEIPT_BYTES) {
+-        throw new FailClosed('RECEIPT_TOO_LARGE', `${path} is ${fst.size} bytes (limit ${MAX_RECEIPT_BYTES})`);
+-      }
+-      text = readFileSync(fd, 'utf8');
++      text = readFileSync(path, 'utf8');
+     } catch (e) {
+       if (e instanceof FailClosed) throw e;
+       throw new FailClosed('RECEIPT_UNREADABLE', `${path} (${e.code || 'read failed'})`);

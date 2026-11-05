@@ -1,0 +1,26 @@
+K90Mutation: boundary-removal mutants of receipt-bind v3 (base 7218699cfbdec702ba42f35ceac0a8e52d1bd564, base.mjs sha256 37201ad0c6acd4c51b8804fa66ac9606469a181891dbed1d5ee46c56176e1bb3)
+Scorer: node .ufo/waves/round-90/probe/probe90-c1.mjs --lane <lane> --work <scratch/w-Mk> --rev 7218699cfbdec702ba42f35ceac0a8e52d1bd564 --tool <Mk.mjs>   (TMPDIR=<scratch/tmp-Mk>)
+Probe sha256 before and after: 70622333ca6946c73564e1236f7c19a8efa110200e09043bf2fd3b24d2f2b694 (unchanged; never written)
+Format: id | boundary removed (base line) | verdict line | probe exit | failing arms (anchored ^ARM ...: FAIL) | diff -u lines (Mk.diff)
+
+BASE  | none (do-nothing v3 control, re-run by this seat)                       | C90_C1: UNMET held=39/47 | 1 | dup-feff dup-zwsp dup-zwnj dup-zwj dup-lrm dup-nbsp single-zwsp single-nbsp (8 K89-V1 arms, as the plan records) | n/a
+M1    | ESCAPES_LANE: relative token outside lane read as external (343)          | C90_C1: UNMET held=36/47 | 1 | selftest, escape-relative, escape-inner-dotdot, +8 K89-V1 base arms | 11
+M2    | mode-120000 SYMLINK_INSTRUMENT branch in-lane (361-363)                   | C90_C1: UNMET held=35/47 | 1 | selftest, symlink-instrument, symlink-instrument-space-target, abs-symlink-instrument, +8 base | 12
+M3    | AMBIGUOUS_FIELD check (292): first wins                                   | C90_C1: UNMET held=36/47 | 1 | selftest, duplicate-field, dup-equal-field, +8 base | 10
+M4    | RECEIPT_TOO_LARGE checks, both lstat (268) and post-open (278-280)         | C90_C1: UNMET held=35/47 | 1 | selftest, oversize, limit-edge, limit-before-read (now RECEIPT_UNREADABLE, mode-0000 open fails first), +8 base | 20
+M5    | BOM strip (289)                                                           | C90_C1: UNMET held=37/47 | 1 | selftest, bom-rev, +8 base | 10
+M6    | realpath membership -> lexical (334-335 dropped; laneRel(lane, abs))      | C90_C1: UNMET held=34/47 | 1 | selftest, alias-proc-root, alias-proc-root-clean, alias-ancestor, alias-ancestor-worktree, +8 base | 13
+M7    | receipt-level rev= precedence (300): always --rev                         | C90_C1: UNMET held=35/47 | 1 | selftest, clean-r87-at-rev, rev-receipt-wins, bom-rev, +8 base | 10
+M8    | O_NOFOLLOW single-descriptor read -> readFileSync(path) (275-281)         | C90_C1: UNMET held=39/47 | 1 | exactly the 8 base arms: PROBE-BLIND (see K90Mutation.md) | 17
+M9    | SYMLINK_DIR check (251)                                                   | C90_C1: UNMET held=37/47 | 1 | selftest, symlink-dir, +8 base | 10
+M10   | unchecked branches counted as matched (307, 314)                          | C90_C1: UNMET held=39/47 | 1 | selftest, unchecked, dup-feff, dup-zwsp, dup-zwnj, dup-zwj, dup-lrm, dup-nbsp (single-zwsp and single-nbsp flip to PASS: unchecked becomes matched) | 19
+
+SURVIVORS (47/47): none. All ten mutants print UNMET with exit 1.
+PROBE GAPS (not 47/47, but noted):
+- M8 (O_NOFOLLOW / one-descriptor read): verdict, exit and failing-arm set are identical to the base v3 control (39/47, same 8 arms). The probe has no arm distinguishing it. Base v3 itself says (lines 533-534) "that branch needs a race and has no arm". The descriptor read is not in the plan's claimed-behaviour list, so this is a declared-scope gap, not a kill-rule breach.
+
+Caveat on kill attribution: each mutant is killed by at least one boundary-specific arm that BASE v3 PASSES (listed in the failing-arm column beside selftest). "selftest" fails for every mutant except M8 only because the mutant's own suite shrank; it is not an independent kill.
+Caveat on scale: all mutants are copies of v3 (as tasked), so the 8 K89-V1 arms fail before any mutation. Prefix-normalisation boundaries of v4 are NOT exercised by this set; they need mutants of the v4 candidate.
+
+Commands: node --check Mk.mjs; diff -u base.mjs Mk.mjs > Mk.diff; TMPDIR=<scratch>/tmp-Mk node probe90-c1.mjs --lane <lane> --work <scratch>/w-Mk --rev 7218699cfbdec702ba42f35ceac0a8e52d1bd564 --tool <seat>/Mk.mjs > Mk-probe.txt; echo probe_exit=$?
+Raw evidence: base-probe.txt, M1-probe.txt ... M10-probe.txt, M1.diff ... M10.diff, M1.check ... M10.check (all in this directory).
