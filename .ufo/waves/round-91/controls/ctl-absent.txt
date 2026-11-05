@@ -1,0 +1,58 @@
+ARM usage: FAIL A=FAIL B=FAIL | A: exit=1 | B: exit=1
+ARM selftest: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM detect-r86-at-rev: FAIL A=FAIL B=FAIL | A: files=10 exit=1  | B: files=10 exit=1 
+ARM detect-r86-renamed: FAIL A=FAIL B=FAIL | A: files=10 exit=1  | B: files=10 exit=1 
+ARM clean-r87-at-rev: FAIL A=FAIL B=FAIL | A: copied=11 exit=1  | B: copied=11 exit=1 
+ARM unchecked: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM unresolved: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM dir-missing: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM rev-bad: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM symlink-receipt: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM rev-receipt-wins: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM worktree-forgery: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM default-rev: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM rev-receipt-negative: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM untracked-instrument: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM escape-relative: FAIL A=FAIL B=FAIL | A: relative exit=1  | absolute exit=1  | B: relative exit=1  | absolute exit=1 
+ARM symlink-dir: FAIL A=FAIL B=FAIL | A: link exit=1  | real exit=1  | B: link exit=1  | real exit=1 
+ARM oversize: FAIL A=FAIL B=FAIL | A: 2MiB exit=1  | 512KiB exit=1  | B: 2MiB exit=1  | 512KiB exit=1 
+ARM duplicate-field: FAIL A=FAIL B=FAIL | A: dup-cmd exit=1  | dup-cmd-equal exit=1  | dup-digest exit=1  | dup-rev exit=1  | single exit=1  | B: dup-cmd exit=1  | dup-cmd-equal exit=1  | dup-digest exit=1  | dup-rev exit=1  | single exit=1 
+ARM sweep: FAIL A=FAIL B=FAIL | A: scripts=33 clean exit=1  | flip=s06.txt exit=1  | B: scripts=33 clean exit=1  | flip=s06.txt exit=1 
+ARM default-rev-not-head: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM index-not-judged: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM abs-in-lane-at-rev: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM limit-edge: FAIL A=FAIL B=FAIL | A: edge 1048576 exit=1  | over 1048577 exit=1  | B: edge 1048576 exit=1  | over 1048577 exit=1 
+ARM limit-before-read: FAIL A=FAIL B=FAIL | A: size=1073741824 exit=1  | B: size=1073741824 exit=1 
+ARM escape-inner-dotdot: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM dup-equal-field: FAIL A=FAIL B=FAIL | A: dup-rev-equal exit=1  | dup-digest-equal exit=1  | B: dup-rev-equal exit=1  | dup-digest-equal exit=1 
+ARM alias-proc-root: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM alias-proc-root-clean: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM bom-rev: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM symlink-instrument: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM symlink-instrument-space-target: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM symlink-instrument-twin: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM abs-symlink-instrument: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM dotdot-inside: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM dotdot-inside-worktree: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM alias-ancestor: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM alias-ancestor-worktree: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM alias-ancestor-external-twin: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM dup-feff: FAIL A=FAIL B=FAIL | A: "﻿" exit=1  | B: "﻿" exit=1 
+ARM dup-zwsp: FAIL A=FAIL B=FAIL | A: "​" exit=1  | B: "​" exit=1 
+ARM dup-zwnj: FAIL A=FAIL B=FAIL | A: "‌" exit=1  | B: "‌" exit=1 
+ARM dup-zwj: FAIL A=FAIL B=FAIL | A: "‍" exit=1  | B: "‍" exit=1 
+ARM dup-lrm: FAIL A=FAIL B=FAIL | A: "‎" exit=1  | B: "‎" exit=1 
+ARM dup-nbsp: FAIL A=FAIL B=FAIL | A: " " exit=1  | B: " " exit=1 
+ARM single-zwsp: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM single-nbsp: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM ext-zero: FAIL A=FAIL B=FAIL | A: bound=in exit=1  | B: bound=in exit=1 
+ARM ext-null: FAIL A=FAIL B=FAIL | A: bound=in exit=1  | B: bound=in exit=1 
+ARM ext-empty-twin: FAIL A=FAIL B=FAIL | A: bound=in exit=1  | B: bound=in exit=1 
+ARM ext-fifo: FAIL A=FAIL B=FAIL | A: bound=in exit=1  | B: bound=in exit=1 
+ARM ext-dir: FAIL A=FAIL B=FAIL | A: bound=in exit=1  | B: bound=in exit=1 
+ARM ext-overcap: FAIL A=FAIL B=FAIL | A: bound=in exit=1  | B: bound=in exit=1 
+ARM ext-atcap: FAIL A=FAIL B=FAIL | A: bound=in exit=1  | B: bound=in exit=1 
+ARM midtoken-invisible: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+ARM midtoken-twin: FAIL A=FAIL B=FAIL | A: exit=1  | B: exit=1 
+C91_C1: UNMET held=0/56
+exit=1

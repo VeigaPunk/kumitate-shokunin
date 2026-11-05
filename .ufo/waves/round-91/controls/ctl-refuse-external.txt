@@ -1,0 +1,58 @@
+ARM usage: PASS A=PASS B=PASS
+ARM selftest: FAIL A=FAIL B=FAIL | A: exit=1 RECEIPT_BIND_SELFTEST: FAIL held=73/76 | B: exit=1 RECEIPT_BIND_SELFTEST: FAIL held=73/76
+ARM detect-r86-at-rev: FAIL A=FAIL B=FAIL | A: files=10 exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED q09-1.txt external instrument refused (external): /home/vgpnk/Projects/shokunin/scripts/sources-census.sh | B: files=10 exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED q09-1.txt external instrument refused (external): /home/vgpnk/Projects/shokunin/scripts/sources-census.sh
+ARM detect-r86-renamed: FAIL A=FAIL B=FAIL | A: files=10 exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED p09.txt external instrument refused (external): /home/vgpnk/Projects/shokunin/scripts/sources-census.sh | B: files=10 exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED p09.txt external instrument refused (external): /home/vgpnk/Projects/shokunin/scripts/sources-census.sh
+ARM clean-r87-at-rev: PASS A=PASS B=PASS
+ARM unchecked: PASS A=PASS B=PASS
+ARM unresolved: PASS A=PASS B=PASS
+ARM dir-missing: PASS A=PASS B=PASS
+ARM rev-bad: PASS A=PASS B=PASS
+ARM symlink-receipt: PASS A=PASS B=PASS
+ARM rev-receipt-wins: PASS A=PASS B=PASS
+ARM worktree-forgery: PASS A=PASS B=PASS
+ARM default-rev: PASS A=PASS B=PASS
+ARM rev-receipt-negative: PASS A=PASS B=PASS
+ARM untracked-instrument: PASS A=PASS B=PASS
+ARM escape-relative: FAIL A=FAIL B=FAIL | A: relative exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: ../d-3cb3f696/ext-e684f6136eca.mjs | absolute exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt external instrument refused (external): /fast/scratch/hyaku/kumitate-r91/l1/controls/p-refuse-external/r-2713f9ac/d-3cb3f696/ext-e684f6136eca.mjs | B: relative exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: ../d-b6c95557/ext-ed2f2f68d969.mjs | absolute exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt external instrument refused (external): /fast/scratch/hyaku/r-4c1f5383/d-b6c95557/ext-ed2f2f68d969.mjs
+ARM symlink-dir: PASS A=PASS B=PASS
+ARM oversize: PASS A=PASS B=PASS
+ARM duplicate-field: PASS A=PASS B=PASS
+ARM sweep: PASS A=PASS B=PASS
+ARM default-rev-not-head: PASS A=PASS B=PASS
+ARM index-not-judged: PASS A=PASS B=PASS
+ARM abs-in-lane-at-rev: PASS A=PASS B=PASS
+ARM limit-edge: PASS A=PASS B=PASS
+ARM limit-before-read: PASS A=PASS B=PASS
+ARM escape-inner-dotdot: PASS A=PASS B=PASS
+ARM dup-equal-field: PASS A=PASS B=PASS
+ARM alias-proc-root: PASS A=PASS B=PASS
+ARM alias-proc-root-clean: PASS A=PASS B=PASS
+ARM bom-rev: PASS A=PASS B=PASS
+ARM symlink-instrument: PASS A=PASS B=PASS
+ARM symlink-instrument-space-target: PASS A=PASS B=PASS
+ARM symlink-instrument-twin: PASS A=PASS B=PASS
+ARM abs-symlink-instrument: PASS A=PASS B=PASS
+ARM dotdot-inside: PASS A=PASS B=PASS
+ARM dotdot-inside-worktree: PASS A=PASS B=PASS
+ARM alias-ancestor: PASS A=PASS B=PASS
+ARM alias-ancestor-worktree: PASS A=PASS B=PASS
+ARM alias-ancestor-external-twin: FAIL A=FAIL B=FAIL | A: exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt external instrument refused (external): /fast/scratch/hyaku/kumitate-r91/l1/controls/p-refuse-external/r-2713f9ac/d-950b57da/ex-e684f6136eca.mjs | B: exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt external instrument refused (external): /fast/scratch/hyaku/r-4c1f5383/d-7209d078/ex-ed2f2f68d969.mjs
+ARM dup-feff: PASS A=PASS B=PASS
+ARM dup-zwsp: PASS A=PASS B=PASS
+ARM dup-zwnj: PASS A=PASS B=PASS
+ARM dup-zwj: PASS A=PASS B=PASS
+ARM dup-lrm: PASS A=PASS B=PASS
+ARM dup-nbsp: PASS A=PASS B=PASS
+ARM single-zwsp: PASS A=PASS B=PASS
+ARM single-nbsp: PASS A=PASS B=PASS
+ARM ext-zero: PASS A=PASS B=PASS
+ARM ext-null: PASS A=PASS B=PASS
+ARM ext-empty-twin: FAIL A=FAIL B=FAIL | A: bound=in exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt external instrument refused (external): /fast/scratch/hyaku/kumitate-r91/l1/controls/p-refuse-external/r-2713f9ac/d-e34dde36/e-e684f6136eca.sh | B: bound=in exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt external instrument refused (external): /fast/scratch/hyaku/r-4c1f5383/d-35065e43/e-ed2f2f68d969.sh
+ARM ext-fifo: PASS A=PASS B=PASS
+ARM ext-dir: PASS A=PASS B=PASS
+ARM ext-overcap: PASS A=PASS B=PASS
+ARM ext-atcap: FAIL A=FAIL B=FAIL | A: bound=in exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt external instrument refused (external): /fast/scratch/hyaku/kumitate-r91/l1/controls/p-refuse-external/r-2713f9ac/d-0ef7d654/o-e684f6136eca.sh | B: bound=in exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt external instrument refused (external): /fast/scratch/hyaku/r-4c1f5383/d-23665532/o-ed2f2f68d969.sh
+ARM midtoken-invisible: PASS A=PASS B=PASS
+ARM midtoken-twin: PASS A=PASS B=PASS
+C91_C1: UNMET held=49/56
+exit=1
