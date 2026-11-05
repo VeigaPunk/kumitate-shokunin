@@ -4361,3 +4361,52 @@ UNMET. Pre-data controls committed at `adfc2f55` (22 controls): v2 27/30, v2 wor
 refuse-all 2/30, and every one of the nine round-88 constructions below terminal (17–26/30). The
 instrument integrates at the seat candidate `37201ad0…` (selftest 59 → 68 arms). No second claim, no
 exploratory claim.
+
+### Round 89 — measured disposition (2026-11-04)
+
+Measured at M = `7a8afb5fa02975e75cb2f33faf6d211a9680fc92` (the integration commit); close battery
+`.ufo/waves/round-89/close/` emitted by the wave's runner (`.ufo/waves/round-89/run-close.mjs`, v4,
+bind last, `BIND_CASE … counted=13 others=13 ALL`), with `checklists.txt`, `sources-check.txt`,
+`source-capture.txt` and `bind-after-checklists.txt` added by the L1 and every receipt bound
+(`RECEIPT_BIND: CLEAN matched=18 … external=1` over the 18 receipts present at that run;
+`close/bind-final.txt`).
+
+| item | measured |
+|---|---|
+| predicate (frozen) | `C89_C1: HELD held=30/30` exit 0, twice, byte-identical (`close/probe1.txt`, `close/probe2.txt`, `PROBE_DETERMINISM SAME`) |
+| do-nothing control (`base-v2-at-rev`, pre-data) | `C89_C1: UNMET held=27/30` exit 1 (`controls/ctl-base-v2-at-rev.txt`) |
+| other pre-data controls | v2 worktree twin 14/30, v1 19/30, refuse-all 2/30, absent —, all nine round-88 constructions 17–26/30 (`controls/table.txt`) |
+| worktree twin at M | `C89_C1: UNMET held=15/30` exit 1 (`close/twin.txt`) |
+| tool selftest | `RECEIPT_BIND_SELFTEST: PASS held=68/68` (`close/bind-selftest.txt`; 59 → 68) |
+| close receipts | `RECEIPT_BIND: CLEAN matched=18 mismatched=0 unchecked=0 external=1` (`close/bind-final.txt`) |
+| **kill rule** | **fired**: `build/K89Review/cand-probe-keyed.mjs` 30/30 (computes nothing; reads the `--dir` basename), `build/K89Review/cand-skip-mode.mjs` 30/30 (blob-shape test + literal prefix strip), `build/K89Labrat/labrat-label-only.mjs` 30/30 (label-only oracle; 4/30 on a labelless probe copy). Both K89Review constructions re-run by the L1. |
+| accounting | A 36, C 46, C2 224 → 227, `pin.receipt-bind` re-pinned, `pin.omp-census` and `pin.spotcheck-adopt` re-pinned; `PROXY: MATCH --strict` (`close/proxy.txt`) |
+| gates | checklist `43/46 pass` (`close/checklists.txt`; 36/46 at open — the `spotcheck-adopt` repair turned 746/748 green; the remaining reds are the inherited 723/737/741/755/756 and the proxy/host-bound ones), `sources-check` CLEAN rows=197, `source-capture` CLEAN captures=86, census exit 0, `counter-pins` CLEAN pins=45, `readme-map` CLEAN, `OMP_CENSUS` findings 7 → 2 (both operator-owned, L0 filed), `plan-before-ready` and `ready-handoff` receipts committed |
+
+**Verdict: C1 UNMET — rejected-honest-stop, no capability row.** The instrument is stronger than the
+scorer (the reviewer's D1/D3 and the absolute symlink-token case read correctly on v3 where the
+constructions do not), but the frozen kill rule is written against the scorer's score and the scorer is
+an output-text oracle that names its own arms. Axes: operability 9 unchanged, every coverage row 10
+unchanged, no axis harmed.
+
+**Routed defects carried to round 90.** (1) K89-V1 — a BOM- or ZWSP-prefixed duplicate `cmd=`/`rev=`
+line bypasses `AMBIGUOUS_FIELD` (sentinel B2/B3/B7, `build/K89Sentinel/attacks.txt`; base v2 and the
+draft both read CLEAN). (2) K89-V2 — the round-89 probe has no arm for an **absolute** in-lane
+symlink token (`build/K89ExecInst/abs-symlink-check.txt`), none for an in-lane `..` that stays inside,
+and none for an in-lane alias through a symlinked ancestor. (3) K89-V3 — the probe's header still says
+`limit-before-read` runs under a 256 MiB cap (the code uses a mode-0000 sparse file). (4) K89-V4 — the
+probe's `usage` and `selftest` arms are text stubs, and arms #3/#5 read the lane's worktree receipts
+rather than the rev. (5) The `spotcheck-adopt`/`omp-census`/`counter-pins`/`readme-map` repairs landed;
+the two `~/.omp/agent` findings are operator-owned.
+
+## Round 90 pre-registration (written by round 89). Candidates, not commitments
+
+(1) **A scorer that cannot be keyed**: fixtures whose paths carry no arm identity, drawn from a nonce;
+every shape-gated arm carries a positive twin (non-bare symlink target, in-lane `..` that stays inside,
+alias through a symlinked ancestor, absolute in-lane symlink token); `usage`/`selftest` arms replaced by
+behavioural arms; arms #3/#5 read the rev, not the worktree. (2) K89-V1 (BOM/ZWSP duplicate bypass) as
+its own instrument claim with an arm per prefix class. (3) The `K_findings` double penalty and
+`POINTER_DEAD` precision carried from rounds 81/79. (4) `cite-check` carried debt. (5) The
+`receipt-evidence` overlap dialect question. (6) Round-90 must not re-claim `receipt-bind` without a
+scorer that satisfies Q82 — three honest stops on this capability say the scorer, not the instrument,
+is the work.

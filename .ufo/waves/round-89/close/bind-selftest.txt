@@ -1,0 +1,74 @@
+rev=7a8afb5fa02975e75cb2f33faf6d211a9680fc92
+tool_sha256=37201ad0c6acd4c51b8804fa66ac9606469a181891dbed1d5ee46c56176e1bb3
+cmd=node scripts/receipt-bind.mjs --selftest --work /fast/scratch/hyaku/kumitate-r89/l1/close
+RECEIPT_BIND_SELFTEST arm usage-bare ok exit=64
+RECEIPT_BIND_SELFTEST arm usage-unknown-flag ok exit=64
+RECEIPT_BIND_SELFTEST arm usage-missing-value ok exit=64
+RECEIPT_BIND_SELFTEST arm usage-duplicate-flag ok exit=64
+RECEIPT_BIND_SELFTEST arm usage-bad-rev ok exit=64
+RECEIPT_BIND_SELFTEST arm usage-work-without-selftest ok exit=64
+RECEIPT_BIND_SELFTEST arm usage-selftest-with-dir ok exit=64
+RECEIPT_BIND_SELFTEST arm clean ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm clean-multi ok exit=0 RECEIPT_BIND: CLEAN matched=3 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm clean-crlf ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm digest-flip ok exit=1 RECEIPT_BIND: DRIFT matched=1 mismatched=1 unchecked=0 external=0 first=a.txt
+RECEIPT_BIND_SELFTEST arm cmd-flip ok exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=a.txt
+RECEIPT_BIND_SELFTEST arm unchecked-no-cmd ok exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=0 unchecked=1 external=0 first=a.txt
+RECEIPT_BIND_SELFTEST arm unchecked-no-digest ok exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=0 unchecked=1 external=0 first=a.txt
+RECEIPT_BIND_SELFTEST arm unchecked-bad-digest ok exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=0 unchecked=1 external=0 first=a.txt
+RECEIPT_BIND_SELFTEST arm clean-bom ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm bom-rev-precedence ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm alias-proc-root-in-lane ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm alias-proc-root-negative ok exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=a.txt
+RECEIPT_BIND_SELFTEST arm symlink-instrument-120000 ok exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT a.txt instrument is a symlink at de8fcc22642c5577172ac717c7d40bd9439f43ce: scripts/link.mjs
+RECEIPT_BIND_SELFTEST arm symlink-instrument-twin-target-binds ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm symlink-instrument-absolute-token ok exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT a.txt instrument is a symlink at de8fcc22642c5577172ac717c7d40bd9439f43ce: scripts/link.mjs
+RECEIPT_BIND_SELFTEST arm symlink-instrument-external ok exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT a.txt external instrument is a symlink: /fast/scratch/hyaku/kumitate-r89/l1/close/receipt-bind-selftest-3043367-e1iisd/outside/tool-link.sh
+RECEIPT_BIND_SELFTEST arm receipt-is-directory ok exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_UNREADABLE /fast/scratch/hyaku/kumitate-r89/l1/close/receipt-bind-selftest-3043367-e1iisd/rc-31/d.txt is not a regular file
+RECEIPT_BIND_SELFTEST arm unresolved-instrument ok exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt instrument absent at 6d2ae2e7b3875af059e54ea1fcc3acd44759e4ea: scripts/gamma.mjs
+RECEIPT_BIND_SELFTEST arm unresolved-directory-instrument ok exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt instrument absent at 6d2ae2e7b3875af059e54ea1fcc3acd44759e4ea: scripts
+RECEIPT_BIND_SELFTEST arm unresolved-bare-instrument ok exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt cmd= names no instrument: "node"
+RECEIPT_BIND_SELFTEST arm dir-missing ok exit=2 RECEIPT_BIND: FAIL-CLOSED DIR_UNREADABLE /fast/scratch/hyaku/kumitate-r89/l1/close/receipt-bind-selftest-3043367-e1iisd/absent (ENOENT)
+RECEIPT_BIND_SELFTEST arm dir-is-file ok exit=2 RECEIPT_BIND: FAIL-CLOSED DIR_UNREADABLE /fast/scratch/hyaku/kumitate-r89/l1/close/receipt-bind-selftest-3043367-e1iisd/outside/tool.sh (ENOTDIR)
+RECEIPT_BIND_SELFTEST arm rev-unresolved ok exit=2 RECEIPT_BIND: FAIL-CLOSED REV_UNRESOLVED --rev 0000000000000000000000000000000000000000 is not a commit in /fast/scratch/hyaku/kumitate-r89/l1/close/receipt-bind-selftest-3043367-e1iisd/lane
+RECEIPT_BIND_SELFTEST arm rev-per-receipt-overrides ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm rev-default-is-judged ok exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=a.txt
+RECEIPT_BIND_SELFTEST arm symlink-receipt ok exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_RECEIPT /fast/scratch/hyaku/kumitate-r89/l1/close/receipt-bind-selftest-3043367-e1iisd/rc-22/a.txt
+RECEIPT_BIND_SELFTEST arm external-disk ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+RECEIPT_BIND_SELFTEST arm external-mismatch ok exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=1 first=a.txt
+RECEIPT_BIND_SELFTEST arm lane-absolute-instrument ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm empty-dir-not-clean ok exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=0 unchecked=0 external=0 first=-
+RECEIPT_BIND_SELFTEST arm non-txt-ignored ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm non-txt-only-is-empty ok exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=0 unchecked=0 external=0 first=-
+RECEIPT_BIND_SELFTEST arm sorted-first ok exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=2 unchecked=0 external=0 first=aa.txt
+RECEIPT_BIND_SELFTEST arm lane-flag-from-outside ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm default-lane-is-toplevel ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm git-env-canary-ignored ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm json-drift ok exit=1 {"matched":1,"mismatched":1,"first":"a.txt"}
+RECEIPT_BIND_SELFTEST arm json-clean ok exit=0 CLEAN
+RECEIPT_BIND_SELFTEST arm json-fail-closed ok exit=2 DIR_UNREADABLE
+RECEIPT_BIND_SELFTEST arm escapes-lane-relative ok exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE a.txt relative instrument resolves outside the lane: ../outside/tool.sh
+RECEIPT_BIND_SELFTEST arm escapes-lane-interior-dotdot ok exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE a.txt relative instrument resolves outside the lane: scripts/../../outside/tool.sh
+RECEIPT_BIND_SELFTEST arm escapes-lane-among-clean ok exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE b.txt relative instrument resolves outside the lane: ../outside/tool.sh
+RECEIPT_BIND_SELFTEST arm escapes-lane-twin-absolute-external ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+RECEIPT_BIND_SELFTEST arm escapes-lane-twin-dotdot-inside ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm symlink-dir ok exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_DIR /fast/scratch/hyaku/kumitate-r89/l1/close/receipt-bind-selftest-3043367-e1iisd/rc-dir-link
+RECEIPT_BIND_SELFTEST arm symlink-dir-trailing-slash ok exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_DIR /fast/scratch/hyaku/kumitate-r89/l1/close/receipt-bind-selftest-3043367-e1iisd/rc-dir-link
+RECEIPT_BIND_SELFTEST arm symlink-dir-twin-real-target ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm receipt-too-large ok exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/l1/close/receipt-bind-selftest-3043367-e1iisd/rc-38/a.txt is 1048577 bytes (limit 1048576)
+RECEIPT_BIND_SELFTEST arm receipt-too-large-before-parse ok exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/l1/close/receipt-bind-selftest-3043367-e1iisd/rc-39/a.txt is 1048577 bytes (limit 1048576)
+RECEIPT_BIND_SELFTEST arm receipt-too-large-twin-at-limit ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm ambiguous-cmd-differing ok exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 2 cmd= lines
+RECEIPT_BIND_SELFTEST arm ambiguous-cmd-equal ok exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 2 cmd= lines
+RECEIPT_BIND_SELFTEST arm ambiguous-tool-sha256 ok exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 2 tool_sha256= lines
+RECEIPT_BIND_SELFTEST arm ambiguous-rev-equal ok exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 2 rev= lines
+RECEIPT_BIND_SELFTEST arm ambiguous-rev-differing ok exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 2 rev= lines
+RECEIPT_BIND_SELFTEST arm ambiguous-cmd-not-unchecked ok exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 2 cmd= lines
+RECEIPT_BIND_SELFTEST arm ambiguous-among-clean ok exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD b.txt carries 2 cmd= lines
+RECEIPT_BIND_SELFTEST arm ambiguous-twin-single-fields ok exit=0 RECEIPT_BIND: CLEAN matched=2 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm json-ambiguous-field ok exit=2 AMBIGUOUS_FIELD
+RECEIPT_BIND_SELFTEST arm dirty-worktree-cannot-launder ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm worktree-bytes-not-truth ok exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=a.txt
+RECEIPT_BIND_SELFTEST: PASS held=68/68
+exit=0
+signal=none

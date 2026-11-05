@@ -3084,3 +3084,17 @@ rejected-honest-stop in a row for this capability, and the root cause is the sco
 instrument (the integrated v3 answers correctly on the reviewer's unprobed D1/D3 and on an absolute
 symlink token the probe never draws). No capability row enters the table; operability stays 9 and
 every coverage row stays 10.
+
+### Round 89 — measured disposition (2026-11-04)
+
+At M `7a8afb5fa02975e75cb2f33faf6d211a9680fc92`: frozen predicate `C89_C1: HELD held=30/30` twice and
+byte-identical, worktree twin 15/30, selftest 68/68, close receipts `CLEAN matched=18 … external=1`
+over 18 receipts, `PROXY: MATCH --strict` (C2 224 → 227, three pins re-pinned), checklist 43/46 (36/46
+at open), census exit 0, `counter-pins`/`readme-map`/`sources-check`/`source-capture` CLEAN,
+`OMP_CENSUS` findings 7 → 2 (operator-owned, L0 filed). SOURCES 192 → 197 (S255–S258 admitted A, S259
+rejected B; no existing cell changed). **C1 UNMET**: the frozen kill rule fired on three seat
+constructions at 30/30 — a probe-keyed oracle, a blob-shape/prefix-strip skip, and a label-only oracle —
+while the integrated instrument answers correctly on inputs the probe never draws. No capability row;
+operability 9 and every coverage row 10 unchanged. Routed to round 90: K89-V1 (BOM/ZWSP duplicate
+bypass), K89-V2 (missing absolute-symlink, in-lane `..` and symlinked-ancestor arms), K89-V3 (stale
+probe docstring), K89-V4 (`usage`/`selftest` text stubs, worktree-reading arms).
