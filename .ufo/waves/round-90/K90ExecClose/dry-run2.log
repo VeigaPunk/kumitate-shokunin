@@ -1,0 +1,24 @@
+RUN_CLOSE: REV b67fa9639ca6537b92021ea938f769ff1ed6c883
+RUN_CLOSE: NOTE out is not the round's close dir /fast/scratch/hyaku/kumitate-r90/K90ExecClose/base-lane/.ufo/waves/round-90/close
+probe1: exit=1 C90_C1: UNMET held=38/47
+probe2: exit=1 C90_C1: UNMET held=38/47
+selftest: exit=0 RECEIPT_BIND_SELFTEST: PASS held=68/68
+checklists: exit=1 VERDICT: FAIL
+proxy: exit=1 PROXY: DRIFT (A_WAVE_DRIFT term=A_wave declared=1210 computed=1214 delta=+4; C2_DRIFT term=C2 declared=227 computed=228 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=227 computed=228 delta=+1; src-rev=31c465f15669; source=snapshot)
+sources: exit=0 SOURCES_CHECK: CLEAN (rows=197 tiers=A:165,B:22,C:10 status=queued:13,mined:156,rejected:28 entries_with_source=43 legacy=38)
+source-capture: exit=0 SOURCE_CAPTURE: CLEAN captures=86 exemptions=111
+census: exit=0 kumitate	ok	/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
+counter-pins: exit=0 COUNTER_PINS: CLEAN pins=45
+readme-map: exit=0 README_MAP: CLEAN files=228 rows=228 covered=228
+round-gate: exit=2 ROUND_GATE: FAIL-CLOSED (REPORTS_DIR_MISSING) --reports-dir /fast/scratch/hyaku/kumitate-r90/K90ExecClose/.ufo/reports is absent
+plan-before-ready: exit=0 PLAN_BEFORE_READY_SUMMARY: pass=1 fail=0 na=0 rounds=90-90 rev=82c9c7efb9d9567341c209ad888012646590e99f exit=0 failed= na_rounds= map_red=
+bind: exit=0 RECEIPT_BIND: CLEAN matched=12 mismatched=0 unchecked=0 external=1
+RUN_CLOSE: PROBE1 C90_C1: UNMET held=38/47 exit=1
+RUN_CLOSE: PROBE2 C90_C1: UNMET held=38/47 exit=1
+RUN_CLOSE: PROBE_DETERMINISM SAME
+RUN_CLOSE: CHECKLIST_ITEMS parsed=46 red=7 skipped=0
+RUN_CLOSE: CHECKLIST_TALLY CHECKLIST: 39/46 pass
+RUN_CLOSE: CHECKLIST_RED 6(SKILL.md:723) 7(SKILL.md:724) 8(SKILL.md:725) 20(SKILL.md:737) 22(SKILL.md:739) 38(SKILL.md:755) 39(SKILL.md:756)
+RUN_CLOSE: BIND_CASE RECEIPT_BIND: CLEAN matched=12 mismatched=0 unchecked=0 external=1 counted=12 others=12 ALL
+RUN_CLOSE: BIND RECEIPT_BIND: CLEAN matched=12 mismatched=0 unchecked=0 external=1 exit=0
+RUN_CLOSE: DONE cases=13 rev=b67fa9639ca6537b92021ea938f769ff1ed6c883 out=/fast/scratch/hyaku/kumitate-r90/K90ExecClose/.ufo/waves/round-90/K90ExecClose/dry bind_exit=0 probe=SAME count=ALL NOT_OK

@@ -1,0 +1,4 @@
+291c291
+<       const all = [...text.matchAll(new RegExp(`^${key}=(.*)$`, 'gm'))];
+---
+>       const all = [...text.matchAll(new RegExp(`^[\\uFEFF\\u200B-\\u200E\\u00A0]*${key}=(.*)$`, 'gm'))];
