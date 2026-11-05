@@ -1,0 +1,19 @@
+--- candidate-v3.mjs	2026-11-04 21:05:59.673250076 -0300
++++ mutants/composite-realpath-final-and-arm-dropped.mjs	2026-11-04 21:07:51.037449860 -0300
+@@ -332,7 +332,7 @@
+       // (SYMLINK_INSTRUMENT) instead of being followed to its target. A token whose parent is absent
+       // on disk keeps the lexical judgement; the blob read decides.
+       let absReal = null;
+-      try { absReal = join(realpathSync(dirname(abs)), basename(abs)); } catch { /* parent absent */ }
++      try { absReal = realpathSync(abs); } catch { /* parent absent */ }
+       const lr = absReal !== null ? laneRel(laneReal, absReal) : laneRel(lane, abs);
+       if (lr.root) throw new FailClosed('UNRESOLVED', `${file} instrument names the lane root: ${instrument}`);
+       if (lr.inside) rel = lr.rel; else fromDisk = true;
+@@ -559,7 +559,6 @@
+   }
+   expect('symlink-instrument-120000', runTool(['--dir', rcSymlinkInstrument, '--rev', c3]), 2, FC('SYMLINK_INSTRUMENT'));
+   expect('symlink-instrument-twin-target-binds', runTool(['--dir', rcSymlinkInstrumentTwin, '--rev', c3]), 0, CLE(1));
+-  expect('symlink-instrument-absolute-token', runTool(['--dir', rcSymlinkInstrumentAbs, '--rev', c3]), 2, FC('SYMLINK_INSTRUMENT'));
+   expect('symlink-instrument-external', runTool(['--dir', rcExtLink, '--rev', c2]), 2, FC('SYMLINK_INSTRUMENT'));
+   expect('receipt-is-directory', runTool(['--dir', rcDirReceipt, '--rev', c2]), 2, FC('RECEIPT_UNREADABLE'));
+   expect('unresolved-instrument', runTool(['--dir', rcUnresolved, '--rev', c2]), 2, FC('UNRESOLVED'));

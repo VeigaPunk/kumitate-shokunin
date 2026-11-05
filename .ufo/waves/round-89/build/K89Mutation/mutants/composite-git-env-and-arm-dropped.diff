@@ -1,0 +1,22 @@
+--- candidate-v3.mjs	2026-11-04 21:05:59.673250076 -0300
++++ mutants/composite-git-env-and-arm-dropped.mjs	2026-11-04 21:07:51.037449860 -0300
+@@ -124,7 +124,7 @@
+ 
+ function gitEnv(extra) {
+   const env = { ...process.env, ...(extra || {}) };
+-  for (const k of GIT_ENV_DROP) delete env[k];
++  for (const k of []) delete env[k];
+   env.GIT_TERMINAL_PROMPT = '0';
+   return env;
+ }
+@@ -580,9 +580,7 @@
+   expect('sorted-first', runTool(['--dir', rcSorted, '--rev', c2]), 1, DRI(0, 2, 0, 0, 'aa.txt'));
+   expect('lane-flag-from-outside', runTool(['--dir', rcClean, '--rev', c2, '--lane', repo], root), 0, CLE(1));
+   expect('default-lane-is-toplevel', runTool(['--dir', rcClean, '--rev', c2], join(repo, 'scripts')), 0, CLE(1));
+-  expect('git-env-canary-ignored', runTool(['--dir', rcClean, '--rev', c2, '--lane', repo], repo, {
+-    GIT_DIR: join(root, 'canary-git-dir'), GIT_WORK_TREE: join(root, 'canary-work-tree'), GIT_INDEX_FILE: join(root, 'canary-index'),
+-  }), 0, CLE(1));
++  // mutant: git-env-canary-ignored selftest arm removed
+ 
+   // --json parity: the object carries the same tallies as the verdict line.
+   {

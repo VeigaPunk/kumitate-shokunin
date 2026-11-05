@@ -1,0 +1,19 @@
+--- candidate-v3.mjs	2026-11-04 21:05:59.673250076 -0300
++++ mutants/composite-bad-digest-and-arm-dropped.mjs	2026-11-04 21:07:51.037449860 -0300
+@@ -310,7 +310,7 @@
+       continue;
+     }
+     const declared = digestField.toLowerCase();
+-    if (!FULL_SHA.test(declared)) {
++    if (!FULL_SHA.test(declared) && false) {
+       unchecked += 1;
+       rows.push({ file, verdict: 'UNCHECKED', note: 'tool_sha256= is not a 64-hex sha256' });
+       if (first === null) first = file;
+@@ -550,7 +550,6 @@
+   expect('cmd-flip', runTool(['--dir', rcFlipCmd, '--rev', c2]), 1, DRI(0, 1, 0, 0, 'a.txt'));
+   expect('unchecked-no-cmd', runTool(['--dir', rcNoCmd, '--rev', c2]), 1, DRI(0, 0, 1, 0, 'a.txt'));
+   expect('unchecked-no-digest', runTool(['--dir', rcNoDigest, '--rev', c2]), 1, DRI(0, 0, 1, 0, 'a.txt'));
+-  expect('unchecked-bad-digest', runTool(['--dir', rcBadDigest, '--rev', c2]), 1, DRI(0, 0, 1, 0, 'a.txt'));
+   expect('clean-bom', runTool(['--dir', rcBom, '--rev', c2]), 0, CLE(1));
+   expect('bom-rev-precedence', runTool(['--dir', rcBomRev, '--rev', c2]), 0, CLE(1));
+   if (existsSync('/proc/self/root')) {

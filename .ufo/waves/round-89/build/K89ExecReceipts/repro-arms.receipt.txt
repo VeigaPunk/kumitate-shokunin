@@ -1,0 +1,18 @@
+rev=a5d2503393fc5646acb6468888d8b12a445bf62d
+tool_sha256=70dbcd5d02e30c831bc7ba9b80539d7443cb76a0e0d9dad0ad70e1e293384b4a
+cmd=node repro89-arms.mjs --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --work /fast/scratch/hyaku/kumitate-r89/K89ExecReceipts/repro-work2 --rev a5d2503393fc5646acb6468888d8b12a445bf62d --tool /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-bind.mjs
+--- driver source: repro89-arms.mjs (same dir) ---
+REPRO fixture repo=/fast/scratch/hyaku/kumitate-r89/K89ExecReceipts/repro-work2/indep-3f971d9531c2/repo-7d08c3b926a4 A=9cfb86436ac34b50b5c7936423ea7ed1b497da93 B=f5bd8c37b8f6ddd17b6adbdd3541af6257063cc7 C=27acdf0bbd26af674f684acbcad38f11a0c0f643 ok=true
+REPRO default-rev-not-head: exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+REPRO index-not-judged: exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+REPRO abs-in-lane-at-rev: exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+REPRO limit-edge: edge size=1048576 exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | over size=1048577 exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89ExecReceipts/repro-work2/indep-3f971d9531c2/limit-edge-over-7d08c3b926a4/r.txt is 1048577 bytes (limit 1048576)
+REPRO limit-before-read: size=1073741824 exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89ExecReceipts/repro-work2/indep-3f971d9531c2/limit-before-read-7d08c3b926a4/r.txt is 1073741824 bytes (limit 1048576)
+REPRO escape-inner-dotdot: exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: scripts/../../outside2-7d08c3b926a4/ext2-7d08c3b926a4.mjs
+REPRO dup-equal-field: dup-rev-equal exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 rev= lines | dup-digest-equal exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 tool_sha256= lines
+REPRO alias-proc-root: exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+REPRO symlink-instrument: exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT r.txt instrument is a symlink at 27acdf0bbd26af674f684acbcad38f11a0c0f643: scripts/indep-link-7d08c3b926a4.mjs
+REPRO bom-rev: exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+REPRO89: DONE
+exit=0
+signal=none

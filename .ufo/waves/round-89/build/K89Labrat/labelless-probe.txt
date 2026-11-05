@@ -1,0 +1,35 @@
+frozen probe sha256=ab09dc131b98d9c5bb2a54e9db57b3393184a3a13993bcb7842d535f4d0b0f13 (unchanged before/after)
+edits applied (unique match count): 1,1,1
+repaired copy: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-89/build/K89Labrat/probe89-c1-labelless.mjs
+repaired sha256=74532a8ada3e96713af844dad24aae29fd4ad75c358a1715ce1854db9a92a0d7
+--- .ufo/waves/round-89/probe/probe89-c1.mjs	2026-11-04 20:42:38.622603782 -0300
++++ .ufo/waves/round-89/build/K89Labrat/probe89-c1-labelless.mjs	2026-11-04 21:05:44.190196117 -0300
+@@ -116,8 +116,8 @@
+   if (!existsSync(dir)) return null;
+   return readdirSync(dir).filter((f) => f.endsWith('.txt')).sort();
+ }
+-function mk(name) {
+-  const d = join(fixRoot, `${name}-${NONCE}`);
++function mk() {
++  const d = join(fixRoot, randomBytes(6).toString('hex'));
+   mkdirSync(d, { recursive: true });
+   return d;
+ }
+@@ -233,7 +233,7 @@
+ }
+ // A8 — a missing receipt directory is fail-closed.
+ {
+-  const r = runTool(['--dir', join(fixRoot, `absent-${NONCE}-dir`), '--rev', rev]);
++  const r = runTool(['--dir', join(fixRoot, `absent-${randomBytes(6).toString('hex')}-dir`), '--rev', rev]);
+   arm('dir-missing', isFail(r, 'DIR_UNREADABLE'), brief(r));
+ }
+ // A9 — an unresolvable default revision is fail-closed.
+@@ -304,7 +304,7 @@
+ {
+   const real = mk('real-dir');
+   writeFileSync(join(real, 'r.txt'), receipt({ r: B, digest: sha(BODY.B), cmd: TOOL_CMD }));
+-  const link = join(fixRoot, `link-dir-${NONCE}`);
++  const link = join(fixRoot, randomBytes(6).toString('hex'));
+   symlinkSync(real, link);
+   const r1 = fixtureOk ? inRepo(link, B) : { status: -1, out: '' };
+   const r2 = fixtureOk ? inRepo(real, B) : { status: -1, out: '' };

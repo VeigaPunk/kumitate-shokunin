@@ -1,0 +1,11 @@
+--- candidate-v3.mjs	2026-11-04 21:05:59.673250076 -0300
++++ mutants/mode-literal-swap.mjs	2026-11-04 21:07:51.031449846 -0300
+@@ -358,7 +358,7 @@
+       // the digest would bind the link text while the executed content is the target's.
+       const lsTree = git(lane, ['ls-tree', receiptRev, '--', rel]);
+       const mode = lsTree.status === 0 ? (lsTree.stdout.trim().split(/\s+/)[0] || '') : '';
+-      if (mode === '120000') {
++      if (mode === '120001') {
+         throw new FailClosed('SYMLINK_INSTRUMENT', `${file} instrument is a symlink at ${receiptRev}: ${rel}`);
+       }
+       bytes = blobAt(lane, receiptRev, rel);

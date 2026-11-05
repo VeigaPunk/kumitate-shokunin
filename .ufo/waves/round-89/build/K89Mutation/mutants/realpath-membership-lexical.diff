@@ -1,0 +1,11 @@
+--- candidate-v3.mjs	2026-11-04 21:05:59.673250076 -0300
++++ mutants/realpath-membership-lexical.mjs	2026-11-04 21:07:51.031449846 -0300
+@@ -333,7 +333,7 @@
+       // on disk keeps the lexical judgement; the blob read decides.
+       let absReal = null;
+       try { absReal = join(realpathSync(dirname(abs)), basename(abs)); } catch { /* parent absent */ }
+-      const lr = absReal !== null ? laneRel(laneReal, absReal) : laneRel(lane, abs);
++      const lr = laneRel(lane, abs);
+       if (lr.root) throw new FailClosed('UNRESOLVED', `${file} instrument names the lane root: ${instrument}`);
+       if (lr.inside) rel = lr.rel; else fromDisk = true;
+     } else {

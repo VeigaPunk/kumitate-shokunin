@@ -259,6 +259,9 @@ fixture suite, `--strict` to fail on warnings.
 | `lessons/round-86-verifier-spotcheck.md` | Non-author round-86 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 | `lessons/round-87-verifier-spotcheck.md` | Non-author round-87 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 | `lessons/round-88.md` | Round-88 receipt-bind v2: the three-body revision fixture, four fail-closed boundaries, nine seat constructions at 20/20, the honest UNMET verdict, and the mined mistakes | LOG.md round 88; `.ufo/waves/round-88/` |
+| `knowledge/receipt-lane-membership-and-link-binding.md` | Real-path lane membership, the mode-120000 instrument refusal and BOM tolerance: the three v3 boundaries, each with its failing base arm | S255, S256, S257, S258; round-89 frozen plan; `.ufo/waves/round-89/controls/ctl-base-v2-at-rev.txt` |
+| `lessons/round-88-verifier-spotcheck.md` | Non-author round-88 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
+| `lessons/round-89.md` | Round-89 receipt-bind v3: the 30-arm scorer, 22 pre-data controls, the probe-keyed construction at 30/30, the honest UNMET verdict, and the scorer-class mistake mined into Q82 | LOG.md round 89; `.ufo/waves/round-89/` |
 
 ## Known gaps
 

@@ -1,0 +1,11 @@
+--- candidate-v3.mjs	2026-11-04 21:05:59.673250076 -0300
++++ mutants/bom-strip-off.mjs	2026-11-04 21:07:51.031449846 -0300
+@@ -286,7 +286,7 @@
+       if (fd !== null) { try { closeSync(fd); } catch { /* already closed */ } }
+     }
+     // One leading UTF-8 BOM is a signature, not content (v3): it must not hide `rev=`.
+-    text = text.replace(/^\uFEFF/, '');
++    text = text;
+     const field = (key) => {
+       const all = [...text.matchAll(new RegExp(`^${key}=(.*)$`, 'gm'))];
+       if (all.length > 1) throw new FailClosed('AMBIGUOUS_FIELD', `${file} carries ${all.length} ${key}= lines`);

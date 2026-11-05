@@ -1,0 +1,11 @@
+--- candidate-v3.mjs	2026-11-04 21:05:59.673250076 -0300
++++ mutants/realpath-abs-off.mjs	2026-11-04 21:07:51.030449844 -0300
+@@ -332,7 +332,7 @@
+       // (SYMLINK_INSTRUMENT) instead of being followed to its target. A token whose parent is absent
+       // on disk keeps the lexical judgement; the blob read decides.
+       let absReal = null;
+-      try { absReal = join(realpathSync(dirname(abs)), basename(abs)); } catch { /* parent absent */ }
++      try { absReal = join(dirname(abs), basename(abs)); } catch { /* parent absent */ }
+       const lr = absReal !== null ? laneRel(laneReal, absReal) : laneRel(lane, abs);
+       if (lr.root) throw new FailClosed('UNRESOLVED', `${file} instrument names the lane root: ${instrument}`);
+       if (lr.inside) rel = lr.rel; else fromDisk = true;

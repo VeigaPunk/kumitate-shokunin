@@ -1,0 +1,30 @@
+FIXTURE: repo=/fast/scratch/hyaku/kumitate-r89/K89ScoutRecon/repo-536935e045c6 A=30fa69ea4990e9a9db39107383b6d5d2a9714a69 B=f9f455a8255955a214f404c1435da21dfd6cacd4 C=843690eb83e60a7df99d1e37824e18f7c9bc945a instr=instr-536935e045c6.mjs alias=alias-536935e045c6.mjs ok=true
+ARM default-rev-not-head: exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM index-not-judged: exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM abs-in-lane-at-rev: exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+SIZES limit-edge: at=1048576 over=1048577
+ARM limit-edge/at: exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM limit-edge/over: exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89ScoutRecon/rc-05-limit-edge-over-536935e045c6/r.txt is 1048577 bytes (limit 1048576)
+SIZE limit-before-read: 1073741824 mode=0000
+ARM limit-before-read: exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89ScoutRecon/rc-06-limit-before-read-536935e045c6/r.txt is 1073741824 bytes (limit 1048576)
+ARM escape-inner-dotdot: exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: scripts/../../outside-536935e045c6/ext2-536935e045c6.mjs
+ARM dup-equal-field/rev-equal: exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 rev= lines
+ARM dup-equal-field/digest-equal: exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 tool_sha256= lines
+ARM alias-proc-root: exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+ARM bom-rev: exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+ARM symlink-instrument: exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+
+VERDICT default-rev-not-head: ARM-EXPECTATION-HELD observed=exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+VERDICT index-not-judged: ARM-EXPECTATION-HELD observed=exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+VERDICT abs-in-lane-at-rev: ARM-EXPECTATION-HELD observed=exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+VERDICT limit-edge/at: ARM-EXPECTATION-HELD observed=exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+VERDICT limit-edge/over: ARM-EXPECTATION-HELD observed=exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89ScoutRecon/rc-05-limit-edge-over-536935e045c6/r.txt is 1048577 bytes (limit 1048576)
+VERDICT limit-before-read: ARM-EXPECTATION-HELD observed=exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89ScoutRecon/rc-06-limit-before-read-536935e045c6/r.txt is 1073741824 bytes (limit 1048576)
+VERDICT escape-inner-dotdot: ARM-EXPECTATION-HELD observed=exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: scripts/../../outside-536935e045c6/ext2-536935e045c6.mjs
+VERDICT dup-equal-field/rev-equal: ARM-EXPECTATION-HELD observed=exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 rev= lines
+VERDICT dup-equal-field/digest-equal: ARM-EXPECTATION-HELD observed=exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 tool_sha256= lines
+VERDICT alias-proc-root: ARM-EXPECTATION-MISSED observed=exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+VERDICT bom-rev: ARM-EXPECTATION-MISSED observed=exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+VERDICT symlink-instrument: ARM-EXPECTATION-MISSED observed=exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+
+RECON89: arms=10 runs=12 arm-expectations-held=9/12 tool=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-89/build/K89ScoutRecon/base-receipt-bind-v2.mjs sha256=1f11f124198fdb894265dc69a75efeca5fbf43d931209d227b2bc1b29e5880ea nonce=536935e045c6

@@ -1,0 +1,22 @@
+HOLE lane-not-git-token [lane-not-git-off]
+  candidate: exit=2 RECEIPT_BIND: FAIL-CLOSED LANE_NOT_GIT /fast/scratch/hyaku/kumitate-r89/K89Mutation/holes2/holes-435899/not-a-repo
+  mutant:    exit=2 RECEIPT_BIND: FAIL-CLOSED REV_UNRESOLVED --rev aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa is not a commit in /fast/scratch/hyaku/kumitate-r89/K89Mutation/holes2/holes-435899/not-a-repo
+HOLE receipt-rev-not-a-commit [rev-commit-check-off]
+  candidate: exit=2 RECEIPT_BIND: FAIL-CLOSED REV_UNRESOLVED a.txt rev=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb is not a commit in /fast/scratch/hyaku/kumitate-r89/K89Mutation/holes2/holes-435899/revcheck
+  mutant:    exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt instrument absent at bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb: scripts/tool.mjs
+HOLE absolute-token-names-lane-root [root-check-absolute-off]
+  candidate: exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt instrument names the lane root: /fast/scratch/hyaku/kumitate-r89/K89Mutation/holes2/holes-435899/rootcheck
+  mutant:    exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt instrument absent at b3335b26615254ce8ffb3e068b4cfac962ac95a2: null
+HOLE lane-through-symlink-forge [realpath-lane-off]
+  candidate: exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=a.txt
+  mutant:    exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+HOLE symlink-at-judged-rev-only [mode-read-at-head]
+  candidate: exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT a.txt instrument is a symlink at cabd163a19d01c0927fbc066afaaa7c910ed3179: scripts/link.mjs
+  mutant:    exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+HOLE json-contract-id [contract-string-v2]
+  candidate: exit=0 contract=kumitate-receipt-bind-v3
+  mutant:    exit=0 contract=kumitate-receipt-bind-v2
+HOLE uppercase-digest [digest-lowercase-off]
+  candidate: exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+  mutant:    exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=0 unchecked=1 external=0 first=a.txt
+HOLES: checks=7 differ=7

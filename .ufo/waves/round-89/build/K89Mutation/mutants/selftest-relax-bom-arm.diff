@@ -1,0 +1,11 @@
+--- candidate-v3.mjs	2026-11-04 21:05:59.673250076 -0300
++++ mutants/selftest-relax-bom-arm.mjs	2026-11-04 21:07:51.037449860 -0300
+@@ -552,7 +552,7 @@
+   expect('unchecked-no-digest', runTool(['--dir', rcNoDigest, '--rev', c2]), 1, DRI(0, 0, 1, 0, 'a.txt'));
+   expect('unchecked-bad-digest', runTool(['--dir', rcBadDigest, '--rev', c2]), 1, DRI(0, 0, 1, 0, 'a.txt'));
+   expect('clean-bom', runTool(['--dir', rcBom, '--rev', c2]), 0, CLE(1));
+-  expect('bom-rev-precedence', runTool(['--dir', rcBomRev, '--rev', c2]), 0, CLE(1));
++  expect('bom-rev-precedence', runTool(['--dir', rcBomRev, '--rev', c2]), 0, /RECEIPT_BIND:/);
+   if (existsSync('/proc/self/root')) {
+     expect('alias-proc-root-in-lane', runTool(['--dir', rcProcAlias, '--rev', c2]), 0, CLE(1, 0));
+     expect('alias-proc-root-negative', runTool(['--dir', rcProcAliasBad, '--rev', c2]), 1, DRI(0, 1, 0, 0, 'a.txt'));

@@ -1,0 +1,11 @@
+--- candidate-v3.mjs	2026-11-04 21:05:59.673250076 -0300
++++ mutants/usage-exit-zero.mjs	2026-11-04 21:07:51.029449842 -0300
+@@ -704,7 +704,7 @@
+     return selftest(args.work);
+   }
+   if (args.work !== null) { errOut(`receipt-bind: --work is a --selftest argument\n\n${USAGE}`); return 64; }
+-  if (args.dir === null) { errOut(`receipt-bind: --dir is required\n\n${USAGE}`); return 64; }
++  if (args.dir === null) { errOut(`receipt-bind: --dir is required\n\n${USAGE}`); return 0; }
+   if (args.rev === null) { errOut(`receipt-bind: --rev is required\n\n${USAGE}`); return 64; }
+   if (!FULL_REV.test(args.rev)) { errOut(`receipt-bind: --rev ${JSON.stringify(args.rev)} is not 40 lowercase hex\n\n${USAGE}`); return 64; }
+   try {

@@ -1,0 +1,11 @@
+--- candidate-v3.mjs	2026-11-04 21:05:59.673250076 -0300
++++ mutants/external-count-off.mjs	2026-11-04 21:07:51.035449855 -0300
+@@ -352,7 +352,7 @@
+       try { est = lstatSync(abs); } catch (e) { throw new FailClosed('UNRESOLVED', `${file} external instrument unreadable: ${abs} (${e.code || 'lstat failed'})`); }
+       if (est.isSymbolicLink()) throw new FailClosed('SYMLINK_INSTRUMENT', `${file} external instrument is a symlink: ${abs}`);
+       try { bytes = readFileSync(abs); } catch (e) { throw new FailClosed('UNRESOLVED', `${file} external instrument unreadable: ${abs} (${e.code || 'read failed'})`); }
+-      external += 1;
++      external += 0;
+     } else {
+       // A mode-120000 instrument is a symlink (v3): `cat-file blob` returns its TARGET STRING, so
+       // the digest would bind the link text while the executed content is the target's.

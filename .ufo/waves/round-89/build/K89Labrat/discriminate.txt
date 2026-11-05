@@ -1,0 +1,29 @@
+nonce=1d7d439eb7f5
+fixture=/fast/scratch/hyaku/kumitate-r89/K89Labrat/demo/repo-1d7d439eb7f5
+toplevel=/fast/scratch/hyaku/kumitate-r89/K89Labrat/demo/repo-1d7d439eb7f5
+A=bc9a7303fef5262239fd796a070aa9bae8b790e8
+B=451d0b2a90842a7c673c61548e4a5576d6b8bddc
+C=1ef65b6b82e73b6480b3ab20f60ad208fcd74d38
+dirty_worktree_digest=144b28b429859c501c399e1acdc0665871b851889052f797ad64c36305f50d04
+
+== D1: digest is 64 nines, cmd names a real in-lane instrument at C ==
+-- committed v2 instrument:
+RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+   exit=1
+-- oracle (probe-aware):
+RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+   exit=0
+-- oracle (label-only):
+RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+   exit=0
+
+== D2: a correct receipt in a directory labelled 'novel' (never drawn by the probe) ==
+-- committed v2 instrument:
+RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+   exit=0
+-- oracle (probe-aware):
+RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label 'novel'
+   exit=2
+-- oracle (label-only):
+RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label 'novel'
+   exit=2

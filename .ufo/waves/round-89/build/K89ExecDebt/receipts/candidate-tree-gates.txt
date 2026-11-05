@@ -1,0 +1,25 @@
+# candidate tree = git archive HEAD (9c3b64e4) + the five candidate patches (gate1/2/3), applied with patch -p1
+$ node scripts/readme-map.mjs
+README_MAP: CLEAN files=225 rows=225 covered=225
+exit=0
+$ node scripts/counter-pins.mjs
+COUNTER_PINS: CLEAN pins=45
+exit=0
+$ node scripts/spotcheck-adopt.mjs --check
+SPOTCHECK_COVERAGE: CLEAN spotchecks=55 uncovered=0
+MAP: CLEAN
+exit=0
+$ node scripts/proxy-check.mjs --strict --self <candidate>
+PROXY: MATCH (A=36 C=46 operability=9; C1=19/19 C2=225/225 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=55/55 coverage:kimi-layer=10; O=1/1 O_members=65 O_findings=0 O_bound=35 coverage:omp=10; pins=6 match; src-rev=31c465f15669; source=snapshot)
+exit=0
+$ node scripts/omp-census.mjs --root /home/vgpnk/.omp/agent --self <candidate>
+UNLISTED agent.db.reset-a37b64321d6cc959
+UNLISTED config.yml.pre-run15-devin-unavailable-20261104.Qfa62SXH.bak
+OMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=80 findings=2)
+exit=1
+$ selftests (TMPDIR=scratch)
+SPOTCHECK_ADOPT_SELFTEST: PASS (34/34)
+VERDICT: PASS
+VERDICT: PASS
+VERDICT: PASS
+VERDICT: PASS (108 cases)

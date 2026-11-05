@@ -1,0 +1,11 @@
+--- candidate-v3.mjs	2026-11-04 21:05:59.673250076 -0300
++++ mutants/escape-downgraded.mjs	2026-11-04 21:07:51.033449851 -0300
+@@ -340,7 +340,7 @@
+       abs = resolve(lane, instrument);
+       const lr = laneRel(lane, abs);
+       if (lr.root) throw new FailClosed('UNRESOLVED', `${file} instrument resolves to the lane root: ${instrument}`);
+-      if (!lr.inside) throw new FailClosed('ESCAPES_LANE', `${file} relative instrument resolves outside the lane: ${instrument}`);
++      if (!lr.inside) rel = lr.rel;
+       rel = lr.rel;
+     }
+ 

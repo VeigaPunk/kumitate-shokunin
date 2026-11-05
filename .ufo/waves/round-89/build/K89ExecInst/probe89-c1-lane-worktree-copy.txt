@@ -1,0 +1,31 @@
+ARM usage: PASS exit=64
+ARM selftest: PASS exit=0 RECEIPT_BIND_SELFTEST: PASS held=64/64
+ARM detect-r86: PASS exit=1 RECEIPT_BIND: DRIFT matched=1 mismatched=9 unchecked=0 external=1 first=c1-probe.txt
+ARM detect-r86-renamed: PASS files=10 exit=1 RECEIPT_BIND: DRIFT matched=1 mismatched=9 unchecked=0 external=1 first=q01-9.txt
+ARM clean-r87: PASS copied=11 exit=0 RECEIPT_BIND: CLEAN matched=11 mismatched=0 unchecked=0 external=0
+ARM unchecked: PASS exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=0 unchecked=1 external=0 first=u.txt
+ARM unresolved: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED u.txt instrument absent at 814395dd14756b1b66cce593d1b16cf6c945a1e6: scripts/absent-053efb64764e.mjs
+ARM dir-missing: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED DIR_UNREADABLE /fast/scratch/hyaku/kumitate-r89/K89ExecInst/probe-wt/p89-053efb64764e/absent-053efb64764e-dir (ENOENT)
+ARM rev-bad: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED REV_UNRESOLVED --rev ffffffffffffffffffffffffffffffffffffffff is not a commit in /fast/scratch/hyaku/kumitate-r89/K89ExecInst/probe-wt/p89-053efb64764e/repo-053efb64764e
+ARM symlink-receipt: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_RECEIPT /fast/scratch/hyaku/kumitate-r89/K89ExecInst/probe-wt/p89-053efb64764e/symlink-receipt-053efb64764e/a.txt
+ARM rev-receipt-wins: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM worktree-forgery: PASS exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+ARM default-rev: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM rev-receipt-negative: PASS exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+ARM untracked-instrument: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt instrument absent at 814395dd14756b1b66cce593d1b16cf6c945a1e6: scripts/fresh-053efb64764e.mjs
+ARM escape-relative: PASS relative exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: ../outside-053efb64764e/ext-053efb64764e.mjs | absolute exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+ARM symlink-dir: PASS link exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_DIR /fast/scratch/hyaku/kumitate-r89/K89ExecInst/probe-wt/p89-053efb64764e/link-dir-053efb64764e | real exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM oversize: PASS 2MiB exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89ExecInst/probe-wt/p89-053efb64764e/oversize-053efb64764e/r.txt is 2097354 bytes (limit 1048576) | 512KiB exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM duplicate-field: PASS dup-cmd exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 cmd= lines | dup-cmd-equal exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 cmd= lines | dup-digest exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 tool_sha256= lines | dup-rev exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 rev= lines | single exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM sweep: PASS scripts=33 clean exit=0 RECEIPT_BIND: CLEAN matched=33 mismatched=0 unchecked=0 external=0 | flip=s-cite-sources.mjs.txt exit=1 RECEIPT_BIND: DRIFT matched=32 mismatched=1 unchecked=0 external=0 first=s-cite-sources.mjs.txt
+ARM default-rev-not-head: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM index-not-judged: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM abs-in-lane-at-rev: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM limit-edge: PASS edge 1048576 exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | over 1048577 exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89ExecInst/probe-wt/p89-053efb64764e/limit-edge-over-053efb64764e/r.txt is 1048577 bytes (limit 1048576)
+ARM limit-before-read: PASS size=1073741824 exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89ExecInst/probe-wt/p89-053efb64764e/limit-before-read-053efb64764e/r.txt is 1073741824 bytes (limit 1048576)
+ARM escape-inner-dotdot: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: scripts/../../outside2-053efb64764e/ext2-053efb64764e.mjs
+ARM dup-equal-field: PASS dup-rev-equal exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 rev= lines | dup-digest-equal exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 tool_sha256= lines
+ARM alias-proc-root: PASS exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+ARM bom-rev: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM symlink-instrument: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT r.txt instrument is a symlink at 52fee036d52cf18cd649869e9b4a887edeca876f: scripts/link-053efb64764e.mjs
+C89_C1: HELD held=30/30

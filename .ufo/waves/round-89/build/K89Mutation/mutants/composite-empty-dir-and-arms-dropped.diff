@@ -1,0 +1,21 @@
+--- candidate-v3.mjs	2026-11-04 21:05:59.673250076 -0300
++++ mutants/composite-empty-dir-and-arms-dropped.mjs	2026-11-04 21:07:51.037449860 -0300
+@@ -377,7 +377,7 @@
+   }
+ 
+   const total = matched + mismatched + unchecked;
+-  const clean = total > 0 && mismatched === 0 && unchecked === 0;
++  const clean = mismatched === 0 && unchecked === 0;
+ 
+   if (json) {
+     out(`${JSON.stringify({
+@@ -574,9 +574,7 @@
+   expect('external-disk', runTool(['--dir', rcExternal, '--rev', c2]), 0, CLE(1, 1));
+   expect('external-mismatch', runTool(['--dir', rcExternalBad, '--rev', c2]), 1, DRI(0, 1, 0, 1, 'a.txt'));
+   expect('lane-absolute-instrument', runTool(['--dir', rcLaneAbs, '--rev', c2]), 0, CLE(1, 0));
+-  expect('empty-dir-not-clean', runTool(['--dir', rcEmpty, '--rev', c2]), 1, DRI(0, 0, 0, 0, '-'));
+   expect('non-txt-ignored', runTool(['--dir', rcWithNotes, '--rev', c2]), 0, CLE(1));
+-  expect('non-txt-only-is-empty', runTool(['--dir', rcNotesOnly, '--rev', c2]), 1, DRI(0, 0, 0, 0, '-'));
+   expect('sorted-first', runTool(['--dir', rcSorted, '--rev', c2]), 1, DRI(0, 2, 0, 0, 'aa.txt'));
+   expect('lane-flag-from-outside', runTool(['--dir', rcClean, '--rev', c2, '--lane', repo], root), 0, CLE(1));
+   expect('default-lane-is-toplevel', runTool(['--dir', rcClean, '--rev', c2], join(repo, 'scripts')), 0, CLE(1));

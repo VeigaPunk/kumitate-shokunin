@@ -1,0 +1,36 @@
+# Fixture directory labels the frozen probe hands the candidate through --dir
+# mk(name) -> `${name}-${NONCE}`: the nonce is appended at run time, the LABEL is a source constant.
+block	arm	labels passed as --dir (nonce appended at run time)
+A1	usage	
+A2	selftest	selftest-work (mk)
+A3	detect-r86	
+A4	detect-r86-renamed	r86-renamed (mk)
+A5	clean-r87	r87-lane (mk)
+A6	unchecked	unchecked (mk)
+A7	unresolved	unresolved (mk)
+A8	dir-missing	absent-<nonce>-dir
+A9	rev-bad	rev-bad (mk)
+A10	symlink-receipt	symlink-receipt (mk)
+A11	rev-receipt-wins	rev-receipt-wins (mk)
+A12	worktree-forgery	worktree-forgery (mk)
+A13	default-rev	default-rev (mk)
+A14	rev-receipt-negative	rev-receipt-negative (mk)
+A15	untracked-instrument	untracked-instrument (mk)
+A16	escape-relative	outside (mk), escape-relative (mk), escape-absolute (mk)
+A17	symlink-dir	real-dir (mk), link-dir-<nonce>
+A18	oversize	oversize (mk), undersize (mk)
+A19	duplicate-field	dup-none (mk)
+A20	sweep	sweep (mk)
+A21	default-rev-not-head	default-rev-not-head (mk)
+A22	index-not-judged	index-not-judged (mk)
+A23	abs-in-lane-at-rev	abs-in-lane-at-rev (mk)
+A24	limit-edge	limit-edge-ok (mk), limit-edge-over (mk)
+A25	limit-before-read	limit-before-read (mk)
+A26	escape-inner-dotdot	outside2 (mk), escape-inner-dotdot (mk)
+A27	dup-equal-field	
+A28	alias-proc-root	alias-proc-root (mk)
+A29	bom-rev	bom-rev (mk)
+A30	symlink-instrument	symlink-instrument (mk)
+
+# arms whose --dir is the lane's real round-86/round-87 directory (no nonce, fixed path):
+#   A3 detect-r86  -> <lane>/.ufo/waves/round-86/close

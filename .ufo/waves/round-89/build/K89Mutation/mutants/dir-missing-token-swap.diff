@@ -1,0 +1,11 @@
+--- candidate-v3.mjs	2026-11-04 21:05:59.673250076 -0300
++++ mutants/dir-missing-token-swap.mjs	2026-11-04 21:07:51.030449844 -0300
+@@ -247,7 +247,7 @@
+ 
+   let entries;
+   let dirStat;
+-  try { dirStat = lstatSync(dir); } catch (e) { throw new FailClosed('DIR_UNREADABLE', `${dir} (${e.code || 'unreadable'})`); }
++  try { dirStat = lstatSync(dir); } catch (e) { throw new FailClosed('RECEIPT_UNREADABLE', `${dir} (${e.code || 'unreadable'})`); }
+   if (dirStat.isSymbolicLink()) throw new FailClosed('SYMLINK_DIR', dir);
+   try { entries = readdirSync(dir); } catch (e) { throw new FailClosed('DIR_UNREADABLE', `${dir} (${e.code || 'unreadable'})`); }
+   const files = entries.filter((f) => f.endsWith('.txt')).sort();

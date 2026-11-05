@@ -1,0 +1,38 @@
+RUN_CLOSE: REV adfc2f55675f760eaf8b59f80033f926500cd951
+RUN_CLOSE: NOTE out is not the round's close dir /fast/scratch/hyaku/kumitate-r89/K89ExecClose/lane/.ufo/waves/round-89/close
+selftest: exit=0 COUNTER_RECEIPT_SELFTEST: PASS held=63/63
+proxy: exit=1 PROXY: DRIFT (A_WAVE_DRIFT term=A_wave declared=1112 computed=1115 delta=+3; C2_TOTAL_DRIFT term=C2_total declared=224 computed=225 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669; source=snapshot)
+proxy-selftest: exit=0 VERDICT: PASS
+map: exit=1 README_MAP: DRIFT files=225 rows=224 covered=224 bad=2 first=uncovered:lessons/round-88-verifier-spotcheck.md
+map-selftest: exit=0 VERDICT: PASS
+spotcheck: exit=1 MAP: DRIFT first=uncovered:lessons/round-88-verifier-spotcheck.md
+ready: exit=2 READY_HANDOFF: FAIL-CLOSED DISPATCH_OUTSIDE (dispatch /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-89/w1-dispatch.json is not under /fast/scratch/hyaku/kumitate-r89/K89ExecClose/lane/.ufo/waves/round-89)
+plan: exit=1 PLAN_BEFORE_READY_SUMMARY: pass=0 fail=1 na=0 rounds=89-89 rev=adfc2f55675f760eaf8b59f80033f926500cd951 exit=1 failed=89 na_rounds= map_red=89
+census: exit=0 kumitate	ok	/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
+bind-selftest: exit=0 RECEIPT_BIND_SELFTEST: PASS held=59/59
+probe1: exit=1 C89_C1: UNMET held=26/30
+probe2: exit=1 C89_C1: UNMET held=26/30
+twin: exit=1 C89_C1: UNMET held=14/30
+bind: exit=0 RECEIPT_BIND: CLEAN matched=13 mismatched=0 unchecked=0 external=1
+RUN_CLOSE: BIND_CASE RECEIPT_BIND: CLEAN matched=13 mismatched=0 unchecked=0 external=1 counted=13 others=13 ALL
+RUN_CLOSE: PROBE1 C89_C1: UNMET held=26/30 exit=1
+RUN_CLOSE: PROBE2 C89_C1: UNMET held=26/30 exit=1
+RUN_CLOSE: PROBE_DETERMINISM SAME
+RUN_CLOSE: TWIN C89_C1: UNMET held=14/30 exit=1
+RUN_CLOSE: BIND RECEIPT_BIND: CLEAN matched=14 mismatched=0 unchecked=0 external=1 exit=0
+RUN_CLOSE: BIND_CASE bind-selftest.txt MATCH
+RUN_CLOSE: BIND_CASE bind.txt MATCH
+RUN_CLOSE: BIND_CASE census.txt MATCH
+RUN_CLOSE: BIND_CASE map-selftest.txt MATCH
+RUN_CLOSE: BIND_CASE map.txt MATCH
+RUN_CLOSE: BIND_CASE plan.txt MATCH
+RUN_CLOSE: BIND_CASE probe1.txt MATCH
+RUN_CLOSE: BIND_CASE probe2.txt MATCH
+RUN_CLOSE: BIND_CASE proxy-selftest.txt MATCH
+RUN_CLOSE: BIND_CASE proxy.txt MATCH
+RUN_CLOSE: BIND_CASE ready.txt MATCH
+RUN_CLOSE: BIND_CASE selftest.txt MATCH
+RUN_CLOSE: BIND_CASE spotcheck.txt MATCH
+RUN_CLOSE: BIND_CASE twin.txt MATCH
+RUN_CLOSE: BIND_JSON verdict=CLEAN receipts=14 matched=14 mismatched=0 unchecked=0 external=1
+RUN_CLOSE: DONE cases=14 rev=adfc2f55675f760eaf8b59f80033f926500cd951 out=/fast/scratch/hyaku/kumitate-r89/K89ExecClose/out-c bind_exit=0 OK

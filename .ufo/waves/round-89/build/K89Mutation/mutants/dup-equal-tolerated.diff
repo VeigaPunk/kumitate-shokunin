@@ -1,0 +1,11 @@
+--- candidate-v3.mjs	2026-11-04 21:05:59.673250076 -0300
++++ mutants/dup-equal-tolerated.mjs	2026-11-04 21:07:51.033449851 -0300
+@@ -289,7 +289,7 @@
+     text = text.replace(/^\uFEFF/, '');
+     const field = (key) => {
+       const all = [...text.matchAll(new RegExp(`^${key}=(.*)$`, 'gm'))];
+-      if (all.length > 1) throw new FailClosed('AMBIGUOUS_FIELD', `${file} carries ${all.length} ${key}= lines`);
++      if (new Set(all.map((m) => m[1])).size > 1) throw new FailClosed('AMBIGUOUS_FIELD', `${file} carries ${all.length} ${key}= lines`);
+       return all.length ? all[0][1].trim() : null;
+     };
+ 

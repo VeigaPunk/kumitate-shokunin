@@ -1,0 +1,11 @@
+--- candidate-v3.mjs	2026-11-04 21:05:59.673250076 -0300
++++ mutants/mode-read-at-head.mjs	2026-11-04 21:07:51.031449846 -0300
+@@ -356,7 +356,7 @@
+     } else {
+       // A mode-120000 instrument is a symlink (v3): `cat-file blob` returns its TARGET STRING, so
+       // the digest would bind the link text while the executed content is the target's.
+-      const lsTree = git(lane, ['ls-tree', receiptRev, '--', rel]);
++      const lsTree = git(lane, ['ls-tree', 'HEAD', '--', rel]);
+       const mode = lsTree.status === 0 ? (lsTree.stdout.trim().split(/\s+/)[0] || '') : '';
+       if (mode === '120000') {
+         throw new FailClosed('SYMLINK_INSTRUMENT', `${file} instrument is a symlink at ${receiptRev}: ${rel}`);

@@ -1,0 +1,11 @@
+--- candidate-v3.mjs	2026-11-04 21:05:59.673250076 -0300
++++ mutants/unchecked-or-to-and.mjs	2026-11-04 21:07:51.035449855 -0300
+@@ -303,7 +303,7 @@
+ 
+     const cmdField = field('cmd');
+     const digestField = field('tool_sha256');
+-    if (cmdField === null || digestField === null) {
++    if (cmdField === null && digestField === null) {
+       unchecked += 1;
+       rows.push({ file, verdict: 'UNCHECKED', note: cmdField === null ? 'no cmd=' : 'no tool_sha256=' });
+       if (first === null) first = file;

@@ -1,0 +1,15 @@
+nonce=e39362d92f62
+
+== (1) cwd is a directory with no probe89-c1.mjs in any ancestor ==
+RECEIPT_BIND: FAIL-CLOSED INTERNAL probe89-c1.mjs not found from cwd
+   exit=2
+
+== (2a) path nonce 000000000000 vs .git/logs/HEAD ==
+labrat: nonce path=000000000000 logs/HEAD=e39362d92f62
+RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+   exit=0
+
+== (2b) same, with .git/logs/HEAD removed -> index fallback ==
+labrat: nonce path=000000000000 index=e39362d92f62
+RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+   exit=0

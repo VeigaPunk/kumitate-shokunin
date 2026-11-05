@@ -1,0 +1,19 @@
+--- candidate-v3.mjs	2026-11-04 21:05:59.673250076 -0300
++++ mutants/composite-limit-x2-and-arm-dropped.mjs	2026-11-04 21:07:51.038449862 -0300
+@@ -83,7 +83,7 @@
+ import { fileURLToPath } from 'node:url';
+ 
+ const CONTRACT = 'kumitate-receipt-bind-v3';
+-const MAX_RECEIPT_BYTES = 1048576;
++const MAX_RECEIPT_BYTES = 2097152;
+ const SELF = fileURLToPath(import.meta.url);
+ const FULL_REV = /^[a-f0-9]{40}$/;
+ const FULL_SHA = /^[a-f0-9]{64}$/;
+@@ -643,7 +643,6 @@
+   if (sizes[0] !== MAX_RECEIPT_BYTES + 1 || sizes[1] !== MAX_RECEIPT_BYTES + 1 || sizes[2] !== MAX_RECEIPT_BYTES) {
+     return fixtureFail(`receipt sizes ${sizes.join(',')}`);
+   }
+-  expect('receipt-too-large', runTool(['--dir', rcOver, '--rev', c2]), 2, FC('RECEIPT_TOO_LARGE'));
+   expect('receipt-too-large-before-parse', runTool(['--dir', rcOverAmbiguous, '--rev', c2]), 2, FC('RECEIPT_TOO_LARGE'));
+   expect('receipt-too-large-twin-at-limit', runTool(['--dir', rcAtLimit, '--rev', c2]), 0, CLE(1));
+ 

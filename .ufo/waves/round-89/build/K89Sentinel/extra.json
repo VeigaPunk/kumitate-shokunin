@@ -1,0 +1,156 @@
+{
+  "repo": "/fast/scratch/hyaku/kumitate-r89/K89Sentinel/att/repo2-1455d14d",
+  "outside": "/fast/scratch/hyaku/kumitate-r89/K89Sentinel/att/outside2-1455d14d",
+  "P1": "d45fd415bb2dbd1530bda4240d4e872a59df3bea",
+  "G": "6bedaf948c5f8911c73312bb7e397fa80e0582c1",
+  "P2": "5f899b884b7d812b7e83336b394c8ddb6b344bf1",
+  "D": {
+    "P": "e01b67b475dcddc88aabb244e202c6a5bbf0ac9cba1c994ec33274a576116e3f",
+    "Q": "8b66b7bcaa9e5cced0af76ecf4a19e36d2d74412e6efd6cc652be5addfcc88f0",
+    "R": "796e70182db3c523eebcdbc380c98199b4f257010aede2a56b28ca192138aa4d",
+    "EXT": "d6983ed992d7fa7e7db14b68ab8afc639e3f4305f940294420cfe25b8e60757f",
+    "ALIAS": "c7073f83c581635e67e83cd4a4e7381720029da096d5f8e618053c4f3ad650e1"
+  },
+  "results": [
+    {
+      "case": "G1 gitlink instrument at G",
+      "tool": "base",
+      "exit": 2,
+      "signal": null,
+      "line": "RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt instrument absent at 6bedaf948c5f8911c73312bb7e397fa80e0582c1: scripts/sub-1455d14d.mjs"
+    },
+    {
+      "case": "G1 gitlink instrument at G",
+      "tool": "cand",
+      "exit": 2,
+      "signal": null,
+      "line": "RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt instrument absent at 6bedaf948c5f8911c73312bb7e397fa80e0582c1: scripts/sub-1455d14d.mjs"
+    },
+    {
+      "case": "X1 symlink -> /proc/self/root<lane>/tool, abs token, P digest",
+      "tool": "base",
+      "exit": 1,
+      "signal": null,
+      "line": "RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+    },
+    {
+      "case": "X1 symlink -> /proc/self/root<lane>/tool, abs token, P digest",
+      "tool": "cand",
+      "exit": 0,
+      "signal": null,
+      "line": "RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0"
+    },
+    {
+      "case": "X2 symlink -> nonexistent outside path, abs token",
+      "tool": "base",
+      "exit": 1,
+      "signal": null,
+      "line": "RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+    },
+    {
+      "case": "X2 symlink -> nonexistent outside path, abs token",
+      "tool": "cand",
+      "exit": 2,
+      "signal": null,
+      "line": "RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT r.txt instrument is a symlink at d45fd415bb2dbd1530bda4240d4e872a59df3bea: scripts/gone-1455d14d.mjs"
+    },
+    {
+      "case": "X3 symlink -> relative escape, abs token, EXT digest",
+      "tool": "base",
+      "exit": 1,
+      "signal": null,
+      "line": "RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+    },
+    {
+      "case": "X3 symlink -> relative escape, abs token, EXT digest",
+      "tool": "cand",
+      "exit": 0,
+      "signal": null,
+      "line": "RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1"
+    },
+    {
+      "case": "X4 symlink -> relative escape, rel token, EXT digest",
+      "tool": "base",
+      "exit": 1,
+      "signal": null,
+      "line": "RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+    },
+    {
+      "case": "X4 symlink -> relative escape, rel token, EXT digest",
+      "tool": "cand",
+      "exit": 2,
+      "signal": null,
+      "line": "RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT r.txt instrument is a symlink at d45fd415bb2dbd1530bda4240d4e872a59df3bea: scripts/relout-1455d14d.mjs"
+    },
+    {
+      "case": "X5 --lane via symlink, abs token on the real path, P digest",
+      "tool": "base",
+      "exit": 2,
+      "signal": null,
+      "line": "RECEIPT_BIND: FAIL-CLOSED LANE_UNREADABLE /fast/scratch/hyaku/kumitate-r89/K89Sentinel/att/lanelink-1455d14d is not a directory"
+    },
+    {
+      "case": "X5 --lane via symlink, abs token on the real path, P digest",
+      "tool": "cand",
+      "exit": 2,
+      "signal": null,
+      "line": "RECEIPT_BIND: FAIL-CLOSED LANE_UNREADABLE /fast/scratch/hyaku/kumitate-r89/K89Sentinel/att/lanelink-1455d14d is not a directory"
+    },
+    {
+      "case": "X6 --lane via symlink, abs token on the LINK path, P digest",
+      "tool": "base",
+      "exit": 2,
+      "signal": null,
+      "line": "RECEIPT_BIND: FAIL-CLOSED LANE_UNREADABLE /fast/scratch/hyaku/kumitate-r89/K89Sentinel/att/lanelink-1455d14d is not a directory"
+    },
+    {
+      "case": "X6 --lane via symlink, abs token on the LINK path, P digest",
+      "tool": "cand",
+      "exit": 2,
+      "signal": null,
+      "line": "RECEIPT_BIND: FAIL-CLOSED LANE_UNREADABLE /fast/scratch/hyaku/kumitate-r89/K89Sentinel/att/lanelink-1455d14d is not a directory"
+    },
+    {
+      "case": "X7 /proc/self/fd/3 -> dirty worktree tool, R digest",
+      "tool": "base",
+      "exit": 0,
+      "signal": null,
+      "line": "RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1"
+    },
+    {
+      "case": "X7 /proc/self/fd/3 -> dirty worktree tool, R digest",
+      "tool": "cand",
+      "exit": 1,
+      "signal": null,
+      "line": "RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+    },
+    {
+      "case": "X8 /proc/self/fd/3 -> outside file, EXT digest",
+      "tool": "base",
+      "exit": 0,
+      "signal": null,
+      "line": "RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1"
+    },
+    {
+      "case": "X8 /proc/self/fd/3 -> outside file, EXT digest",
+      "tool": "cand",
+      "exit": 0,
+      "signal": null,
+      "line": "RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1"
+    },
+    {
+      "case": "X9 /proc/self/fd/3 -> dirty worktree tool, P digest",
+      "tool": "base",
+      "exit": 1,
+      "signal": null,
+      "line": "RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=1 first=r.txt"
+    },
+    {
+      "case": "X9 /proc/self/fd/3 -> dirty worktree tool, P digest",
+      "tool": "cand",
+      "exit": 0,
+      "signal": null,
+      "line": "RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0"
+    }
+  ]
+}

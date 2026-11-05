@@ -1,0 +1,31 @@
+ARM usage: PASS exit=64
+ARM selftest: PASS exit=0 RECEIPT_BIND_SELFTEST: PASS held=0/0 (oracle: no behaviour implemented)
+ARM detect-r86: PASS exit=1 RECEIPT_BIND: DRIFT matched=1 mismatched=9 unchecked=0 external=0 first=r.txt
+ARM detect-r86-renamed: FAIL files=10 exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label '9f709a48f2a5'
+ARM clean-r87: FAIL copied=11 exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label '7e8ca2dbe7d5'
+ARM unchecked: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label 'e88c86c06349'
+ARM unresolved: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label 'b6a932f91599'
+ARM dir-missing: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED DIR_UNREADABLE absent-1cbd8c30fc51-dir (arm-derived verdict)
+ARM rev-bad: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label '4ebe4910120a'
+ARM symlink-receipt: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label '8795806b9fce'
+ARM rev-receipt-wins: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label '14860c12a631'
+ARM worktree-forgery: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label '03e41d283cc0'
+ARM default-rev: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label 'ef9c6199df4a'
+ARM rev-receipt-negative: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label 'f6e370786f42'
+ARM untracked-instrument: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label 'd30030a277f9'
+ARM escape-relative: FAIL relative exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label 'cf75f0f76eb3' | absolute exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label '3b2c1f7b8918'
+ARM symlink-dir: FAIL link exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label '87ebb8226640' | real exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label 'f638f2dd673c'
+ARM oversize: FAIL 2MiB exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label '6995bd58b0f7' | 512KiB exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label '3bef4fd7127d'
+ARM duplicate-field: FAIL dup-cmd exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label 'c8c6bfa56a46' | dup-cmd-equal exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label '803a8f09870a' | dup-digest exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label '6fb5885a0994' | dup-rev exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label '00d6cc22b51b' | single exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label 'dcd2081b9fb1'
+ARM sweep: FAIL scripts=33 clean exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label '69c8d96d50cc' | flip=s-cite-sources.mjs.txt exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label '69c8d96d50cc'
+ARM default-rev-not-head: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label 'b1925fbb7e1f'
+ARM index-not-judged: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label 'e88897b353b4'
+ARM abs-in-lane-at-rev: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label 'b5c5cce81033'
+ARM limit-edge: FAIL edge 1048576 exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label 'dd9aff82488b' | over 1048577 exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label '30577fbcd39a'
+ARM limit-before-read: FAIL size=1073741824 exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label 'd2f8e3e833c2'
+ARM escape-inner-dotdot: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label 'cec57713c05f'
+ARM dup-equal-field: FAIL dup-rev-equal exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label '645cdae02d87' | dup-digest-equal exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label '2cd0d5e5f197'
+ARM alias-proc-root: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label '713c9dde55a8'
+ARM bom-rev: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label '2b18aa476fd3'
+ARM symlink-instrument: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL unknown fixture label 'da81468e3c11'
+C89_C1: UNMET held=4/30

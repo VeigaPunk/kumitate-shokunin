@@ -1,0 +1,10 @@
+--- candidate-v3.mjs	2026-11-04 21:05:59.673250076 -0300
++++ mutants/selftest-drop-dup-equal-arm.mjs	2026-11-04 21:07:51.036501276 -0300
+@@ -660,7 +660,6 @@
+   expect('ambiguous-cmd-differing', runTool(['--dir', rcDupCmd, '--rev', c2]), 2, FC('AMBIGUOUS_FIELD'));
+   expect('ambiguous-cmd-equal', runTool(['--dir', rcDupCmdEqual, '--rev', c2]), 2, FC('AMBIGUOUS_FIELD'));
+   expect('ambiguous-tool-sha256', runTool(['--dir', rcDupDigest, '--rev', c2]), 2, FC('AMBIGUOUS_FIELD'));
+-  expect('ambiguous-rev-equal', runTool(['--dir', rcDupRev, '--rev', c2]), 2, FC('AMBIGUOUS_FIELD'));
+   expect('ambiguous-rev-differing', runTool(['--dir', rcDupRevDiffer, '--rev', c2]), 2, FC('AMBIGUOUS_FIELD'));
+   expect('ambiguous-cmd-not-unchecked', runTool(['--dir', rcDupCmdNoDigest, '--rev', c2]), 2, FC('AMBIGUOUS_FIELD'));
+   expect('ambiguous-among-clean', runTool(['--dir', rcDupAmongClean, '--rev', c2]), 2, FC('AMBIGUOUS_FIELD'));

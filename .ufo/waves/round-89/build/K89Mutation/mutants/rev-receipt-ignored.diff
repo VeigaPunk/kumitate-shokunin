@@ -1,0 +1,11 @@
+--- candidate-v3.mjs	2026-11-04 21:05:59.673250076 -0300
++++ mutants/rev-receipt-ignored.mjs	2026-11-04 21:07:51.033449851 -0300
+@@ -297,7 +297,7 @@
+     const revField = field('rev');
+     if (revField !== null) {
+       if (!FULL_REV.test(revField)) throw new FailClosed('REV_UNRESOLVED', `${file} rev=${JSON.stringify(revField)} is not 40 lowercase hex`);
+-      receiptRev = revField;
++      receiptRev = rev;
+       if (!revOk(receiptRev)) throw new FailClosed('REV_UNRESOLVED', `${file} rev=${receiptRev} is not a commit in ${lane}`);
+     }
+ 

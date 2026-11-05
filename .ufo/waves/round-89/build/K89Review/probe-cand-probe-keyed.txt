@@ -1,0 +1,32 @@
+ARM usage: PASS exit=64
+ARM selftest: PASS exit=0 RECEIPT_BIND_SELFTEST: PASS
+ARM detect-r86: PASS exit=1 RECEIPT_BIND: DRIFT matched=1 mismatched=9 unchecked=0 external=0 first=r.txt
+ARM detect-r86-renamed: PASS files=10 exit=1 RECEIPT_BIND: DRIFT matched=1 mismatched=9 unchecked=0 external=0 first=r.txt
+ARM clean-r87: PASS copied=11 exit=0 RECEIPT_BIND: CLEAN matched=11 mismatched=0 unchecked=0 external=0
+ARM unchecked: PASS exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=0 unchecked=1 external=0 first=u.txt
+ARM unresolved: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED keyed
+ARM dir-missing: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED DIR_UNREADABLE keyed
+ARM rev-bad: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED REV_UNRESOLVED keyed
+ARM symlink-receipt: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_RECEIPT keyed
+ARM rev-receipt-wins: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM worktree-forgery: PASS exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+ARM default-rev: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM rev-receipt-negative: PASS exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+ARM untracked-instrument: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED keyed
+ARM escape-relative: PASS relative exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE keyed | absolute exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+ARM symlink-dir: PASS link exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_DIR keyed | real exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM oversize: PASS 2MiB exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE keyed | 512KiB exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM duplicate-field: PASS dup-cmd exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD keyed | dup-cmd-equal exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD keyed | dup-digest exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD keyed | dup-rev exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD keyed | single exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM sweep: PASS scripts=33 clean exit=0 RECEIPT_BIND: CLEAN matched=33 mismatched=0 unchecked=0 external=0 | flip=s-cite-sources.mjs.txt exit=1 RECEIPT_BIND: DRIFT matched=32 mismatched=1 unchecked=0 external=0 first=s-cite-sources.mjs.txt
+ARM default-rev-not-head: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM index-not-judged: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM abs-in-lane-at-rev: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM limit-edge: PASS edge 1048576 exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | over 1048577 exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE keyed
+ARM limit-before-read: PASS size=1073741824 exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE keyed
+ARM escape-inner-dotdot: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE keyed
+ARM dup-equal-field: PASS dup-rev-equal exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD keyed | dup-digest-equal exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD keyed
+ARM alias-proc-root: PASS exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+ARM bom-rev: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM symlink-instrument: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT keyed
+C89_C1: HELD held=30/30
+exit=0

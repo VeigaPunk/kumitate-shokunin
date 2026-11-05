@@ -292,12 +292,12 @@ The K census decision supplies both members and findings; the score is now
 
 <!-- kumitate-proxy-v1
 A=36
-A_wave=1112
+A_wave=1210
 C=46
 C1=19
 C1_total=19
-C2=224
-C2_total=224
+C2=227
+C2_total=227
 S_members=88
 S_sections=88
 R_members=92
@@ -328,14 +328,14 @@ pin.anchor-truth=43c37865a5b3ea5912c5be0e1243fa222642b6be0ef6a1103ee03a287614b23
 pin.sources-check=5402b2103bb9e3ccd76f7bf3f5880f2249f809c78cee4766a75e3cf30b69f434
 pin.wave-census=76447250f9de1f7e9258d0dfe9544feba18d6c8723db37e77e6ca422235f45f4
 pin.gate-mutants=177f6cbbd70d7503263d00c77357893658a0e393ac722d43034ebd7e429bb717
-pin.omp-census=f6ace3e2d451e20ff5f7f6f0a41aae98296952ae549b03e6ecb3d15bccbf1e45
+pin.omp-census=a080652c7bc3beb638349e2a15bfb069e7a42f5d2dd474c9fd6860d1e2bee208
 pin.omp-shape=8b6aaa79e24fc56f39afdff6488aadeffe909f4e58f6de03f32901333263dae7
 pin.cap-run=e1d0a79b0c38a5d1d60ccba37ab7dd0528d1ee63982aae3213e28572a8d754c5
 pin.bind-oracle=c3929a97c5b24303b1acadb62ebaa4778768585597cf7fc06d2996602ec211e5
 pin.cap-spawn=1fde43fb7f68992fb5e692188cd9afd3581d1d16c720815adc8d3a1ca3c734d0
 pin.counter-rerun=c002523fc39b521f57a3ee86c3ff154e06aea8ccd6738501138460141abc369b
 pin.receipt-attest=ba5139b1290b204054c043df3140554757116e6fbaf19783b502a24ed1b2ce31
-pin.receipt-bind=1f11f124198fdb894265dc69a75efeca5fbf43d931209d227b2bc1b29e5880ea
+pin.receipt-bind=37201ad0c6acd4c51b8804fa66ac9606469a181891dbed1d5ee46c56176e1bb3
 pin.counter-pins=060d5d8662701340da24f483316053be86bed246510c541a0518492e7b29028e
 pin.source-capture=39bdeb39298672dd3ed81036013de542ad6925587cb84f330ab69de6799d28f5
 pin.source-dupes=ead88b22fbd1525d13dd46c67b427041dc331d202a005285adea813c32530d7a
@@ -352,7 +352,7 @@ pin.control-replay=22bd0e31a74f4a58e3303f145d9f88e2ff89d890f21588b4ae2879d4a0e39
 pin.harm-matrix=ab123486e2fd753fc2df10d207b2d92a3759838bd3f31370402717de493f7c38
 pin.routed-ledger=05aacb5ede6b3389a693bb71c6c1cb74281f8bab9b5bf2309027dd97d83913b1
 pin.ready-handoff=d6e6ba8a20a02ce233707a8444a2d1404cd0abe08d77595248e26cb876136a53
-pin.spotcheck-adopt=e2b0f0decace6383983571bbc200c25cc9a7b20216ac79f42397884ad6887346
+pin.spotcheck-adopt=b359a24c968d87c29d9668928278c27d99d86dac0489f2609745c7b8e77f5b97
 pin.counter-receipt=e95313700aaf8430c51e0f8abdb991ab168519eecf9803cce3fac51154f31069
 -->
 
@@ -4338,3 +4338,26 @@ membership); LOW-MED: a UTF-8 BOM hides a receipt's `rev=` (`w1/K88Review.md`). 
 S124, S041, S237; `w1/K88ExecCarry.md`). (5) `ready-handoff` relative-path rule for item text. (6) Carried:
 spotcheck-adopt selftest 33/34 and conflation, `K_findings`, `POINTER_DEAD`, cite-check debt, round-gate
 row/LOG line format for rounds 87–88, receipt-evidence overlap.
+
+## Round 89 — declaration (2026-11-04)
+
+One claim: **C1 operability** (lowest non-retired axis; integer 9, terminal under `f_O`), capability
+acquisition `receipt-bind` v3 (contract `kumitate-receipt-bind-v3`). The stagnation nudge is active
+(saturation line 9, window N = 3, last verified capability row `counter-receipt` v3 in round 86), so
+the round is a capability move and the axis is named by the surface it changes: a runnable gate.
+
+Motivating evidence: rounds 87 and 88 both lost this capability to the same frozen kill rule — a seat
+construction reached the terminal score while skipping a claimed behaviour (round-87
+`cand-a-worktree` 12/12; round-88 nine constructions at 20/20,
+`.ufo/waves/round-88/build/K88Critic/SCORES.md`), although round 88's own off-probe table proved the
+instrument stronger than its scorer (`build/K88Critic/discriminate.mjs`).
+
+Frozen at `adfc2f55675f760eaf8b59f80033f926500cd951` (plan, 30-arm probe, control generators) and
+`9c3b64e44024869937a827d588fe1b75e6692ef7` (wave spec + validated dispatch). Predicate:
+`node .ufo/waves/round-89/probe/probe89-c1.mjs --lane <LANE> --work <SCRATCH> --rev <REV>` prints
+`C89_C1: HELD held=30/30` exit 0. Kill rule: any control — committed, the worktree twin of the
+integrated instrument, or a seat-constructed tool that skips a claimed behaviour — at 30/30 makes C1
+UNMET. Pre-data controls committed at `adfc2f55` (22 controls): v2 27/30, v2 worktree twin 14/30,
+refuse-all 2/30, and every one of the nine round-88 constructions below terminal (17–26/30). The
+instrument integrates at the seat candidate `37201ad0…` (selftest 59 → 68 arms). No second claim, no
+exploratory claim.

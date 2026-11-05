@@ -1,0 +1,11 @@
+--- candidate-v3.mjs	2026-11-04 21:05:59.673250076 -0300
++++ mutants/limit-lstat-ge.mjs	2026-11-04 21:07:51.032449849 -0300
+@@ -265,7 +265,7 @@
+     try { st = lstatSync(path); } catch (e) { throw new FailClosed('RECEIPT_UNREADABLE', `${path} (${e.code || 'lstat failed'})`); }
+     if (st.isSymbolicLink()) throw new FailClosed('SYMLINK_RECEIPT', path);
+     if (!st.isFile()) throw new FailClosed('RECEIPT_UNREADABLE', `${path} is not a regular file`);
+-    if (st.size > MAX_RECEIPT_BYTES) throw new FailClosed('RECEIPT_TOO_LARGE', `${path} is ${st.size} bytes (limit ${MAX_RECEIPT_BYTES})`);
++    if (st.size >= MAX_RECEIPT_BYTES) throw new FailClosed('RECEIPT_TOO_LARGE', `${path} is ${st.size} bytes (limit ${MAX_RECEIPT_BYTES})`);
+ 
+     // Read from ONE descriptor (v3): the regular-file and size checks are re-asserted on the opened
+     // file, so a path swapped between the lstat above and this read cannot substitute another file.

@@ -1,0 +1,11 @@
+--- candidate-v3.mjs	2026-11-04 21:05:59.673250076 -0300
++++ mutants/git-env-drop-off.mjs	2026-11-04 21:07:51.036501276 -0300
+@@ -124,7 +124,7 @@
+ 
+ function gitEnv(extra) {
+   const env = { ...process.env, ...(extra || {}) };
+-  for (const k of GIT_ENV_DROP) delete env[k];
++  for (const k of []) delete env[k];
+   env.GIT_TERMINAL_PROMPT = '0';
+   return env;
+ }

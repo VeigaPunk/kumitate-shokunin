@@ -1,0 +1,10 @@
+--- candidate-v3.mjs	2026-11-04 21:05:59.673250076 -0300
++++ mutants/selftest-drop-external-symlink-arm.mjs	2026-11-04 21:07:51.036501276 -0300
+@@ -560,7 +560,6 @@
+   expect('symlink-instrument-120000', runTool(['--dir', rcSymlinkInstrument, '--rev', c3]), 2, FC('SYMLINK_INSTRUMENT'));
+   expect('symlink-instrument-twin-target-binds', runTool(['--dir', rcSymlinkInstrumentTwin, '--rev', c3]), 0, CLE(1));
+   expect('symlink-instrument-absolute-token', runTool(['--dir', rcSymlinkInstrumentAbs, '--rev', c3]), 2, FC('SYMLINK_INSTRUMENT'));
+-  expect('symlink-instrument-external', runTool(['--dir', rcExtLink, '--rev', c2]), 2, FC('SYMLINK_INSTRUMENT'));
+   expect('receipt-is-directory', runTool(['--dir', rcDirReceipt, '--rev', c2]), 2, FC('RECEIPT_UNREADABLE'));
+   expect('unresolved-instrument', runTool(['--dir', rcUnresolved, '--rev', c2]), 2, FC('UNRESOLVED'));
+   expect('unresolved-directory-instrument', runTool(['--dir', rcDirInstrument, '--rev', c2]), 2, FC('UNRESOLVED'));

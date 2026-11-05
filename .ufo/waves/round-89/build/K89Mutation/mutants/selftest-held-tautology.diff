@@ -1,0 +1,11 @@
+--- candidate-v3.mjs	2026-11-04 21:05:59.673250076 -0300
++++ mutants/selftest-held-tautology.mjs	2026-11-04 21:07:51.036501276 -0300
+@@ -680,7 +680,7 @@
+   const rcDirty = mkdir({ 'a.txt': body(c2, sha256(readFileSync(join(repo, 'scripts', 'alpha.mjs'))), 'node scripts/alpha.mjs') });
+   expect('worktree-bytes-not-truth', runTool(['--dir', rcDirty, '--rev', c2]), 1, DRI(0, 1, 0, 0, 'a.txt'));
+ 
+-  const held = results.filter((r) => r.ok).length;
++  const held = results.length;
+   for (const r of results) out(`RECEIPT_BIND_SELFTEST arm ${r.name} ${r.ok ? 'ok' : 'FAIL'} ${r.detail}\n`);
+   if (held === results.length) {
+     out(`RECEIPT_BIND_SELFTEST: PASS held=${held}/${results.length}\n`);

@@ -1,0 +1,11 @@
+--- candidate-v3.mjs	2026-11-04 21:05:59.673250076 -0300
++++ mutants/rev-bad-default-off.mjs	2026-11-04 21:07:51.030449844 -0300
+@@ -243,7 +243,7 @@
+   // resolved is fail-closed even when every receipt happens to carry its own rev= or an external
+   // instrument, so "no receipts bound at this rev" can never be mistaken for a clean directory.
+   const revOk = revResolver(lane);
+-  if (!revOk(rev)) throw new FailClosed('REV_UNRESOLVED', `--rev ${rev} is not a commit in ${lane}`);
++  if (false) throw new FailClosed('REV_UNRESOLVED', `--rev ${rev} is not a commit in ${lane}`);
+ 
+   let entries;
+   let dirStat;

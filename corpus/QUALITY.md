@@ -1407,3 +1407,37 @@ Q39–Q41 were added in round 50 (r49 verifier-spotcheck defects 4–5 and the R
   judged revision differ from HEAD and from the index, put an absolute in-lane token in front of a
   dirty worktree, test each size/duplicate/escape boundary at its edge from both sides, and draw
   fixture bytes and names at run time.
+
+### Q82 — a capability scorer may not hand the candidate its own fixture's identity (round 89)
+
+- **Rule.** A scorer that reads only the candidate's stdout and exit code must not pass the candidate
+  an argument from which the expected verdict can be read off (a fixture directory named after the
+  arm, a file named after the behaviour, a constant body). If it does, a tool that computes nothing
+  reaches the terminal score, and the score measures the scorer, not the capability. Where an arm's
+  fixture has a *shape* (a bare-filename symlink target, a literal `/proc/self/root` prefix, one
+  leading U+FEFF), the arm must carry a **positive twin** that the same shape test gets wrong, so a
+  textual special case cannot pass.
+- **Grounding.** Round 89's frozen 30-arm scorer scored the lane's own v3 instrument 30/30 — and also
+  scored `cand-probe-keyed.mjs` 30/30: a tool that reads the `--dir` basename (`<arm>-<12 hex>`),
+  prints the verdict line that arm expects and computes nothing
+  (`.ufo/waves/round-89/build/K89Review/probe-cand-probe-keyed.txt`, re-run by the L1). A second
+  construction, `cand-skip-mode.mjs` (a textual `/proc/self/root` prefix strip and a blob-shape test
+  in place of the git mode test), also reached 30/30 (`probe-cand-skip-mode.txt`). Both are the
+  round-88 kill-rule class one level up: the scorer's fixtures are the defect, not the instrument.
+- **Who checks.** The L1 before freezing (a control that scores terminal by skipping everything), and
+  a reviewer seat that must attempt the probe-keyed construction explicitly.
+- **Field.** The scorer's fixture paths must not encode the arm; every shape-gated arm carries a twin
+  that breaks the shape; the scorer's own docstring names the fixture it actually builds.
+- **Command.** `node .ufo/waves/round-89/probe/probe89-c1.mjs --lane . --work "$HYAKU_SCRATCH/x" --rev <rev> --tool <probe-keyed construction>` — must print `C89_C1: UNMET`.
+- **Fails when.** Any construction that skips a claimed behaviour prints the terminal line, or a
+  shape-gated arm has no twin.
+- **Shown able to fail.** The probe-keyed construction prints `C89_C1: HELD held=30/30` exit 0
+  (round-89 finding, unedited probe; the defect is the arm fixtures, not the instrument). The positive
+  direction is round 89's own instrument: on the reviewer's D1 (a committed mode-120000 symlink whose
+  target has a space) and D3 (an in-lane instrument through a symlinked ancestor, dirty worktree) the
+  instrument answers `SYMLINK_INSTRUMENT` and `CLEAN` where both constructions answer `CLEAN` and
+  `DRIFT external=1` (`.ufo/waves/round-89/build/K89Review/demos.txt`).
+- **Limit.** The rule binds the scorer, not the instrument: it says nothing about whether the
+  instrument is right, and a scorer that satisfies it can still be blind to a behaviour nobody
+  thought to arm. Round 89's own probe remains the counter of record for its claim and is not edited
+  after data.

@@ -2,7 +2,7 @@
 /**
  * receipt-bind.mjs — bind every close receipt in a directory to the instrument its own
  * `cmd=` names, at a judged revision.
- * Contract: kumitate-receipt-bind-v2 (round 88; v1 round 87, capability `receipt-bind`).
+ * Contract: kumitate-receipt-bind-v3 (round 89; v2 round 88, v1 round 87, capability `receipt-bind`).
  *
  *   node scripts/receipt-bind.mjs --dir <receipt-dir> --rev <40-hex> [--lane <dir>] [--json]
  *   node scripts/receipt-bind.mjs --selftest [--work <dir>]
@@ -29,8 +29,8 @@
  *          `unchecked`: a receipt that binds nothing is not clean), or a digest is present but is
  *          not a sha256, or the directory holds no `.txt` receipt at all. exit 1.
  *   FAIL-CLOSED  DIR_UNREADABLE | SYMLINK_DIR | SYMLINK_RECEIPT | RECEIPT_UNREADABLE | RECEIPT_TOO_LARGE |
- *          AMBIGUOUS_FIELD | REV_UNRESOLVED | UNRESOLVED | ESCAPES_LANE | LANE_UNREADABLE | LANE_NOT_GIT |
- *          INTERNAL. exit 2.
+ *          AMBIGUOUS_FIELD | SYMLINK_INSTRUMENT | REV_UNRESOLVED | UNRESOLVED | ESCAPES_LANE |
+ *          LANE_UNREADABLE | LANE_NOT_GIT | INTERNAL. exit 2.
  *
  * v2 boundaries (round 88; the round-87 sentinel's fail-open rows 1e, 2a/2d, 3c/3d, 4):
  *   ESCAPES_LANE       a RELATIVE instrument token that resolves outside --lane. Only an ABSOLUTE
@@ -40,6 +40,22 @@
  *   AMBIGUOUS_FIELD    more than one `cmd=`, `tool_sha256=` or `rev=` line in one receipt (equal
  *                      values included): first-wins would let an appended line change nothing visibly.
  *   usage  exit 64.
+ *
+ * v3 boundaries (round 89; the round-88 reviewer's MED/LOW-MED rows and the sentinel's TOCTOU row):
+ *   lane membership    an ABSOLUTE instrument token is judged inside/outside the lane on REAL paths:
+ *                      the token's parent directory and the lane are resolved (the final component
+ *                      is not followed), so /proc/self/root<lane>/scripts/x.mjs is the lane's own
+ *                      instrument and is hashed at the judged revision; a token whose parent is absent
+ *                      keeps its lexical judgement. A genuinely outside absolute token stays a counted external.
+ *   SYMLINK_INSTRUMENT an in-lane instrument whose blob at the judged revision is a mode-120000
+ *                      symlink, or an external disk instrument whose named path is a symlink
+ *                      (lstat), is fail-closed: `cat-file blob` returns the LINK TEXT, so hashing
+ *                      it binds sha256(<target string>) while the executed content is the target's.
+ *   BOM                one leading U+FEFF is stripped from the receipt text before field parsing,
+ *                      so a byte-order mark cannot hide `rev=`.
+ *   receipt read       the receipt is opened O_RDONLY|O_NOFOLLOW and fstat'ed and read from that
+ *                      one descriptor (closed in a finally), so a path swapped between the lstat
+ *                      above and the read cannot substitute another file; verdicts are unchanged.
  *
  * Output, text mode, one line on stdout:
  *   RECEIPT_BIND: CLEAN matched=<n> mismatched=0 unchecked=0 external=<e>
@@ -51,20 +67,22 @@
  * Declared limits: the pair is read as text, so a receipt that names an instrument without ever
  * running it still binds when its digest equals those bytes — the tool checks the claim, not the
  * history of the run; only `*.txt` files directly under --dir are receipts (subdirectories are not
- * walked, other suffixes are ignored); an external instrument reached through a symlink is hashed
- * through the link; `cmd=` tokens after the instrument are not inspected; a `cmd=` whose second
- * token is a flag rather than a program fails closed as UNRESOLVED (it names no instrument).
+ * walked, other suffixes are ignored); an external instrument whose named path is a symlink is
+ * refused (SYMLINK_INSTRUMENT), never hashed through the link; `cmd=` tokens after the instrument
+ * are not inspected; a `cmd=` whose second token is a flag rather than a program fails closed as
+ * UNRESOLVED (it names no instrument).
  */
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import {
-  lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, symlinkSync, writeFileSync, writeSync,
+  closeSync, constants as fsConstants, existsSync, fstatSync, lstatSync, mkdirSync, mkdtempSync,
+  openSync, readFileSync, readdirSync, realpathSync, rmSync, symlinkSync, writeFileSync, writeSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { isAbsolute, join, relative, resolve, sep } from 'node:path';
+import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const CONTRACT = 'kumitate-receipt-bind-v2';
+const CONTRACT = 'kumitate-receipt-bind-v3';
 const MAX_RECEIPT_BYTES = 1048576;
 const SELF = fileURLToPath(import.meta.url);
 const FULL_REV = /^[a-f0-9]{40}$/;
@@ -89,13 +107,15 @@ contract ${CONTRACT}
   --selftest   hermetic fixtures under --work (its own git init repo); needs no lane
 
 Lane-relative and lane-absolute instruments are hashed from git cat-file blob <rev>:<path>; an
-absolute instrument outside the lane is hashed from the file on disk and counted external=.
+absolute instrument outside the lane (judged on real paths) is hashed from the file on disk and
+counted external=. A mode-120000 instrument at the rev, or a symlinked external instrument, is
+fail-closed SYMLINK_INSTRUMENT. One leading UTF-8 BOM on a receipt is ignored.
 
 exit 0   RECEIPT_BIND: CLEAN matched=<n> mismatched=0 unchecked=0 external=<e>
 exit 1   RECEIPT_BIND: DRIFT matched=<n> mismatched=<m> unchecked=<u> external=<e> first=<file>
 exit 2   RECEIPT_BIND: FAIL-CLOSED <TOKEN>[ detail]
          DIR_UNREADABLE SYMLINK_DIR SYMLINK_RECEIPT RECEIPT_UNREADABLE RECEIPT_TOO_LARGE AMBIGUOUS_FIELD
-         REV_UNRESOLVED UNRESOLVED ESCAPES_LANE LANE_UNREADABLE LANE_NOT_GIT INTERNAL
+         SYMLINK_INSTRUMENT REV_UNRESOLVED UNRESOLVED ESCAPES_LANE LANE_UNREADABLE LANE_NOT_GIT INTERNAL
 exit 64  usage
 `;
 
@@ -215,6 +235,9 @@ function bind({ dir, rev, laneArg, json }) {
   try { laneStat = lstatSync(lane); } catch { throw new FailClosed('LANE_UNREADABLE', lane); }
   if (!laneStat.isDirectory()) throw new FailClosed('LANE_UNREADABLE', `${lane} is not a directory`);
   if (git(lane, ['rev-parse', '--git-dir']).status !== 0) throw new FailClosed('LANE_NOT_GIT', lane);
+  // Lane membership is judged on REAL paths (v3): /proc/self/root<lane> is the lane itself.
+  let laneReal = lane;
+  try { laneReal = realpathSync(lane); } catch { /* keep the lexical path */ }
 
   // The default revision is judged before any receipt is read: a run whose default cannot be
   // resolved is fail-closed even when every receipt happens to carry its own rev= or an external
@@ -244,8 +267,26 @@ function bind({ dir, rev, laneArg, json }) {
     if (!st.isFile()) throw new FailClosed('RECEIPT_UNREADABLE', `${path} is not a regular file`);
     if (st.size > MAX_RECEIPT_BYTES) throw new FailClosed('RECEIPT_TOO_LARGE', `${path} is ${st.size} bytes (limit ${MAX_RECEIPT_BYTES})`);
 
+    // Read from ONE descriptor (v3): the regular-file and size checks are re-asserted on the opened
+    // file, so a path swapped between the lstat above and this read cannot substitute another file.
     let text;
-    try { text = readFileSync(path, 'utf8'); } catch (e) { throw new FailClosed('RECEIPT_UNREADABLE', `${path} (${e.code || 'read failed'})`); }
+    let fd = null;
+    try {
+      fd = openSync(path, fsConstants.O_RDONLY | fsConstants.O_NOFOLLOW);
+      const fst = fstatSync(fd);
+      if (!fst.isFile()) throw new FailClosed('RECEIPT_UNREADABLE', `${path} is not a regular file`);
+      if (fst.size > MAX_RECEIPT_BYTES) {
+        throw new FailClosed('RECEIPT_TOO_LARGE', `${path} is ${fst.size} bytes (limit ${MAX_RECEIPT_BYTES})`);
+      }
+      text = readFileSync(fd, 'utf8');
+    } catch (e) {
+      if (e instanceof FailClosed) throw e;
+      throw new FailClosed('RECEIPT_UNREADABLE', `${path} (${e.code || 'read failed'})`);
+    } finally {
+      if (fd !== null) { try { closeSync(fd); } catch { /* already closed */ } }
+    }
+    // One leading UTF-8 BOM is a signature, not content (v3): it must not hide `rev=`.
+    text = text.replace(/^\uFEFF/, '');
     const field = (key) => {
       const all = [...text.matchAll(new RegExp(`^${key}=(.*)$`, 'gm'))];
       if (all.length > 1) throw new FailClosed('AMBIGUOUS_FIELD', `${file} carries ${all.length} ${key}= lines`);
@@ -285,7 +326,14 @@ function bind({ dir, rev, laneArg, json }) {
     let fromDisk = false;
     if (isAbsolute(instrument)) {
       abs = resolve(instrument);
-      const lr = laneRel(lane, abs);
+      // Membership on REAL paths (v3): an alias such as /proc/self/root<lane> is IN the lane even
+      // though it is lexically outside it. Only the parent directory is resolved: the final component
+      // is the instrument's own identity, so an in-lane SYMLINK named by the token stays a symlink
+      // (SYMLINK_INSTRUMENT) instead of being followed to its target. A token whose parent is absent
+      // on disk keeps the lexical judgement; the blob read decides.
+      let absReal = null;
+      try { absReal = join(realpathSync(dirname(abs)), basename(abs)); } catch { /* parent absent */ }
+      const lr = absReal !== null ? laneRel(laneReal, absReal) : laneRel(lane, abs);
       if (lr.root) throw new FailClosed('UNRESOLVED', `${file} instrument names the lane root: ${instrument}`);
       if (lr.inside) rel = lr.rel; else fromDisk = true;
     } else {
@@ -298,9 +346,21 @@ function bind({ dir, rev, laneArg, json }) {
 
     let bytes;
     if (fromDisk) {
+      // An external instrument named through a symlink is refused (v3): the link is what the
+      // receipt named, and hashing through it would launder the target's identity.
+      let est;
+      try { est = lstatSync(abs); } catch (e) { throw new FailClosed('UNRESOLVED', `${file} external instrument unreadable: ${abs} (${e.code || 'lstat failed'})`); }
+      if (est.isSymbolicLink()) throw new FailClosed('SYMLINK_INSTRUMENT', `${file} external instrument is a symlink: ${abs}`);
       try { bytes = readFileSync(abs); } catch (e) { throw new FailClosed('UNRESOLVED', `${file} external instrument unreadable: ${abs} (${e.code || 'read failed'})`); }
       external += 1;
     } else {
+      // A mode-120000 instrument is a symlink (v3): `cat-file blob` returns its TARGET STRING, so
+      // the digest would bind the link text while the executed content is the target's.
+      const lsTree = git(lane, ['ls-tree', receiptRev, '--', rel]);
+      const mode = lsTree.status === 0 ? (lsTree.stdout.trim().split(/\s+/)[0] || '') : '';
+      if (mode === '120000') {
+        throw new FailClosed('SYMLINK_INSTRUMENT', `${file} instrument is a symlink at ${receiptRev}: ${rel}`);
+      }
       bytes = blobAt(lane, receiptRev, rel);
       if (bytes === null) throw new FailClosed('UNRESOLVED', `${file} instrument absent at ${receiptRev}: ${rel}`);
     }
@@ -372,7 +432,11 @@ function runSelftest(root) {
   writeFileSync(join(repo, 'scripts', 'alpha.mjs'), 'export const alpha = 2;\n');
   if (g(['add', '-A']).status !== 0 || g(commitArgs('c2')).status !== 0) return fixtureFail('commit c2');
   const c2 = g(['rev-parse', 'HEAD']).stdout.trim();
-  if (!FULL_REV.test(c1) || !FULL_REV.test(c2) || c1 === c2) return fixtureFail('commit ids');
+  // c3 adds a committed symlink instrument (git mode 120000) for the SYMLINK_INSTRUMENT cases.
+  symlinkSync('alpha.mjs', join(repo, 'scripts', 'link.mjs'));
+  if (g(['add', 'scripts/link.mjs']).status !== 0 || g(commitArgs('c3')).status !== 0) return fixtureFail('commit c3');
+  const c3 = g(['rev-parse', 'HEAD']).stdout.trim();
+  if (!FULL_REV.test(c1) || !FULL_REV.test(c2) || c1 === c2 || c2 === c3) return fixtureFail('commit ids');
 
   const blob = (rev, rel) => {
     const r = g(['cat-file', 'blob', `${rev}:${rel}`], true);
@@ -387,6 +451,8 @@ function runSelftest(root) {
   mkdirSync(outside, { recursive: true });
   const extPath = join(outside, 'tool.sh');
   writeFileSync(extPath, '#!/bin/sh\necho outside\n');
+  const extLink = join(outside, 'tool-link.sh');
+  symlinkSync('tool.sh', extLink);
 
   const body = (rev, digest, cmd) => `rev=${rev}\ntool_sha256=${digest}\ncmd=${cmd}\nexit=0\nsignal=none\n`;
   const okA = body(c2, sha256(dAlphaC2), 'node scripts/alpha.mjs --selftest');
@@ -448,6 +514,27 @@ function runSelftest(root) {
   rmSync(join(rcSymlink, 'a.txt'));
   symlinkSync(join(rcSymlink, 'b.txt'), join(rcSymlink, 'a.txt'));
 
+  // v3: one leading UTF-8 BOM is stripped before field parsing, so it cannot hide a receipt's rev=.
+  const rcBom = mkdir({ 'a.txt': `\uFEFF${okA}` });
+  const rcBomRev = mkdir({ 'a.txt': `\uFEFF${body(c1, sha256(dAlphaC1), 'node scripts/alpha.mjs')}` });
+  // v3: an in-lane instrument named through /proc/self/root is IN the lane (realpath membership)
+  // and is hashed at the judged revision, never from the worktree bytes behind the alias.
+  const procAlias = `/proc/self/root${join(repo, 'scripts', 'alpha.mjs')}`;
+  const rcProcAlias = mkdir({ 'a.txt': body(c2, sha256(dAlphaC2), `node ${procAlias} --selftest`) });
+  const rcProcAliasBad = mkdir({ 'a.txt': body(c2, sha256(dBetaC2), `node ${procAlias} --selftest`) });
+  // v3: a committed mode-120000 instrument is fail-closed, never hashed as its link text; the
+  // target itself still binds at the same revision.
+  const rcSymlinkInstrument = mkdir({ 'a.txt': body(c3, sha256(Buffer.from('alpha.mjs')), 'node scripts/link.mjs') });
+  const rcSymlinkInstrumentTwin = mkdir({ 'a.txt': body(c3, sha256(dAlphaC2), 'node scripts/alpha.mjs') });
+  // v3: an external disk instrument named through a symlink is fail-closed too.
+  const rcExtLink = mkdir({ 'a.txt': body(c2, sha256(readFileSync(extPath)), `bash ${extLink}`) });
+  // v3: an ABSOLUTE token naming the in-lane symlink itself is the same instrument: not followed.
+  const rcSymlinkInstrumentAbs = mkdir({ 'a.txt': body(c3, sha256(Buffer.from('alpha.mjs')), `node ${join(repo, 'scripts', 'link.mjs')}`) });
+  // v3: a directory named like a receipt is RECEIPT_UNREADABLE. The lstat precedes the descriptor
+  // read, so this exercises the verdict, not the fstat branch: that branch needs a race and has no arm.
+  const rcDirReceipt = mkdir({});
+  mkdirSync(join(rcDirReceipt, 'd.txt'), { recursive: true });
+
   expectUsage('usage-bare', runTool([]));
   expectUsage('usage-unknown-flag', runTool(['--bogus']));
   expectUsage('usage-missing-value', runTool(['--dir']));
@@ -464,6 +551,17 @@ function runSelftest(root) {
   expect('unchecked-no-cmd', runTool(['--dir', rcNoCmd, '--rev', c2]), 1, DRI(0, 0, 1, 0, 'a.txt'));
   expect('unchecked-no-digest', runTool(['--dir', rcNoDigest, '--rev', c2]), 1, DRI(0, 0, 1, 0, 'a.txt'));
   expect('unchecked-bad-digest', runTool(['--dir', rcBadDigest, '--rev', c2]), 1, DRI(0, 0, 1, 0, 'a.txt'));
+  expect('clean-bom', runTool(['--dir', rcBom, '--rev', c2]), 0, CLE(1));
+  expect('bom-rev-precedence', runTool(['--dir', rcBomRev, '--rev', c2]), 0, CLE(1));
+  if (existsSync('/proc/self/root')) {
+    expect('alias-proc-root-in-lane', runTool(['--dir', rcProcAlias, '--rev', c2]), 0, CLE(1, 0));
+    expect('alias-proc-root-negative', runTool(['--dir', rcProcAliasBad, '--rev', c2]), 1, DRI(0, 1, 0, 0, 'a.txt'));
+  }
+  expect('symlink-instrument-120000', runTool(['--dir', rcSymlinkInstrument, '--rev', c3]), 2, FC('SYMLINK_INSTRUMENT'));
+  expect('symlink-instrument-twin-target-binds', runTool(['--dir', rcSymlinkInstrumentTwin, '--rev', c3]), 0, CLE(1));
+  expect('symlink-instrument-absolute-token', runTool(['--dir', rcSymlinkInstrumentAbs, '--rev', c3]), 2, FC('SYMLINK_INSTRUMENT'));
+  expect('symlink-instrument-external', runTool(['--dir', rcExtLink, '--rev', c2]), 2, FC('SYMLINK_INSTRUMENT'));
+  expect('receipt-is-directory', runTool(['--dir', rcDirReceipt, '--rev', c2]), 2, FC('RECEIPT_UNREADABLE'));
   expect('unresolved-instrument', runTool(['--dir', rcUnresolved, '--rev', c2]), 2, FC('UNRESOLVED'));
   expect('unresolved-directory-instrument', runTool(['--dir', rcDirInstrument, '--rev', c2]), 2, FC('UNRESOLVED'));
   expect('unresolved-bare-instrument', runTool(['--dir', rcBareInstrument, '--rev', c2]), 2, FC('UNRESOLVED'));

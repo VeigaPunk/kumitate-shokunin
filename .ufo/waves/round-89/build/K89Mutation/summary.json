@@ -1,0 +1,2484 @@
+{
+  "build": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-89/build/K89Mutation",
+  "rev": "9c3b64e44024869937a827d588fe1b75e6692ef7",
+  "probe": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-89/probe/probe89-c1.mjs",
+  "candidateSha256": "37201ad0c6acd4c51b8804fa66ac9606469a181891dbed1d5ee46c56176e1bb3",
+  "candidate": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-89/build/K89Mutation/candidate-v3.mjs",
+  "totals": {
+    "mutants": 56,
+    "singles": 49,
+    "composites": 7,
+    "KILLED": 33,
+    "BASELINE": 1,
+    "PROBE_ONLY": 3,
+    "COVERAGE_HOLE": 20
+  },
+  "aggregates": {
+    "killedByIndependentProbeArm": 31,
+    "killedOnlyThroughSelftestArm": [
+      "bad-digest-unchecked-off",
+      "empty-dir-clean",
+      "external-symlink-instrument-disabled",
+      "git-env-drop-off",
+      "realpath-final-component-followed"
+    ],
+    "surviveBoth": [
+      "composite-bad-digest-and-arm-dropped",
+      "composite-empty-dir-and-arms-dropped",
+      "composite-external-symlink-and-arm-dropped",
+      "composite-git-env-and-arm-dropped",
+      "composite-realpath-final-and-arm-dropped",
+      "contract-string-v2",
+      "digest-lowercase-off",
+      "lane-not-git-off",
+      "limit-fstat-disabled",
+      "mode-read-at-head",
+      "nofollow-dropped",
+      "realpath-lane-off",
+      "rev-commit-check-off",
+      "root-check-absolute-off",
+      "selftest-drop-dup-equal-arm",
+      "selftest-drop-external-symlink-arm",
+      "selftest-drop-receipt-is-directory-arm",
+      "selftest-drop-symlink-instrument-arm",
+      "selftest-held-tautology",
+      "selftest-relax-bom-arm"
+    ],
+    "surviveBothAndDropAClaimedBehaviour": [
+      "composite-external-symlink-and-arm-dropped",
+      "composite-realpath-final-and-arm-dropped",
+      "mode-read-at-head",
+      "realpath-lane-off"
+    ]
+  },
+  "rows": [
+    {
+      "id": "bad-digest-unchecked-off",
+      "behaviour": "unchecked: a non-64-hex tool_sha256= is counted as a mismatch",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "d9d828dea7b0719ee29e823a1c465b851f105223b75afc8339dd636b77404d75",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=29/30",
+      "probeExit": 1,
+      "probeHeld": "29/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=67/68",
+      "selftestExit": 1,
+      "selftestHeld": "67/68",
+      "killedByProbeArms": [
+        "selftest"
+      ],
+      "independentProbeArms": [],
+      "probeKillIndependent": false,
+      "killedBySelftestCases": [
+        "unchecked-bad-digest"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=67/68"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "baseline",
+      "behaviour": "(baseline)",
+      "kind": "baseline",
+      "sites": 0,
+      "sha256": null,
+      "survivedProbe": true,
+      "probeVerdict": "C89_C1: HELD held=30/30",
+      "probeExit": 0,
+      "probeHeld": "30/30",
+      "survivedSelftest": true,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: PASS held=68/68",
+      "selftestExit": 0,
+      "selftestHeld": "68/68",
+      "killedByProbeArms": [],
+      "independentProbeArms": [],
+      "probeKillIndependent": false,
+      "killedBySelftestCases": [],
+      "probeFailDetail": [],
+      "selftestCrash": null,
+      "verdict": "BASELINE"
+    },
+    {
+      "id": "blob-head",
+      "behaviour": "byte source: the blob is read at HEAD instead of the judged revision",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "cfae04b9dd8a030f777dae4e27356b19f5bbcc2cb725b099fd165e3c5e968f0f",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=18/30",
+      "probeExit": 1,
+      "probeHeld": "18/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=66/68",
+      "selftestExit": 1,
+      "selftestHeld": "66/68",
+      "killedByProbeArms": [
+        "selftest",
+        "clean-r87",
+        "rev-receipt-wins",
+        "default-rev",
+        "symlink-dir",
+        "oversize",
+        "duplicate-field",
+        "default-rev-not-head",
+        "index-not-judged",
+        "abs-in-lane-at-rev",
+        "limit-edge",
+        "bom-rev"
+      ],
+      "independentProbeArms": [
+        "clean-r87",
+        "rev-receipt-wins",
+        "default-rev",
+        "symlink-dir",
+        "oversize",
+        "duplicate-field",
+        "default-rev-not-head",
+        "index-not-judged",
+        "abs-in-lane-at-rev",
+        "limit-edge",
+        "bom-rev"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [
+        "bom-rev-precedence",
+        "rev-per-receipt-overrides"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=66/68"
+        },
+        {
+          "arm": "clean-r87",
+          "detail": "copied=11 exit=1 RECEIPT_BIND: DRIFT matched=9 mismatched=2 unchecked=0 external=0 first=bind-selftest.txt"
+        },
+        {
+          "arm": "rev-receipt-wins",
+          "detail": "exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        },
+        {
+          "arm": "default-rev",
+          "detail": "exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        },
+        {
+          "arm": "symlink-dir",
+          "detail": "link exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_DIR /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/blob-head/p89-1995fbbd4ba1/link-dir-1995fbbd4ba1 | real exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        },
+        {
+          "arm": "oversize",
+          "detail": "2MiB exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/blob-head/p89-1995fbbd4ba1/oversize-1995fbbd4ba1/r.txt is 2097354 bytes (limit 1048576) | 512KiB exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        },
+        {
+          "arm": "duplicate-field",
+          "detail": "dup-cmd exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 cmd= lines | dup-cmd-equal exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 cmd= lines | dup-digest exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 tool_sha256= lines | dup-rev exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 rev= lines | single exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        },
+        {
+          "arm": "default-rev-not-head",
+          "detail": "exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        },
+        {
+          "arm": "index-not-judged",
+          "detail": "exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        },
+        {
+          "arm": "abs-in-lane-at-rev",
+          "detail": "exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        },
+        {
+          "arm": "limit-edge",
+          "detail": "edge 1048576 exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt | over 1048577 exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/blob-head/p89-1995fbbd4ba1/limit-edge-over-1995fbbd4ba1/r.txt is 1048577 bytes (limit 1048576)"
+        },
+        {
+          "arm": "bom-rev",
+          "detail": "exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "blob-index",
+      "behaviour": "byte source: the blob is read from the index, not the judged revision",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "316034ab8e236c8c770079cb61be4b66e29aa585886c70a521618fc1d91bb7e4",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=18/30",
+      "probeExit": 1,
+      "probeHeld": "18/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=66/68",
+      "selftestExit": 1,
+      "selftestHeld": "66/68",
+      "killedByProbeArms": [
+        "selftest",
+        "clean-r87",
+        "rev-receipt-wins",
+        "default-rev",
+        "symlink-dir",
+        "oversize",
+        "duplicate-field",
+        "default-rev-not-head",
+        "index-not-judged",
+        "abs-in-lane-at-rev",
+        "limit-edge",
+        "bom-rev"
+      ],
+      "independentProbeArms": [
+        "clean-r87",
+        "rev-receipt-wins",
+        "default-rev",
+        "symlink-dir",
+        "oversize",
+        "duplicate-field",
+        "default-rev-not-head",
+        "index-not-judged",
+        "abs-in-lane-at-rev",
+        "limit-edge",
+        "bom-rev"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [
+        "bom-rev-precedence",
+        "rev-per-receipt-overrides"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=66/68"
+        },
+        {
+          "arm": "clean-r87",
+          "detail": "copied=11 exit=1 RECEIPT_BIND: DRIFT matched=9 mismatched=2 unchecked=0 external=0 first=bind-selftest.txt"
+        },
+        {
+          "arm": "rev-receipt-wins",
+          "detail": "exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        },
+        {
+          "arm": "default-rev",
+          "detail": "exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        },
+        {
+          "arm": "symlink-dir",
+          "detail": "link exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_DIR /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/blob-index/p89-ed66e7831d0b/link-dir-ed66e7831d0b | real exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        },
+        {
+          "arm": "oversize",
+          "detail": "2MiB exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/blob-index/p89-ed66e7831d0b/oversize-ed66e7831d0b/r.txt is 2097354 bytes (limit 1048576) | 512KiB exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        },
+        {
+          "arm": "duplicate-field",
+          "detail": "dup-cmd exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 cmd= lines | dup-cmd-equal exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 cmd= lines | dup-digest exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 tool_sha256= lines | dup-rev exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 rev= lines | single exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        },
+        {
+          "arm": "default-rev-not-head",
+          "detail": "exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        },
+        {
+          "arm": "index-not-judged",
+          "detail": "exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        },
+        {
+          "arm": "abs-in-lane-at-rev",
+          "detail": "exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        },
+        {
+          "arm": "limit-edge",
+          "detail": "edge 1048576 exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt | over 1048577 exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/blob-index/p89-ed66e7831d0b/limit-edge-over-ed66e7831d0b/r.txt is 1048577 bytes (limit 1048576)"
+        },
+        {
+          "arm": "bom-rev",
+          "detail": "exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "blob-worktree",
+      "behaviour": "byte source: the blob is read from the worktree on disk",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "01d53b6ecab9d2e77f6d6d7a051b63d4e8833bbf6d714196e2e7f86305590e4d",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=13/30",
+      "probeExit": 1,
+      "probeHeld": "13/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=62/68",
+      "selftestExit": 1,
+      "selftestHeld": "62/68",
+      "killedByProbeArms": [
+        "selftest",
+        "clean-r87",
+        "unresolved",
+        "rev-receipt-wins",
+        "worktree-forgery",
+        "default-rev",
+        "untracked-instrument",
+        "symlink-dir",
+        "oversize",
+        "duplicate-field",
+        "sweep",
+        "default-rev-not-head",
+        "index-not-judged",
+        "abs-in-lane-at-rev",
+        "limit-edge",
+        "alias-proc-root",
+        "bom-rev"
+      ],
+      "independentProbeArms": [
+        "clean-r87",
+        "unresolved",
+        "rev-receipt-wins",
+        "worktree-forgery",
+        "default-rev",
+        "untracked-instrument",
+        "symlink-dir",
+        "oversize",
+        "duplicate-field",
+        "sweep",
+        "default-rev-not-head",
+        "index-not-judged",
+        "abs-in-lane-at-rev",
+        "limit-edge",
+        "alias-proc-root",
+        "bom-rev"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [
+        "bom-rev-precedence",
+        "unresolved-instrument",
+        "unresolved-directory-instrument",
+        "rev-per-receipt-overrides",
+        "dirty-worktree-cannot-launder",
+        "worktree-bytes-not-truth"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=62/68"
+        },
+        {
+          "arm": "clean-r87",
+          "detail": "copied=11 exit=1 RECEIPT_BIND: DRIFT matched=8 mismatched=3 unchecked=0 external=0 first=bind-selftest.txt"
+        },
+        {
+          "arm": "unresolved",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL ENOENT: no such file or directory, open '/fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/blob-worktree/p89-7c53ee0954f6/repo-7c53ee0954f6/scripts/absent-7c53ee0954f6.mjs'"
+        },
+        {
+          "arm": "rev-receipt-wins",
+          "detail": "exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        },
+        {
+          "arm": "worktree-forgery",
+          "detail": "exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0"
+        },
+        {
+          "arm": "default-rev",
+          "detail": "exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        },
+        {
+          "arm": "untracked-instrument",
+          "detail": "exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0"
+        },
+        {
+          "arm": "symlink-dir",
+          "detail": "link exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_DIR /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/blob-worktree/p89-7c53ee0954f6/link-dir-7c53ee0954f6 | real exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        },
+        {
+          "arm": "oversize",
+          "detail": "2MiB exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/blob-worktree/p89-7c53ee0954f6/oversize-7c53ee0954f6/r.txt is 2097354 bytes (limit 1048576) | 512KiB exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        },
+        {
+          "arm": "duplicate-field",
+          "detail": "dup-cmd exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 cmd= lines | dup-cmd-equal exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 cmd= lines | dup-digest exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 tool_sha256= lines | dup-rev exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 rev= lines | single exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        },
+        {
+          "arm": "sweep",
+          "detail": "scripts=33 clean exit=1 RECEIPT_BIND: DRIFT matched=31 mismatched=2 unchecked=0 external=0 first=s-receipt-bind.mjs.txt | flip=s-cite-sources.mjs.txt exit=1 RECEIPT_BIND: DRIFT matched=30 mismatched=3 unchecked=0 external=0 first=s-cite-sources.mjs.txt"
+        },
+        {
+          "arm": "default-rev-not-head",
+          "detail": "exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        },
+        {
+          "arm": "index-not-judged",
+          "detail": "exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        },
+        {
+          "arm": "abs-in-lane-at-rev",
+          "detail": "exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        },
+        {
+          "arm": "limit-edge",
+          "detail": "edge 1048576 exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt | over 1048577 exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/blob-worktree/p89-7c53ee0954f6/limit-edge-over-7c53ee0954f6/r.txt is 1048577 bytes (limit 1048576)"
+        },
+        {
+          "arm": "alias-proc-root",
+          "detail": "exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0"
+        },
+        {
+          "arm": "bom-rev",
+          "detail": "exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "bom-codepoint-swap",
+      "behaviour": "BOM strip: the stripped codepoint is wrong (U+FFFE)",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "17c333a89499a0c027de5b283edd69eceb5960a5401fc68fdc8afb2c622067f1",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=28/30",
+      "probeExit": 1,
+      "probeHeld": "28/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=67/68",
+      "selftestExit": 1,
+      "selftestHeld": "67/68",
+      "killedByProbeArms": [
+        "selftest",
+        "bom-rev"
+      ],
+      "independentProbeArms": [
+        "bom-rev"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [
+        "bom-rev-precedence"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=67/68"
+        },
+        {
+          "arm": "bom-rev",
+          "detail": "exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "bom-strip-off",
+      "behaviour": "BOM strip: a leading U+FEFF is left in the text",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "5ce713cf90fcbd4f2982c7f2535991f0361cb3d44d0eaf93293aed1c09f563ed",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=28/30",
+      "probeExit": 1,
+      "probeHeld": "28/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=67/68",
+      "selftestExit": 1,
+      "selftestHeld": "67/68",
+      "killedByProbeArms": [
+        "selftest",
+        "bom-rev"
+      ],
+      "independentProbeArms": [
+        "bom-rev"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [
+        "bom-rev-precedence"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=67/68"
+        },
+        {
+          "arm": "bom-rev",
+          "detail": "exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "composite-mode-off-and-arm-dropped",
+      "behaviour": "SYMLINK_INSTRUMENT refusal + its selftest arm both removed",
+      "kind": "composite",
+      "sites": 2,
+      "sha256": "9f486df13344d2b24be30d17a9ec922835c74ab9f6725fd9247b1962c891f4ed",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=28/30",
+      "probeExit": 1,
+      "probeHeld": "28/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=66/67",
+      "selftestExit": 1,
+      "selftestHeld": "66/67",
+      "killedByProbeArms": [
+        "selftest",
+        "symlink-instrument"
+      ],
+      "independentProbeArms": [
+        "symlink-instrument"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [
+        "symlink-instrument-absolute-token"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=66/67"
+        },
+        {
+          "arm": "symlink-instrument",
+          "detail": "exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "dir-missing-token-swap",
+      "behaviour": "DIR_UNREADABLE: a missing --dir is reported as RECEIPT_UNREADABLE",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "9db28541370e0064b3309686dc04e2718b8077e9da21150fdc98870c79e31c41",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=28/30",
+      "probeExit": 1,
+      "probeHeld": "28/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=66/68",
+      "selftestExit": 1,
+      "selftestHeld": "66/68",
+      "killedByProbeArms": [
+        "selftest",
+        "dir-missing"
+      ],
+      "independentProbeArms": [
+        "dir-missing"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [
+        "dir-missing",
+        "json-fail-closed"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=66/68"
+        },
+        {
+          "arm": "dir-missing",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_UNREADABLE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/dir-missing-token-swap/p89-4d98d25c15b8/absent-4d98d25c15b8-dir (ENOENT)"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "dup-disabled",
+      "behaviour": "AMBIGUOUS_FIELD: first-wins parsing, no duplicate refusal",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "853de9665fe2a46babf55889a59e0c76700d522418ec4b8a1a7b732eb6f741db",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=27/30",
+      "probeExit": 1,
+      "probeHeld": "27/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=60/68",
+      "selftestExit": 1,
+      "selftestHeld": "60/68",
+      "killedByProbeArms": [
+        "selftest",
+        "duplicate-field",
+        "dup-equal-field"
+      ],
+      "independentProbeArms": [
+        "duplicate-field",
+        "dup-equal-field"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [
+        "ambiguous-cmd-differing",
+        "ambiguous-cmd-equal",
+        "ambiguous-tool-sha256",
+        "ambiguous-rev-equal",
+        "ambiguous-rev-differing",
+        "ambiguous-cmd-not-unchecked",
+        "ambiguous-among-clean",
+        "json-ambiguous-field"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=60/68"
+        },
+        {
+          "arm": "duplicate-field",
+          "detail": "dup-cmd exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | dup-cmd-equal exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | dup-digest exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | dup-rev exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | single exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0"
+        },
+        {
+          "arm": "dup-equal-field",
+          "detail": "dup-rev-equal exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | dup-digest-equal exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "dup-equal-tolerated",
+      "behaviour": "AMBIGUOUS_FIELD: equal-valued duplicates are tolerated",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "f2d879bf07822e4a8a54aeb7fd5cfdb070a53b7f9d3106380a90626711be2a59",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=27/30",
+      "probeExit": 1,
+      "probeHeld": "27/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=63/68",
+      "selftestExit": 1,
+      "selftestHeld": "63/68",
+      "killedByProbeArms": [
+        "selftest",
+        "duplicate-field",
+        "dup-equal-field"
+      ],
+      "independentProbeArms": [
+        "duplicate-field",
+        "dup-equal-field"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [
+        "ambiguous-cmd-equal",
+        "ambiguous-tool-sha256",
+        "ambiguous-rev-equal",
+        "ambiguous-among-clean",
+        "json-ambiguous-field"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=63/68"
+        },
+        {
+          "arm": "duplicate-field",
+          "detail": "dup-cmd exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 cmd= lines | dup-cmd-equal exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | dup-digest exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 tool_sha256= lines | dup-rev exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 rev= lines | single exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0"
+        },
+        {
+          "arm": "dup-equal-field",
+          "detail": "dup-rev-equal exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | dup-digest-equal exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "dup-gt2",
+      "behaviour": "AMBIGUOUS_FIELD: only >2 duplicate lines are ambiguous",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "3214262d11f3698630da0b279ddcbdd59bdb38cbacab5458d826c07e1eb984d0",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=27/30",
+      "probeExit": 1,
+      "probeHeld": "27/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=60/68",
+      "selftestExit": 1,
+      "selftestHeld": "60/68",
+      "killedByProbeArms": [
+        "selftest",
+        "duplicate-field",
+        "dup-equal-field"
+      ],
+      "independentProbeArms": [
+        "duplicate-field",
+        "dup-equal-field"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [
+        "ambiguous-cmd-differing",
+        "ambiguous-cmd-equal",
+        "ambiguous-tool-sha256",
+        "ambiguous-rev-equal",
+        "ambiguous-rev-differing",
+        "ambiguous-cmd-not-unchecked",
+        "ambiguous-among-clean",
+        "json-ambiguous-field"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=60/68"
+        },
+        {
+          "arm": "duplicate-field",
+          "detail": "dup-cmd exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | dup-cmd-equal exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | dup-digest exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | dup-rev exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | single exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0"
+        },
+        {
+          "arm": "dup-equal-field",
+          "detail": "dup-rev-equal exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | dup-digest-equal exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "empty-dir-clean",
+      "behaviour": "verdict: an empty receipt directory reads CLEAN",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "939944e70fcc69c3551d105d52933f82d328ed4b088249fcac0411224b49685c",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=29/30",
+      "probeExit": 1,
+      "probeHeld": "29/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=66/68",
+      "selftestExit": 1,
+      "selftestHeld": "66/68",
+      "killedByProbeArms": [
+        "selftest"
+      ],
+      "independentProbeArms": [],
+      "probeKillIndependent": false,
+      "killedBySelftestCases": [
+        "empty-dir-not-clean",
+        "non-txt-only-is-empty"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=66/68"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "escape-downgraded",
+      "behaviour": "ESCAPES_LANE: an escaping token is bound instead of refused",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "a27ee3af77e3441af8e341f33712191c26936adbbce176991b22ed7dbc427848",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=27/30",
+      "probeExit": 1,
+      "probeHeld": "27/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=65/68",
+      "selftestExit": 1,
+      "selftestHeld": "65/68",
+      "killedByProbeArms": [
+        "selftest",
+        "escape-relative",
+        "escape-inner-dotdot"
+      ],
+      "independentProbeArms": [
+        "escape-relative",
+        "escape-inner-dotdot"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [
+        "escapes-lane-relative",
+        "escapes-lane-interior-dotdot",
+        "escapes-lane-among-clean"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=65/68"
+        },
+        {
+          "arm": "escape-relative",
+          "detail": "relative exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt instrument absent at d970ccdff4909dd570ec242147d9d942ffb73ac8: null | absolute exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1"
+        },
+        {
+          "arm": "escape-inner-dotdot",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt instrument absent at d970ccdff4909dd570ec242147d9d942ffb73ac8: null"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "escape-negated",
+      "behaviour": "ESCAPES_LANE: the membership test is negated",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "fe4ddde5283bd4c1c523d0c03febb0dba1793ab7517b9682d7d5aaa9db0e0383",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=9/30",
+      "probeExit": 1,
+      "probeHeld": "9/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=39/68",
+      "selftestExit": 1,
+      "selftestHeld": "39/68",
+      "killedByProbeArms": [
+        "selftest",
+        "detect-r86",
+        "detect-r86-renamed",
+        "clean-r87",
+        "unresolved",
+        "rev-receipt-wins",
+        "worktree-forgery",
+        "default-rev",
+        "rev-receipt-negative",
+        "untracked-instrument",
+        "escape-relative",
+        "symlink-dir",
+        "oversize",
+        "duplicate-field",
+        "sweep",
+        "default-rev-not-head",
+        "index-not-judged",
+        "limit-edge",
+        "escape-inner-dotdot",
+        "bom-rev",
+        "symlink-instrument"
+      ],
+      "independentProbeArms": [
+        "detect-r86",
+        "detect-r86-renamed",
+        "clean-r87",
+        "unresolved",
+        "rev-receipt-wins",
+        "worktree-forgery",
+        "default-rev",
+        "rev-receipt-negative",
+        "untracked-instrument",
+        "escape-relative",
+        "symlink-dir",
+        "oversize",
+        "duplicate-field",
+        "sweep",
+        "default-rev-not-head",
+        "index-not-judged",
+        "limit-edge",
+        "escape-inner-dotdot",
+        "bom-rev",
+        "symlink-instrument"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [
+        "clean",
+        "clean-multi",
+        "clean-crlf",
+        "digest-flip",
+        "cmd-flip",
+        "clean-bom",
+        "bom-rev-precedence",
+        "symlink-instrument-120000",
+        "symlink-instrument-twin-target-binds",
+        "unresolved-instrument",
+        "unresolved-directory-instrument",
+        "rev-per-receipt-overrides",
+        "rev-default-is-judged",
+        "non-txt-ignored",
+        "sorted-first",
+        "lane-flag-from-outside",
+        "default-lane-is-toplevel",
+        "git-env-canary-ignored",
+        "json-drift",
+        "json-clean",
+        "escapes-lane-relative",
+        "escapes-lane-interior-dotdot",
+        "escapes-lane-twin-dotdot-inside",
+        "symlink-dir-twin-real-target",
+        "receipt-too-large-twin-at-limit",
+        "ambiguous-among-clean",
+        "ambiguous-twin-single-fields",
+        "dirty-worktree-cannot-launder",
+        "worktree-bytes-not-truth"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=39/68"
+        },
+        {
+          "arm": "detect-r86",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE map-selftest.txt relative instrument resolves outside the lane: scripts/readme-map.mjs"
+        },
+        {
+          "arm": "detect-r86-renamed",
+          "detail": "files=10 exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE q01-9.txt relative instrument resolves outside the lane: scripts/spotcheck-adopt.mjs"
+        },
+        {
+          "arm": "clean-r87",
+          "detail": "copied=11 exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE bind-selftest.txt relative instrument resolves outside the lane: scripts/receipt-bind.mjs"
+        },
+        {
+          "arm": "unresolved",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE u.txt relative instrument resolves outside the lane: scripts/absent-a469dfc39d17.mjs"
+        },
+        {
+          "arm": "rev-receipt-wins",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: scripts/tool-a469dfc39d17.mjs"
+        },
+        {
+          "arm": "worktree-forgery",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: scripts/tool-a469dfc39d17.mjs"
+        },
+        {
+          "arm": "default-rev",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: scripts/tool-a469dfc39d17.mjs"
+        },
+        {
+          "arm": "rev-receipt-negative",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: scripts/tool-a469dfc39d17.mjs"
+        },
+        {
+          "arm": "untracked-instrument",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: scripts/fresh-a469dfc39d17.mjs"
+        },
+        {
+          "arm": "escape-relative",
+          "detail": "relative exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt instrument absent at 6c0b899ea0761766270558a74ec6875e4b0250de: null | absolute exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1"
+        },
+        {
+          "arm": "symlink-dir",
+          "detail": "link exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_DIR /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/escape-negated/p89-a469dfc39d17/link-dir-a469dfc39d17 | real exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: scripts/tool-a469dfc39d17.mjs"
+        },
+        {
+          "arm": "oversize",
+          "detail": "2MiB exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/escape-negated/p89-a469dfc39d17/oversize-a469dfc39d17/r.txt is 2097354 bytes (limit 1048576) | 512KiB exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: scripts/tool-a469dfc39d17.mjs"
+        },
+        {
+          "arm": "duplicate-field",
+          "detail": "dup-cmd exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 cmd= lines | dup-cmd-equal exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 cmd= lines | dup-digest exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 tool_sha256= lines | dup-rev exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 rev= lines | single exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: scripts/tool-a469dfc39d17.mjs"
+        },
+        {
+          "arm": "sweep",
+          "detail": "scripts=33 clean exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE s-anchor-truth.mjs.txt relative instrument resolves outside the lane: scripts/anchor-truth.mjs | flip=s-cite-sources.mjs.txt exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE s-anchor-truth.mjs.txt relative instrument resolves outside the lane: scripts/anchor-truth.mjs"
+        },
+        {
+          "arm": "default-rev-not-head",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: scripts/tool-a469dfc39d17.mjs"
+        },
+        {
+          "arm": "index-not-judged",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: scripts/tool-a469dfc39d17.mjs"
+        },
+        {
+          "arm": "limit-edge",
+          "detail": "edge 1048576 exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: scripts/tool-a469dfc39d17.mjs | over 1048577 exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/escape-negated/p89-a469dfc39d17/limit-edge-over-a469dfc39d17/r.txt is 1048577 bytes (limit 1048576)"
+        },
+        {
+          "arm": "escape-inner-dotdot",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt instrument absent at 6c0b899ea0761766270558a74ec6875e4b0250de: null"
+        },
+        {
+          "arm": "bom-rev",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: scripts/tool-a469dfc39d17.mjs"
+        },
+        {
+          "arm": "symlink-instrument",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: scripts/link-a469dfc39d17.mjs"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "escape-token-swap",
+      "behaviour": "ESCAPES_LANE: the escape is reported as UNRESOLVED",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "70fdd3149a0bb84b309ed45cb945bd6b16460c9f495e4d7c176f65b269436031",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=27/30",
+      "probeExit": 1,
+      "probeHeld": "27/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=65/68",
+      "selftestExit": 1,
+      "selftestHeld": "65/68",
+      "killedByProbeArms": [
+        "selftest",
+        "escape-relative",
+        "escape-inner-dotdot"
+      ],
+      "independentProbeArms": [
+        "escape-relative",
+        "escape-inner-dotdot"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [
+        "escapes-lane-relative",
+        "escapes-lane-interior-dotdot",
+        "escapes-lane-among-clean"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=65/68"
+        },
+        {
+          "arm": "escape-relative",
+          "detail": "relative exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt relative instrument resolves outside the lane: ../outside-f1a615e346e9/ext-f1a615e346e9.mjs | absolute exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1"
+        },
+        {
+          "arm": "escape-inner-dotdot",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt relative instrument resolves outside the lane: scripts/../../outside2-f1a615e346e9/ext2-f1a615e346e9.mjs"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "external-count-off",
+      "behaviour": "external tally: an out-of-lane instrument is not counted external",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "cc48f96ac82c995248b49e485884e84d9075b972eafcb5289d20f19aaf97dc45",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=28/30",
+      "probeExit": 1,
+      "probeHeld": "28/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=65/68",
+      "selftestExit": 1,
+      "selftestHeld": "65/68",
+      "killedByProbeArms": [
+        "selftest",
+        "escape-relative"
+      ],
+      "independentProbeArms": [
+        "escape-relative"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [
+        "external-disk",
+        "external-mismatch",
+        "escapes-lane-twin-absolute-external"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=65/68"
+        },
+        {
+          "arm": "escape-relative",
+          "detail": "relative exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: ../outside-0ab1ba822094/ext-0ab1ba822094.mjs | absolute exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "external-symlink-instrument-disabled",
+      "behaviour": "SYMLINK_INSTRUMENT: a symlinked external instrument is hashed through the link",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "bae8420cf794c375d51b5a8abc6c0df439c242a588b4bcfa7fd06e48dfb36f8e",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=29/30",
+      "probeExit": 1,
+      "probeHeld": "29/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=67/68",
+      "selftestExit": 1,
+      "selftestHeld": "67/68",
+      "killedByProbeArms": [
+        "selftest"
+      ],
+      "independentProbeArms": [],
+      "probeKillIndependent": false,
+      "killedBySelftestCases": [
+        "symlink-instrument-external"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=67/68"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "git-env-drop-off",
+      "behaviour": "GIT_* hardening: inherited GIT_DIR/GIT_INDEX_FILE are honoured",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "4aff4e4cf815ed0040d6bf293ceefee49cf628bf8f7be6ab68aec73f6a21f763",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=29/30",
+      "probeExit": 1,
+      "probeHeld": "29/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=67/68",
+      "selftestExit": 1,
+      "selftestHeld": "67/68",
+      "killedByProbeArms": [
+        "selftest"
+      ],
+      "independentProbeArms": [],
+      "probeKillIndependent": false,
+      "killedBySelftestCases": [
+        "git-env-canary-ignored"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=67/68"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "isabsolute-disabled",
+      "behaviour": "absolute tokens: every token is resolved relative to the lane",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "ecb2ab2d93ba7b340789c55ee32aaf5a7e01940b0e14a440520ab9756ca5daf3",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=25/30",
+      "probeExit": 1,
+      "probeHeld": "25/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=62/68",
+      "selftestExit": 1,
+      "selftestHeld": "62/68",
+      "killedByProbeArms": [
+        "selftest",
+        "detect-r86",
+        "detect-r86-renamed",
+        "escape-relative",
+        "alias-proc-root"
+      ],
+      "independentProbeArms": [
+        "detect-r86",
+        "detect-r86-renamed",
+        "escape-relative",
+        "alias-proc-root"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [
+        "alias-proc-root-in-lane",
+        "alias-proc-root-negative",
+        "symlink-instrument-external",
+        "external-disk",
+        "external-mismatch",
+        "escapes-lane-twin-absolute-external"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=62/68"
+        },
+        {
+          "arm": "detect-r86",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE census.txt relative instrument resolves outside the lane: /home/vgpnk/Projects/shokunin/scripts/sources-census.sh"
+        },
+        {
+          "arm": "detect-r86-renamed",
+          "detail": "files=10 exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE q09-1.txt relative instrument resolves outside the lane: /home/vgpnk/Projects/shokunin/scripts/sources-census.sh"
+        },
+        {
+          "arm": "escape-relative",
+          "detail": "relative exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: ../outside-cdad8b1f0dc5/ext-cdad8b1f0dc5.mjs | absolute exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/isabsolute-disabled/p89-cdad8b1f0dc5/outside-cdad8b1f0dc5/ext-cdad8b1f0dc5.mjs"
+        },
+        {
+          "arm": "alias-proc-root",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: /proc/self/root/fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/isabsolute-disabled/p89-cdad8b1f0dc5/repo-cdad8b1f0dc5/scripts/tool-cdad8b1f0dc5.mjs"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "limit-fstat-ge",
+      "behaviour": "size limit: descriptor check `>` -> `>=`",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "116a26c3b78d8b4f21a914f1ab45c68b85052d094588b2a7fec050e18a5ced56",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=28/30",
+      "probeExit": 1,
+      "probeHeld": "28/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=67/68",
+      "selftestExit": 1,
+      "selftestHeld": "67/68",
+      "killedByProbeArms": [
+        "selftest",
+        "limit-edge"
+      ],
+      "independentProbeArms": [
+        "limit-edge"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [
+        "receipt-too-large-twin-at-limit"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=67/68"
+        },
+        {
+          "arm": "limit-edge",
+          "detail": "edge 1048576 exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-fstat-ge/p89-95be7c263f9e/limit-edge-ok-95be7c263f9e/r.txt is 1048576 bytes (limit 1048576) | over 1048577 exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-fstat-ge/p89-95be7c263f9e/limit-edge-over-95be7c263f9e/r.txt is 1048577 bytes (limit 1048576)"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "limit-lstat-ge",
+      "behaviour": "size limit: pre-read check `>` -> `>=` (refuses the exact limit)",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "2346f7337ce61c43e06971c6dc0552a7f2848fe0561b9ba918ff5a3da5ab875a",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=28/30",
+      "probeExit": 1,
+      "probeHeld": "28/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=67/68",
+      "selftestExit": 1,
+      "selftestHeld": "67/68",
+      "killedByProbeArms": [
+        "selftest",
+        "limit-edge"
+      ],
+      "independentProbeArms": [
+        "limit-edge"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [
+        "receipt-too-large-twin-at-limit"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=67/68"
+        },
+        {
+          "arm": "limit-edge",
+          "detail": "edge 1048576 exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-ge/p89-7d69d1e6296d/limit-edge-ok-7d69d1e6296d/r.txt is 1048576 bytes (limit 1048576) | over 1048577 exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-ge/p89-7d69d1e6296d/limit-edge-over-7d69d1e6296d/r.txt is 1048577 bytes (limit 1048576)"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "limit-lstat-lt",
+      "behaviour": "size limit: pre-read check `>` -> `<` (refuses every small receipt)",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "1f880c34b1ee5a1c7f6181b9c5dc87358d624f32336ed2fc1e736fda8db75fb8",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=5/30",
+      "probeExit": 1,
+      "probeHeld": "5/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=20/68",
+      "selftestExit": 1,
+      "selftestHeld": "20/68",
+      "killedByProbeArms": [
+        "selftest",
+        "detect-r86",
+        "detect-r86-renamed",
+        "clean-r87",
+        "unchecked",
+        "unresolved",
+        "rev-receipt-wins",
+        "worktree-forgery",
+        "default-rev",
+        "rev-receipt-negative",
+        "untracked-instrument",
+        "escape-relative",
+        "symlink-dir",
+        "oversize",
+        "duplicate-field",
+        "sweep",
+        "default-rev-not-head",
+        "index-not-judged",
+        "abs-in-lane-at-rev",
+        "limit-before-read",
+        "escape-inner-dotdot",
+        "dup-equal-field",
+        "alias-proc-root",
+        "bom-rev",
+        "symlink-instrument"
+      ],
+      "independentProbeArms": [
+        "detect-r86",
+        "detect-r86-renamed",
+        "clean-r87",
+        "unchecked",
+        "unresolved",
+        "rev-receipt-wins",
+        "worktree-forgery",
+        "default-rev",
+        "rev-receipt-negative",
+        "untracked-instrument",
+        "escape-relative",
+        "symlink-dir",
+        "oversize",
+        "duplicate-field",
+        "sweep",
+        "default-rev-not-head",
+        "index-not-judged",
+        "abs-in-lane-at-rev",
+        "limit-before-read",
+        "escape-inner-dotdot",
+        "dup-equal-field",
+        "alias-proc-root",
+        "bom-rev",
+        "symlink-instrument"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [
+        "clean",
+        "clean-multi",
+        "clean-crlf",
+        "digest-flip",
+        "cmd-flip",
+        "unchecked-no-cmd",
+        "unchecked-no-digest",
+        "unchecked-bad-digest",
+        "clean-bom",
+        "bom-rev-precedence",
+        "alias-proc-root-in-lane",
+        "alias-proc-root-negative",
+        "symlink-instrument-120000",
+        "symlink-instrument-twin-target-binds",
+        "symlink-instrument-absolute-token",
+        "symlink-instrument-external",
+        "unresolved-instrument",
+        "unresolved-directory-instrument",
+        "unresolved-bare-instrument",
+        "rev-per-receipt-overrides",
+        "rev-default-is-judged",
+        "external-disk",
+        "external-mismatch",
+        "lane-absolute-instrument",
+        "non-txt-ignored",
+        "sorted-first",
+        "lane-flag-from-outside",
+        "default-lane-is-toplevel",
+        "git-env-canary-ignored",
+        "json-drift",
+        "json-clean",
+        "escapes-lane-relative",
+        "escapes-lane-interior-dotdot",
+        "escapes-lane-among-clean",
+        "escapes-lane-twin-absolute-external",
+        "escapes-lane-twin-dotdot-inside",
+        "symlink-dir-twin-real-target",
+        "ambiguous-cmd-differing",
+        "ambiguous-cmd-equal",
+        "ambiguous-tool-sha256",
+        "ambiguous-rev-equal",
+        "ambiguous-rev-differing",
+        "ambiguous-cmd-not-unchecked",
+        "ambiguous-among-clean",
+        "ambiguous-twin-single-fields",
+        "json-ambiguous-field",
+        "dirty-worktree-cannot-launder",
+        "worktree-bytes-not-truth"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=20/68"
+        },
+        {
+          "arm": "detect-r86",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-86/close/c1-probe.txt is 1367 bytes (limit 1048576)"
+        },
+        {
+          "arm": "detect-r86-renamed",
+          "detail": "files=10 exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/r86-renamed-df4f023e76fd/q01-9.txt is 249 bytes (limit 1048576)"
+        },
+        {
+          "arm": "clean-r87",
+          "detail": "copied=11 exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/r87-lane-df4f023e76fd/bind-selftest.txt is 4990 bytes (limit 1048576)"
+        },
+        {
+          "arm": "unchecked",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/unchecked-df4f023e76fd/u.txt is 141 bytes (limit 1048576)"
+        },
+        {
+          "arm": "unresolved",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/unresolved-df4f023e76fd/u.txt is 198 bytes (limit 1048576)"
+        },
+        {
+          "arm": "rev-receipt-wins",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/rev-receipt-wins-df4f023e76fd/r.txt is 202 bytes (limit 1048576)"
+        },
+        {
+          "arm": "worktree-forgery",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/worktree-forgery-df4f023e76fd/r.txt is 157 bytes (limit 1048576)"
+        },
+        {
+          "arm": "default-rev",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/default-rev-df4f023e76fd/r.txt is 157 bytes (limit 1048576)"
+        },
+        {
+          "arm": "rev-receipt-negative",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/rev-receipt-negative-df4f023e76fd/r.txt is 202 bytes (limit 1048576)"
+        },
+        {
+          "arm": "untracked-instrument",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/untracked-instrument-df4f023e76fd/r.txt is 152 bytes (limit 1048576)"
+        },
+        {
+          "arm": "escape-relative",
+          "detail": "relative exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/escape-relative-df4f023e76fd/r.txt is 166 bytes (limit 1048576) | absolute exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/escape-absolute-df4f023e76fd/r.txt is 246 bytes (limit 1048576)"
+        },
+        {
+          "arm": "symlink-dir",
+          "detail": "link exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_DIR /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/link-dir-df4f023e76fd | real exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/real-dir-df4f023e76fd/r.txt is 202 bytes (limit 1048576)"
+        },
+        {
+          "arm": "oversize",
+          "detail": "2MiB exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/oversize-df4f023e76fd/r.txt is 2097354 bytes (limit 1048576) | 512KiB exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/undersize-df4f023e76fd/r.txt is 524490 bytes (limit 1048576)"
+        },
+        {
+          "arm": "duplicate-field",
+          "detail": "dup-cmd exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/dup-cmd-df4f023e76fd/r.txt is 242 bytes (limit 1048576) | dup-cmd-equal exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/dup-cmd-equal-df4f023e76fd/r.txt is 247 bytes (limit 1048576) | dup-digest exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/dup-digest-df4f023e76fd/r.txt is 279 bytes (limit 1048576) | dup-rev exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/dup-rev-df4f023e76fd/r.txt is 247 bytes (limit 1048576) | single exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/dup-none-df4f023e76fd/r.txt is 202 bytes (limit 1048576)"
+        },
+        {
+          "arm": "sweep",
+          "detail": "scripts=33 clean exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/sweep-df4f023e76fd/s-anchor-truth.mjs.txt is 198 bytes (limit 1048576) | flip=s-cite-sources.mjs.txt exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/sweep-df4f023e76fd/s-anchor-truth.mjs.txt is 198 bytes (limit 1048576)"
+        },
+        {
+          "arm": "default-rev-not-head",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/default-rev-not-head-df4f023e76fd/r.txt is 157 bytes (limit 1048576)"
+        },
+        {
+          "arm": "index-not-judged",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/index-not-judged-df4f023e76fd/r.txt is 157 bytes (limit 1048576)"
+        },
+        {
+          "arm": "abs-in-lane-at-rev",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/abs-in-lane-at-rev-df4f023e76fd/r.txt is 297 bytes (limit 1048576)"
+        },
+        {
+          "arm": "limit-before-read",
+          "detail": "size=1073741824 exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_UNREADABLE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/limit-before-read-df4f023e76fd/r.txt (EACCES)"
+        },
+        {
+          "arm": "escape-inner-dotdot",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/escape-inner-dotdot-df4f023e76fd/r.txt is 179 bytes (limit 1048576)"
+        },
+        {
+          "arm": "dup-equal-field",
+          "detail": "dup-rev-equal exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/dup-rev-equal-df4f023e76fd/r.txt is 247 bytes (limit 1048576) | dup-digest-equal exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/dup-digest-equal-df4f023e76fd/r.txt is 279 bytes (limit 1048576)"
+        },
+        {
+          "arm": "alias-proc-root",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/alias-proc-root-df4f023e76fd/r.txt is 312 bytes (limit 1048576)"
+        },
+        {
+          "arm": "bom-rev",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/bom-rev-df4f023e76fd/r.txt is 205 bytes (limit 1048576)"
+        },
+        {
+          "arm": "symlink-instrument",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-lstat-lt/p89-df4f023e76fd/symlink-instrument-df4f023e76fd/r.txt is 196 bytes (limit 1048576)"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "mode-check-disabled",
+      "behaviour": "SYMLINK_INSTRUMENT: the refusal is disabled",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "583f4d8a0bfab072fd200c140ab27852c8e8d27a923766306c64bc8381756d43",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=28/30",
+      "probeExit": 1,
+      "probeHeld": "28/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=66/68",
+      "selftestExit": 1,
+      "selftestHeld": "66/68",
+      "killedByProbeArms": [
+        "selftest",
+        "symlink-instrument"
+      ],
+      "independentProbeArms": [
+        "symlink-instrument"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [
+        "symlink-instrument-120000",
+        "symlink-instrument-absolute-token"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=66/68"
+        },
+        {
+          "arm": "symlink-instrument",
+          "detail": "exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "mode-literal-swap",
+      "behaviour": "SYMLINK_INSTRUMENT: the 120000 literal never matches",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "6863d9da176c77ce304b6af952e2195140374a741601fb24194f47410619c44a",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=28/30",
+      "probeExit": 1,
+      "probeHeld": "28/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=66/68",
+      "selftestExit": 1,
+      "selftestHeld": "66/68",
+      "killedByProbeArms": [
+        "selftest",
+        "symlink-instrument"
+      ],
+      "independentProbeArms": [
+        "symlink-instrument"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [
+        "symlink-instrument-120000",
+        "symlink-instrument-absolute-token"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=66/68"
+        },
+        {
+          "arm": "symlink-instrument",
+          "detail": "exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "realpath-abs-off",
+      "behaviour": "realpath membership: the token parent directory is not realpath-resolved",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "101f3b1ae78b83b9b4a3d8dae81b9b182326aeb38bf8b04b9fc2c74e38e57c3b",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=28/30",
+      "probeExit": 1,
+      "probeHeld": "28/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=66/68",
+      "selftestExit": 1,
+      "selftestHeld": "66/68",
+      "killedByProbeArms": [
+        "selftest",
+        "alias-proc-root"
+      ],
+      "independentProbeArms": [
+        "alias-proc-root"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [
+        "alias-proc-root-in-lane",
+        "alias-proc-root-negative"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=66/68"
+        },
+        {
+          "arm": "alias-proc-root",
+          "detail": "exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "realpath-final-component-followed",
+      "behaviour": "realpath membership: the final component is followed (in-lane symlink identity lost)",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "b9bf8b7e22f2ce1d68e3945c5da55fde2fac83c2b6b5652b183161a83ac3b444",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=29/30",
+      "probeExit": 1,
+      "probeHeld": "29/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=67/68",
+      "selftestExit": 1,
+      "selftestHeld": "67/68",
+      "killedByProbeArms": [
+        "selftest"
+      ],
+      "independentProbeArms": [],
+      "probeKillIndependent": false,
+      "killedBySelftestCases": [
+        "symlink-instrument-absolute-token"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=67/68"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "realpath-membership-lexical",
+      "behaviour": "realpath membership: membership judged on lexical lane/abs",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "049c0a2e139c9d53cbd81b7c8182795de51cd994cc66143f279fc7b073925df1",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=28/30",
+      "probeExit": 1,
+      "probeHeld": "28/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=66/68",
+      "selftestExit": 1,
+      "selftestHeld": "66/68",
+      "killedByProbeArms": [
+        "selftest",
+        "alias-proc-root"
+      ],
+      "independentProbeArms": [
+        "alias-proc-root"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [
+        "alias-proc-root-in-lane",
+        "alias-proc-root-negative"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=66/68"
+        },
+        {
+          "arm": "alias-proc-root",
+          "detail": "exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "rev-bad-default-off",
+      "behaviour": "REV_UNRESOLVED: an unresolvable default --rev is not refused up front",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "ce5cbb44ce1c204579ed413873d1e277d98e1123bbe27bf5a005f2abecb78f65",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=28/30",
+      "probeExit": 1,
+      "probeHeld": "28/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=67/68",
+      "selftestExit": 1,
+      "selftestHeld": "67/68",
+      "killedByProbeArms": [
+        "selftest",
+        "rev-bad"
+      ],
+      "independentProbeArms": [
+        "rev-bad"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [
+        "rev-unresolved"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=67/68"
+        },
+        {
+          "arm": "rev-bad",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt instrument absent at ffffffffffffffffffffffffffffffffffffffff: scripts/tool-4a73f7258f7f.mjs"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "rev-field-skipped",
+      "behaviour": "receipt rev=: the rev= field is never read",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "53b76e52d042e19c7bdcb6b38e35b4b86f1d6fee140a4ba1ff0309f352fc215c",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=26/30",
+      "probeExit": 1,
+      "probeHeld": "26/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=66/68",
+      "selftestExit": 1,
+      "selftestHeld": "66/68",
+      "killedByProbeArms": [
+        "selftest",
+        "clean-r87",
+        "rev-receipt-wins",
+        "bom-rev"
+      ],
+      "independentProbeArms": [
+        "clean-r87",
+        "rev-receipt-wins",
+        "bom-rev"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [
+        "bom-rev-precedence",
+        "rev-per-receipt-overrides"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=66/68"
+        },
+        {
+          "arm": "clean-r87",
+          "detail": "copied=11 exit=1 RECEIPT_BIND: DRIFT matched=9 mismatched=2 unchecked=0 external=0 first=bind-selftest.txt"
+        },
+        {
+          "arm": "rev-receipt-wins",
+          "detail": "exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        },
+        {
+          "arm": "bom-rev",
+          "detail": "exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "rev-receipt-ignored",
+      "behaviour": "receipt rev=: the receipt's own rev= is discarded",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "a13910d2a2ce700e685512f291da5cc404dd882a0efb8762b36261bccf1635bc",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=26/30",
+      "probeExit": 1,
+      "probeHeld": "26/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=66/68",
+      "selftestExit": 1,
+      "selftestHeld": "66/68",
+      "killedByProbeArms": [
+        "selftest",
+        "clean-r87",
+        "rev-receipt-wins",
+        "bom-rev"
+      ],
+      "independentProbeArms": [
+        "clean-r87",
+        "rev-receipt-wins",
+        "bom-rev"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [
+        "bom-rev-precedence",
+        "rev-per-receipt-overrides"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=66/68"
+        },
+        {
+          "arm": "clean-r87",
+          "detail": "copied=11 exit=1 RECEIPT_BIND: DRIFT matched=9 mismatched=2 unchecked=0 external=0 first=bind-selftest.txt"
+        },
+        {
+          "arm": "rev-receipt-wins",
+          "detail": "exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        },
+        {
+          "arm": "bom-rev",
+          "detail": "exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "symlink-receipt-disabled",
+      "behaviour": "SYMLINK_RECEIPT: a symlinked receipt is parsed as a receipt",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "9a1ef39e83bcc184bd2b9220612e4c2406521d263e786fa44979b30d9d0b39b0",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=28/30",
+      "probeExit": 1,
+      "probeHeld": "28/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=67/68",
+      "selftestExit": 1,
+      "selftestHeld": "67/68",
+      "killedByProbeArms": [
+        "selftest",
+        "symlink-receipt"
+      ],
+      "independentProbeArms": [
+        "symlink-receipt"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [
+        "symlink-receipt"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=67/68"
+        },
+        {
+          "arm": "symlink-receipt",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_UNREADABLE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/symlink-receipt-disabled/p89-a8a8a81329b6/symlink-receipt-a8a8a81329b6/a.txt is not a regular file"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "unchecked-or-to-and",
+      "behaviour": "unchecked: a receipt missing cmd= or tool_sha256= is no longer unchecked",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "b92d8f66d676899274057da0ae74c5dbc9146bb1857a2338f256a383382b7320",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=28/30",
+      "probeExit": 1,
+      "probeHeld": "28/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=66/68",
+      "selftestExit": 1,
+      "selftestHeld": "66/68",
+      "killedByProbeArms": [
+        "selftest",
+        "unchecked"
+      ],
+      "independentProbeArms": [
+        "unchecked"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [
+        "unchecked-no-cmd",
+        "unchecked-no-digest"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=66/68"
+        },
+        {
+          "arm": "unchecked",
+          "detail": "exit=2 RECEIPT_BIND: FAIL-CLOSED INTERNAL Cannot read properties of null (reading 'split')"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "usage-exit-zero",
+      "behaviour": "usage: a bare invocation is no longer a usage error",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "ae4f0247bf2992018c1cb86b7f5f9017a13301ed351ebebf4a2c0f39402ae16a",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=28/30",
+      "probeExit": 1,
+      "probeHeld": "28/30",
+      "survivedSelftest": false,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: FAIL held=67/68",
+      "selftestExit": 1,
+      "selftestHeld": "67/68",
+      "killedByProbeArms": [
+        "usage",
+        "selftest"
+      ],
+      "independentProbeArms": [
+        "usage"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [
+        "usage-bare"
+      ],
+      "probeFailDetail": [
+        {
+          "arm": "usage",
+          "detail": "exit=0"
+        },
+        {
+          "arm": "selftest",
+          "detail": "exit=1 RECEIPT_BIND_SELFTEST: FAIL held=67/68"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "KILLED"
+    },
+    {
+      "id": "composite-limit-x2-and-arm-dropped",
+      "behaviour": "size limit doubled + the too-large selftest arm removed",
+      "kind": "composite",
+      "sites": 2,
+      "sha256": "b0c9f7b1624759e6984d97c1a086ff4b77d8259c78fd100a14fc0f9a23fda4b2",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=29/30",
+      "probeExit": 1,
+      "probeHeld": "29/30",
+      "survivedSelftest": true,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: PASS held=67/67",
+      "selftestExit": 0,
+      "selftestHeld": "67/67",
+      "killedByProbeArms": [
+        "limit-edge"
+      ],
+      "independentProbeArms": [
+        "limit-edge"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [],
+      "probeFailDetail": [
+        {
+          "arm": "limit-edge",
+          "detail": "edge 1048576 exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | over 1048577 exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "PROBE_ONLY"
+    },
+    {
+      "id": "limit-doubled",
+      "behaviour": "size limit: MAX_RECEIPT_BYTES 1048576 -> 2097152",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "f40ced43ebd51134541f4ea9bab4f693d462a362a2766f9a934ee55f940262cf",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=29/30",
+      "probeExit": 1,
+      "probeHeld": "29/30",
+      "survivedSelftest": true,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: PASS held=68/68",
+      "selftestExit": 0,
+      "selftestHeld": "68/68",
+      "killedByProbeArms": [
+        "limit-edge"
+      ],
+      "independentProbeArms": [
+        "limit-edge"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [],
+      "probeFailDetail": [
+        {
+          "arm": "limit-edge",
+          "detail": "edge 1048576 exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | over 1048577 exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "PROBE_ONLY"
+    },
+    {
+      "id": "limit-preread-disabled",
+      "behaviour": "size limit: the size is judged only after the receipt is opened",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "97b2841f6297cdfe442711b8fc95e507ccc0fca21f8c72c24af8945fd4234327",
+      "survivedProbe": false,
+      "probeVerdict": "C89_C1: UNMET held=29/30",
+      "probeExit": 1,
+      "probeHeld": "29/30",
+      "survivedSelftest": true,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: PASS held=68/68",
+      "selftestExit": 0,
+      "selftestHeld": "68/68",
+      "killedByProbeArms": [
+        "limit-before-read"
+      ],
+      "independentProbeArms": [
+        "limit-before-read"
+      ],
+      "probeKillIndependent": true,
+      "killedBySelftestCases": [],
+      "probeFailDetail": [
+        {
+          "arm": "limit-before-read",
+          "detail": "size=1073741824 exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_UNREADABLE /fast/scratch/hyaku/kumitate-r89/K89Mutation/probe/limit-preread-disabled/p89-b6692ab60e7c/limit-before-read-b6692ab60e7c/r.txt (EACCES)"
+        }
+      ],
+      "selftestCrash": null,
+      "verdict": "PROBE_ONLY"
+    },
+    {
+      "id": "composite-bad-digest-and-arm-dropped",
+      "behaviour": "non-64-hex tool_sha256= becomes a mismatch + its selftest arm removed",
+      "kind": "composite",
+      "sites": 2,
+      "sha256": "eef613e586edbb078dee3f97759ddd77afb9aaeaac5d09dffbe9371dac759bf9",
+      "survivedProbe": true,
+      "probeVerdict": "C89_C1: HELD held=30/30",
+      "probeExit": 0,
+      "probeHeld": "30/30",
+      "survivedSelftest": true,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: PASS held=67/67",
+      "selftestExit": 0,
+      "selftestHeld": "67/67",
+      "killedByProbeArms": [],
+      "independentProbeArms": [],
+      "probeKillIndependent": false,
+      "killedBySelftestCases": [],
+      "probeFailDetail": [],
+      "selftestCrash": null,
+      "verdict": "COVERAGE_HOLE"
+    },
+    {
+      "id": "composite-empty-dir-and-arms-dropped",
+      "behaviour": "empty-directory-reads-clean + both empty-dir selftest arms removed",
+      "kind": "composite",
+      "sites": 3,
+      "sha256": "632ab30a60dab7aae658e0d54628cbcf0e6d250cb1f621291d24e569e35d143a",
+      "survivedProbe": true,
+      "probeVerdict": "C89_C1: HELD held=30/30",
+      "probeExit": 0,
+      "probeHeld": "30/30",
+      "survivedSelftest": true,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: PASS held=66/66",
+      "selftestExit": 0,
+      "selftestHeld": "66/66",
+      "killedByProbeArms": [],
+      "independentProbeArms": [],
+      "probeKillIndependent": false,
+      "killedBySelftestCases": [],
+      "probeFailDetail": [],
+      "selftestCrash": null,
+      "verdict": "COVERAGE_HOLE"
+    },
+    {
+      "id": "composite-external-symlink-and-arm-dropped",
+      "behaviour": "external-symlink refusal + its selftest arm both removed",
+      "kind": "composite",
+      "sites": 2,
+      "sha256": "bbd242022b736a26226b072bc24e9da184dac5b396317b4d45a924c2de7c1e64",
+      "survivedProbe": true,
+      "probeVerdict": "C89_C1: HELD held=30/30",
+      "probeExit": 0,
+      "probeHeld": "30/30",
+      "survivedSelftest": true,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: PASS held=67/67",
+      "selftestExit": 0,
+      "selftestHeld": "67/67",
+      "killedByProbeArms": [],
+      "independentProbeArms": [],
+      "probeKillIndependent": false,
+      "killedBySelftestCases": [],
+      "probeFailDetail": [],
+      "selftestCrash": null,
+      "verdict": "COVERAGE_HOLE"
+    },
+    {
+      "id": "composite-git-env-and-arm-dropped",
+      "behaviour": "inherited GIT_* honoured + its selftest arm removed",
+      "kind": "composite",
+      "sites": 2,
+      "sha256": "b4b869a2f83418d875a92bf18df4bb0e70451235cc15a62d9e65f6479ce822d3",
+      "survivedProbe": true,
+      "probeVerdict": "C89_C1: HELD held=30/30",
+      "probeExit": 0,
+      "probeHeld": "30/30",
+      "survivedSelftest": true,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: PASS held=67/67",
+      "selftestExit": 0,
+      "selftestHeld": "67/67",
+      "killedByProbeArms": [],
+      "independentProbeArms": [],
+      "probeKillIndependent": false,
+      "killedBySelftestCases": [],
+      "probeFailDetail": [],
+      "selftestCrash": null,
+      "verdict": "COVERAGE_HOLE"
+    },
+    {
+      "id": "composite-realpath-final-and-arm-dropped",
+      "behaviour": "final-component realpath lost + the absolute-token symlink selftest arm removed",
+      "kind": "composite",
+      "sites": 2,
+      "sha256": "e148cda47aa79956c898aaa4d0802b6ba432b6eb7feaea101a264e7b97f8034e",
+      "survivedProbe": true,
+      "probeVerdict": "C89_C1: HELD held=30/30",
+      "probeExit": 0,
+      "probeHeld": "30/30",
+      "survivedSelftest": true,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: PASS held=67/67",
+      "selftestExit": 0,
+      "selftestHeld": "67/67",
+      "killedByProbeArms": [],
+      "independentProbeArms": [],
+      "probeKillIndependent": false,
+      "killedBySelftestCases": [],
+      "probeFailDetail": [],
+      "selftestCrash": null,
+      "verdict": "COVERAGE_HOLE"
+    },
+    {
+      "id": "contract-string-v2",
+      "behaviour": "contract: the emitted contract id is v2, not v3",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "199e72af8f0fe5466c6906fbfe79399e89ce017ec1d2723a29e0f38669f09c71",
+      "survivedProbe": true,
+      "probeVerdict": "C89_C1: HELD held=30/30",
+      "probeExit": 0,
+      "probeHeld": "30/30",
+      "survivedSelftest": true,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: PASS held=68/68",
+      "selftestExit": 0,
+      "selftestHeld": "68/68",
+      "killedByProbeArms": [],
+      "independentProbeArms": [],
+      "probeKillIndependent": false,
+      "killedBySelftestCases": [],
+      "probeFailDetail": [],
+      "selftestCrash": null,
+      "verdict": "COVERAGE_HOLE"
+    },
+    {
+      "id": "digest-lowercase-off",
+      "behaviour": "digest: tool_sha256= is not lowercased before comparison",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "8839da499d6e4b82fe10987100f3c8d4d692cd84ef93fbed1f2b46bb330ee29b",
+      "survivedProbe": true,
+      "probeVerdict": "C89_C1: HELD held=30/30",
+      "probeExit": 0,
+      "probeHeld": "30/30",
+      "survivedSelftest": true,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: PASS held=68/68",
+      "selftestExit": 0,
+      "selftestHeld": "68/68",
+      "killedByProbeArms": [],
+      "independentProbeArms": [],
+      "probeKillIndependent": false,
+      "killedBySelftestCases": [],
+      "probeFailDetail": [],
+      "selftestCrash": null,
+      "verdict": "COVERAGE_HOLE"
+    },
+    {
+      "id": "lane-not-git-off",
+      "behaviour": "LANE_NOT_GIT: a --lane that is not a git repository is accepted",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "64ce171a2552a3218b7a1e94da18284704c1b800277b757110626d0f75d73a27",
+      "survivedProbe": true,
+      "probeVerdict": "C89_C1: HELD held=30/30",
+      "probeExit": 0,
+      "probeHeld": "30/30",
+      "survivedSelftest": true,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: PASS held=68/68",
+      "selftestExit": 0,
+      "selftestHeld": "68/68",
+      "killedByProbeArms": [],
+      "independentProbeArms": [],
+      "probeKillIndependent": false,
+      "killedBySelftestCases": [],
+      "probeFailDetail": [],
+      "selftestCrash": null,
+      "verdict": "COVERAGE_HOLE"
+    },
+    {
+      "id": "limit-fstat-disabled",
+      "behaviour": "size limit: the descriptor re-check after open is disabled",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "a328755e3dcd285fba85b1a94ce5cc050471d1fa059334481489371223bb2994",
+      "survivedProbe": true,
+      "probeVerdict": "C89_C1: HELD held=30/30",
+      "probeExit": 0,
+      "probeHeld": "30/30",
+      "survivedSelftest": true,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: PASS held=68/68",
+      "selftestExit": 0,
+      "selftestHeld": "68/68",
+      "killedByProbeArms": [],
+      "independentProbeArms": [],
+      "probeKillIndependent": false,
+      "killedBySelftestCases": [],
+      "probeFailDetail": [],
+      "selftestCrash": null,
+      "verdict": "COVERAGE_HOLE"
+    },
+    {
+      "id": "mode-read-at-head",
+      "behaviour": "SYMLINK_INSTRUMENT: mode read at HEAD, not the judged revision",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "5751e47a66a28831caa19daa624969e3de5416b7318b8be25660f7f21e8b3614",
+      "survivedProbe": true,
+      "probeVerdict": "C89_C1: HELD held=30/30",
+      "probeExit": 0,
+      "probeHeld": "30/30",
+      "survivedSelftest": true,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: PASS held=68/68",
+      "selftestExit": 0,
+      "selftestHeld": "68/68",
+      "killedByProbeArms": [],
+      "independentProbeArms": [],
+      "probeKillIndependent": false,
+      "killedBySelftestCases": [],
+      "probeFailDetail": [],
+      "selftestCrash": null,
+      "verdict": "COVERAGE_HOLE"
+    },
+    {
+      "id": "nofollow-dropped",
+      "behaviour": "TOCTOU: the receipt is opened without O_NOFOLLOW",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "cb5d74b03546ba9953b9d076d7f3c02b092d1e5c4d18ebce79e6b64d043a7c44",
+      "survivedProbe": true,
+      "probeVerdict": "C89_C1: HELD held=30/30",
+      "probeExit": 0,
+      "probeHeld": "30/30",
+      "survivedSelftest": true,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: PASS held=68/68",
+      "selftestExit": 0,
+      "selftestHeld": "68/68",
+      "killedByProbeArms": [],
+      "independentProbeArms": [],
+      "probeKillIndependent": false,
+      "killedBySelftestCases": [],
+      "probeFailDetail": [],
+      "selftestCrash": null,
+      "verdict": "COVERAGE_HOLE"
+    },
+    {
+      "id": "realpath-lane-off",
+      "behaviour": "realpath membership: the LANE is not realpath-resolved",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "ddb6a4304e7e7a677eb5b3c674eaa4453a115eee6566f0673e4e01f6f8774a12",
+      "survivedProbe": true,
+      "probeVerdict": "C89_C1: HELD held=30/30",
+      "probeExit": 0,
+      "probeHeld": "30/30",
+      "survivedSelftest": true,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: PASS held=68/68",
+      "selftestExit": 0,
+      "selftestHeld": "68/68",
+      "killedByProbeArms": [],
+      "independentProbeArms": [],
+      "probeKillIndependent": false,
+      "killedBySelftestCases": [],
+      "probeFailDetail": [],
+      "selftestCrash": null,
+      "verdict": "COVERAGE_HOLE"
+    },
+    {
+      "id": "rev-commit-check-off",
+      "behaviour": "receipt rev=: a receipt rev= that is not a commit is not refused",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "91586adbc6a5220926b2f7a141af0ff7f28b4d1426281920a1d6e631e6d4d61d",
+      "survivedProbe": true,
+      "probeVerdict": "C89_C1: HELD held=30/30",
+      "probeExit": 0,
+      "probeHeld": "30/30",
+      "survivedSelftest": true,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: PASS held=68/68",
+      "selftestExit": 0,
+      "selftestHeld": "68/68",
+      "killedByProbeArms": [],
+      "independentProbeArms": [],
+      "probeKillIndependent": false,
+      "killedBySelftestCases": [],
+      "probeFailDetail": [],
+      "selftestCrash": null,
+      "verdict": "COVERAGE_HOLE"
+    },
+    {
+      "id": "root-check-absolute-off",
+      "behaviour": "UNRESOLVED: an absolute token naming the lane root is accepted",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "53e8351dd7ed2245c679db023af97edfa4f30a6fd82710df170e59fb6697a010",
+      "survivedProbe": true,
+      "probeVerdict": "C89_C1: HELD held=30/30",
+      "probeExit": 0,
+      "probeHeld": "30/30",
+      "survivedSelftest": true,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: PASS held=68/68",
+      "selftestExit": 0,
+      "selftestHeld": "68/68",
+      "killedByProbeArms": [],
+      "independentProbeArms": [],
+      "probeKillIndependent": false,
+      "killedBySelftestCases": [],
+      "probeFailDetail": [],
+      "selftestCrash": null,
+      "verdict": "COVERAGE_HOLE"
+    },
+    {
+      "id": "selftest-drop-dup-equal-arm",
+      "behaviour": "selftest: the equal-valued duplicate rev= arm is deleted",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "fc7634d35fe6196fd9c9defb5c2e1ca93435d36128151c5a631f92bc77ad3db4",
+      "survivedProbe": true,
+      "probeVerdict": "C89_C1: HELD held=30/30",
+      "probeExit": 0,
+      "probeHeld": "30/30",
+      "survivedSelftest": true,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: PASS held=67/67",
+      "selftestExit": 0,
+      "selftestHeld": "67/67",
+      "killedByProbeArms": [],
+      "independentProbeArms": [],
+      "probeKillIndependent": false,
+      "killedBySelftestCases": [],
+      "probeFailDetail": [],
+      "selftestCrash": null,
+      "verdict": "COVERAGE_HOLE"
+    },
+    {
+      "id": "selftest-drop-external-symlink-arm",
+      "behaviour": "selftest: the external-symlink SYMLINK_INSTRUMENT arm is deleted",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "42e41d69395a846da08919373d2fe1a6a6df699eb458671a1399052a5d8839b9",
+      "survivedProbe": true,
+      "probeVerdict": "C89_C1: HELD held=30/30",
+      "probeExit": 0,
+      "probeHeld": "30/30",
+      "survivedSelftest": true,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: PASS held=67/67",
+      "selftestExit": 0,
+      "selftestHeld": "67/67",
+      "killedByProbeArms": [],
+      "independentProbeArms": [],
+      "probeKillIndependent": false,
+      "killedBySelftestCases": [],
+      "probeFailDetail": [],
+      "selftestCrash": null,
+      "verdict": "COVERAGE_HOLE"
+    },
+    {
+      "id": "selftest-drop-receipt-is-directory-arm",
+      "behaviour": "selftest: the RECEIPT_UNREADABLE directory arm is deleted",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "ac0f2fc8e85b1a6eb64ae13e5962a3e4fc052c0b1cac99aae5431263835d4fd8",
+      "survivedProbe": true,
+      "probeVerdict": "C89_C1: HELD held=30/30",
+      "probeExit": 0,
+      "probeHeld": "30/30",
+      "survivedSelftest": true,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: PASS held=67/67",
+      "selftestExit": 0,
+      "selftestHeld": "67/67",
+      "killedByProbeArms": [],
+      "independentProbeArms": [],
+      "probeKillIndependent": false,
+      "killedBySelftestCases": [],
+      "probeFailDetail": [],
+      "selftestCrash": null,
+      "verdict": "COVERAGE_HOLE"
+    },
+    {
+      "id": "selftest-drop-symlink-instrument-arm",
+      "behaviour": "selftest: the SYMLINK_INSTRUMENT arm is deleted",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "7a1815adb662363f63037188ce805bf193d38a793a792fc01aa33d5c18f89e71",
+      "survivedProbe": true,
+      "probeVerdict": "C89_C1: HELD held=30/30",
+      "probeExit": 0,
+      "probeHeld": "30/30",
+      "survivedSelftest": true,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: PASS held=67/67",
+      "selftestExit": 0,
+      "selftestHeld": "67/67",
+      "killedByProbeArms": [],
+      "independentProbeArms": [],
+      "probeKillIndependent": false,
+      "killedBySelftestCases": [],
+      "probeFailDetail": [],
+      "selftestCrash": null,
+      "verdict": "COVERAGE_HOLE"
+    },
+    {
+      "id": "selftest-held-tautology",
+      "behaviour": "selftest: the PASS verdict is a tautology (every arm counts held)",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "73ce7394136648311029a8253f6df02168b40a10cf1106a184fa34b92d84d043",
+      "survivedProbe": true,
+      "probeVerdict": "C89_C1: HELD held=30/30",
+      "probeExit": 0,
+      "probeHeld": "30/30",
+      "survivedSelftest": true,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: PASS held=68/68",
+      "selftestExit": 0,
+      "selftestHeld": "68/68",
+      "killedByProbeArms": [],
+      "independentProbeArms": [],
+      "probeKillIndependent": false,
+      "killedBySelftestCases": [],
+      "probeFailDetail": [],
+      "selftestCrash": null,
+      "verdict": "COVERAGE_HOLE"
+    },
+    {
+      "id": "selftest-relax-bom-arm",
+      "behaviour": "selftest: the BOM precedence arm accepts any RECEIPT_BIND line",
+      "kind": "single",
+      "sites": 1,
+      "sha256": "5b53409b0200b66ec1a0a34c3eb9818f62564741daae24ba7f978299306a3baa",
+      "survivedProbe": true,
+      "probeVerdict": "C89_C1: HELD held=30/30",
+      "probeExit": 0,
+      "probeHeld": "30/30",
+      "survivedSelftest": true,
+      "selftestVerdict": "RECEIPT_BIND_SELFTEST: PASS held=68/68",
+      "selftestExit": 0,
+      "selftestHeld": "68/68",
+      "killedByProbeArms": [],
+      "independentProbeArms": [],
+      "probeKillIndependent": false,
+      "killedBySelftestCases": [],
+      "probeFailDetail": [],
+      "selftestCrash": null,
+      "verdict": "COVERAGE_HOLE"
+    }
+  ]
+}

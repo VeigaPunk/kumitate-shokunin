@@ -1,0 +1,20 @@
+--- candidate-v3.mjs	2026-11-04 21:05:59.673250076 -0300
++++ mutants/composite-mode-off-and-arm-dropped.mjs	2026-11-04 21:07:51.037449860 -0300
+@@ -358,7 +358,7 @@
+       // the digest would bind the link text while the executed content is the target's.
+       const lsTree = git(lane, ['ls-tree', receiptRev, '--', rel]);
+       const mode = lsTree.status === 0 ? (lsTree.stdout.trim().split(/\s+/)[0] || '') : '';
+-      if (mode === '120000') {
++      if (mode === '120000' && false) {
+         throw new FailClosed('SYMLINK_INSTRUMENT', `${file} instrument is a symlink at ${receiptRev}: ${rel}`);
+       }
+       bytes = blobAt(lane, receiptRev, rel);
+@@ -557,7 +557,7 @@
+     expect('alias-proc-root-in-lane', runTool(['--dir', rcProcAlias, '--rev', c2]), 0, CLE(1, 0));
+     expect('alias-proc-root-negative', runTool(['--dir', rcProcAliasBad, '--rev', c2]), 1, DRI(0, 1, 0, 0, 'a.txt'));
+   }
+-  expect('symlink-instrument-120000', runTool(['--dir', rcSymlinkInstrument, '--rev', c3]), 2, FC('SYMLINK_INSTRUMENT'));
++  // mutant: symlink-instrument-120000 selftest arm removed
+   expect('symlink-instrument-twin-target-binds', runTool(['--dir', rcSymlinkInstrumentTwin, '--rev', c3]), 0, CLE(1));
+   expect('symlink-instrument-absolute-token', runTool(['--dir', rcSymlinkInstrumentAbs, '--rev', c3]), 2, FC('SYMLINK_INSTRUMENT'));
+   expect('symlink-instrument-external', runTool(['--dir', rcExtLink, '--rev', c2]), 2, FC('SYMLINK_INSTRUMENT'));

@@ -1,0 +1,13 @@
+== D1 symlink target with a space (committed mode 120000; digest = sha256 of the link text)
+D1   base-v2.mjs        exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+D1   cand-skip-mode.mjs exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+D1   worktree.mjs       exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT r.txt instrument is a symlink at 83dc5466a374dda9b85742f1d59968ff55125e8b: scripts/l2.mjs
+== D2 in-lane relative token with an interior .. (should bind CLEAN)
+D2   base-v2.mjs        exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+D2   cand-skip-mode.mjs exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+D2   worktree.mjs       exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+== D3 in-lane instrument via symlinked ancestor, dirty worktree, judged at its own commit (should bind CLEAN)
+D3   base-v2.mjs        exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=1 first=r.txt
+D3   cand-skip-mode.mjs exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=1 first=r.txt
+D3   worktree.mjs       exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+demos exit=0

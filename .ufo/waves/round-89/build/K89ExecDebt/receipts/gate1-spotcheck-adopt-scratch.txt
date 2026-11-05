@@ -1,0 +1,22 @@
+# gate1 adoption receipt (SPOTCHECK_ADOPT run in scratch copy of a5d2503; lane untouched)
+$ node scripts/spotcheck-adopt.mjs --check   # before
+SPOTCHECK_COVERAGE: CLEAN spotchecks=55 uncovered=0
+MAP: CLEAN
+exit=0
+$ node scripts/spotcheck-adopt.mjs --predict 88
+SPOTCHECK_PREDICT: COVERED corpus/lessons/round-88-verifier-spotcheck.md
+exit=0
+$ node scripts/spotcheck-adopt.mjs --adopt corpus/lessons/round-88-verifier-spotcheck.md
+SPOTCHECK_ADOPT: ALREADY_ADOPTED corpus/lessons/round-88-verifier-spotcheck.md
+exit=0
+$ node scripts/readme-map.mjs   # after
+README_MAP: CLEAN files=225 rows=225 covered=225
+exit=0
+$ node scripts/spotcheck-adopt.mjs --check   # after
+SPOTCHECK_COVERAGE: CLEAN spotchecks=55 uncovered=0
+MAP: CLEAN
+exit=0
+# journal: .ufo/pins/adopt-journal is empty after success (retire() removes the staged entry by design); no journal bytes survive to commit. Pre-images are the a5d2503 README.md and readme-map.json (sha in base receipts).
+total 4
+drwxr-xr-x 2 vgpnk vgpnk    6 Nov  4 20:52 .
+drwxr-xr-x 3 vgpnk vgpnk 4096 Nov  4 20:52 ..

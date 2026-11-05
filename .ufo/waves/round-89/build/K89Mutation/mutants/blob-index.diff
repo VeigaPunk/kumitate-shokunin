@@ -1,0 +1,11 @@
+--- candidate-v3.mjs	2026-11-04 21:05:59.673250076 -0300
++++ mutants/blob-index.mjs	2026-11-04 21:07:51.034449853 -0300
+@@ -214,7 +214,7 @@
+ }
+ 
+ function blobAt(lane, rev, rel) {
+-  const r = git(lane, ['cat-file', 'blob', `${rev}:${rel}`], { buffer: true });
++  const r = git(lane, ['show', `:${rel}`], { buffer: true });
+   return r.status === 0 ? r.stdout : null;
+ }
+ 

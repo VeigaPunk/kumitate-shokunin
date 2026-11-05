@@ -1,0 +1,11 @@
+--- candidate-v3.mjs	2026-11-04 21:05:59.673250076 -0300
++++ mutants/empty-dir-clean.mjs	2026-11-04 21:07:51.035449855 -0300
+@@ -377,7 +377,7 @@
+   }
+ 
+   const total = matched + mismatched + unchecked;
+-  const clean = total > 0 && mismatched === 0 && unchecked === 0;
++  const clean = mismatched === 0 && unchecked === 0;
+ 
+   if (json) {
+     out(`${JSON.stringify({

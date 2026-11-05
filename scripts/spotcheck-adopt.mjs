@@ -64,7 +64,9 @@ function appendPin(raw, key) {
   }
   const body = raw.slice(start, end);
   const boundary = start + body.trimEnd().length;
-  const addition = `${body.trim() ? ',' : ''}\n  ${JSON.stringify(key)}`;
+  // Match the file's own entry indentation (first existing entry), not a fixed two spaces.
+  const indent = /\n([ \t]+)"/.exec(body)?.[1] ?? '  ';
+  const addition = `${body.trim() ? ',' : ''}\n${indent}${JSON.stringify(key)}`;
   const next = raw.slice(0, boundary) + addition + raw.slice(boundary);
   const doc = JSON.parse(next);
   if (!doc.covered.includes(key)) throw new Error('insertion failed');
@@ -311,7 +313,9 @@ function selftest(lane) {
       return exact(run(d, '--check'), 0, 'SPOTCHECK_COVERAGE: CLEAN spotchecks=1 uncovered=0\nMAP: DRIFT first=uncovered:knowledge/late.md');
     });
     d = fixture('check-map-orphan', true, true);
-    writeFileSync(join(d, 'corpus/README.md'), readFileSync(join(d, 'corpus/README.md'), 'utf8') + '| `knowledge/ghost.md` | Ghost | fixture |\n');
+    // Insert the ghost row INSIDE the map section: readme-map v3 (round 86) reads a row after
+    // `## Known gaps` as outside-map, not orphan-row; this case proves the orphan class.
+    writeFileSync(join(d, 'corpus/README.md'), readFileSync(join(d, 'corpus/README.md'), 'utf8').replace('\n## Known gaps', '| `knowledge/ghost.md` | Ghost | fixture |\n## Known gaps'));
     test('check-map-orphan', () => !oracle(d).clean, () => {
       const r = run(d, '--check');
       return r.exit === 0 && r.text === 'SPOTCHECK_COVERAGE: CLEAN spotchecks=1 uncovered=0\nMAP: DRIFT first=orphan-row:knowledge/ghost.md';

@@ -3044,3 +3044,43 @@ At M `7817d20093015866a419f865fd2e0085195873a9`: frozen predicate `C88_C1: HELD 
 `plan-before-ready` PASS (K87-V2 closed), `PROXY: MATCH --strict` (C2 222 → 224). **C1 UNMET**: nine seat
 constructions reach 20/20 under the frozen kill rule. SOURCES 189 → 192 (S252, S253 admitted A; S254 rejected B;
 S218 used-by extended). `ready-handoff` DRIFT on this round's own spec (relative path in one item), disclosed.
+
+## Round 89 — receipt-bind v3: a scorer that names its own arms (2026-11-04, attempt 2)
+
+Claim: C1 operability, capability acquisition `receipt-bind` v3 (contract `kumitate-receipt-bind-v3`),
+frozen at `adfc2f55675f760eaf8b59f80033f926500cd951` (plan + 30-arm probe + 22 pre-data controls) and
+`9c3b64e44024869937a827d588fe1b75e6692ef7` (wave spec + validated dispatch). Attempt 1 of this round
+left only `.ufo/waves/round-89/open/census-start.txt`; it is reused as the attempt-2 round-start census
+and nothing else was inherited.
+
+Frozen predicate `node .ufo/waves/round-89/probe/probe89-c1.mjs --lane <LANE> --work <SCRATCH> --rev <REV>`
+→ `C89_C1: HELD held=30/30`; kill rule: any control at 30/30, committed or seat-constructed, makes C1
+UNMET. Pre-data controls (`controls/table.txt`): v2 27/30 (fails `alias-proc-root`, `bom-rev`,
+`symlink-instrument`), v2 worktree twin 14/30, v1 19/30, refuse-all 2/30, absent —, and all nine
+round-88 kill-rule constructions below terminal (c2-head-default 24, e2-index-default 24, ctl-abs-disk
+26, d-fixture-gated-boundaries 19, f1-size-after-read 26, f4-textual-escape 26, f5-loose-limit 26,
+f6-dup-equal-ok 26, nogit-overfit 17 of 30). The fixture is drawn at run time from a 12-hex nonce
+(three commits A/B/C=HEAD, a staged body S, a dirty worktree W, an untracked instrument, a committed
+mode-120000 symlink), so no construction can key on a path or a body constant.
+
+Landed instrument: `scripts/receipt-bind.mjs` v3, sha256 `37201ad0…` — real-path lane membership on
+the token's PARENT (so an absolute in-lane symlink token is still seen as a link), `SYMLINK_INSTRUMENT`
+for a mode-120000 blob at the judged rev and for a symlinked external instrument, one leading U+FEFF
+stripped before field parsing, and the receipt read on one `O_NOFOLLOW` descriptor (`fstat` + read).
+Selftest 59 → 68 arms. Corpus: S255–S258 admitted (A, mined), S259 rejected (B), knowledge
+`receipt-lane-membership-and-link-binding.md`, QUALITY **Q82**, lesson `corpus/lessons/round-89.md`.
+
+Routed-debt repairs landed from the wave's debt seat: `spotcheck-adopt` `appendPin` indent + the stale
+`check-map-orphan` fixture (selftest 33/34 → 34/34), `.ufo/pins/counter-pins.json` `readme-map` re-pin
+(`COUNTER_PINS: CLEAN pins=45`), the round-88 spotcheck's README row + `readme-map` covered entry
+(`README_MAP: CLEAN`), and the proxy stanza refresh at M.
+
+Wave: one v1 wave of 13 seats under policy v1 (4 executors, 2 scribes, 1 scout, 1 reviewer, 2 critics,
+1 mutation-tester, 1 sentinel, 1 connector; attack 4/13). The kill rule FIRED: two seats independently
+reached `C89_C1: HELD held=30/30` while skipping claimed behaviour — `cand-probe-keyed` (computes
+nothing; reads the `--dir` basename `<arm>-<nonce>`) and `cand-skip-mode` (a blob-shape test and a
+literal `/proc/self/root` prefix strip) — and the L1 re-ran both. C1 is UNMET: the third
+rejected-honest-stop in a row for this capability, and the root cause is the scorer class, not the
+instrument (the integrated v3 answers correctly on the reviewer's unprobed D1/D3 and on an absolute
+symlink token the probe never draws). No capability row enters the table; operability stays 9 and
+every coverage row stays 10.
