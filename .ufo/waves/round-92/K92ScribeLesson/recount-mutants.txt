@@ -1,0 +1,24 @@
+# recount of .ufo/waves/round-91/K91Mutation/mutants.txt
+# source sha256: c164893b16a60ad26a9706879250af9c1276ebf1f6d9046850daf90213ffb83f  .ufo/waves/round-91/K91Mutation/mutants.txt
+# command: awk on data rows mNN<TAB>description<TAB>verdict<TAB>classification
+
+row	verdict	first_token_of_verdict
+m00-pristine	C91_C1: HELD held=56/56 rc=0 10s	HELD
+m01-drop-nonblock	C91_C1: UNMET held=55/56 rc=1 49s	UNMET
+m02-drop-nofollow	C91_C1: HELD held=56/56 rc=0 10s	HELD
+m03-isfile-to-notisdirectory	C91_C1: UNMET held=49/56 rc=1 10s	UNMET
+m04-gte-cap	C91_C1: UNMET held=55/56 rc=1 10s	UNMET
+m05-cap-minus1	C91_C1: UNMET held=55/56 rc=1 10s	UNMET
+m06-cap-plus1	C91_C1: UNMET held=55/56 rc=1 10s	UNMET
+m07-read-by-path	C91_C1: HELD held=56/56 rc=0 10s	HELD
+m08-swallow-failclosed	C91_C1: HELD held=56/56 rc=0 10s	HELD
+m09-token-swap	C91_C1: UNMET held=52/56 rc=1 10s	UNMET
+m10-stat-abs	C91_C1: HELD held=56/56 rc=0 10s	HELD
+m11-remove-close	C91_C1: HELD held=56/56 rc=0 10s	HELD
+
+UNMET_rows=6
+HELD_rows=6
+mutant_rows_excluding_m00=11
+killed_excluding_m00=6
+survivors=m02-drop-nofollow m07-read-by-path m08-swallow-failclosed m10-stat-abs m11-remove-close 
+stated_line=1

@@ -1,0 +1,288 @@
+# Field-level dump of the route rows the contradictions cite. Not a transcript copy:
+# only type/role/model/resolvedModelIsFallback and, per assistant turn, provider/model/stopReason
+# plus the first 70 chars of errorMessage. Command: this heredoc python3 driver over the
+# session paths recorded in retro-r86.json / retro-r90.json / retro-r91.json.
+
+=== r86 K86Review  session=/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-11-03T17-37-19-922Z_01a1a27c-a432-71e1-944b-0900e4e7a66b/K86Review.jsonl
+  model_change {'role': None, 'model': 'opencode-go/deepseek-v4.1-flash', 'resolvedModelIsFallback': False}
+  model_change {'role': 'subagent:K86Review', 'model': 'opencode-go/deepseek-v4.1-flash', 'resolvedModelIsFallback': False}
+  turn 1 {'provider': 'opencode-go', 'model': 'deepseek-v4.1-flash', 'stopReason': 'error', 'err': '402 Upstream request failed: Insufficient account funds (type=server_e'}
+  assistant_turns=1
+
+=== r86 K86Critic  session=/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-11-03T17-37-19-922Z_01a1a27c-a432-71e1-944b-0900e4e7a66b/K86Critic.jsonl
+  model_change {'role': None, 'model': 'opencode-go/deepseek-v4.1-flash', 'resolvedModelIsFallback': False}
+  model_change {'role': 'subagent:K86Critic', 'model': 'opencode-go/deepseek-v4.1-flash', 'resolvedModelIsFallback': False}
+  turn 1 {'provider': 'opencode-go', 'model': 'deepseek-v4.1-flash', 'stopReason': 'error', 'err': '402 Upstream request failed: Insufficient account funds (type=server_e'}
+  assistant_turns=1
+
+=== r86 K86Mutation  session=/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-11-03T17-37-19-922Z_01a1a27c-a432-71e1-944b-0900e4e7a66b/K86Mutation.jsonl
+  model_change {'role': None, 'model': 'opencode-go/deepseek-v4.1-flash', 'resolvedModelIsFallback': False}
+  model_change {'role': 'subagent:K86Mutation', 'model': 'opencode-go/deepseek-v4.1-flash', 'resolvedModelIsFallback': False}
+  turn 1 {'provider': 'opencode-go', 'model': 'deepseek-v4.1-flash', 'stopReason': 'error', 'err': '402 Upstream request failed: Insufficient account funds (type=server_e'}
+  model_change {'role': 'fallback', 'model': 'commandcode/deepseek/deepseek-v4.1-flash', 'resolvedModelIsFallback': True}
+  turn 2 {'provider': 'opencode-go', 'model': 'deepseek-v4.1-flash', 'stopReason': 'error', 'err': '402 Upstream request failed: Insufficient account funds (type=server_e'}
+  turn 3 {'provider': 'commandcode', 'model': 'deepseek/deepseek-v4.1-flash', 'stopReason': 'error', 'err': "401 Invalid 'Authorization' header or token. (type=authentication_erro"}
+  assistant_turns=3
+
+=== r86 K86Sentinel  session=/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-11-03T17-37-19-922Z_01a1a27c-a432-71e1-944b-0900e4e7a66b/K86Sentinel.jsonl
+  model_change {'role': None, 'model': 'opencode-go/deepseek-v4.1-flash', 'resolvedModelIsFallback': False}
+  model_change {'role': 'subagent:K86Sentinel', 'model': 'opencode-go/deepseek-v4.1-flash', 'resolvedModelIsFallback': False}
+  turn 1 {'provider': 'opencode-go', 'model': 'deepseek-v4.1-flash', 'stopReason': 'error', 'err': '402 Upstream request failed: Insufficient account funds (type=server_e'}
+  assistant_turns=1
+
+=== r86 K86Revenger  session=/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-11-03T17-37-19-922Z_01a1a27c-a432-71e1-944b-0900e4e7a66b/K86Revenger.jsonl
+  model_change {'role': None, 'model': 'opencode-go/deepseek-v4.1-flash', 'resolvedModelIsFallback': False}
+  model_change {'role': 'subagent:K86Revenger', 'model': 'opencode-go/deepseek-v4.1-flash', 'resolvedModelIsFallback': False}
+  turn 1 {'provider': 'opencode-go', 'model': 'deepseek-v4.1-flash', 'stopReason': 'error', 'err': '402 Upstream request failed: Insufficient account funds (type=server_e'}
+  assistant_turns=1
+
+=== r90 K90Connector  session=/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-11-03T17-37-19-922Z_01a1a27c-a432-71e1-944b-0900e4e7a66b/K90Connector.jsonl
+  model_change {'role': None, 'model': 'zai/glm-5.3-flash', 'resolvedModelIsFallback': False}
+  model_change {'role': 'subagent:K90Connector', 'model': 'zai/glm-5.3-flash', 'resolvedModelIsFallback': False}
+  model_change {'role': 'fallback', 'model': 'anthropic/claude-haiku-5-5', 'resolvedModelIsFallback': True}
+  turn 1 {'provider': 'zai', 'model': 'glm-5.3-flash', 'stopReason': 'error', 'err': '429 Rate limit reached for requests (type=1302)'}
+  turn 2 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 3 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 4 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 5 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 6 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 7 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 8 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 9 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 10 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 11 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 12 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 13 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 14 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 15 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 16 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 17 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 18 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 19 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 20 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 21 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  assistant_turns=21
+
+=== r90 K90Sentinel  session=/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-11-03T17-37-19-922Z_01a1a27c-a432-71e1-944b-0900e4e7a66b/K90Sentinel.jsonl
+  model_change {'role': None, 'model': 'zai/glm-5.3-flash', 'resolvedModelIsFallback': False}
+  model_change {'role': 'subagent:K90Sentinel', 'model': 'zai/glm-5.3-flash', 'resolvedModelIsFallback': False}
+  model_change {'role': 'fallback', 'model': 'anthropic/claude-haiku-5-5', 'resolvedModelIsFallback': True}
+  turn 1 {'provider': 'zai', 'model': 'glm-5.3-flash', 'stopReason': 'error', 'err': '429 Rate limit reached for requests (type=1302)'}
+  turn 2 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 3 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 4 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 5 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 6 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 7 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 8 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 9 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 10 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 11 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 12 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 13 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 14 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 15 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 16 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  turn 17 {'provider': 'anthropic', 'model': 'claude-haiku-5-5', 'stopReason': 'toolUse', 'err': ''}
+  assistant_turns=17
+
+=== r90 K90Reviewer  session=/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-11-03T17-37-19-922Z_01a1a27c-a432-71e1-944b-0900e4e7a66b/K90Reviewer.jsonl
+  model_change {'role': None, 'model': 'zai/glm-5.3-flashx', 'resolvedModelIsFallback': False}
+  model_change {'role': 'subagent:K90Reviewer', 'model': 'zai/glm-5.3-flashx', 'resolvedModelIsFallback': False}
+  model_change {'role': 'fallback', 'model': 'commandcode/z-ai/glm-5.3-flash', 'resolvedModelIsFallback': True}
+  turn 1 {'provider': 'zai', 'model': 'glm-5.3-flashx', 'stopReason': 'error', 'err': '429 Rate limit reached for requests (type=1302)'}
+  turn 2 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 3 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 4 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 5 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 6 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 7 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 8 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 9 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 10 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 11 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 12 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 13 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 14 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 15 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 16 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 17 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 18 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 19 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 20 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 21 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 22 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 23 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 24 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 25 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 26 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 27 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 28 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 29 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 30 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 31 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 32 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 33 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 34 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 35 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 36 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 37 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 38 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 39 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 40 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 41 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 42 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 43 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 44 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 45 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 46 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 47 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 48 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 49 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 50 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 51 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 52 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 53 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 54 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 55 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 56 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 57 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 58 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 59 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 60 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 61 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 62 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 63 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 64 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 65 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 66 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 67 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 68 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 69 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 70 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 71 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 72 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 73 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 74 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 75 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 76 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 77 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 78 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 79 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 80 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 81 {'provider': 'commandcode', 'model': 'z-ai/glm-5.3-flash', 'stopReason': 'toolUse', 'err': ''}
+  assistant_turns=81
+
+=== r91 K91Scout  session=/home/vgpnk/.omp/agent/sessions/-Projects-shokunin/2026-11-03T17-37-19-922Z_01a1a27c-a432-71e1-944b-0900e4e7a66b/K91Scout.jsonl
+  model_change {'role': None, 'model': 'google-antigravity/claude-opus-5-5', 'resolvedModelIsFallback': False}
+  model_change {'role': 'subagent:K91Scout', 'model': 'google-antigravity/claude-opus-5-5', 'resolvedModelIsFallback': False}
+  model_change {'role': 'fallback', 'model': 'minimax-code/MiniMax-M3.1-Flash', 'resolvedModelIsFallback': True}
+  turn 1 {'provider': 'google-antigravity', 'model': 'claude-opus-5-5', 'stopReason': 'error', 'err': 'Cloud Code Assist API error (429): {\n  "error": {\n    "code": 429,\n   '}
+  turn 2 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 3 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 4 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 5 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 6 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 7 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 8 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 9 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 10 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 11 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 12 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 13 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 14 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 15 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 16 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 17 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 18 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 19 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 20 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 21 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 22 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 23 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 24 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 25 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 26 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 27 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 28 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 29 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 30 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 31 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 32 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 33 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 34 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 35 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 36 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 37 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 38 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 39 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 40 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 41 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 42 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 43 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 44 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 45 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 46 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 47 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 48 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 49 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 50 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 51 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 52 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 53 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 54 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 55 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 56 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 57 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 58 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 59 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 60 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 61 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 62 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 63 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 64 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 65 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 66 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 67 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 68 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 69 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 70 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 71 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 72 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 73 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 74 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 75 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 76 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 77 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 78 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 79 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 80 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 81 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 82 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 83 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 84 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 85 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 86 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 87 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 88 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 89 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 90 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 91 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 92 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 93 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 94 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 95 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 96 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 97 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 98 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 99 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 100 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 101 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 102 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 103 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 104 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 105 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 106 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  turn 107 {'provider': 'minimax-code', 'model': 'MiniMax-M3.1-Flash', 'stopReason': 'toolUse', 'err': ''}
+  assistant_turns=107
+

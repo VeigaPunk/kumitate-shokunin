@@ -1,0 +1,828 @@
+diff --git a/scripts/seat-route.mjs b/scripts/seat-route.mjs
+new file mode 100755
+index 00000000..daa0a4c2
+--- /dev/null
++++ b/scripts/seat-route.mjs
+@@ -0,0 +1,822 @@
++#!/usr/bin/env node
++/**
++ * seat-route.mjs — kumitate lane tool, contract `kumitate-seat-route-v1` (round 92).
++ *
++ *   node scripts/seat-route.mjs --file T.jsonl [--json]
++ *   node scripts/seat-route.mjs --results R.json [--sessions-root DIR] [--json] [--strict]
++ *   node scripts/seat-route.mjs --selftest
++ *
++ * Exit: 0 ok · 1 (with `--strict`) a dead/absent/silent seat · 2 fail-closed · 64 usage.
++ *
++ * Why it exists. Round reports used to say what a seat was *dispatched* to. `inline-dispatch-evidence`
++ * keeps only the first `subagent:` model_change, i.e. the captured route — the Amendment-44 mistake
++ * (smokes reported as served by `amr` were answered by `mistral` after a 402). The r90 spot-check routed
++ * "12/12 COMPLETE" as an overstatement, and the r91 seat K91Scout captured
++ * `google-antigravity/claude-opus-5-5` while every answered turn came from
++ * `minimax-code/MiniMax-M3.1-Flash`. This tool reads the harness-written seat transcript and separates
++ * what was captured from what actually answered, and names every seat that dies with a redacted last
++ * error. It replaces hand-written seat-status prose in round reports.
++ *
++ * WHAT IT READS. omp seat transcripts `~/.omp/agent/sessions/<cwd>/<orchestrator-session>/<Seat>.jsonl`,
++ * one JSON object per non-empty line (read streamed, never whole: these reach hundreds of MB). Rows
++ * that do not parse to an object are counted as parse errors and skipped.
++ *
++ * FIELDS (frozen by the round plan's § Claim C1 and implemented here, from the plan text alone):
++ *   seat       file name without `.jsonl`.
++ *   captured   `model` of the first `model_change` row whose `role` is `subagent:<seat>`; if none, of
++ *              the first `model_change` whose `role` is absent (or null) or `default`; else null.
++ *   turns      the `message` rows whose `message.role` is `assistant`, in file order. A turn's model is
++ *              `provider + "/" + model` (either missing or empty → `?`).
++ *   answered   distinct turn models of turns whose `stopReason` is `stop`, `toolUse` or `length`,
++ *              in first-seen order.
++ *   errors     count of turns with `stopReason` `error`; aborted: count with `aborted`.
++ *   last_error of the last `error` turn, `errorMessage`'s first line, trimmed, every run of 24 or more
++ *              characters from `[A-Za-z0-9_-]` replaced by `<redacted>`, then cut to 120 characters;
++ *              null when no error turn (a non-string `errorMessage` reads as the empty string). This is
++ *              the plan's redaction: a credential-shaped token never reaches a report.
++ *   yielded    some turn's `content` holds a `toolCall` item named `yield`.
++ *   final      `silent` with no turns; else from the last turn's `stopReason`: `served`
++ *              (stop/toolUse/length), `dead` (error), `aborted` (aborted), `other` (anything else).
++ *   fallback   `captured` is not null and some `answered` model differs from it.
++ *   parse_errors  count of non-empty lines that do not parse to a JSON object (skipped).
++ *
++ * Wave mode (`--results`) adds `role` (the results.json `agent`) and `session` (realpath of the located
++ * transcript). Candidates are `<name>.jsonl` files anywhere under the sessions root whose bytes contain
++ * both `/.ufo/waves/round-<round>/` and `<lane>-shokunin`; the one with the greatest first `session`-row
++ * `timestamp` wins (ties: greatest path). None → `{seat, role, session: null, final: "absent"}`.
++ *
++ * SEAT NAMES ARE UNTRUSTED. A results.json `name` containing `/`, `\`, NUL or `..` can never address a
++ * file outside the sessions root, so it locates nothing: the record is `absent` with `session: null`.
++ * This is a deliberate choice, not a lookup failure that a caller may paper over.
++ *
++ * HUMAN MODE prints one line per seat and a verdict line:
++ *   SEAT <name> role=<role|-> captured=<model|-> answered=<a,b|-> fallback=<true|false> errors=<n>
++ *        aborted=<n> final=<served|dead|aborted|silent|other|absent> yielded=<true|false> last_error=<json|null>
++ *   SEAT_ROUTE: OK seats=… served=… dead=… aborted=… silent=… absent=… fallback=…
++ *   SEAT_ROUTE: DRIFT …              (only with --strict, exit 1)
++ * `final=other` seats are counted in seats= but in none of the named strata.
++ *
++ * Fail-closed (exit 2): the transcript, the results file, or the sessions root is missing/unreadable, or
++ * the results file lacks a usable `lane`, `round` or `results` array.
++ */
++import { closeSync, existsSync, mkdirSync, mkdtempSync, openSync, opendirSync, readFileSync, readSync, realpathSync, rmSync, statSync, writeFileSync } from 'node:fs';
++import { tmpdir } from 'node:os';
++import { basename, join, resolve } from 'node:path';
++import { spawnSync } from 'node:child_process';
++import { StringDecoder } from 'node:string_decoder';
++import { fileURLToPath } from 'node:url';
++
++const CONTRACT = 'kumitate-seat-route-v1';
++const SELF = fileURLToPath(import.meta.url);
++const CHUNK = 1 << 20;
++const SERVED_STOPS = new Set(['stop', 'toolUse', 'length']);
++const REDACT_RE = /[A-Za-z0-9_-]{24,}/g;
++const LAST_ERROR_CAP = 120;
++const UNSAFE_NAME = /[/\\\u0000]|\.\./;
++const USAGE = 'usage: node scripts/seat-route.mjs --file T.jsonl [--json] | '
++  + '--results R.json [--sessions-root DIR] [--json] [--strict] | --selftest\n';
++
++class Usage extends Error {}
++class FailClosed extends Error {}
++
++/** Exit without cutting a pending stdout/stderr write: the caller sets the code and returns. */
++class ExitNow extends Error {
++  constructor(code) {
++    super(`exit ${code}`);
++    this.code = code;
++  }
++}
++
++function parseArgs(argv) {
++  const out = {
++    file: null,
++    results: null,
++    sessionsRoot: join(process.env.HOME ?? '', '.omp', 'agent', 'sessions'),
++    json: false,
++    strict: false,
++    selftest: false,
++  };
++  for (let i = 0; i < argv.length; i += 1) {
++    const a = argv[i];
++    const need = () => {
++      const v = argv[i + 1];
++      if (v === undefined) throw new Usage(`${a} needs a value`);
++      i += 1;
++      return v;
++    };
++    if (a === '--file') out.file = need();
++    else if (a === '--results') out.results = need();
++    else if (a === '--sessions-root') out.sessionsRoot = need();
++    else if (a === '--json') out.json = true;
++    else if (a === '--strict') out.strict = true;
++    else if (a === '--selftest') out.selftest = true;
++    else if (a === '-h' || a === '--help') throw new Usage('help requested');
++    else throw new Usage(`unknown argument ${a}`);
++  }
++  const modes = [out.file !== null, out.results !== null, out.selftest].filter(Boolean).length;
++  if (modes !== 1) throw new Usage('exactly one of --file, --results, --selftest');
++  if (out.strict && out.results === null) throw new Usage('--strict needs --results');
++  return out;
++}
++
++/** Yield the file's lines, decoded as UTF-8 across chunk boundaries. One line is held at a time. */
++function* linesOf(path) {
++  const fd = openSync(path, 'r');
++  try {
++    const dec = new StringDecoder('utf8');
++    const buf = Buffer.allocUnsafe(CHUNK);
++    let rest = '';
++    for (;;) {
++      const n = readSync(fd, buf, 0, CHUNK, null);
++      if (n === 0) break;
++      rest += dec.write(buf.subarray(0, n));
++      let start = 0;
++      let idx = rest.indexOf('\n', start);
++      while (idx !== -1) {
++        yield rest.slice(start, idx);
++        start = idx + 1;
++        idx = rest.indexOf('\n', start);
++      }
++      if (start !== 0) rest = rest.slice(start);
++    }
++    rest += dec.end();
++    if (rest.length > 0) yield rest;
++  } finally {
++    closeSync(fd);
++  }
++}
++
++/** True when the file's bytes hold both markers (scanned in chunks, no whole-file read). */
++function hasBothMarkers(path, m1, m2) {
++  const fd = openSync(path, 'r');
++  let s1 = false;
++  let s2 = false;
++  try {
++    const dec = new StringDecoder('utf8');
++    const buf = Buffer.allocUnsafe(CHUNK);
++    const keep = Math.max(m1.length, m2.length) - 1;
++    let tail = '';
++    for (;;) {
++      const n = readSync(fd, buf, 0, CHUNK, null);
++      if (n === 0) break;
++      const text = tail + dec.write(buf.subarray(0, n));
++      if (!s1 && text.includes(m1)) s1 = true;
++      if (!s2 && text.includes(m2)) s2 = true;
++      if (s1 && s2) return true;
++      tail = text.length > keep ? text.slice(-keep) : text;
++    }
++    const last = tail + dec.end();
++    if (!s1 && last.includes(m1)) s1 = true;
++    if (!s2 && last.includes(m2)) s2 = true;
++    return s1 && s2;
++  } finally {
++    closeSync(fd);
++  }
++}
++
++function isPlainObject(v) {
++  return v !== null && typeof v === 'object' && !Array.isArray(v);
++}
++
++function modelPart(v) {
++  return typeof v === 'string' && v !== '' ? v : '?';
++}
++
++function turnModel(message) {
++  return `${modelPart(message.provider)}/${modelPart(message.model)}`;
++}
++
++function redactLastError(raw) {
++  const text = typeof raw === 'string' ? raw : '';
++  const firstLine = text.split('\n')[0].trim();
++  return firstLine.replace(REDACT_RE, '<redacted>').slice(0, LAST_ERROR_CAP);
++}
++
++/** Read one seat transcript into the record (wave mode adds role/session later). */
++function readTranscript(path, seat) {
++  let subagentModel;
++  let hasSubagent = false;
++  let defaultModel;
++  let hasDefault = false;
++  const answered = [];
++  const seenModels = new Set();
++  let errors = 0;
++  let aborted = 0;
++  let lastErrorMessage = null;
++  let yielded = false;
++  let turnCount = 0;
++  let lastStopReason;
++  let parseErrors = 0;
++
++  for (const line of linesOf(path)) {
++    if (line.trim() === '') continue;
++    let row;
++    try {
++      row = JSON.parse(line);
++    } catch {
++      parseErrors += 1;
++      continue;
++    }
++    if (!isPlainObject(row)) {
++      parseErrors += 1;
++      continue;
++    }
++    if (row.type === 'model_change') {
++      const role = row.role;
++      const model = typeof row.model === 'string' ? row.model : null;
++      if (role === `subagent:${seat}`) {
++        if (!hasSubagent) {
++          hasSubagent = true;
++          subagentModel = model;
++        }
++      } else if (role === undefined || role === null || role === 'default') {
++        if (!hasDefault) {
++          hasDefault = true;
++          defaultModel = model;
++        }
++      }
++      continue;
++    }
++    if (row.type !== 'message') continue;
++    const message = row.message;
++    if (!isPlainObject(message) || message.role !== 'assistant') continue;
++
++    turnCount += 1;
++    const stop = message.stopReason;
++    lastStopReason = stop;
++    const model = turnModel(message);
++
++    if (SERVED_STOPS.has(stop)) {
++      if (!seenModels.has(model)) {
++        seenModels.add(model);
++        answered.push(model);
++      }
++    }
++    if (stop === 'error') {
++      errors += 1;
++      lastErrorMessage = message.errorMessage;
++    } else if (stop === 'aborted') {
++      aborted += 1;
++    }
++    if (!yielded && Array.isArray(message.content)) {
++      for (const item of message.content) {
++        if (isPlainObject(item) && item.type === 'toolCall' && item.name === 'yield') {
++          yielded = true;
++          break;
++        }
++      }
++    }
++  }
++
++  const captured = hasSubagent ? subagentModel : (hasDefault ? defaultModel : null);
++
++  let final;
++  if (turnCount === 0) final = 'silent';
++  else if (SERVED_STOPS.has(lastStopReason)) final = 'served';
++  else if (lastStopReason === 'error') final = 'dead';
++  else if (lastStopReason === 'aborted') final = 'aborted';
++  else final = 'other';
++
++  return {
++    seat,
++    captured,
++    answered,
++    errors,
++    aborted,
++    last_error: lastErrorMessage === null ? null : redactLastError(lastErrorMessage),
++    yielded,
++    final,
++    fallback: captured !== null && answered.some((m) => m !== captured),
++    parse_errors: parseErrors,
++  };
++}
++
++/** First `session` row's `timestamp` (string) or null; stops at that row. */
++function firstSessionTimestamp(path) {
++  for (const line of linesOf(path)) {
++    if (line.trim() === '') continue;
++    let row;
++    try {
++      row = JSON.parse(line);
++    } catch {
++      continue;
++    }
++    if (isPlainObject(row) && row.type === 'session') {
++      return typeof row.timestamp === 'string' ? row.timestamp : null;
++    }
++  }
++  return null;
++}
++
++/** Every `.jsonl` file under root (iterative, symlinked dirs not followed, unreadable dirs skipped). */
++function walkJsonl(root, wanted) {
++  const found = new Map();
++  const stack = [root];
++  while (stack.length > 0) {
++    const dir = stack.pop();
++    let handle;
++    try {
++      handle = opendirSync(dir);
++    } catch {
++      continue;
++    }
++    for (;;) {
++      let entry;
++      try {
++        entry = handle.readSync();
++      } catch {
++        break;
++      }
++      if (entry === null) break;
++      const full = join(dir, entry.name);
++      if (entry.isDirectory()) {
++        stack.push(full);
++      } else if (entry.isFile() && entry.name.endsWith('.jsonl')) {
++        const seat = entry.name.slice(0, -'.jsonl'.length);
++        if (wanted.has(seat)) {
++          if (!found.has(seat)) found.set(seat, []);
++          found.get(seat).push(full);
++        }
++      }
++    }
++    handle.closeSync();
++  }
++  return found;
++}
++
++function locate(sessionsRoot, seats, markers) {
++  const wanted = new Set();
++  for (const seat of seats) {
++    if (typeof seat === 'string' && seat !== '' && !UNSAFE_NAME.test(seat)) wanted.add(seat);
++  }
++  const bySeat = walkJsonl(sessionsRoot, wanted);
++  const located = new Map();
++  for (const [seat, paths] of bySeat) {
++    let best = null;
++    for (const path of paths) {
++      let ok;
++      try {
++        ok = hasBothMarkers(path, markers.round, markers.lane);
++      } catch {
++        continue;
++      }
++      if (!ok) continue;
++      const ts = firstSessionTimestamp(path);
++      const key = { path, ts: ts ?? '' };
++      if (best === null || key.ts > best.ts || (key.ts === best.ts && key.path > best.path)) best = key;
++    }
++    if (best !== null) located.set(seat, best.path);
++  }
++  return located;
++}
++
++function readResults(path) {
++  let raw;
++  try {
++    raw = readFileSync(path, 'utf8');
++  } catch (err) {
++    throw new FailClosed(`results unreadable: ${path}: ${err.code ?? err.message}`);
++  }
++  let data;
++  try {
++    data = JSON.parse(raw);
++  } catch {
++    throw new FailClosed(`results unparseable: ${path}`);
++  }
++  if (!isPlainObject(data) || !Array.isArray(data.results)) {
++    throw new FailClosed(`results has no results array: ${path}`);
++  }
++  const lane = typeof data.lane === 'string' && data.lane !== '' ? data.lane : null;
++  const round = typeof data.round === 'number' || typeof data.round === 'string' ? String(data.round) : null;
++  if (lane === null || round === null || round === '') {
++    throw new FailClosed(`results lacks lane/round: ${path}`);
++  }
++  return { data, lane, round };
++}
++
++function waveRecords(opts) {
++  const { data, lane, round } = readResults(opts.results);
++  const root = resolve(opts.sessionsRoot);
++  if (!existsSync(root)) throw new FailClosed(`sessions root absent: ${root}`);
++  let st;
++  try {
++    st = statSync(root);
++  } catch (err) {
++    throw new FailClosed(`sessions root unreadable: ${root}: ${err.code ?? err.message}`);
++  }
++  if (!st.isDirectory()) throw new FailClosed(`sessions root is not a directory: ${root}`);
++
++  const markers = { round: `/.ufo/waves/round-${round}/`, lane: `${lane}-shokunin` };
++  const seats = data.results.map((entry) => (isPlainObject(entry) && typeof entry.name === 'string' ? entry.name : null));
++  const located = locate(root, seats.filter((s) => s !== null), markers);
++
++  const records = [];
++  data.results.forEach((entry, i) => {
++    const seat = seats[i];
++    const role = isPlainObject(entry) && typeof entry.agent === 'string' ? entry.agent : null;
++    const path = seat === null ? undefined : located.get(seat);
++    if (path === undefined) {
++      records.push({ seat, role, session: null, final: 'absent' });
++      return;
++    }
++    let rec;
++    try {
++      rec = readTranscript(path, seat);
++    } catch (err) {
++      throw new FailClosed(`transcript unreadable: ${path}: ${err.code ?? err.message}`);
++    }
++    let session;
++    try {
++      session = realpathSync(path);
++    } catch (err) {
++      throw new FailClosed(`transcript unreadable: ${path}: ${err.code ?? err.message}`);
++    }
++    records.push({ seat, role, session, ...rec });
++  });
++  return records;
++}
++
++function humanLine(rec) {
++  const role = rec.role === undefined || rec.role === null ? '-' : rec.role;
++  const captured = rec.captured === null || rec.captured === undefined ? '-' : rec.captured;
++  const answered = rec.answered === undefined || rec.answered.length === 0 ? '-' : rec.answered.join(',');
++  const lastError = rec.last_error === null || rec.last_error === undefined ? 'null' : JSON.stringify(rec.last_error);
++  return `SEAT ${rec.seat ?? '-'} role=${role} captured=${captured} answered=${answered}`
++    + ` fallback=${Boolean(rec.fallback)} errors=${rec.errors ?? 0} aborted=${rec.aborted ?? 0}`
++    + ` final=${rec.final} yielded=${Boolean(rec.yielded)} last_error=${lastError}`;
++}
++
++function summarize(records) {
++  const counts = { seats: records.length, served: 0, dead: 0, aborted: 0, silent: 0, absent: 0, fallback: 0 };
++  const drift = [];
++  for (const rec of records) {
++    if (rec.final === 'served') counts.served += 1;
++    else if (rec.final === 'dead') counts.dead += 1;
++    else if (rec.final === 'aborted') counts.aborted += 1;
++    else if (rec.final === 'silent') counts.silent += 1;
++    else if (rec.final === 'absent') counts.absent += 1;
++    if (rec.fallback === true) counts.fallback += 1;
++    if (rec.final === 'dead' || rec.final === 'absent' || rec.final === 'silent') drift.push(rec.seat ?? '-');
++  }
++  return { counts, drift };
++}
++
++function runCli(opts) {
++  let records;
++  if (opts.file !== null) {
++    const target = resolve(opts.file);
++    let st;
++    try {
++      st = statSync(target);
++    } catch (err) {
++      throw new FailClosed(`transcript unreadable: ${target}: ${err.code ?? err.message}`);
++    }
++    if (!st.isFile()) throw new FailClosed(`transcript is not a file: ${target}`);
++    const seat = basename(target).replace(/\.jsonl$/, '');
++    records = [readTranscript(target, seat)];
++  } else {
++    records = waveRecords(opts);
++  }
++
++  if (opts.json) {
++    const payload = opts.file !== null ? records[0] : records;
++    process.stdout.write(`${JSON.stringify(payload)}\n`);
++    return 0;
++  }
++
++  for (const rec of records) process.stdout.write(`${humanLine(rec)}\n`);
++  const { counts, drift } = summarize(records);
++  const body = `seats=${counts.seats} served=${counts.served} dead=${counts.dead} aborted=${counts.aborted}`
++    + ` silent=${counts.silent} absent=${counts.absent} fallback=${counts.fallback}`;
++  if (opts.strict && drift.length > 0) {
++    process.stdout.write(`SEAT_ROUTE: DRIFT ${body} drift=${drift.join(',')}\n`);
++    return 1;
++  }
++  process.stdout.write(`SEAT_ROUTE: OK ${body}\n`);
++  return 0;
++}
++
++// ---------------------------------------------------------------- selftest
++
++function jsonl(...rows) {
++  return `${rows.map((r) => (typeof r === 'string' ? r : JSON.stringify(r))).join('\n')}\n`;
++}
++
++function mc(model, role, extra = {}) {
++  const row = { type: 'model_change', id: 'm', parentId: null, timestamp: '2026-11-01T00:00:00.000Z', model, ...extra };
++  if (role !== undefined) row.role = role;
++  return row;
++}
++
++function turn(fields) {
++  return {
++    type: 'message',
++    id: 't',
++    parentId: null,
++    timestamp: '2026-11-01T00:00:01.000Z',
++    message: {
++      role: 'assistant',
++      content: [],
++      ...fields,
++    },
++  };
++}
++
++function selftest() {
++  const held = [];
++  const failed = [];
++  const check = (name, cond, detail) => {
++    if (cond) held.push(name);
++    else failed.push(`${name}: ${detail}`);
++  };
++  const base = mkdtempSync(join(tmpdir(), 'seat-route-selftest-'));
++  const S = 'SeatA';
++  const write = (name, body) => {
++    const p = join(base, name);
++    writeFileSync(p, body);
++    return p;
++  };
++  const rec = (file, seat = S) => readTranscript(file, seat);
++
++  try {
++    // 1 clean served
++    {
++      const f = write('clean.jsonl', jsonl(
++        { type: 'session', version: 3, id: 's', timestamp: '2026-11-01T00:00:00.000Z' },
++        mc('p/one', `subagent:${S}`),
++        turn({ provider: 'p', model: 'one', stopReason: 'stop' }),
++      ));
++      const r = rec(f);
++      check('clean-served', r.final === 'served' && r.captured === 'p/one' && r.answered.length === 1
++        && r.answered[0] === 'p/one' && r.fallback === false && r.errors === 0 && r.aborted === 0
++        && r.last_error === null && r.yielded === false, JSON.stringify(r));
++    }
++    // 2 captured from roleless default when no subagent row
++    {
++      const f = write('default.jsonl', jsonl(
++        mc('p/def'),
++        mc('p/def', 'default'),
++        turn({ provider: 'p', model: 'def', stopReason: 'toolUse' }),
++      ));
++      const r = rec(f);
++      check('captured-from-default', r.captured === 'p/def' && r.fallback === false, JSON.stringify(r));
++    }
++    // 3 captured null, fallback false even with answers
++    {
++      const f = write('nocap.jsonl', jsonl(turn({ provider: 'p', model: 'x', stopReason: 'stop' })));
++      const r = rec(f);
++      check('captured-null', r.captured === null && r.fallback === false && r.final === 'served', JSON.stringify(r));
++    }
++    // 4 first subagent model_change wins
++    {
++      const f = write('multicap.jsonl', jsonl(
++        mc('p/first', `subagent:${S}`),
++        mc('p/second', `subagent:${S}`),
++        turn({ provider: 'p', model: 'first', stopReason: 'stop' }),
++      ));
++      const r = rec(f);
++      check('captured-first-subagent', r.captured === 'p/first' && r.fallback === false, JSON.stringify(r));
++    }
++    // 5 answered distinct, first-seen order
++    {
++      const f = write('order.jsonl', jsonl(
++        turn({ provider: 'p', model: 'b', stopReason: 'stop' }),
++        turn({ provider: 'p', model: 'a', stopReason: 'toolUse' }),
++        turn({ provider: 'p', model: 'b', stopReason: 'length' }),
++      ));
++      const r = rec(f);
++      check('answered-order', JSON.stringify(r.answered) === '["p/b","p/a"]', JSON.stringify(r.answered));
++    }
++    // 6 fallback
++    {
++      const f = write('fallback.jsonl', jsonl(
++        mc('google/x', `subagent:${S}`),
++        turn({ provider: 'minimax', model: 'y', stopReason: 'stop' }),
++      ));
++      const r = rec(f);
++      check('fallback', r.fallback === true && r.captured === 'google/x', JSON.stringify(r));
++    }
++    // 7 dead + redaction
++    {
++      const f = write('dead.jsonl', jsonl(
++        mc('p/one', `subagent:${S}`),
++        turn({ provider: 'p', model: 'one', stopReason: 'error', errorMessage: '402 payment required: sk-abcdefghijklmnopqrstuvwx\nstack line 2' }),
++      ));
++      const r = rec(f);
++      check('dead', r.final === 'dead' && r.errors === 1 && r.last_error === '402 payment required: <redacted>', JSON.stringify(r));
++    }
++    // 8 aborted
++    {
++      const f = write('aborted.jsonl', jsonl(turn({ provider: 'p', model: 'one', stopReason: 'aborted' })));
++      const r = rec(f);
++      check('aborted', r.final === 'aborted' && r.aborted === 1 && r.errors === 0, JSON.stringify(r));
++    }
++    // 9 error then recovered on the same model
++    {
++      const f = write('errfix.jsonl', jsonl(
++        mc('p/one', `subagent:${S}`),
++        turn({ provider: 'p', model: 'one', stopReason: 'error', errorMessage: 'boom' }),
++        turn({ provider: 'p', model: 'one', stopReason: 'stop' }),
++      ));
++      const r = rec(f);
++      check('errfix', r.final === 'served' && r.errors === 1 && r.answered.length === 1
++        && r.fallback === false && r.last_error === 'boom', JSON.stringify(r));
++    }
++    // 10 silent
++    {
++      const f = write('silent.jsonl', jsonl({ type: 'title', title: '' }, mc('p/one', `subagent:${S}`)));
++      const r = rec(f);
++      check('silent', r.final === 'silent' && r.answered.length === 0 && r.captured === 'p/one', JSON.stringify(r));
++    }
++    // 11 parse errors skip, do not abort
++    {
++      const f = write('parse.jsonl', jsonl(
++        '{not json',
++        '[1,2,3]',
++        '',
++        turn({ provider: 'p', model: 'one', stopReason: 'stop' }),
++      ));
++      const r = rec(f);
++      check('parse-errors', r.final === 'served' && r.answered[0] === 'p/one' && r.parse_errors === 2, JSON.stringify(r));
++    }
++    // 12 redaction boundary: 23 kept, 24 redacted
++    {
++      const f = write('redact.jsonl', jsonl(
++        turn({ provider: 'p', model: 'one', stopReason: 'error', errorMessage: `k ${'a'.repeat(23)} y ${'b'.repeat(24)} z` }),
++      ));
++      const r = rec(f);
++      check('redact-23-24', r.last_error === `k ${'a'.repeat(23)} y <redacted> z`, JSON.stringify(r.last_error));
++    }
++    // 13 120-char cut happens after redaction
++    {
++      const f = write('cap.jsonl', jsonl(
++        turn({ provider: 'p', model: 'one', stopReason: 'error', errorMessage: 'abc '.repeat(40) }),
++      ));
++      const r = rec(f);
++      check('cap-120', r.last_error === 'abc '.repeat(30) && r.last_error.length === 120, JSON.stringify(r.last_error));
++    }
++    // 14 non-string errorMessage reads as empty string
++    {
++      const f = write('nonstr.jsonl', jsonl(
++        turn({ provider: 'p', model: 'one', stopReason: 'error', errorMessage: { code: 'E' } }),
++      ));
++      const r = rec(f);
++      check('nonstring-error', r.last_error === '' && r.final === 'dead', JSON.stringify(r));
++    }
++    // 15 yield detection
++    {
++      const f = write('yield.jsonl', jsonl(
++        turn({ provider: 'p', model: 'one', stopReason: 'toolUse', content: [{ type: 'toolCall', id: 'y', name: 'yield', arguments: {} }] }),
++      ));
++      const r = rec(f);
++      check('yielded', r.yielded === true && r.final === 'served', JSON.stringify(r));
++    }
++    // 16 unknown stopReason -> other
++    {
++      const f = write('other.jsonl', jsonl(turn({ provider: 'p', model: 'one', stopReason: 'cancelled' })));
++      const r = rec(f);
++      check('other', r.final === 'other' && r.answered.length === 0, JSON.stringify(r));
++    }
++    // 17 missing provider/model -> ?/?
++    {
++      const f = write('unknown.jsonl', jsonl(turn({ stopReason: 'stop' })));
++      const r = rec(f);
++      check('unknown-model', r.answered[0] === '?/?' && r.final === 'served', JSON.stringify(r.answered));
++    }
++    // 18 wave mode absent + 19 unsafe name + 20 tie-break + 21 role/session realpath
++    {
++      const root = join(base, 'sessions');
++      mkdirSync(join(root, 'cwd-a', 'orch-1'), { recursive: true });
++      mkdirSync(join(root, 'cwd-b', 'orch-2'), { recursive: true });
++      const roundMarker = (round, lane, ts) => jsonl(
++        { type: 'session', version: 3, id: 's', timestamp: ts },
++        { type: 'custom', text: `/home/vgpnk/Projects/shokunin/${lane}-shokunin/.ufo/waves/round-${round}/w1/x.md` },
++        mc('p/old', 'subagent:OldSeat'),
++        turn({ provider: 'p', model: 'old', stopReason: 'stop' }),
++      );
++      writeFileSync(join(root, 'cwd-a', 'orch-1', 'OldSeat.jsonl'), roundMarker(91, 'kumitate', '2026-11-01T00:00:00.000Z'));
++      writeFileSync(join(root, 'cwd-b', 'orch-2', 'OldSeat.jsonl'), roundMarker(91, 'kumitate', '2026-11-02T00:00:00.000Z'));
++      // same name, another lane: never located
++      writeFileSync(join(root, 'cwd-a', 'orch-1', 'Foreign.jsonl'), roundMarker(91, 'tabi', '2026-11-03T00:00:00.000Z'));
++      // same name, this lane, another round: never located
++      writeFileSync(join(root, 'cwd-a', 'orch-1', 'WrongRound.jsonl'), roundMarker(90, 'kumitate', '2026-11-04T00:00:00.000Z'));
++      const results = join(base, 'w1-results.json');
++      writeFileSync(results, JSON.stringify({
++        lane: 'kumitate',
++        round: 91,
++        wave: 'w1',
++        results: [
++          { name: 'OldSeat', agent: 'executor' },
++          { name: 'Missing', agent: 'scribe' },
++          { name: '../escape', agent: 'scout' },
++          { name: 'Foreign', agent: 'reviewer' },
++          { name: 'WrongRound', agent: 'critic' },
++        ],
++      }));
++      const recs = waveRecords({ results, sessionsRoot: root });
++      check('wave-count', recs.length === 5, String(recs.length));
++      check('wave-newest-session', recs[0].session === realpathSync(join(root, 'cwd-b', 'orch-2', 'OldSeat.jsonl'))
++        && recs[0].role === 'executor' && recs[0].final === 'served' && recs[0].parse_errors === 0,
++      JSON.stringify(recs[0]));
++      check('wave-absent', recs[1].seat === 'Missing' && recs[1].session === null
++        && recs[1].final === 'absent' && Object.keys(recs[1]).length === 4, JSON.stringify(recs[1]));
++      check('wave-unsafe-name', recs[2].final === 'absent' && recs[2].session === null, JSON.stringify(recs[2]));
++      check('wave-lane-marker-miss', recs[3].final === 'absent' && recs[3].session === null, JSON.stringify(recs[3]));
++      check('wave-round-marker-miss', recs[4].final === 'absent' && recs[4].session === null, JSON.stringify(recs[4]));
++    }
++    // 22 missing sessions root / bad results fail closed (exit 2)
++    {
++      const bad = spawnSync(process.execPath, [SELF, '--results', join(base, 'nope.json'), '--json'], { encoding: 'utf8' });
++      check('failclosed-results', bad.status === 2, `status=${bad.status} err=${bad.stderr}`);
++      const r2 = (() => {
++        const p = join(base, 'w2-results.json');
++        writeFileSync(p, JSON.stringify({ lane: 'kumitate', round: 91, results: [{ name: 'X', agent: 'executor' }] }));
++        return spawnSync(process.execPath, [SELF, '--results', p, '--sessions-root', join(base, 'no-such-root'), '--json'], { encoding: 'utf8' });
++      })();
++      check('failclosed-root', r2.status === 2, `status=${r2.status} err=${r2.stderr}`);
++    }
++    // 23 human mode strict drift + json one-object-per-seat
++    {
++      const root = join(base, 'sessions2');
++      mkdirSync(join(root, 'd'), { recursive: true });
++      writeFileSync(join(root, 'd', 'Dead.jsonl'), jsonl(
++        { type: 'session', timestamp: '2026-11-01T00:00:00.000Z' },
++        { type: 'custom', text: 'kumitate-shokunin /.ufo/waves/round-91/w1/z.md' },
++        mc('p/one', 'subagent:Dead'),
++        turn({ provider: 'p', model: 'one', stopReason: 'error', errorMessage: 'boom' }),
++      ));
++      const p = join(base, 'w3-results.json');
++      writeFileSync(p, JSON.stringify({ lane: 'kumitate', round: 91, results: [{ name: 'Dead', agent: 'executor' }, { name: 'Gone', agent: 'scribe' }] }));
++      const human = spawnSync(process.execPath, [SELF, '--results', p, '--sessions-root', root], { encoding: 'utf8' });
++      check('human-ok', human.status === 0 && /^SEAT_ROUTE: OK seats=2 served=0 dead=1 aborted=0 silent=0 absent=1 fallback=0$/m.test(human.stdout), human.stdout + human.stderr);
++      const strict = spawnSync(process.execPath, [SELF, '--results', p, '--sessions-root', root, '--strict'], { encoding: 'utf8' });
++      check('strict-drift', strict.status === 1 && /^SEAT_ROUTE: DRIFT /m.test(strict.stdout), `status=${strict.status} out=${strict.stdout}`);
++      const js = spawnSync(process.execPath, [SELF, '--results', p, '--sessions-root', root, '--json'], { encoding: 'utf8' });
++      let parsed = null;
++      try {
++        parsed = JSON.parse(js.stdout);
++      } catch {
++        parsed = null;
++      }
++      check('json-array', Array.isArray(parsed) && parsed.length === 2 && parsed[0].seat === 'Dead'
++        && parsed[0].final === 'dead' && parsed[0].last_error === 'boom', js.stdout);
++    }
++    // 24 usage exit 64
++    {
++      const u = spawnSync(process.execPath, [SELF, '--bogus'], { encoding: 'utf8' });
++      check('usage-64', u.status === 64, `status=${u.status}`);
++      const u2 = spawnSync(process.execPath, [SELF, '--file', join(base, 'clean.jsonl'), '--strict'], { encoding: 'utf8' });
++      check('usage-strict-file', u2.status === 64, `status=${u2.status}`);
++    }
++  } finally {
++    rmSync(base, { recursive: true, force: true });
++  }
++
++  if (failed.length > 0) {
++    for (const f of failed) process.stdout.write(`FIELD ${f}\n`);
++    process.stdout.write(`SEAT_ROUTE_SELFTEST: FAIL held=${held.length}/${held.length + failed.length}\n`);
++    return 1;
++  }
++  process.stdout.write(`SEAT_ROUTE_SELFTEST: PASS held=${held.length}/${held.length}\n`);
++  return 0;
++}
++
++function main() {
++  let opts;
++  try {
++    opts = parseArgs(process.argv.slice(2));
++  } catch (err) {
++    if (err instanceof Usage) {
++      process.stderr.write(`SEAT_ROUTE: USAGE ${err.message}\n${USAGE}`);
++      process.exitCode = 64;
++      return;
++    }
++    throw err;
++  }
++  if (opts.selftest) {
++    process.exitCode = selftest();
++    return;
++  }
++  try {
++    process.exitCode = runCli(opts);
++  } catch (err) {
++    if (err instanceof ExitNow) {
++      process.exitCode = err.code;
++      return;
++    }
++    if (err instanceof FailClosed) {
++      process.stderr.write(`SEAT_ROUTE: FAILCLOSED ${err.message}\n`);
++      process.exitCode = 2;
++      return;
++    }
++    if (err instanceof Usage) {
++      process.stderr.write(`SEAT_ROUTE: USAGE ${err.message}\n${USAGE}`);
++      process.exitCode = 64;
++      return;
++    }
++    process.stderr.write(`SEAT_ROUTE: FAILCLOSED ${err.code ?? 'error'}: ${err.message}\n`);
++    process.exitCode = 2;
++  }
++}
++
++main();

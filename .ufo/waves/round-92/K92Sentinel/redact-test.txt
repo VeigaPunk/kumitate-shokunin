@@ -1,0 +1,45 @@
+aws-access-key-id-20
+  expect: survives: 20 alnum < 24
+  last_error(len=52, residual_shape=True): InvalidAccessKeyId <FAKE-REDACTED> is not valid
+jwt-3seg-short
+  expect: survives: each JWT segment < 24
+  last_error(len=44, residual_shape=True): auth failed for <FAKE-REDACTED> sig
+bearer-short
+  expect: survives: token 14 chars
+  last_error(len=34, residual_shape=True): 401 Bearer abcDEF12345ghi rejected
+url-query-token
+  expect: survives: token value 12 chars
+  last_error(len=67, residual_shape=True): GET https://api.example.test/v1/x?token=abc123def456&u=1 failed 403
+email
+  expect: survives: email, no 24-run besides domain?
+  last_error(len=48, residual_shape=True): no access for alice.wong@example.test on project
+base64-punct
+  expect: survives: +//= break the alnum runs
+  last_error(len=42, residual_shape=False): decrypt dGhpcyBpcyBh+fake/c2VjcmV0= failed
+labeled-secret
+  expect: survives: value 16 chars
+  last_error(len=50, residual_shape=True): config error api_key=shortFakeValue42 not accepted
+pem-header
+  expect: survives: hyphen/space split
+  last_error(len=42, residual_shape=True): <FAKE-REDACTED> unreadable
+stripe-short
+  expect: survives: hyphen/underscore split
+  last_error(len=41, residual_shape=True): billing key <FAKE-REDACTED> rejected
+hex-32
+  expect: REDACTED: 32-char alnum run
+  last_error(len=24, residual_shape=False): hash mismatch <redacted>
+long-b64-standard
+  expect: partial: alnum run >=24 redacted, tail after = survives
+  last_error(len=15, residual_shape=False): sig <redacted>=
+secret-at-118
+  expect: truncated at 120: first 2 chars of key survive
+  last_error(len=10, residual_shape=False): <redacted>
+multiline-secret
+  expect: safe: only first line kept
+  last_error(len=4, residual_shape=False): boom
+over-redact
+  expect: OVER-REDACT: ordinary id destroyed
+  last_error(len=32, residual_shape=False): connection to <redacted> refused
+
+LEAK_CASES=aws-access-key-id-20,jwt-3seg-short,bearer-short,url-query-token,email,labeled-secret,pem-header,stripe-short
+OVER_REDACT_CASES=hex-32,long-b64-standard,secret-at-118,over-redact

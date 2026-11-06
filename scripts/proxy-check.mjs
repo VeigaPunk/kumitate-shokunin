@@ -577,6 +577,7 @@ const GATE_PINS = {
   'pin.spotcheck-adopt': 'scripts/spotcheck-adopt.mjs', // round 76: the constrained spotcheck repair client (C2)
   'pin.ready-handoff': 'scripts/ready-handoff.mjs', // round 81: the inline handoff admission gate (C1)
   'pin.counter-receipt': 'scripts/counter-receipt.mjs', // round 84: executed-arm transcript reconciliation
+  'pin.seat-route': 'scripts/seat-route.mjs', // round 92: per-seat captured route vs answering models (C1)
 };
 /** Scorecard `## Axes` rows the derived scores must equal: axis name → term key. */
 const AXIS_ROWS = [

@@ -268,6 +268,9 @@ fixture suite, `--strict` to fail on warnings.
 | `lessons/round-90-verifier-spotcheck.md` | Non-author round-90 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 | `knowledge/receipt-bounded-external-reads.md` | Bounded external reads (receipt-bind v5): descriptor open `O_NONBLOCK\|O_NOFOLLOW`, fstat type/size refusal, a chunked read bound for procfs files whose `st_size` understates content, and the 56/56 token-keyed constructions that keep the claim UNMET | S263, S264, S265; `.ufo/waves/round-91/` (probe, controls, `K91CriticA/`, `K91ReviewProc/`, `K91Sentinel/`, `close-l1/class-sampler.txt`) |
 | `lessons/round-91.md` | Round-91 receipt-bind v5: the two-context probe, the 14 pre-data controls with a positive control, the three 56/56 kill-rule constructions, admitted Q84/Q85, mistakes M3/M6/M7 | LOG.md round 91; `.ufo/waves/round-91/` |
+| `lessons/round-91-verifier-spotcheck.md` | Non-author round-91 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
+| `knowledge/seat-route-from-session-transcripts.md` | Seat route from omp session transcripts (`seat-route` v1): captured route vs answering turns, `model_change` roles and `resolvedModelIsFallback`, error turns per attempt, the frozen field definitions, the Amendment-44 trap, and the fields omp persists that the definitions do not read | S266, S267, S268; `.ufo/waves/round-92/` (plan, probe, controls, `K92Scout/recon.md`, `K92ExecRetro/`, `close/`) |
+| `lessons/round-92.md` | Round-92 fresh start: `seat-route` scored on a post-freeze wave, ten pre-data controls, constructions that still read HELD on zero-population fields (M92-3), admitted Q86, mistakes M92-1..3 | LOG.md round 92; `.ufo/waves/round-92/` |
 
 ## Known gaps
 

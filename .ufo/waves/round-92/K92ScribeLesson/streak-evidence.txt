@@ -1,0 +1,38 @@
+# streak evidence, read-only, 2026-11-06
+# lane rev: 4f3a8d633f2f4770073c51db5f5ee3300997140d
+
+== corpus/lessons/round-87.md
+24:**The claim is UNMET.** The frozen kill rule says a seat-constructed control that reaches 12/12
+25:scores like a control in `controls/`; the critic's construction `cand-a-worktree` — identical to
+27:12/12 (`build/K87Critic/transcript-cand-a-worktree.txt`). The twelve arms therefore do not
+69:| survivor | the frozen 12 arms cannot see a worktree-vs-revision hash substitution: `build/K87Critic/cand-a-worktree.mjs` reaches 12/12 while binding the wrong byte source | the frozen kill rule (a seat-constructed control reaching the target scores like a committed control) | disclosed as the reason C1 is UNMET; the fix is a v2 arm that makes the worktree and the judged revision differ (pre-registered for round 88), never a post-data edit of the frozen probe |
+
+== corpus/lessons/round-88.md
+24:**The claim is UNMET.** The frozen kill rule says any seat-constructed control at 20/20 makes C1
+25:UNMET. Nine constructions reached it, each a one-to-six-line diff of the integrated instrument
+
+== corpus/lessons/round-89.md
+23:59 → 68 arms) and measured `C89_C1: HELD held=30/30` at the integration tip.
+25:**The claim is UNMET.** Two seats independently constructed tools that reach 30/30 while skipping
+30:| `cand-probe-keyed.mjs` | everything: it reads the `--dir` basename (`<arm>-<12 hex>`), prints the verdict that arm expects and computes nothing | **30/30** | `build/K89Review/probe-cand-probe-keyed.txt`, L1 re-run |
+31:| `cand-skip-mode.mjs` | the git mode test (a blob-*shape* test instead) and real-path membership (a literal `/proc/self/root` prefix strip) | **30/30** | `build/K89Review/probe-cand-skip-mode.txt`, L1 re-run |
+40:the scorer class, not the instrument.** No capability row enters the table.
+84:| **vacuous** (round 89, this round) | `build/K89Review/probe-cand-probe-keyed.txt` — a tool that computes nothing prints `C89_C1: HELD held=30/30` because `mk(name)` names each fixture directory `<arm>-<nonce>` and the probe reads only stdout | `none` — the plan's limit (a) asserted an output-text oracle could not be gamed this way; it was wrong | **Q82** (new): a scorer may not hand the candidate its fixture's identity; every shape-gated arm carries a positive twin |
+85:| **survivor** (round 89, this round) | `build/K89Review/probe-cand-skip-mode.txt` (30/30 by a blob-shape test + literal prefix strip) and `build/K89ExecInst/abs-symlink-check.txt` (the probe has no arm for an *absolute* in-lane symlink token) | Q82, written this round after the finding — it did not exist when the probe was frozen | the Q82 twin requirement; the next scorer draws a non-bare symlink target and an absolute symlink token, and its fixture names carry no arm |
+
+== corpus/lessons/round-90.md
+14:  byte-identically. Measured on the lane: `C90_C1: HELD held=47/47` on two runs; selftest
+32:  47/47 on the frozen probe and rewrites a mid-token `cmd=` name (`K90Reviewer.md` step 4). It is
+42:1. Reviewer candidate `cand-1-global-strip` (whole-text delete of the six code points): 47/47.
+45:   when `TMPDIR` is an ancestor of `--dir`, or when `--dir` contains `/kumitate-r90/`): 47/47 on two
+56:| M2 — the invisible-prefix class was never armed: a duplicate field behind U+200B/U+FEFF reads CLEAN (K89-V1) | `.ufo/waves/round-89/build/K89Sentinel/attacks.txt` rows B2, B3, B7; first committed at `7a8afb5f`, after the freeze | none: the round-89 probe had only the file-leading `bom-rev` arm | probe90 arms `dup-feff` … `dup-nbsp` and `single-zwsp`/`single-nbsp`. Red-before: base v3 `39/47`, failing exactly those eight arms (`controls/ctl-base-v3-at-rev.txt`). Green: v4 `47/47`. |
+57:| M3 — the probe header's no-round-token claim is false: the mandated scratch root `/fast/scratch/hyaku/kumitate-r90/…` is the `--work` path the candidate sees, and the probe sets `TMPDIR=<work>` for every call | `.ufo/waves/round-90/w1/K90CriticA.md` (constructions d, e: 47/47 on two runs) | none: `K90ExecAudit` checked arm labels in path and file names only, not the scratch root token | **not fixed in round 90** (the probe is frozen; a rule changed after data is not the claim's rule). Routed to round 91: a counter version that runs each arm under two `TMPDIR` values and two work roots with no round token, and a context-invariance control outside the frozen probe. |
+58:| M4 — the counter cannot tell field-line scoping from a whole-text strip (no arm places an invisible code point mid-token) | `.ufo/waves/round-90/w1/K90Reviewer.md` candidate 1 (47/47) and step 4 (`cmd=scripts/legit\u200B.mjs` binds CLEAN to `scripts/legit.mjs`) | none | **not fixed in round 90** (frozen). Routed to round 91: mid-token arm with a positive twin (the same receipt without the code point binds clean) and an arm with an invisible code point in a non-field line. |
+
+== corpus/lessons/round-91.md
+25:  `close-l1/class-sampler.txt`, the three 56/56 constructions UNMET on both runs).
+70:Kill clause (d) of `.ufo/waves/round-91/plan.md`: a tool at 56/56 with a committed reproduction of
+72:(`.ufo/waves/round-91/K91CriticA/scores.md`), each 56/56 on the frozen probe three times:
+82:The L1 re-ran three reproductions and one 56/56 score independently
+97:| M7 (this round) — a declared input class was armed with ONE fixture token (`*.sh`/`/dev/*` spellings, exactly 16777217 bytes, an empty directory), so three token-keyed constructions reached 56/56 while wrong on the same class one token away | `.ufo/waves/round-91/K91CriticA/scores.md`; `close-l1/l1-rerun-criticA-repros.txt` | none: Q82 forbids arm identity in paths, Q84 forbids shared ambient tokens; neither forbids a constant member token inside a class | `close-l1/class-sampler.mjs` draws ≥ 6 members per class per run (random name/extension, over-cap size in [16777217, 16777216+2^20], directory empty or populated). Shown able to fail: `close-l1/class-sampler.txt` — `cand-extsh-gate` 26/36 and 25/36, `cand-capwindow` 30/36 twice, `cand-dirhash` 31/36 and 34/36, base v4 24/36 twice; positive control and v5 `HELD held=36/36` twice. QUALITY Q85. Routed to round 92 as the counter for any re-claim. |
+

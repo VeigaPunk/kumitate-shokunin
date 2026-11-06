@@ -1,0 +1,28 @@
+tool=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-92/K92ExecTool/seat-route.mjs sha256=3b8b6ce072db381a52fda44dd78cd9936be5b3fefd19f758328fe82b06002608
+[PASS] A1-wave-hostile-fixtures-terminates: rc=0 dt=0.0s stderr=''
+[PASS] A2-no-sidereal-records-for-unsafe-names: records=15
+[PASS] A2-unsafe-name-'../x': rec={"seat": "../x", "role": "task", "session": null, "final": "absent"}
+[PASS] A2-unsafe-name-'../../etc/pass': rec={"seat": "../../etc/passwd", "role": "task", "session": null, "final": "absent"}
+[PASS] A2-unsafe-name-'/etc/passwd': rec={"seat": "/etc/passwd", "role": "task", "session": null, "final": "absent"}
+[PASS] A2-unsafe-name-'a/../../GoodSe': rec={"seat": "a/../../GoodSeat", "role": "task", "session": null, "final": "absent"}
+[PASS] A2-unsafe-name-'..': rec={"seat": "..", "role": "task", "session": null, "final": "absent"}
+[PASS] A2-unsafe-name-'A\x00B': rec={"seat": "A\u0000B", "role": "task", "session": null, "final": "absent"}
+[PASS] A2-unsafe-name-'GoodSeat\x00evil': rec={"seat": "GoodSeat\u0000evil", "role": "task", "session": null, "final": "absent"}
+[PASS] A2-unsafe-name-'．．/slash': rec={"seat": "\uff0e\uff0e/slash", "role": "task", "session": null, "final": "absent"}
+[PASS] A2-5000-char-name: rec={"seat": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+[PASS] A3-symlink-does-not-read-outside-root: rec={"seat": "EscapeSeat", "role": "task", "session": null, "final": "absent"}
+[PASS] A4-fifo-seat-skipped-not-blocking: rec={"seat": "FifoSeat", "role": "task", "session": null, "final": "absent"}
+[PASS] A5-devzero-seat-skipped: rec={"seat": "ZeroSeat", "role": "task", "session": null, "final": "absent"}
+[PASS] A6-unreadable-dir-seat-absent: rec={"seat": "HiddenSeat", "role": "task", "session": null, "final": "absent"}
+[PASS] A7-good-seat-served: rec={"seat": "GoodSeat", "role": "task", "session": "/fast/scratch/hyaku/kumitate-r92/K92Sentinel/attack/tmp54wbb6tw/sessions/cwd-a/orch-1/GoodSeat.jsonl", "captured": "cap/model", "answered": ["ansp/ansm"], "errors": 0, "aborted": 0, "last_error": null, "yielded": false, "final": "served", "fallback": true, "parse_errors": 0}
+[PASS] A8-results-absent: rc=2 stdout=''
+[PASS] A8-results-notjson: rc=2 stdout=''
+[PASS] A8-root-absent: rc=2 stdout=''
+[PASS] A8-root-is-file: rc=2 stdout=''
+[PASS] A8-usage: rc=64
+[PASS] A9-50MB-nonerror-line: rc=0 dt=0.7s out='{"seat":"BigSeat","captured":null,"answered":["p/m"],"errors":0,"aborted":0,"last_error":null,"yielded":false,"final":"s' err=''
+[PASS] A10-2GB-sparse-bounded: rc=2 dt=46.1s out='' err='SEAT_ROUTE: FAILCLOSED error: Invalid string length'
+[FAIL] A11-6MB-error-first-line: rc=2 dt=0.1s out='' err='SEAT_ROUTE: FAILCLOSED error: Maximum call stack size exceeded'
+
+SUMMARY A1-wave-hostile-fixtures-terminates=ok A2-no-sidereal-records-for-unsafe-names=ok A2-unsafe-name-'../x'=ok A2-unsafe-name-'../../etc/pass'=ok A2-unsafe-name-'/etc/passwd'=ok A2-unsafe-name-'a/../../GoodSe'=ok A2-unsafe-name-'..'=ok A2-unsafe-name-'A\x00B'=ok A2-unsafe-name-'GoodSeat\x00evil'=ok A2-unsafe-name-'．．/slash'=ok A2-5000-char-name=ok A3-symlink-does-not-read-outside-root=ok A4-fifo-seat-skipped-not-blocking=ok A5-devzero-seat-skipped=ok A6-unreadable-dir-seat-absent=ok A7-good-seat-served=ok A8-results-absent=ok A8-results-notjson=ok A8-root-absent=ok A8-root-is-file=ok A8-usage=ok A9-50MB-nonerror-line=ok A10-2GB-sparse-bounded=ok A11-6MB-error-first-line=FAIL
+FAILS=A11-6MB-error-first-line

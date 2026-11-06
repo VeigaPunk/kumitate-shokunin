@@ -1,0 +1,15 @@
+# The exact command the L1 must run (lane root, after the round-91 spot-check file is present):
+cd /home/vgpnk/Projects/shokunin/kumitate-shokunin
+node scripts/spotcheck-adopt.mjs --lane . --adopt corpus/lessons/round-91-verifier-spotcheck.md
+
+# Observed in the freeze-tree fixture (scratch copy at 596f6753), 2026-11-06:
+#   SPOTCHECK_ADOPT: ADOPTED corpus/lessons/round-91-verifier-spotcheck.md wrote=both
+#   node scripts/spotcheck-adopt.mjs --lane . --check
+#   SPOTCHECK_COVERAGE: CLEAN spotchecks=58 uncovered=0
+#   MAP: CLEAN
+#   node scripts/readme-map.mjs
+#   README_MAP: CLEAN files=234 rows=234 covered=234
+# Byte delta (proven): corpus/README.md +1 row; .ufo/pins/readme-map.json covered +=
+#   "lessons/round-91-verifier-spotcheck.md"
+# Prefer this writer over readme-map.patch: it stages a journal and rolls back on failure.
+# readme-map.patch carries the same two-file delta as a fallback only (do not apply both).

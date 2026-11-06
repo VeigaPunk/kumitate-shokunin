@@ -1,0 +1,17 @@
+c03 two-errors      input=twoerr.jsonl
+   pristine={"last_error": "second boom"}
+   mutant  ={"last_error": "first boom"}
+c04 length-turn     input=RevC2Counter.jsonl
+   pristine={"answered": ["zai/glm-5.3-flash", "devin/glm-5-3-flash-1m"], "fallback": true}
+   mutant  ={"answered": ["zai/glm-5.3-flash"], "fallback": false}
+c06 first-role      input=cand-firstrole.jsonl
+   pristine={"captured": "prov/captured-model", "fallback": false}
+   mutant  ={"captured": "prov/main-model", "fallback": true}
+c17 run-across-cap  input=capcross.jsonl
+   pristine={"last_error": "! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! <redacted> tail"}
+   mutant  ={"last_error": "! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! aaaaaaaaaaaaaaaaaaaa"}
+c19 role-default    input=defrole.jsonl
+   pristine={"captured": "prov/def-model"}
+   mutant  ={"captured": null}
+c14 locate-tiebreak pristine=aaa195 mutant=zzz195
+c07 locate-tiebreak pristine=aaa195 mutant=zzz195

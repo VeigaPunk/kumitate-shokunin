@@ -1,0 +1,15 @@
+m01 run24          input=run24.jsonl
+   pristine={"last_error": "token <redacted> rejected"}
+   mutant  ={"last_error": "token abcdefghijklmnopqrstuvwx rejected"}
+m06 first-role     input=firstrole.jsonl
+   pristine={"captured": "prov/captured-model", "fallback": false}
+   mutant  ={"captured": "prov/main-model", "fallback": true}
+m12 empty-provider input=pmguard.jsonl
+   pristine={"answered": ["?"]}
+   mutant  ={"answered": ["/m"]}
+m13 nonobject-line input=nonobj.jsonl
+   pristine={"parse_errors": 1}
+   mutant  ={"parse_errors": 0}
+m04 length-turn    input=CritV3Spec.jsonl
+   pristine={}
+   mutant  ={}

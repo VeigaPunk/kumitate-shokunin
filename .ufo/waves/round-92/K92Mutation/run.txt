@@ -1,0 +1,30 @@
+# exact commands (scratch root /fast/scratch/hyaku/kumitate-r92/K92Mutation, TMPDIR set to it)
+L=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+# frozen inputs, copied never edited
+cp $L/.ufo/waves/round-92/probe/oracle92.py oracle92-pristine.py            # sha256 07e84a8f...
+cp $L/.ufo/waves/round-92/K92ExecTool/seat-route.mjs cand/seat-route.pristine.mjs  # sha256 3b8b6ce0... (== READY)
+# mutants: one replacement each, asserted 1 hunk + compiles
+python3 gen_oracle_mutants.py oracle92-pristine.py mutants-py manifest-py.tsv
+python3 gen_cand_mutants.py cand/seat-route.pristine.mjs mutants-mjs manifest-mjs.tsv
+# baselines
+python3 $L/.ufo/waves/round-92/probe/probe92-c1.py --tool $PWD/oracle92-pristine.py \
+  --index $L/.ufo/waves/round-92/probe/index92.tsv --sample-a $L/.ufo/waves/round-92/probe/sampleA.tsv \
+  --waves $L/.ufo/waves/round-91/w1-results.json --out baseline.txt              # HELD 133/133
+python3 <same probe> --tool $PWD/cand/seat-route.pristine.mjs ... --out receipts-mjs/pristine.txt  # HELD 133/133
+node cand/seat-route.pristine.mjs --selftest                                    # PASS held=30/30
+# battery 1 (17 oracle mutants), parallel
+printf '%s\n' mutants-py/m*.py | xargs -P 8 -I{} sh -c '<probe> --tool $PWD/{} ... --out receipts-py/$(basename {} .py).txt'
+# battery 2 (19 candidate mutants): counter + own selftest
+printf '%s\n' mutants-mjs/c*.mjs | xargs -P 10 -I{} sh -c '<probe> --tool $PWD/{} ... --out receipts-mjs/$(basename {} .mjs).txt'
+printf '%s\n' mutants-mjs/c*.mjs | xargs -P 10 -I{} sh -c 'node {} --selftest > selftest-mjs/$(basename {} .mjs).txt; echo $?'
+# witnesses and coverage scans
+python3 witness_fixtures.py > witnesses-fixtures.txt      # W1 oracle captured fallback; W2 synthetic locate; W3 real R45RevProvince
+python3 witness_survivors.py > witnesses-oracle.txt       # per-survivor pristine-vs-mutant diffs
+python3 witness_cand.py > witnesses-cand.txt
+python3 hostscan.py > hostscan.txt                        # index92-wide: m01/m04/m06/m12/m13 witnesses
+python3 locate.py > locate.txt                            # same-round same-lane duplicate seat names
+python3 - > scanSubagentModel2.txt                        # first subagent model_change model type, 23206 files
+python3 emit_mutants.py                                   # mutants.md from the receipts, rows first then ratios
+# post-run integrity
+sha256sum $L/.ufo/waves/round-92/probe/oracle92.py $L/.ufo/waves/round-92/probe/probe92-c1.py $L/.ufo/waves/round-92/K92ExecTool/seat-route.mjs
+grep -c -E 'round-92|oracle92|probe92' $L/.ufo/waves/round-92/K92ExecTool/seat-route.mjs   # 0

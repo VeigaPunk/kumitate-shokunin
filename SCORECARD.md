@@ -291,13 +291,13 @@ The K census decision supplies both members and findings; the score is now
 `K_sections` remains independently derived and checked.
 
 <!-- kumitate-proxy-v1
-A=36
-A_wave=1319
-C=46
+A=37
+A_wave=1380
+C=47
 C1=19
 C1_total=19
-C2=233
-C2_total=233
+C2=236
+C2_total=236
 S_members=88
 S_sections=88
 R_members=92
@@ -319,7 +319,7 @@ coverage_omp=10
 pin.cite-check=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2
 pin.surface-probe=79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35
 pin.round-gate=09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594
-pin.proxy-check=c9cd52ce74cb248cc0a904d242129338ce28ac0c6f9e8d92b9c1afdda196516c
+pin.proxy-check=1145df889936bc497baf09375086cbcd92c7377536316ce72b2ffd63dba6ab66
 pin.claims-check=de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14
 pin.kimi-census=7ea6b793028e2918ca920f0a5d225382bf687740d4cbee4545db963e50572439
 -->
@@ -354,6 +354,7 @@ pin.routed-ledger=05aacb5ede6b3389a693bb71c6c1cb74281f8bab9b5bf2309027dd97d83913
 pin.ready-handoff=d6e6ba8a20a02ce233707a8444a2d1404cd0abe08d77595248e26cb876136a53
 pin.spotcheck-adopt=b359a24c968d87c29d9668928278c27d99d86dac0489f2609745c7b8e77f5b97
 pin.counter-receipt=e95313700aaf8430c51e0f8abdb991ab168519eecf9803cce3fac51154f31069
+pin.seat-route=cd7ee03dd814da01f6c73ad4113022c2484dea182f95b0a84e07f9b6810ccfac
 -->
 
 
@@ -471,6 +472,7 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
+| 92 | operability (lowest non-retired axis; integer 9 — terminal under `f_O`, so the move is the capability row, not a score delta; capability acquisition `seat-route`, contract `kumitate-seat-route-v1`; sourced on S266/S267/S268 — **HELD** under the frozen predicate and kill rule; discernment caveat M92-3) | do-nothing control `C92_C1: UNMET agree=0/133`; existing `inline-dispatch-evidence` 0/133; seven one-field ablations 54..132/133; positive control (oracle) `HELD agree=133/133` (`.ufo/waves/round-92/controls/table.txt`, committed at freeze `596f6753`) | `python3 .ufo/waves/round-92/probe/probe92-c1.py --tool scripts/seat-route.mjs --index .ufo/waves/round-92/probe/index92.tsv --sample-a .ufo/waves/round-92/probe/sampleA.tsv --waves .ufo/waves/round-91/w1-results.json,.ufo/waves/round-92/w1-results.json` → `C92_C1: HELD agree=145/145 A=61/61 C=60/60 W=24/24 last_wave_located=12` twice, `tool_sha256=cd7ee03d…` (`close/probe1.txt`, `close/probe2.txt`); selftest 37/37; three definition-wrong constructions also HELD 145/145 (`close-l1/construct-*.txt`) | `.ufo/waves/round-92/{plan.md,probe,controls,close,close-l1}`; `corpus/knowledge/seat-route-from-session-transcripts.md`; `corpus/lessons/round-92.md`; measured on the round-92 lane commit that carries `scripts/seat-route.mjs` (hash in LOG round 92) |
 | 91 | operability (lowest non-retired axis; integer held 9 — terminal under `f_O`; capability acquisition `receipt-bind` v5, bounded external reads; sourced on S263/S264/S265 — **UNMET**, rejected-honest-stop by frozen kill clause (d); no capability row) | `node .ufo/waves/round-91/probe/probe91-c1.mjs --lane . --work <scratch> --alt /fast/scratch/hyaku --rev 0bff4babeec90dd57ea36efeaa94b66db9af381d --tool <v4 at rev>` → do-nothing `C91_C1: UNMET held=52/56` exit 1 (`.ufo/waves/round-91/controls/ctl-base-v4-at-rev.txt`; fails `ext-zero`, `ext-null`, `ext-fifo`, `ext-overcap`); positive control `HELD 56/56`, refuse-all 8/56 (`controls/table.txt`) | at M the integrated v5 reads `C91_C1: HELD held=56/56` twice (`.ufo/waves/round-91/close/probe1.txt`, `close/probe2.txt`), selftest 76 → 84; but three seat constructions also read 56/56 and are wrong inside a declared class (`.ufo/waves/round-91/K91CriticA/scores.md`; L1 re-run `close-l1/l1-rerun-criticA-repros.txt`), so C1 is UNMET; Q84, Q85 admitted; the class sampler separates them (`close-l1/class-sampler.txt`). Lesson `corpus/lessons/round-91.md`; plan `2b1b8bf3` |
 | 90 | operability (lowest non-retired axis; integer held 9 — terminal under `f_O`; capability acquisition `receipt-bind` v4 — **UNMET**, rejected-honest-stop by the frozen kill rule; no capability row) | `node .ufo/waves/round-90/probe/probe90-c1.mjs --lane . --work <scratch> --rev 7218699cfbdec702ba42f35ceac0a8e52d1bd564 --tool .ufo/waves/round-90/controls/…` → do-nothing v3 `C90_C1: UNMET held=39/47` exit 1 (`.ufo/waves/round-90/controls/ctl-base-v3-at-rev.txt`); the eight invisible-prefix arms fail (`dup-feff` … `dup-nbsp`, `single-zwsp`, `single-nbsp`) | at M `82c9c7ef` the integrated v4 reads `C90_C1: HELD held=47/47` exit 0 twice (`.ufo/waves/round-90/close/probe1.txt`, `close/probe2.txt`, `RUN_CLOSE: PROBE_DETERMINISM SAME`), selftest `PASS held=76/76` (`close/selftest.txt`), bind `CLEAN matched=12 … external=1` over 12 of 12 others (`close/bind.txt`), `PROXY: MATCH --strict` (`close/proxy.txt`). The kill rule fired: the reviewer's whole-text strip (`w1/K90Reviewer.md`) and the critic's context-gated prefix tolerances (`w1/K90CriticA.md`, `d-tmpdir-gated-prefix`, `e-round-path-gated-prefix`) each score 47/47, so C1 is UNMET. Checklist 43/46 (`close/checklist-items.txt`): items 737 (operator-owned `~/.omp/agent` findings), 756 (host-bound live OMP comparison) and 739 (cap-run; passes 12/12 on a direct rerun, red under `load1=11.77` in the battery) |
 | 89 | operability (lowest non-retired axis; integer held 9; capability acquisition `receipt-bind` v3 — **UNMET**, rejected-honest-stop by the frozen kill rule; no capability row) | `node .ufo/waves/round-89/probe/probe89-c1.mjs` at base → `C89_C1: UNMET held=27/30` exit 1 (`.ufo/waves/round-89/controls/ctl-base-v2-at-rev.txt`); the kill rule fired on three seat constructions at 30/30 (`build/K89Review/cand-probe-keyed.mjs`, `cand-skip-mode.mjs`, `build/K89Labrat/labrat-label-only.mjs`) | at M `7a8afb5f` the integrated v3 reads `C89_C1: HELD held=30/30`, but the same frozen counter scores the three constructions 30/30, so C1 is UNMET (`.ufo/waves/round-89/close/bind-final.txt` `RECEIPT_BIND: CLEAN matched=18`; `close/bind-selftest.txt` `PASS held=68/68`); routed defects K89-V1..V8 carried to round 90 (`corpus/lessons/round-89-verifier-spotcheck.md` §6). This row was absent at round 89 and is appended by round 90 as the round-89 gate repair (`round-gate` `SCORECARD_ROW_MISSING`).
@@ -579,7 +581,7 @@ the frozen definitions name.
 
 ## Planned
 
-**Round 92 — pre-registration** (written by round 91) lives at the end of this file under `## Round 92 pre-registration (written by round 91)`. **Round 91 — declared claim and measured disposition** live above it under `## Round 91 — declaration and measured disposition (2026-11-05)`.
+**Round 93 — pre-registration** (written by round 92) lives at the end of this file under `## Round 93 pre-registration (written by round 92)`. **Round 92 — declaration and measured disposition** live above it under `## Round 92 — declaration and measured disposition (2026-11-06)`. **Round 92 — pre-registration** (written by round 91) lives at the end of this file under `## Round 92 pre-registration (written by round 91)`. **Round 91 — declared claim and measured disposition** live above it under `## Round 91 — declaration and measured disposition (2026-11-05)`.
 
 **Round 90 — declared claim** lives at the end of this file under `## Round 90 — declaration (2026-11-05)`.
 
@@ -1994,6 +1996,7 @@ Rows enter only through a round that demonstrates the capability running (`AXES.
 | `counter-receipt` *(unverified — round 85 not admitted; see the round-85 disposition)* | Reconcile one arm-form counter transcript against the bytes it read and the source that produced it: v1's denominator/name/prefix/ok-count/verdict/order checks plus a derived `RECEIPT: bytes=… rows=… held=… findings=… sha256=…` line on every non-USAGE run and an optional `--src` binding — the receipt's arm names must be literal `arm('…')` call sites, its row count must equal the site count, and the last `const|let|var ARMS = <int>` must agree with both (`ARM_UNBOUND`, `SOURCE_ARITY`, `SOURCE_DECLARED`, fail-closed `SOURCE_UNREADABLE`/`SOURCE_ARMS_EMPTY`); never executes receipt bytes; a canned or label-keyed printer cannot reproduce the derived line | `node scripts/counter-receipt.mjs --receipt .ufo/waves/round-83/close/c1-repair.txt --src .ufo/waves/round-83/probe/probe83-c1.mjs` → `DRIFT SOURCE_DECLARED` with `SOURCE: sites=28 declared=27 receipt=28` (the r83 defect caught from the source, invisible to v1); frozen `C85_C1: HELD held=20/20` (`.ufo/waves/round-85/close/c1-probe.txt`); `--selftest` `PASS held=60/60` (`close/selftest.txt`); same-path control `HELD held=3/3 distinct_sha=true` (`close/content-variation.txt`); controls base 1/20, constant 0/20, no-reader 1/20 before data (`controls/`) | round 85 |
 
 | `counter-receipt` v3 *(verified round 86)* | Bind BOTH halves of a counter-transcript answer to the bytes read: v2's transcript reconciliation plus `SOURCE: sites=… declared=… receipt=… sha256=<source bytes>`; the frozen 24-arm probe generates receipts at run time (random count, names, padding, nonce, CRLF) and asserts exit + verdict + the byte-derived `RECEIPT:`/`SOURCE:` lines, so a canned, path-keyed or nonce-replay answer fails | `node .ufo/waves/round-86/probe/probe86-c1.mjs --lane . --work DIR` → `C86_C1: HELD held=24/24` exit 0 at `19b4e440` (`close/c1-probe.txt`); controls base 14/24, stub/noreader/replay 0/24 (`controls/`); `--selftest` 63/63; independent driver 54/54; same-path 3/3 distinct | round 86 |
+| `seat-route` *(round 92; discernment caveat M92-3)* | Read an omp seat transcript, or every seat of a wave's `<wave>-results.json`, and report per seat the captured route, the models that actually answered, fallback, error turns (one per attempt), aborted turns, final state (served/dead/aborted/silent/other/absent), yield, and a redacted last error — replacing hand-written seat-status prose (Amendment 44; r90 "12/12 COMPLETE") | `python3 .ufo/waves/round-92/probe/probe92-c1.py --tool scripts/seat-route.mjs … --waves .ufo/waves/round-91/w1-results.json,.ufo/waves/round-92/w1-results.json` → `C92_C1: HELD agree=145/145` ×2 (post-freeze wave included); `node scripts/seat-route.mjs --selftest` → 37/37; real runs `close/seat-route-r92-w1.txt` (2/12 fallback) and `K92ExecRetro/retro-table.md` (81/154 seats over r80–r91) | round 92 |
 
 Round-84 capability disposition: `counter-receipt` is a shipped, self-tested
 instrument, but its acquisition claim is **unadmitted**: the frozen kill rule
@@ -4467,3 +4470,47 @@ empty or populated; the three round-91 constructions committed as pre-data contr
 — an external symlink-leaf arm. (3) Cf members outside the v4 prefix set (U+00AD, U+200F, U+2060;
 `K91CriticA/repro/shy-strip`). (4) Mutation survivors m02/m07/m10 need a race or pseudo-file member.
 (5) Adjacency for tabi: `check-receipt-provenance.mjs:53` (RD-2 class; connector `w1/K91Connector.md`).
+
+## Round 92 — named correction to round 91 (2026-11-06; append-only; routed by the round-91 spot-check §5 items 1–2)
+
+The round-91 disposition table row "mutation | 11 mutants of the positive control's external branch: 7 killed,
+5 survivors" (line 4451) miscounts its own receipt. `.ufo/waves/round-91/K91Mutation/mutants.txt` rows 6–16
+show **6 killed** (m01, m03, m04, m05, m06, m09) and **5 survivors** (m02, m07, m08, m10, m11) of 11; its
+line 18 `KILL RATIO: 7/11` is the arithmetic error. Corrected tally: **6/11**. The round-92 pre-registration
+item (4) named three survivors (m02/m07/m10); the full survivor set is five, and m08 (`catch` swallows
+`FailClosed`) is a fail-open mutation. Round 92 does not re-claim `receipt-bind`, so the survivors stay
+routed with that line (no re-arm this round); the row above stays as written.
+
+## Round 92 — declaration and measured disposition (2026-11-06)
+
+Fresh start (Amendment 46; reads of the r89/r90/r91 rejected closures in `.ufo/waves/round-92/fresh/reads.md`).
+One claim: **C1 operability** (lowest non-retired axis; integer 9, terminal under `f_O`; stagnation nudge active —
+last verified capability row `counter-receipt` v3, round 86), capability acquisition `seat-route` (contract
+`kumitate-seat-route-v1`). Sourced on S266/S267/S268, opened this round. `receipt-bind` is not re-claimed.
+
+Frozen at `596f675366ac5822aac5ea1ffc56b1189b17f65c` (plan, oracle, counter, index of 23206 transcripts, sample A,
+ten pre-data controls); wave spec + validated dispatch `4f3a8d633f2f4770073c51db5f5ee3300997140d`. Predicate and kill
+rule: `.ufo/waves/round-92/plan.md`.
+
+| item | measured |
+|---|---|
+| do-nothing control | `C92_C1: UNMET agree=0/133` (`controls/ctl-absent.txt`); existing lane gate `inline-dispatch-evidence` 0/133 |
+| other pre-data controls | captured-reading 70, last-model 102, flag-only 126, no-error 54, no-abort 121, no-redaction 132, final=yielded 120 (of 133); positive control `HELD 133/133` (`controls/table.txt`) |
+| predicate at M | `C92_C1: HELD agree=145/145 A=61/61 C=60/60 W=24/24 last_wave_located=12` twice, `tool_sha256=cd7ee03d…` = shipped bytes (`close/probe1.txt`, `close/probe2.txt`); the round-92 wave, written after the freeze, is the last `--waves` entry |
+| kill rule | (a) no; (b) no; (c) no reproduction (K92CriticA 1200 unseen transcripts + 12 live seats, 0 disagreements; K92Reviewer 7 hand-reads); (d) byte grep 0 and runtime check `close-l1/kill-d-runtime.txt` (one execve; only the argv-given results file under round-92 opened); (e) sha equal — **did not fire** |
+| selftest | 30 (READY) → 37 at M; K92Mutation survivor family killed 9/9 by it (`close-l1/survivor-remut.txt`) |
+| discernment caveat (M92-3) | three definition-wrong constructions (`x2-parseerr0`, `x2b-redact23`, `x3-boolcounts`) and an oracle-delegating one (`x1-oracle-glob`) also read HELD 145/145 with the held-out wave (`close-l1/construct-*.txt`); the C draw is predictable from the tool's bytes (K92CriticA). The frozen rule excludes "a construction reaches HELD" by design; the operator/closure rules on weight |
+| domain run | r92 wave: 12 served, 2 fallback (K92Reviewer zai→haiku, K92Sentinel amr→mistral) (`close/seat-route-r92-w1.txt`); r80–r91: 81/154 seats fallback, 26 dead, four report contradictions (r86, r87, r90, r91) (`K92ExecRetro/`) |
+
+**Verdict (lane's reading): C1 HELD — capability row `seat-route` enters with the M92-3 caveat.** Axes: operability
+9 unchanged (terminal; `f_O` A 36 → 37, C 46 → 47), every coverage row 10 unchanged. No axis harmed (K92CriticB harm
+base vs M battery). Debt answered as round work: r91 mutation tally correction (above), r91 spot-check adopted
+(`spotcheck-adopt` `wrote=both`).
+
+## Round 93 pre-registration (written by round 92). Candidates, not commitments
+
+(1) `seat-route` v2 under a Q86 counter: type-strict comparison, synthetic members for parse errors, the 24-char
+boundary, `?` and `final=other`, a runtime independence check, a held-out set the author cannot compute; read
+`retryRecovery.supersededBy`, `upstreamProvider`, `session_init.retryFallback` (K92Scout D5–D8) and stop calling
+`errors` requests (D1). (2) Redaction families (K92Sentinel RD-1). (3) `PROVINCE.md:16,57` dated amendment for
+transcript reads (K92Connector). (4) Wire `seat-route --strict` into the round close so reports quote it.

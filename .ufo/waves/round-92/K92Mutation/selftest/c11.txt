@@ -1,0 +1,11 @@
+FIELD dead: {"seat":"SeatA","captured":"p/one","answered":[],"errors":1,"aborted":0,"last_error":"402 payment required: <redacted>","yielded":false,"final":"silent","fallback":false,"parse_errors":0}
+FIELD aborted: {"seat":"SeatA","captured":null,"answered":[],"errors":0,"aborted":1,"last_error":null,"yielded":false,"final":"silent","fallback":false,"parse_errors":0}
+FIELD nonstring-error: {"seat":"SeatA","captured":null,"answered":[],"errors":1,"aborted":0,"last_error":"","yielded":false,"final":"silent","fallback":false,"parse_errors":0}
+FIELD other: {"seat":"SeatA","captured":null,"answered":[],"errors":0,"aborted":0,"last_error":null,"yielded":false,"final":"silent","fallback":false,"parse_errors":0}
+FIELD human-ok: SEAT Dead role=executor captured=p/one answered=- fallback=false errors=1 aborted=0 final=silent yielded=false last_error="boom"
+SEAT Gone role=scribe captured=- answered=- fallback=false errors=0 aborted=0 final=absent yielded=false last_error=null
+SEAT_ROUTE: OK seats=2 served=0 dead=0 aborted=0 silent=1 absent=1 fallback=0
+
+FIELD json-array: [{"seat":"Dead","role":"executor","session":"/fast/scratch/hyaku/kumitate-r92/K92Mutation/seat-route-selftest-4dELho/sessions2/d/Dead.jsonl","captured":"p/one","answered":[],"errors":1,"aborted":0,"last_error":"boom","yielded":false,"final":"silent","fallback":false,"parse_errors":0},{"seat":"Gone","role":"scribe","session":null,"final":"absent"}]
+
+SEAT_ROUTE_SELFTEST: FAIL held=24/30

@@ -1,0 +1,18 @@
+### readme-map
+README_MAP: note unpinned:lessons/round-91-verifier-spotcheck.md
+README_MAP: DRIFT files=234 rows=233 covered=233 bad=2 first=uncovered:lessons/round-91-verifier-spotcheck.md
+### counter-pins
+COUNTER_PINS: CLEAN pins=45
+### proxy-check --strict
+PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+PROXY: DRIFT (A_WAVE_DRIFT term=A_wave declared=1319 computed=1332 delta=+13; C2_TOTAL_DRIFT term=C2_total declared=233 computed=234 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669; source=snapshot)
+### spotcheck-adopt --check
+SPOTCHECK_COVERAGE: DRIFT spotchecks=58 uncovered=1 first=corpus/lessons/round-91-verifier-spotcheck.md
+MAP: DRIFT first=uncovered:lessons/round-91-verifier-spotcheck.md
+### round-gate 91
+ROUND_GATE: CLEAN (round=91 lane=kumitate checks=10 errors=0 warnings=0)
+### round-gate 92
+ROUND_GATE  error  LOG_ENTRY_MISSING  no "- YYYY-MM-DD — round 92" line in /fast/scratch/hyaku/kumitate-r92/K92ExecCarry/base/LOG.md
+ROUND_GATE: DRIFT (round=92 lane=kumitate checks=5 errors=3 warnings=1)
+### seat-route exists?
+no

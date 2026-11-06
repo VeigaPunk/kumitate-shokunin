@@ -1,0 +1,54 @@
+K92ExecRetro — evidence log (2026-11-06). Lane root: /home/vgpnk/Projects/shokunin/kumitate-shokunin
+Scratch /fast/scratch/hyaku/kumitate-r92/K92ExecRetro created, passed as TMPDIR where a driver needed one
+(the oracle writes nothing), removed before yield. No git mutation, no lane write outside this seat dir.
+
+E1 wave inventory (read-only)
+  cmd: ls .ufo/waves/round-<N>/{w1,w2}-results.json for N=80..91
+  out: w1 present for all 12 rounds (rows 10..15); w2-results.json present for none (run-meta.txt).
+  cmd: python3 -c 'json.load(...)' per file -> lane=kumitate round=<N> wave=w1 seats=10..15.
+       r80 13, r81 14, r82 14, r83 15, r84 10, r85 13, r86 12, r87 14, r88 12, r89 13, r90 12, r91 12.
+
+E2 oracle runs (FROZEN reader, sha256 07e84a8f...b0465d)
+  cmd: TMPDIR=/fast/scratch/hyaku/kumitate-r92/K92ExecRetro timeout 900 python3 run-retro.py
+       (python3 .ufo/waves/round-92/probe/oracle92.py --results .ufo/waves/round-<N>/w1-results.json)
+  out: exit 0 for all 12; 0.254 s (r84) .. 0.417 s (r80) per wave, 4.20 s total wall for the driver;
+       every output captured verbatim to retro-r<N>.json. Log: run-retro.log.
+
+E3 coverage of the reading
+  out: 154/154 wave seats located (session path non-null); 0 absent.
+       servings: 128 served, 26 dead, 0 aborted, 0 silent, 0 other.
+       fallback: 81 seats answered on a model other than `captured`; 43 seats had no answering turn
+       on the captured route at all.
+       bytes: 127,513,193 B of transcript under the 154 located paths; largest single file
+       K86Scribe.jsonl 3,412,884 B; largest per wave: r85 2,966,114 B (K85Scribe),
+       r91 3,401,511 B (K91ScribeSources).
+
+E4 report cross-check (read-only fleet reports)
+  cmd: grep -nE '(commandcode|opencode-go|zai|devin|minimax|anthropic|google-antigravity|openai-codex|
+       mistral|kimi-code)/[a-zA-Z0-9._-]+|amr/|@m_[a-z]+|claude-opus|MiniMax|gemini-3|gpt-6|glm-5'
+       round-8[0-9]/kumitate.md round-9[01]/kumitate.md   (from /home/vgpnk/Projects/shokunin/.ufo/reports)
+  out: 3 lines, all round-86 (164, 188, 189). Only line 164 names an answering model — and it is the
+       fallback route, not the captured one. Sweep kept as sweep-model-statements.txt.
+  cmd: grep -n -E 'settled|resumes=|WAVE-DONE|COMPLETE|Dead seats|Dead / partial|Dead seat' <reports>
+  out: 26 hits; each graded against retro-r<N>.json in contradictions.md.
+
+E5 route field dumps (read-only host transcripts, field-level only — no transcript copied)
+  cmd: heredoc python3 driver over the session paths in retro-r86/r90/r91.json printing
+       model_change{role,model,resolvedModelIsFallback} and per assistant turn
+       {provider,model,stopReason,errorMessage[:70]}.
+  out: route-dumps.txt. r86 K86Review/K86Critic/K86Sentinel/K86Revenger = 1 assistant turn each, error;
+       K86Mutation = 3 turns (2 error on opencode-go, then model_change role=fallback
+       commandcode/deepseek/deepseek-v4.1-flash, 1 error 401); K91Scout = 107 turns;
+       K90Connector 21, K90Sentinel 17, K90Reviewer 81 (all served, fallback per table).
+
+E6 wave-record shape (why a status scan is blind)
+  cmd: python3 - per w1-results.json -> rows / null output rows
+  out: r86 12 rows, 12 null; r88 12 rows, 12 null; every other round 0 null. Report-file counts
+       w1/*.md: r80 13, r81 12, r82 11, r83 10, r85 13, r86 7, r87 11, r88 12, r89 13, r90 11, r91 12.
+
+E7 independent generation of the table
+  cmd: python3 gen-table.py   -> retro-table.md (266 lines) from retro-r*.json + timings.tsv + sizes.tsv.
+       No hand-typed values: the per-seat rows are emitted from the oracle JSON.
+  cmd: sha256sum ... -> sha256.txt (frozen reader, all 12 wave records, every deliverable).
+
+No tool was installed or upgraded for this seat (python3 and coreutils only).
