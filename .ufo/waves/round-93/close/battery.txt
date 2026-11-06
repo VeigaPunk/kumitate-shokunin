@@ -1,0 +1,52 @@
+# round-93 battery at the attempt-2 working tree over M=2f8475cd (+ SCORECARD r93 rows only), 2026-11-06T20:25:16-03:00
+cmd=node scripts/proxy-check.mjs --strict
+PROXY  error  A_WAVE_DRIFT  A_wave: declared=1381 computed=1471 delta=+90
+PROXY  error  C2_DRIFT  C2: declared=236 computed=239 delta=+3
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=236 computed=239 delta=+3
+PROXY: DRIFT (A_WAVE_DRIFT term=A_wave declared=1381 computed=1471 delta=+90; C2_DRIFT term=C2 declared=236 computed=239 delta=+3; C2_TOTAL_DRIFT term=C2_total declared=236 computed=239 delta=+3; src-rev=31c465f15669; source=snapshot)
+exit=1
+
+cmd=node scripts/readme-map.mjs
+README_MAP: note unpinned:lessons/round-93.md
+README_MAP: DRIFT files=239 rows=239 covered=237 bad=2 first=unpinned:knowledge/seat-route-retry-fields.md
+exit=1
+
+cmd=node scripts/sources-check.mjs
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/counter-receipt-discrimination.md:1  S243 used-by omits corpus/knowledge/counter-receipt-discrimination.md
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/failure-recovery-replay.md:1  S028 used-by omits corpus/knowledge/failure-recovery-replay.md
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/failure-recovery-replay.md:1  S124 used-by omits corpus/knowledge/failure-recovery-replay.md
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/kimi-plane-single-derivation.md:1  S041 used-by omits corpus/knowledge/kimi-plane-single-derivation.md
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/receipt-invisible-prefix-fields.md:1  S258 used-by omits corpus/knowledge/receipt-invisible-prefix-fields.md
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/self-asserted-instants.md:1  S237 used-by omits corpus/knowledge/self-asserted-instants.md
+SOURCES  info  LEGACY_NO_HEADER  count=38
+SOURCES_CHECK: CLEAN (rows=208 tiers=A:176,B:22,C:10 status=queued:14,mined:166,rejected:28 entries_with_source=47 legacy=38)
+exit=0
+
+cmd=node scripts/counter-pins.mjs
+COUNTER_PINS: CLEAN pins=50
+exit=0
+
+cmd=node scripts/seat-route.mjs --selftest
+SEAT_ROUTE_SELFTEST: PASS held=63/63
+exit=0
+
+cmd=node scripts/spotcheck-adopt.mjs --lane . --check
+SPOTCHECK_COVERAGE: CLEAN spotchecks=59 uncovered=0
+MAP: DRIFT first=unpinned:knowledge/seat-route-retry-fields.md
+exit=0
+
+cmd=node scripts/round-gate.mjs --round 92 --main-repo /home/vgpnk/Projects/shokunin
+ROUND_GATE: CLEAN (round=92 lane=kumitate checks=10 errors=0 warnings=0)
+exit=0
+
+cmd=/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kumitate
+kumitate	W04	S034 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics across scopes
+kumitate	W04	S068 duplicate url github.com/can1357/oh-my-pi/tree/45c35e40c46166dc726ccc52f5d27f40f2449f99 across scopes
+kumitate	W04	S084 duplicate url infection.github.io/guide across scopes
+kumitate	W04	S095 duplicate url raw.githubusercontent.com/containers/bubblewrap/v0.13.1/bwrap.xml across scopes
+kumitate	W04	S123 duplicate url docs.langchain.com/oss/python/langgraph/checkpointers across scopes
+kumitate	W04	S126 duplicate url docs.temporal.io/encyclopedia/detecting-activity-failures across scopes
+kumitate	W04	S247 duplicate url arxiv.org/abs/2212.06118 across scopes
+kumitate	ok	/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
+exit=0
+

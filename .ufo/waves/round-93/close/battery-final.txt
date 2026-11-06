@@ -1,0 +1,49 @@
+# round-93 final battery (attempt 2, after proxy re-declare + readme pins + SCORECARD r93/r94 rows), 2026-11-06T20:26:17-03:00
+cmd=node scripts/proxy-check.mjs --strict
+PROXY: MATCH (A=37 C=47 operability=9; C1=19/19 C2=239/239 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=55/55 coverage:kimi-layer=10; O=1/1 O_members=65 O_findings=0 O_bound=35 coverage:omp=10; pins=6 match; src-rev=31c465f15669; source=snapshot)
+exit=0
+
+cmd=node scripts/readme-map.mjs
+README_MAP: CLEAN files=239 rows=239 covered=239
+exit=0
+
+cmd=node scripts/sources-check.mjs
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/counter-receipt-discrimination.md:1  S243 used-by omits corpus/knowledge/counter-receipt-discrimination.md
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/failure-recovery-replay.md:1  S028 used-by omits corpus/knowledge/failure-recovery-replay.md
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/failure-recovery-replay.md:1  S124 used-by omits corpus/knowledge/failure-recovery-replay.md
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/kimi-plane-single-derivation.md:1  S041 used-by omits corpus/knowledge/kimi-plane-single-derivation.md
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/receipt-invisible-prefix-fields.md:1  S258 used-by omits corpus/knowledge/receipt-invisible-prefix-fields.md
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/self-asserted-instants.md:1  S237 used-by omits corpus/knowledge/self-asserted-instants.md
+SOURCES  info  LEGACY_NO_HEADER  count=38
+SOURCES_CHECK: CLEAN (rows=208 tiers=A:176,B:22,C:10 status=queued:14,mined:166,rejected:28 entries_with_source=47 legacy=38)
+exit=0
+
+cmd=node scripts/counter-pins.mjs
+COUNTER_PINS: CLEAN pins=50
+exit=0
+
+cmd=node scripts/seat-route.mjs --selftest
+SEAT_ROUTE_SELFTEST: PASS held=63/63
+exit=0
+
+cmd=node scripts/spotcheck-adopt.mjs --lane . --check
+SPOTCHECK_COVERAGE: CLEAN spotchecks=59 uncovered=0
+MAP: CLEAN
+exit=0
+
+cmd=node scripts/round-gate.mjs --round 93 --main-repo /home/vgpnk/Projects/shokunin
+ROUND_GATE  error  REPORT_MISSING  /home/vgpnk/Projects/shokunin/.ufo/reports/round-93/kumitate.md
+ROUND_GATE: DRIFT (round=93 lane=kumitate checks=5 errors=1 warnings=0)
+exit=1
+
+cmd=/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kumitate
+kumitate	W04	S034 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics across scopes
+kumitate	W04	S068 duplicate url github.com/can1357/oh-my-pi/tree/45c35e40c46166dc726ccc52f5d27f40f2449f99 across scopes
+kumitate	W04	S084 duplicate url infection.github.io/guide across scopes
+kumitate	W04	S095 duplicate url raw.githubusercontent.com/containers/bubblewrap/v0.13.1/bwrap.xml across scopes
+kumitate	W04	S123 duplicate url docs.langchain.com/oss/python/langgraph/checkpointers across scopes
+kumitate	W04	S126 duplicate url docs.temporal.io/encyclopedia/detecting-activity-failures across scopes
+kumitate	W04	S247 duplicate url arxiv.org/abs/2212.06118 across scopes
+kumitate	ok	/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
+exit=0
+

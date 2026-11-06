@@ -292,12 +292,12 @@ The K census decision supplies both members and findings; the score is now
 
 <!-- kumitate-proxy-v1
 A=37
-A_wave=1381
+A_wave=1471
 C=47
 C1=19
 C1_total=19
-C2=236
-C2_total=236
+C2=239
+C2_total=239
 S_members=88
 S_sections=88
 R_members=92
@@ -472,6 +472,7 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
+| 93 | operability (lowest non-retired axis; integer 9 — terminal under `f_O`, so the move is the capability row, not a score delta; capability upgrade `seat-route` v1 → v2, contract `kumitate-seat-route-v2`; sourced on S267/S268/S269/S270 — **HELD** under the frozen predicate and kill rule; caveat M93-3, runtime clause is a single-invocation literal trace) | do-nothing control `C93_C1: UNMET agree=0/221`; shipped v1 `cd7ee03d…` 0/221; twelve one-field ablations 0..220/221; positive control (oracle) `HELD agree=221/221` (`.ufo/waves/round-93/controls/table.txt`, committed at freeze `b6204949`) | `python3 .ufo/waves/round-93/probe/probe93-c1.py --tool scripts/seat-route.mjs --sample-a .ufo/waves/round-92/probe/sampleA.tsv --fixtures .ufo/waves/round-93/probe/fixtures --after 2026-11-06T21:40:00.000Z --waves .ufo/waves/round-92/w1-results.json,.ufo/waves/round-93/w1-results.json` → `C93_C1: HELD agree=176/176 A=61/61 F=16/16 H=74/74 W=25/25 thin_fields=0` + `RUNTIME: CLEAN findings=0` twice, `tool_sha256=7273ad2b…` (`close/probe1.txt`, `close/probe2.txt`); selftest 63/63; kill clauses (a)–(f) not fired (`close/kill-checks.txt`) | `.ufo/waves/round-93/{plan.md,probe,controls,close,close-l1}`; `corpus/knowledge/seat-route-retry-fields.md`; `corpus/lessons/round-93.md`; measured at M `2f8475cdeca3aab569234537cd75d9f332aac6bc` |
 | 92 | operability (lowest non-retired axis; integer 9 — terminal under `f_O`, so the move is the capability row, not a score delta; capability acquisition `seat-route`, contract `kumitate-seat-route-v1`; sourced on S266/S267/S268 — **HELD** under the frozen predicate and kill rule; discernment caveat M92-3) | do-nothing control `C92_C1: UNMET agree=0/133`; existing `inline-dispatch-evidence` 0/133; seven one-field ablations 54..132/133; positive control (oracle) `HELD agree=133/133` (`.ufo/waves/round-92/controls/table.txt`, committed at freeze `596f6753`) | `python3 .ufo/waves/round-92/probe/probe92-c1.py --tool scripts/seat-route.mjs --index .ufo/waves/round-92/probe/index92.tsv --sample-a .ufo/waves/round-92/probe/sampleA.tsv --waves .ufo/waves/round-91/w1-results.json,.ufo/waves/round-92/w1-results.json` → `C92_C1: HELD agree=145/145 A=61/61 C=60/60 W=24/24 last_wave_located=12` twice, `tool_sha256=cd7ee03d…` (`close/probe1.txt`, `close/probe2.txt`); selftest 37/37; three definition-wrong constructions also HELD 145/145 (`close-l1/construct-*.txt`) | `.ufo/waves/round-92/{plan.md,probe,controls,close,close-l1}`; `corpus/knowledge/seat-route-from-session-transcripts.md`; `corpus/lessons/round-92.md`; measured on the round-92 lane commit that carries `scripts/seat-route.mjs` (hash in LOG round 92) |
 | 91 | operability (lowest non-retired axis; integer held 9 — terminal under `f_O`; capability acquisition `receipt-bind` v5, bounded external reads; sourced on S263/S264/S265 — **UNMET**, rejected-honest-stop by frozen kill clause (d); no capability row) | `node .ufo/waves/round-91/probe/probe91-c1.mjs --lane . --work <scratch> --alt /fast/scratch/hyaku --rev 0bff4babeec90dd57ea36efeaa94b66db9af381d --tool <v4 at rev>` → do-nothing `C91_C1: UNMET held=52/56` exit 1 (`.ufo/waves/round-91/controls/ctl-base-v4-at-rev.txt`; fails `ext-zero`, `ext-null`, `ext-fifo`, `ext-overcap`); positive control `HELD 56/56`, refuse-all 8/56 (`controls/table.txt`) | at M the integrated v5 reads `C91_C1: HELD held=56/56` twice (`.ufo/waves/round-91/close/probe1.txt`, `close/probe2.txt`), selftest 76 → 84; but three seat constructions also read 56/56 and are wrong inside a declared class (`.ufo/waves/round-91/K91CriticA/scores.md`; L1 re-run `close-l1/l1-rerun-criticA-repros.txt`), so C1 is UNMET; Q84, Q85 admitted; the class sampler separates them (`close-l1/class-sampler.txt`). Lesson `corpus/lessons/round-91.md`; plan `2b1b8bf3` |
 | 90 | operability (lowest non-retired axis; integer held 9 — terminal under `f_O`; capability acquisition `receipt-bind` v4 — **UNMET**, rejected-honest-stop by the frozen kill rule; no capability row) | `node .ufo/waves/round-90/probe/probe90-c1.mjs --lane . --work <scratch> --rev 7218699cfbdec702ba42f35ceac0a8e52d1bd564 --tool .ufo/waves/round-90/controls/…` → do-nothing v3 `C90_C1: UNMET held=39/47` exit 1 (`.ufo/waves/round-90/controls/ctl-base-v3-at-rev.txt`); the eight invisible-prefix arms fail (`dup-feff` … `dup-nbsp`, `single-zwsp`, `single-nbsp`) | at M `82c9c7ef` the integrated v4 reads `C90_C1: HELD held=47/47` exit 0 twice (`.ufo/waves/round-90/close/probe1.txt`, `close/probe2.txt`, `RUN_CLOSE: PROBE_DETERMINISM SAME`), selftest `PASS held=76/76` (`close/selftest.txt`), bind `CLEAN matched=12 … external=1` over 12 of 12 others (`close/bind.txt`), `PROXY: MATCH --strict` (`close/proxy.txt`). The kill rule fired: the reviewer's whole-text strip (`w1/K90Reviewer.md`) and the critic's context-gated prefix tolerances (`w1/K90CriticA.md`, `d-tmpdir-gated-prefix`, `e-round-path-gated-prefix`) each score 47/47, so C1 is UNMET. Checklist 43/46 (`close/checklist-items.txt`): items 737 (operator-owned `~/.omp/agent` findings), 756 (host-bound live OMP comparison) and 739 (cap-run; passes 12/12 on a direct rerun, red under `load1=11.77` in the battery) |
@@ -580,6 +581,8 @@ the frozen definitions name.
 
 
 ## Planned
+
+**Round 94 — pre-registration** (written by round 93) lives at the end of this file under `## Round 94 pre-registration (written by round 93)`. **Round 93 — declaration and measured disposition** live above it under `## Round 93 — declaration and measured disposition (2026-11-06, attempts 1–2)`.
 
 **Round 93 — pre-registration** (written by round 92) lives at the end of this file under `## Round 93 pre-registration (written by round 92)`. **Round 92 — declaration and measured disposition** live above it under `## Round 92 — declaration and measured disposition (2026-11-06)`. **Round 92 — pre-registration** (written by round 91) lives at the end of this file under `## Round 92 pre-registration (written by round 91)`. **Round 91 — declared claim and measured disposition** live above it under `## Round 91 — declaration and measured disposition (2026-11-05)`.
 
@@ -1997,6 +2000,7 @@ Rows enter only through a round that demonstrates the capability running (`AXES.
 
 | `counter-receipt` v3 *(verified round 86)* | Bind BOTH halves of a counter-transcript answer to the bytes read: v2's transcript reconciliation plus `SOURCE: sites=… declared=… receipt=… sha256=<source bytes>`; the frozen 24-arm probe generates receipts at run time (random count, names, padding, nonce, CRLF) and asserts exit + verdict + the byte-derived `RECEIPT:`/`SOURCE:` lines, so a canned, path-keyed or nonce-replay answer fails | `node .ufo/waves/round-86/probe/probe86-c1.mjs --lane . --work DIR` → `C86_C1: HELD held=24/24` exit 0 at `19b4e440` (`close/c1-probe.txt`); controls base 14/24, stub/noreader/replay 0/24 (`controls/`); `--selftest` 63/63; independent driver 54/54; same-path 3/3 distinct | round 86 |
 | `seat-route` *(round 92; discernment caveat M92-3)* | Read an omp seat transcript, or every seat of a wave's `<wave>-results.json`, and report per seat the captured route, the models that actually answered, fallback, error turns (one per attempt), aborted turns, final state (served/dead/aborted/silent/other/absent), yield, and a redacted last error — replacing hand-written seat-status prose (Amendment 44; r90 "12/12 COMPLETE") | `python3 .ufo/waves/round-92/probe/probe92-c1.py --tool scripts/seat-route.mjs … --waves .ufo/waves/round-91/w1-results.json,.ufo/waves/round-92/w1-results.json` → `C92_C1: HELD agree=145/145` ×2 (post-freeze wave included); `node scripts/seat-route.mjs --selftest` → 37/37; real runs `close/seat-route-r92-w1.txt` (2/12 fallback) and `K92ExecRetro/retro-table.md` (81/154 seats over r80–r91) | round 92 |
+| `seat-route` v2 *(round 93; caveat M93-3)* | v1 plus the retry fields omp persists: `error_attempts` (renamed from `errors`: one row per failed attempt), `recovered_attempts`, `superseded_by` (`retryRecovery.supersededBy`), `upstream` (`upstreamProvider` of served turns), `resolved` and `chain` (first `session_init`), `flag_hops` and `revert_hops` (the reused `fallback` role) | `python3 .ufo/waves/round-93/probe/probe93-c1.py --tool scripts/seat-route.mjs … --after 2026-11-06T21:40:00.000Z --waves .ufo/waves/round-92/w1-results.json,.ufo/waves/round-93/w1-results.json` → `C93_C1: HELD agree=176/176 H=74/74` ×2, `RUNTIME: CLEAN`; `node scripts/seat-route.mjs --selftest` → 63/63; real run `.ufo/waves/round-93/close/seat-route-r93-w1.txt` (13 served, 8 fallback) | round 93 |
 
 Round-84 capability disposition: `counter-receipt` is a shipped, self-tested
 instrument, but its acquisition claim is **unadmitted**: the frozen kill rule
@@ -4514,3 +4518,32 @@ boundary, `?` and `final=other`, a runtime independence check, a held-out set th
 `retryRecovery.supersededBy`, `upstreamProvider`, `session_init.retryFallback` (K92Scout D5–D8) and stop calling
 `errors` requests (D1). (2) Redaction families (K92Sentinel RD-1). (3) `PROVINCE.md:16,57` dated amendment for
 transcript reads (K92Connector). (4) Wire `seat-route --strict` into the round close so reports quote it.
+
+## Round 93 — declaration and measured disposition (2026-11-06, attempts 1–2)
+
+One claim: **C1 operability** (lowest non-retired axis; integer 9, terminal under `f_O`), capability upgrade
+`seat-route` v1 → v2 (contract `kumitate-seat-route-v2`), sourced on S269/S270 (opened this round) and S267/S268
+(re-opened). Frozen at `b6204949e3bb17df9d6cf0cc3f59ea0c4b362061` (committer time 20:53:14Z; plan, oracle93, counter
+probe93, 16 fixtures, 15 pre-data controls); wave spec + validated dispatch `3b82a316`; M = `2f8475cd`. Attempt 1
+integrated M and ended before the close; attempt 2 ran the frozen predicate at M unchanged.
+
+| item | measured |
+|---|---|
+| do-nothing control | `C93_C1: UNMET agree=0/221` (`ctl-absent`); shipped v1 0/221 (`ctl-v1-shipped`) |
+| other pre-data controls | twelve ablations 0..220/221 UNMET; positive `HELD 221/221` (`controls/table.txt`) |
+| predicate at M | `C93_C1: HELD agree=176/176 A=61/61 F=16/16 H=74/74 W=25/25 h_pool=74 last_wave_located=13 thin_fields=0` and `RUNTIME: CLEAN findings=0`, twice, `tool_sha256=7273ad2b…` = bytes at M (`close/probe1.txt`, `close/probe2.txt`) |
+| kill rule | (a) no; (b) only `ctl-positive` HELD; (c) no committed reproduction contradicting a definition (routed oracle-vs-text gaps are outside the definitions); (d) byte grep 0/0/0/0, `RUNTIME: CLEAN`; (e) sha equal; (f) freeze 20:53:14Z < 21:40:00Z — **did not fire** (`close/kill-checks.txt`) |
+| caveat M93-3 | the runtime clause is a single-invocation literal-string trace: K93ExecRuntime x5/x6/x7 and K93CriticA `t-embed.py` evade it; H is post-freeze but not provenance-checked (K93CriticB `h_forge2`). Constructions are excluded from the kill rule by design; routed to round 94 |
+
+**Verdict (lane's reading): C1 HELD — capability row `seat-route` v2 enters with caveat M93-3.** Axes: operability
+9 unchanged (terminal), every coverage row 10 unchanged; no axis harmed (K93ExecHarm battery base vs candidate,
+`K93ExecHarm/battery-diff-final.txt`; at M + attempt-2 bookkeeping every lane gate CLEAN/MATCH, `close/battery-final.txt`).
+
+## Round 94 pre-registration (written by round 93). Candidates, not commitments
+
+(1) Counter repair for M93-3: trace every invocation, `realpath` + inode match instead of literal strings,
+traced-vs-untraced stdout identity, read-only H/A copies with a sha manifest, H provenance (session ids the
+orchestrator spawned after the freeze). (2) K93CriticA fixtures F93CapturedTwice / F93CapturedNonStr /
+F93ResolvedEmpty and K93Mutation's lone-string `supersededBy` fixture. (3) K93Sentinel R93-D1: redact or bound
+`resolved`/`chain`/`upstream`/`superseded_by` values in human mode. (4) M93-5: `round-gate --close` requires
+`close/probe*.txt` when the plan freezes a predicate. (5) SOURCES row for `retry-fallback-chains.ts` (M93-2).

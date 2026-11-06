@@ -99,3 +99,24 @@ shokuknow package: `Assimilation: none` (K93Connector: no staged transcript/rout
 ## Operator note
 
 None. No L0 question filed.
+
+## Attempt 2 — close at M (appended 2026-11-06; attempt-1 text above is unchanged)
+
+Watchdog `lane-dead-no-report kumitate round=93` (attempt 1, 20:22:56 -03): attempt 1 landed M
+`2f8475cdeca3aab569234537cd75d9f332aac6bc` (pushed) and ended before running the frozen predicate, writing the LOG
+entry, the SCORECARD claim row or the report. Attempt 2 (`KumitateR93a2`) inherited M and the committed wave
+evidence unchanged (re-verified: `sha256sum scripts/seat-route.mjs` = `7273ad2b…` = pin; untracked=0), launched no
+new wave, and ran the frozen predicate at M with the frozen literals:
+
+- `close/probe1.txt`, `close/probe2.txt`: `C93_C1: HELD agree=176/176 A=61/61 F=16/16 H=74/74 W=25/25 h_pool=74
+  last_wave_located=13 thin_fields=0 … tool_sha256=7273ad2b…` and `RUNTIME: CLEAN findings=0`, both rc 0.
+- `close/kill-checks.txt`: (b) only `ctl-positive` HELD; (d) byte grep 0/0/0/0; (e) `git show 2f8475cd:scripts/seat-route.mjs | sha256sum`
+  = `7273ad2b…`; (f) freeze committer `20:53:14Z` < `21:40:00Z`; selftest 63/63. Kill rule did not fire.
+- `close/battery.txt`: at M the lane gates read `PROXY: DRIFT` (A_wave 1381→1471, C2/C2_total 236→239) and
+  `README_MAP: DRIFT` (the new knowledge entry and this lesson unpinned) — round-close bookkeeping attempt 1 never
+  reached. Attempt 2 re-declared the proxy counts and pinned both files (`.ufo/pins/readme-map.json`); coverage
+  stays 10 (239/239). The re-run is `close/battery-final.txt`.
+
+| class | evidence pointer | captured-by | fix |
+|---|---|---|---|
+| **M93-5 — an L1 integrated M and ended before the close** (predicate at M, LOG, SCORECARD row, proxy/readme pins, report). | `.ufo/watchdog.log` line `2026-11-06T20:22:56-03:00 lane-dead-no-report kumitate round=93`; `close/battery.txt` DRIFT lines at M | watchdog `report_of` (shown able to fail: it failed attempt 1) — captures the missing report, not the missing close receipts | close order for later rounds: run the frozen predicate and the battery in the same session step as the integration commit, before any further seat reading. Not shown able to fail (no lane check) — routed: `round-gate --close` should require `close/probe*.txt` for a round whose plan freezes a predicate. |
