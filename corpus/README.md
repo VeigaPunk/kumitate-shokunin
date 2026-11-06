@@ -271,6 +271,7 @@ fixture suite, `--strict` to fail on warnings.
 | `lessons/round-91-verifier-spotcheck.md` | Non-author round-91 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 | `knowledge/seat-route-from-session-transcripts.md` | Seat route from omp session transcripts (`seat-route` v1): captured route vs answering turns, `model_change` roles and `resolvedModelIsFallback`, error turns per attempt, the frozen field definitions, the Amendment-44 trap, and the fields omp persists that the definitions do not read | S266, S267, S268; `.ufo/waves/round-92/` (plan, probe, controls, `K92Scout/recon.md`, `K92ExecRetro/`, `close/`) |
 | `lessons/round-92.md` | Round-92 fresh start: `seat-route` scored on a post-freeze wave, ten pre-data controls, constructions that still read HELD on zero-population fields (M92-3), admitted Q86, mistakes M92-1..3 | LOG.md round 92; `.ufo/waves/round-92/` |
+| `lessons/round-92-verifier-spotcheck.md` | Non-author round-92 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 
 ## Known gaps
 

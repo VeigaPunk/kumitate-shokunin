@@ -1,0 +1,8 @@
+{"type": "session", "version": 3, "id": "x", "timestamp": "2026-11-06T00:00:00.000Z"}
+{"type": "model_change", "id": "m", "model": "p/one", "role": "subagent:F93Supersede"}
+{"type": "message", "id": "t", "message": {"role": "assistant", "stopReason": "error", "content": [{"type": "text", "text": "x"}], "provider": "p", "model": "one", "errorMessage": "429", "retryRecovery": {"status": "recovered", "attempt": 1, "supersededBy": {"provider": "q", "model": "two"}}}}
+{"type": "message", "id": "t", "message": {"role": "assistant", "stopReason": "error", "content": [{"type": "text", "text": "x"}], "provider": "p", "model": "one", "errorMessage": "429", "retryRecovery": {"status": "Recovered", "attempt": 2, "supersededBy": {"provider": "q"}}}}
+{"type": "message", "id": "t", "message": {"role": "assistant", "stopReason": "error", "content": [{"type": "text", "text": "x"}], "provider": "p", "model": "one", "errorMessage": "429", "retryRecovery": {"status": "recovered", "supersededBy": "q/two"}}}
+{"type": "message", "id": "t", "message": {"role": "assistant", "stopReason": "error", "content": [{"type": "text", "text": "x"}], "provider": "p", "model": "one", "errorMessage": "429", "retryRecovery": {"attempt": 4, "supersededBy": {"provider": "q", "model": "two"}}}}
+{"type": "message", "id": "t", "message": {"role": "assistant", "stopReason": "error", "content": [{"type": "text", "text": "x"}], "provider": "p", "model": "one", "errorMessage": "429", "retryRecovery": ["recovered"]}}
+{"type": "message", "id": "t", "message": {"role": "assistant", "stopReason": "stop", "content": [{"type": "text", "text": "x"}], "provider": "q", "model": "two", "retryRecovery": {"status": "recovered", "supersededBy": {"provider": "z", "model": "nine"}}}}
