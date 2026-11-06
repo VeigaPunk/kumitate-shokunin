@@ -1,0 +1,20 @@
+candidate=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/K93ExecTool/seat-route.mjs sha=98a5a3a341b2b41540206caa5378d2ff5dacf02015f8aedf160b9d0f72b6efe9
+CASE X99NullErr  why=errorMessage is JSON null (a non-string) => plan says ""
+  transcript={"type": "message", "message": {"role": "assistant", "stopReason": "error", "provider": "p", "model": "one", "errorMessage": null}}
+  oracle last_error=""  tool last_error=null  diff=['last_error']
+CASE X99BomErr  why=first line starts U+FEFF; python strip keeps it, node trim drops it
+  transcript={"type": "message", "message": {"role": "assistant", "stopReason": "error", "provider": "p", "model": "one", "errorMessage": "\ufeffbom first line"}}
+  oracle last_error="\ufeffbom first line"  tool last_error="bom first line"  diff=['last_error']
+CASE X99NelErr  why=first line starts U+0085; python strip drops it, node trim keeps it
+  transcript={"type": "message", "message": {"role": "assistant", "stopReason": "error", "provider": "p", "model": "one", "errorMessage": "\u0085nel lead"}}
+  oracle last_error="nel lead"  tool last_error="\u0085nel lead"  diff=['last_error']
+counter_cmd=python3 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/probe/probe93-c1.py --tool /fast/scratch/hyaku/kumitate-r93/K93CriticB/cand.mjs --sample-a /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-92/probe/sampleA.tsv --fixtures /fast/scratch/hyaku/kumitate-r93/K93CriticB/deffix-fixtures --after 2026-11-06T21:40:00.000Z --sessions-root /fast/scratch/hyaku/kumitate-r93/K93CriticB/emptyroot --waves /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/w1-results.json --runtime off --out /fast/scratch/hyaku/kumitate-r93/K93CriticB/defects_counter.receipt.txt
+counter_rc=1
+DISAGREE F /fast/scratch/hyaku/kumitate-r93/K93CriticB/deffix-fixtures/X99NullErr.jsonl fields=last_error
+C93_C1: UNMET agree=73/74 A=61/61 F=0/1 H=0/0 W=12/12 h_pool=0 last_wave_located=0 thin_fields=2 after=2026-11-06T21:40:00.000Z tool_sha256=98a5a3a341b2b41540206caa5378d2ff5dacf02015f8aedf160b9d0f72b6efe9
+
+## shipped v1 on the null-errorMessage transcript (same sentinel as the candidate)
+v1 last_error= null  errors= 1
+## candidate source: no marker literal (kill clause d byte grep)
+0
+grep_count=0

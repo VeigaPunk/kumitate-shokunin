@@ -1,0 +1,26 @@
+== RD-1 reproduction: non-credential-shaped token, frozen 24-char redaction ==
+v1_sha256=cd7ee03dd814da01f6c73ad4113022c2484dea182f95b0a84e07f9b6810ccfac
+cand_sha256=98a5a3a341b2b41540206caa5378d2ff5dacf02015f8aedf160b9d0f72b6efe9
+READY=98a5a3a341b2b41540206caa5378d2ff5dacf02015f8aedf160b9d0f72b6efe9
+SPLIT       = 'NOT-A-SECRET:alpha/beta.gamma+delta=epsilon@zeta-split'  (len=54)
+TWENTYFOUR  = 24 x 'a'
+classify(SPLIT)      = []
+classify(TWENTYFOUR) = ['run24']  (the branch's positive trigger)
+
+-- fixture split: --file /fast/scratch/hyaku/kumitate-r93/K93Sentinel/rd1-split.jsonl
+   v1     rc=0 last_error=='request failed: NOT-A-SECRET:alpha/beta.gamma+delta=epsilon@zeta-split' expected_ok=True errors=1
+   oracle rc=0 last_error=='request failed: NOT-A-SECRET:alpha/beta.gamma+delta=epsilon@zeta-split' error_attempts=1
+   cand   rc=0 last_error=='request failed: NOT-A-SECRET:alpha/beta.gamma+delta=epsilon@zeta-split' error_attempts=1
+
+-- fixture run24: --file /fast/scratch/hyaku/kumitate-r93/K93Sentinel/rd1-run24.jsonl
+   v1     rc=0 last_error=='request failed: <redacted>' expected_ok=True errors=1
+   oracle rc=0 last_error=='request failed: <redacted>' error_attempts=1
+   cand   rc=0 last_error=='request failed: <redacted>' error_attempts=1
+
+== new v2 string fields are printed unredacted (definition check, not a tool defect) ==
+   oracle resolved==SPLIT True chain[0]==SPLIT True upstream==[SPLIT] True superseded_by==[SPLIT + '/' + 24a] True
+   cand   resolved==SPLIT True chain==['NOT-A-SECRET:alpha/beta.gamma+delta=epsilon@zeta-split', 24a] True upstream==[SPLIT] True superseded_by==[SPLIT + '/' + 24a] True
+
+mismatches=0
+
+receipt_credential_shapes=0 detail=[]

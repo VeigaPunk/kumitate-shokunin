@@ -1,0 +1,28 @@
+# at: 2026-11-06T18:03:05-03:00
+# cmd: ls -la K93ExecTool ; cat K93ExecTool/READY K93ExecTool/sha256.txt K93ExecTool/selftest.txt ; grep -m1 "^cmd=" K93ExecTool/score1-clean.txt ; grep -m1 "^cmd=" K93ExecTool/score1.txt ; tail -3 K93ExecTool/score1.txt ; tail -2 K93ExecTool/score1-clean.txt
+total 264
+drwxr-xr-x 1 vgpnk vgpnk   416 Nov  6 18:00 .
+drwxr-xr-x 1 vgpnk vgpnk   450 Nov  6 17:57 ..
+-rw-r--r-- 1 vgpnk vgpnk    65 Nov  6 18:00 READY
+-rw-r--r-- 1 vgpnk vgpnk  6464 Nov  6 17:59 human-r92.txt
+-rw-r--r-- 1 vgpnk vgpnk 18434 Nov  6 18:00 probe-copy-outofround.txt
+-rw-r--r-- 1 vgpnk vgpnk 53610 Nov  6 18:00 probe-fake-tool-inround.txt
+-rw-r--r-- 1 vgpnk vgpnk 18468 Nov  6 18:00 probe-relativetool.txt
+-rw-r--r-- 1 vgpnk vgpnk 18551 Nov  6 18:00 probe-symlink-outofround.txt
+-rw-r--r-- 1 vgpnk vgpnk 18460 Nov  6 18:00 score1-clean.txt
+-rw-r--r-- 1 vgpnk vgpnk 18613 Nov  6 18:00 score1.txt
+-rw-r--r-- 1 vgpnk vgpnk 18460 Nov  6 18:00 score2-clean.txt
+-rw-r--r-- 1 vgpnk vgpnk 18613 Nov  6 18:00 score2.txt
+-rwxr-xr-x 1 vgpnk vgpnk 48682 Nov  6 17:57 seat-route.mjs
+-rw-r--r-- 1 vgpnk vgpnk    37 Nov  6 17:59 selftest.txt
+-rw-r--r-- 1 vgpnk vgpnk    81 Nov  6 17:59 sha256.txt
+98a5a3a341b2b41540206caa5378d2ff5dacf02015f8aedf160b9d0f72b6efe9
+98a5a3a341b2b41540206caa5378d2ff5dacf02015f8aedf160b9d0f72b6efe9  seat-route.mjs
+SEAT_ROUTE_SELFTEST: PASS held=54/54
+cmd=python3 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/probe/probe93-c1.py --tool /fast/scratch/hyaku/kumitate-r93/K93ExecTool/score-tool.mjs --sample-a .ufo/waves/round-92/probe/sampleA.tsv --fixtures .ufo/waves/round-93/probe/fixtures --after 2026-11-06T18:47:06.000Z --waves .ufo/waves/round-91/w1-results.json,.ufo/waves/round-92/w1-results.json --out /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/K93ExecTool/score1-clean.txt
+cmd=python3 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/probe/probe93-c1.py --tool /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/K93ExecTool/seat-route.mjs --sample-a .ufo/waves/round-92/probe/sampleA.tsv --fixtures .ufo/waves/round-93/probe/fixtures --after 2026-11-06T18:47:06.000Z --waves .ufo/waves/round-91/w1-results.json,.ufo/waves/round-92/w1-results.json --out /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/K93ExecTool/score1.txt
+RUNTIME_FINDING open /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/K93ExecTool/seat-route.mjs
+RUNTIME: VIOLATION findings=1
+C93_C1: HELD agree=221/221 A=61/61 F=16/16 H=120/120 W=24/24 h_pool=247 last_wave_located=12 thin_fields=0 after=2026-11-06T18:47:06.000Z tool_sha256=98a5a3a341b2b41540206caa5378d2ff5dacf02015f8aedf160b9d0f72b6efe9
+RUNTIME: CLEAN findings=0
+C93_C1: HELD agree=221/221 A=61/61 F=16/16 H=120/120 W=24/24 h_pool=248 last_wave_located=12 thin_fields=0 after=2026-11-06T18:47:06.000Z tool_sha256=98a5a3a341b2b41540206caa5378d2ff5dacf02015f8aedf160b9d0f72b6efe9

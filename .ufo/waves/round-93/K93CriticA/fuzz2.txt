@@ -1,0 +1,39 @@
+default-twice                          SAME
+err-head-0x1c                          CAND-DIFF last_error
+    oracle={"last_error": "402 payment"}
+    cand  ={"last_error": "\u001c402 payment"}
+err-head-bom                           CAND-DIFF last_error
+    oracle={"last_error": "\ufeff402 payment"}
+    cand  ={"last_error": "402 payment"}
+err-head-nbsp                          SAME
+err-head-vtab                          SAME
+err-head-lsep                          SAME
+err-head-fs                            CAND-DIFF last_error
+    oracle={"last_error": "402"}
+    cand  ={"last_error": "\u001c\u001d402"}
+si-empty-resolved                      SAME
+si-twice                               SAME
+si-chain-mixed                         SAME
+si-chain-string                        SAME
+hops-mixed                             SAME
+rr-served-recovered                    SAME
+rr-array                               SAME
+rr-provider-only                       SAME
+rr-empty-provider                      SAME
+up-space                               SAME
+up-zero                                SAME
+up-dup                                 SAME
+no-turns                               SAME
+content-nonlist                        SAME
+stop-null                              SAME
+subagent-nonstr-then-default           CAND-DIFF captured
+    oracle={"captured": "d/def"}
+    cand  ={"captured": null}
+subagent-nonstr-only                   SAME
+subagent-missing-model-then-default    CAND-DIFF captured
+    oracle={"captured": "d/def"}
+    cand  ={"captured": null}
+subagent-twice                         SAME
+subagent-empty-model                   SAME
+subagent-nonstr-then-other-seat        SAME
+scratch=/fast/scratch/hyaku/kumitate-r93/K93CriticA/fuzz-zodumvv1

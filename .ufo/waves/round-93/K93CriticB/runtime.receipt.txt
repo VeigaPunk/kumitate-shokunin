@@ -1,0 +1,66 @@
+# K93CriticB runtime receipts (strace clause, probe93.runtime_check)
+# tools live OUTSIDE round-93 (scratch copies); sha256 of each source:
+9932868299a0ae50bfb748bf31138cce81d8a6b5bec78557820903ba61c224a8  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/K93CriticB/ev/cwd_read.mjs
+5aa7c70119aeb9b40b70e844bbeef8a62848041320d41a0a3bc8dce239793a12  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/K93CriticB/ev/derive2_read.mjs
+d46ad368df41ae06a4b3bef10313d6c7c5ee0556e74c87ecb1a007850bdd34ae  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/K93CriticB/ev/derive_read.mjs
+857936549296d3c0e6a1991a6e95a2b5d8c7666b463754b9a7b4cb8888cdcfb1  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/K93CriticB/ev/nul.mjs
+2a19507aa33082e5a4974454f48ff67da98af45280d2b811a7939d09be5cb5b3  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/K93CriticB/ev/procfd_read.mjs
+6d849025e9cab5798e8295136af4c64c127c9bea4d2a07690b636b2756b88600  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/K93CriticB/ev/spawn_child.mjs
+39ec749245da35df8f2d14b4736b7a6664ea94d6f6ae8d4e84af11864bce4aad  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/K93CriticB/ev/symlink_read.mjs
+181303c683b741d90664c5a409baa22542d99bca992f56f19dc36bba5b4b2432  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/K93CriticB/ev/worker_read.mjs
+
+## clean
+  cmd=python3 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/probe/probe93-c1.py --tool /fast/scratch/hyaku/kumitate-r93/K93CriticB/ev/nul.mjs --sample-a /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-92/probe/sampleA.tsv --fixtures /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/probe/fixtures --after 2026-11-06T21:40:00.000Z --sessions-root /fast/scratch/hyaku/kumitate-r93/K93CriticB/emptyroot --waves /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/w1-results.json,/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-92/w1-results.json --runtime on --out /fast/scratch/hyaku/kumitate-r93/K93CriticB/rt-clean.txt
+  RUNTIME: CLEAN findings=0
+  C93_C1: UNMET agree=0/101 A=0/61 F=0/16 H=0/0 W=0/24 h_pool=0 last_wave_located=0 thin_fields=0 after=2026-11-06T21:40:00.000Z tool_sha256=857936549296d3c0e6a1991a6e95a2b5d8c7666b463754b9a7b4cb8888cdcfb1
+
+## symlink
+  cmd=python3 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/probe/probe93-c1.py --tool /fast/scratch/hyaku/kumitate-r93/K93CriticB/ev/symlink_read.mjs --sample-a /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-92/probe/sampleA.tsv --fixtures /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/probe/fixtures --after 2026-11-06T21:40:00.000Z --sessions-root /fast/scratch/hyaku/kumitate-r93/K93CriticB/emptyroot --waves /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/w1-results.json,/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-92/w1-results.json --runtime on --out /fast/scratch/hyaku/kumitate-r93/K93CriticB/rt-symlink.txt
+  RUNTIME: CLEAN findings=0
+  C93_C1: UNMET agree=0/101 A=0/61 F=0/16 H=0/0 W=0/24 h_pool=0 last_wave_located=0 thin_fields=0 after=2026-11-06T21:40:00.000Z tool_sha256=39ec749245da35df8f2d14b4736b7a6664ea94d6f6ae8d4e84af11864bce4aad
+  proof: [["/fast/scratch/hyaku/kumitate-r93/K93CriticB/alias.py", 7390, "7b2b2e08b13ab8783994aa0cf458b2c0667566b5ae28c90727478306b32c19fa"]]
+
+## procfd
+  cmd=python3 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/probe/probe93-c1.py --tool /fast/scratch/hyaku/kumitate-r93/K93CriticB/ev/procfd_read.mjs --sample-a /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-92/probe/sampleA.tsv --fixtures /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/probe/fixtures --after 2026-11-06T21:40:00.000Z --sessions-root /fast/scratch/hyaku/kumitate-r93/K93CriticB/emptyroot --waves /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/w1-results.json,/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-92/w1-results.json --runtime on --out /fast/scratch/hyaku/kumitate-r93/K93CriticB/rt-procfd.txt
+  RUNTIME: CLEAN findings=0
+  C93_C1: UNMET agree=0/101 A=0/61 F=0/16 H=0/0 W=0/24 h_pool=0 last_wave_located=0 thin_fields=0 after=2026-11-06T21:40:00.000Z tool_sha256=2a19507aa33082e5a4974454f48ff67da98af45280d2b811a7939d09be5cb5b3
+  proof: [["/fast/scratch/hyaku/kumitate-r93/K93CriticB/aliasdir", "dirfd", 20], ["/proc/self/fd/20/n.py", 7390, "7b2b2e08b13ab8783994aa0cf458b2c0667566b5ae28c90727478306b32c19fa"], ["/proc/self/fd/20/c.jsonl", 647, "669e8d6340e19fca0799cce0d5a9eb3564d6956bc3f538e11530ecd2402110fd"]]
+
+## cwd
+  cmd=python3 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/probe/probe93-c1.py --tool /fast/scratch/hyaku/kumitate-r93/K93CriticB/ev/cwd_read.mjs --sample-a /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-92/probe/sampleA.tsv --fixtures /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/probe/fixtures --after 2026-11-06T21:40:00.000Z --sessions-root /fast/scratch/hyaku/kumitate-r93/K93CriticB/emptyroot --waves /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/w1-results.json,/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-92/w1-results.json --runtime on --out /fast/scratch/hyaku/kumitate-r93/K93CriticB/rt-cwd.txt
+  RUNTIME: CLEAN findings=0
+  C93_C1: UNMET agree=0/101 A=0/61 F=0/16 H=0/0 W=0/24 h_pool=0 last_wave_located=0 thin_fields=0 after=2026-11-06T21:40:00.000Z tool_sha256=9932868299a0ae50bfb748bf31138cce81d8a6b5bec78557820903ba61c224a8
+  proof: [["fixtures/F93Chain.jsonl", 647, "669e8d6340e19fca0799cce0d5a9eb3564d6956bc3f538e11530ecd2402110fd"], ["fixtures/F93Flags.jsonl", 834, "9c3f030e260d4bb8ec4cffb07959513e7b09ae1352bdeb8c36ea7e158ea7ece0"]]
+
+## worker
+  cmd=python3 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/probe/probe93-c1.py --tool /fast/scratch/hyaku/kumitate-r93/K93CriticB/ev/worker_read.mjs --sample-a /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-92/probe/sampleA.tsv --fixtures /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/probe/fixtures --after 2026-11-06T21:40:00.000Z --sessions-root /fast/scratch/hyaku/kumitate-r93/K93CriticB/emptyroot --waves /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/w1-results.json,/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-92/w1-results.json --runtime on --out /fast/scratch/hyaku/kumitate-r93/K93CriticB/rt-worker.txt
+  RUNTIME: CLEAN findings=0
+  C93_C1: UNMET agree=0/101 A=0/61 F=0/16 H=0/0 W=0/24 h_pool=0 last_wave_located=0 thin_fields=0 after=2026-11-06T21:40:00.000Z tool_sha256=181303c683b741d90664c5a409baa22542d99bca992f56f19dc36bba5b4b2432
+  proof: [["/fast/scratch/hyaku/kumitate-r93/K93CriticB/alias.py", 7390, "7b2b2e08b13ab8783994aa0cf458b2c0667566b5ae28c90727478306b32c19fa"]]
+
+## derive
+  cmd=python3 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/probe/probe93-c1.py --tool /fast/scratch/hyaku/kumitate-r93/K93CriticB/ev/derive_read.mjs --sample-a /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-92/probe/sampleA.tsv --fixtures /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/probe/fixtures --after 2026-11-06T21:40:00.000Z --sessions-root /fast/scratch/hyaku/kumitate-r93/K93CriticB/emptyroot --waves /fast/scratch/hyaku/kumitate-r93/K93CriticB/fake/.ufo/waves/round-93/w1-results.json --runtime on --out /fast/scratch/hyaku/kumitate-r93/K93CriticB/rt-derive.txt
+  RUNTIME_FINDING open /fast/scratch/hyaku/kumitate-r93/K93CriticB/fake/.ufo/waves/round-93/probe
+  RUNTIME_FINDING open /fast/scratch/hyaku/kumitate-r93/K93CriticB/fake/.ufo/waves/round-93/probe/__pycache__
+  RUNTIME_FINDING open /fast/scratch/hyaku/kumitate-r93/K93CriticB/fake/.ufo/waves/round-93/probe/fixtures
+  RUNTIME: VIOLATION findings=3
+  C93_C1: UNMET agree=0/89 A=0/61 F=0/16 H=0/0 W=0/12 h_pool=0 last_wave_located=0 thin_fields=0 after=2026-11-06T21:40:00.000Z tool_sha256=d46ad368df41ae06a4b3bef10313d6c7c5ee0556e74c87ecb1a007850bdd34ae
+  proof: [["oracle93.cpython-314.pyc", 13055, "74ad1aee1c640076cd2e4b156ae629edc86b8960080f91acb09e96986f0a4532"], ["probe93-c1.cpython-314.pyc", 20114, "24bcb94e67d872281fd3e3a33979baebf3e22c9c6e1544be9bf3247cafa5c2cf"], ["F93AbortYield.jsonl", 484, "115c61edaa1ecc7ae864181ccef0eb292ad1bf39b3fa1dd17447958adedbcb2e"], ["F93CapDefault.jsonl", 243, "c165e0cc625ab3e6a8814d5e9a06fbb304128d6e1645205306ae68f23b4
+
+## derive2
+  cmd=python3 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/probe/probe93-c1.py --tool /fast/scratch/hyaku/kumitate-r93/K93CriticB/ev/derive2_read.mjs --sample-a /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-92/probe/sampleA.tsv --fixtures /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/probe/fixtures --after 2026-11-06T21:40:00.000Z --sessions-root /fast/scratch/hyaku/kumitate-r93/K93CriticB/emptyroot --waves /fast/scratch/hyaku/kumitate-r93/K93CriticB/fake/.ufo/waves/round-93/w1-results.json --runtime on --out /fast/scratch/hyaku/kumitate-r93/K93CriticB/rt-derive2.txt
+  RUNTIME: CLEAN findings=0
+  C93_C1: UNMET agree=0/89 A=0/61 F=0/16 H=0/0 W=0/12 h_pool=0 last_wave_located=0 thin_fields=0 after=2026-11-06T21:40:00.000Z tool_sha256=5aa7c70119aeb9b40b70e844bbeef8a62848041320d41a0a3bc8dce239793a12
+  proof: [["oracle93.py", 7390, "7b2b2e08b13ab8783994aa0cf458b2c0667566b5ae28c90727478306b32c19fa"], ["probe93-c1.py", 11417, "e3ef62eabd70738b427e09a3f1bbe3e23ea2340ad72698f8bc8c03ec04d06fc9"]]
+
+## spawn
+  cmd=python3 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/probe/probe93-c1.py --tool /fast/scratch/hyaku/kumitate-r93/K93CriticB/ev/spawn_child.mjs --sample-a /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-92/probe/sampleA.tsv --fixtures /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/probe/fixtures --after 2026-11-06T21:40:00.000Z --sessions-root /fast/scratch/hyaku/kumitate-r93/K93CriticB/emptyroot --waves /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/w1-results.json,/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-92/w1-results.json --runtime on --out /fast/scratch/hyaku/kumitate-r93/K93CriticB/rt-spawn.txt
+  RUNTIME_FINDING execve /home/vgpnk/.local/share/fnm/node-versions/v24.21.0/installation/bin/node
+  RUNTIME: VIOLATION findings=1
+  C93_C1: UNMET agree=0/101 A=0/61 F=0/16 H=0/0 W=0/24 h_pool=0 last_wave_located=0 thin_fields=0 after=2026-11-06T21:40:00.000Z tool_sha256=6d849025e9cab5798e8295136af4c64c127c9bea4d2a07690b636b2756b88600
+
+## selfpath
+  cmd=python3 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/probe/probe93-c1.py --tool /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/K93CriticB/v1copy.mjs --sample-a /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-92/probe/sampleA.tsv --fixtures /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/probe/fixtures --after 2026-11-06T21:40:00.000Z --sessions-root /fast/scratch/hyaku/kumitate-r93/K93CriticB/emptyroot --waves /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/w1-results.json,/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-92/w1-results.json --runtime on --out /fast/scratch/hyaku/kumitate-r93/K93CriticB/rt-selfpath.txt
+  RUNTIME_FINDING open /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/K93CriticB/v1copy.mjs
+  RUNTIME: VIOLATION findings=1
+  C93_C1: UNMET agree=24/101 A=0/61 F=0/16 H=0/0 W=24/24 h_pool=0 last_wave_located=0 thin_fields=0 after=2026-11-06T21:40:00.000Z tool_sha256=cd7ee03dd814da01f6c73ad4113022c2484dea182f95b0a84e07f9b6810ccfac

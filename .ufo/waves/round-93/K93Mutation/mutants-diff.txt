@@ -1,0 +1,207 @@
+### M01-status-equality  (recovered_attempts status equality (rr.status === 'recovered'))
+# expected kill: F93Supersede row2 status 'Recovered' must NOT count; F93Fallback recovered=1
+--- seat-route.mjs
++++ mut/M01-status-equality.mjs
+@@ -338,5 +338,5 @@
+       const rr = message.retryRecovery;
+       if (isPlainObject(rr)) {
+-        if (rr.status === 'recovered') recoveredAttempts += 1;
++        if (rr.status === 'Recovered') recoveredAttempts += 1;
+         if (isPlainObject(rr.supersededBy)) {
+           const hop = turnModel(rr.supersededBy);
+
+### M02-superseded-object-test  (supersededBy must be a JSON object (isPlainObject(rr.supersededBy)))
+# expected kill: F93Supersede row3 supersededBy string 'q/two' must be ignored, not read as ?
+--- seat-route.mjs
++++ mut/M02-superseded-object-test.mjs
+@@ -339,5 +339,5 @@
+       if (isPlainObject(rr)) {
+         if (rr.status === 'recovered') recoveredAttempts += 1;
+-        if (isPlainObject(rr.supersededBy)) {
++        if (rr.supersededBy !== undefined) {
+           const hop = turnModel(rr.supersededBy);
+           if (!seenSuperseded.has(hop)) {
+
+### M03-qmodel-empty-model  (`?` rule: empty-string model must map to ?)
+# expected kill: F93QModel row2 provider p model '' -> ? (not p/)
+--- seat-route.mjs
++++ mut/M03-qmodel-empty-model.mjs
+@@ -204,5 +204,5 @@
+   const { provider, model } = message;
+   // plan: "provider + "/" + model (either missing or empty → `?`)" — the whole turn model is `?`.
+-  if (typeof provider !== 'string' || provider === '' || typeof model !== 'string' || model === '') return '?';
++  if (typeof provider !== 'string' || provider === '' || typeof model !== 'string') return '?';
+   return `${provider}/${model}`;
+ }
+
+### M04-upstream-error-turns  (upstream is served-turn-only)
+# expected kill: F93Upstream error turn upstreamProvider ErrOnly must not enter upstream
+--- seat-route.mjs
++++ mut/M04-upstream-error-turns.mjs
+@@ -335,4 +335,5 @@
+     if (stop === 'error') {
+       errorAttempts += 1;
++      if (typeof message.upstreamProvider === 'string' && message.upstreamProvider !== '') upstream.push(message.upstreamProvider);
+       lastErrorMessage = message.errorMessage;
+       const rr = message.retryRecovery;
+
+### M05-upstream-empty-string  (upstream ignores empty-string upstreamProvider)
+# expected kill: F93Upstream row2 upstreamProvider '' must not enter upstream
+--- seat-route.mjs
++++ mut/M05-upstream-empty-string.mjs
+@@ -328,5 +328,5 @@
+       }
+       const up = message.upstreamProvider;
+-      if (typeof up === 'string' && up !== '' && !seenUpstream.has(up)) {
++      if (typeof up === 'string' && !seenUpstream.has(up)) {
+         seenUpstream.add(up);
+         upstream.push(up);
+
+### M06-first-session-init  (only the FIRST session_init row states resolved/chain)
+# expected kill: F93Chain second session_init z/z + chain [z/y] must be ignored
+--- seat-route.mjs
++++ mut/M06-first-session-init.mjs
+@@ -303,5 +303,5 @@
+     if (row.type === 'session_init') {
+       // Only the FIRST session_init row states the configured route; later rows are ignored whole.
+-      if (!sessionInitSeen) {
++      if (true) {
+         sessionInitSeen = true;
+         resolved = typeof row.resolvedModel === 'string' ? row.resolvedModel : null;
+
+### M07-chain-list-test  (chain is a list (Array.isArray) else null)
+# expected kill: F93ChainBad retryFallback.chain string 'q/two' must yield null, not ['q/two']
+--- seat-route.mjs
++++ mut/M07-chain-list-test.mjs
+@@ -307,6 +307,6 @@
+         resolved = typeof row.resolvedModel === 'string' ? row.resolvedModel : null;
+         const rb = row.retryFallback;
+-        chain = isPlainObject(rb) && Array.isArray(rb.chain)
+-          ? rb.chain.filter((item) => typeof item === 'string')
++        chain = isPlainObject(rb) && rb.chain !== undefined
++          ? (Array.isArray(rb.chain) ? rb.chain : [rb.chain]).filter((item) => typeof item === 'string')
+           : null;
+       }
+
+### M08-chain-nonstring-filter  (chain drops non-string items)
+# expected kill: F93Chain chain ["q/two:high",7,null,"r/three:max"] must drop 7 and null
+--- seat-route.mjs
++++ mut/M08-chain-nonstring-filter.mjs
+@@ -308,5 +308,5 @@
+         const rb = row.retryFallback;
+         chain = isPlainObject(rb) && Array.isArray(rb.chain)
+-          ? rb.chain.filter((item) => typeof item === 'string')
++          ? rb.chain.filter(() => true)
+           : null;
+       }
+
+### M09-flag-strict-true  (flag_hops needs JSON true, not 1)
+# expected kill: F93Flags resolvedModelIsFallback 1 must count as revert, not flag
+--- seat-route.mjs
++++ mut/M09-flag-strict-true.mjs
+@@ -286,5 +286,5 @@
+       // plan: flag_hops counts `resolvedModelIsFallback` exactly JSON `true`; every other row whose
+       // role is `fallback` is the revert-to-primary hop (turn-recovery reuses that role).
+-      if (row.resolvedModelIsFallback === true) flagHops += 1;
++      if (row.resolvedModelIsFallback) flagHops += 1;
+       else if (role === 'fallback') revertHops += 1;
+       if (role === `subagent:${seat}`) {
+
+### M10-revert-role-fallback  (revert_hops requires role exactly 'fallback')
+# expected kill: F93CapDefault role 'default' must not count as revert
+--- seat-route.mjs
++++ mut/M10-revert-role-fallback.mjs
+@@ -287,5 +287,5 @@
+       // role is `fallback` is the revert-to-primary hop (turn-recovery reuses that role).
+       if (row.resolvedModelIsFallback === true) flagHops += 1;
+-      else if (role === 'fallback') revertHops += 1;
++      else if (role !== undefined) revertHops += 1;
+       if (role === `subagent:${seat}`) {
+         if (!hasSubagent) {
+
+### M11-error-key-name  (record key is error_attempts (errors gone))
+# expected kill: every record lacks error_attempts -> type-strict diff
+--- seat-route.mjs
++++ mut/M11-error-key-name.mjs
+@@ -373,5 +373,5 @@
+     captured,
+     answered,
+-    error_attempts: errorAttempts,
++    errors: errorAttempts,
+     recovered_attempts: recoveredAttempts,
+     superseded_by: supersededBy,
+
+### M12-dedupe-upstream  (upstream distinct first-seen)
+# expected kill: F93Upstream two Stealth rows must collapse to one
+--- seat-route.mjs
++++ mut/M12-dedupe-upstream.mjs
+@@ -328,5 +328,5 @@
+       }
+       const up = message.upstreamProvider;
+-      if (typeof up === 'string' && up !== '' && !seenUpstream.has(up)) {
++      if (typeof up === 'string' && up !== '') {
+         seenUpstream.add(up);
+         upstream.push(up);
+
+### M13-recovered-loose  (recovered_attempts only status exactly 'recovered')
+# expected kill: F93Fallback status 'failed' and F93Supersede no-status rows must not count
+--- seat-route.mjs
++++ mut/M13-recovered-loose.mjs
+@@ -338,5 +338,5 @@
+       const rr = message.retryRecovery;
+       if (isPlainObject(rr)) {
+-        if (rr.status === 'recovered') recoveredAttempts += 1;
++        if (isPlainObject(rr)) recoveredAttempts += 1;
+         if (isPlainObject(rr.supersededBy)) {
+           const hop = turnModel(rr.supersededBy);
+
+### M14-resolved-string-only  (resolved is a string else null)
+# expected kill: F93ChainBad resolvedModel 5 must read null
+--- seat-route.mjs
++++ mut/M14-resolved-string-only.mjs
+@@ -305,5 +305,5 @@
+       if (!sessionInitSeen) {
+         sessionInitSeen = true;
+-        resolved = typeof row.resolvedModel === 'string' ? row.resolvedModel : null;
++        resolved = row.resolvedModel ?? null;
+         const rb = row.retryFallback;
+         chain = isPlainObject(rb) && Array.isArray(rb.chain)
+
+### M16-dedupe-superseded  (superseded_by distinct first-seen)
+# expected kill: F93Supersede rows 1 and 4 both q/two must collapse to one
+--- seat-route.mjs
++++ mut/M16-dedupe-superseded.mjs
+@@ -341,5 +341,5 @@
+         if (isPlainObject(rr.supersededBy)) {
+           const hop = turnModel(rr.supersededBy);
+-          if (!seenSuperseded.has(hop)) {
++          if (true) {
+             seenSuperseded.add(hop);
+             supersededBy.push(hop);
+
+### M17-served-retryrecovery  (served turns' retryRecovery is ignored)
+# expected kill: F93Supersede row6 served retryRecovery {z,nine} must not enter superseded_by
+--- seat-route.mjs
++++ mut/M17-served-retryrecovery.mjs
+@@ -327,4 +327,8 @@
+         answered.push(model);
+       }
++      if (isPlainObject(message.retryRecovery) && isPlainObject(message.retryRecovery.supersededBy)) {
++        const h = turnModel(message.retryRecovery.supersededBy);
++        if (!seenSuperseded.has(h)) { seenSuperseded.add(h); supersededBy.push(h); }
++      }
+       const up = message.upstreamProvider;
+       if (typeof up === 'string' && up !== '' && !seenUpstream.has(up)) {
+
+### M15-chain-default-null  (chain null when first session_init lacks a list chain)
+# expected kill: F93ChainNone / no session_init files must read chain null, not []
+--- seat-route.mjs
++++ mut/M15-chain-default-null.mjs
+@@ -309,5 +309,5 @@
+         chain = isPlainObject(rb) && Array.isArray(rb.chain)
+           ? rb.chain.filter((item) => typeof item === 'string')
+-          : null;
++          : [];
+       }
+       continue;
+

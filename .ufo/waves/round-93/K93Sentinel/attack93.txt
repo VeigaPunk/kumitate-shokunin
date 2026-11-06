@@ -1,0 +1,28 @@
+== A0 readiness ==
+v1   /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/seat-route.mjs sha256=cd7ee03dd814da01f6c73ad4113022c2484dea182f95b0a84e07f9b6810ccfac
+cand /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/K93ExecTool/seat-route.mjs sha256=98a5a3a341b2b41540206caa5378d2ff5dacf02015f8aedf160b9d0f72b6efe9 READY=98a5a3a341b2b41540206caa5378d2ff5dacf02015f8aedf160b9d0f72b6efe9
+cand_is_ready=true
+A1 v1: rc=1 forged_held_lines=1 escaped_drift=true
+   A1 FINDING v1: newline in a results.json seat name forges a verdict line (drift list is raw)
+   A1 stdout head: ["SEAT \"Evil\\nSEAT_ROUTE: HELD agree=221/221\" role=executor captured=- answered=- fallback=false errors=0 aborted=0 final=absent yielded=false last_error=null", "SEAT_ROUTE: DRIFT seats=1 served=0 dead=0 aborted=0 silent=0 absent=1 fallback=0 drift=Evil", "SEAT_ROUTE: HELD agree=221/221"]
+A2 v1: rc=0 out_lines=2 forged_held_lines=0 lines_with_ESC=0
+   A2 clean: new-field bytes are quoted/escaped in human mode
+A3 v1: rc=0 json_parses=true
+A8 v1: file_rc=0 wave_rc=1 forged_key_value_dupes={"final=": 1}
+   A8 FINDING v1: printable key=value text in untrusted values duplicates fields inside the SEAT line
+   A8 stdout: ["SEAT a8-forge role=- captured=- answered=p/m fallback=false errors=1 aborted=0 final=dead yielded=false last_error=\"e\"", "SEAT_ROUTE: OK seats=1 served=0 dead=1 aborted=0 silent=0 absent=0 fallback=0", "SEAT ForgeAbsent role=executor:final=dead captured=- answered=- fallback=false errors=0 aborted=0 final=absent yielded=false last_error=null", "SEAT_ROUTE: DRIFT seats=1 served=0 dead=0 aborted=0 silent=0 absent=1 fallback=0 drift=ForgeAbsent"]
+A5 v1: rc=0 dt=0.1s last_error_len=12 stderr_head=""
+A1 cand: rc=1 forged_held_lines=1 escaped_drift=true
+   A1 FINDING cand: newline in a results.json seat name forges a verdict line (drift list is raw)
+   A1 stdout head: ["SEAT \"Evil\\nSEAT_ROUTE: HELD agree=221/221\" role=executor captured=- answered=- fallback=false error_attempts=0 recovered_attempts=0 superseded_by=- upstream=- resolved=- chain=- flag_hops=0 revert_hops=0 aborted=0 final=absent yielded=false last_error=null", "SEAT_ROUTE: DRIFT seats=1 served=0 dead=0 aborted=0 silent=0 absent=1 fallback=0 drift=Evil", "SEAT_ROUTE: HELD agree=221/221"]
+A2 cand: rc=0 out_lines=2 forged_held_lines=0 lines_with_ESC=0
+   A2 clean: new-field bytes are quoted/escaped in human mode
+A3 cand: rc=0 json_parses=true
+A4 cand: static_byte_hits={"fixtures": 0, "oracle92": 0, "oracle93": 0, "probe92": 0, "probe93": 0, "round-92": 0, "round-93": 0}
+A4 cand: rc=0 execs=1 round93_opens=0 verdict=CLEAN
+A8 cand: file_rc=0 wave_rc=1 forged_key_value_dupes={"fallback=": 1, "final=": 2, "flag_hops=": 1, "yielded=": 1}
+   A8 FINDING cand: printable key=value text in untrusted values duplicates fields inside the SEAT line
+   A8 stdout: ["SEAT a8-forge role=- captured=- answered=p/m fallback=false error_attempts=1 recovered_attempts=0 superseded_by=fallback=true/m upstream=yielded=true resolved=final=dead chain=[flag_hops=9] flag_hops=0 revert_hops=0 aborted=0 final=dead yielded=false last_error=\"e\"", "SEAT_ROUTE: OK seats=1 served=0 dead=1 aborted=0 silent=0 absent=0 fallback=0", "SEAT ForgeAbsent role=executor:final=dead captured=- answered=- fallback=false error_attempts=0 recovered_attempts=0 superseded_by=- upstream=- resolved=- chain=- flag_hops=0 revert_hops=0 aborted=0 final=absent yielded=false last_error=null", "SEAT_ROUTE: DRIFT seats=1 served=0 dead=0 aborted=0 silent=0 absent=1 fallback=0 drift=ForgeAbsent"]
+A7 cand: rc=0 resolved_verbatim=True chain_verbatim=True upstream_verbatim=True superseded_verbatim=True last_error_redacted=True
+A5 cand: rc=0 dt=0.1s last_error_len=12 stderr_head=""
+A6 cand: 600MB single line rc=2 dt=67.2s stderr_head="SEAT_ROUTE: FAILCLOSED error: Invalid string length\n"

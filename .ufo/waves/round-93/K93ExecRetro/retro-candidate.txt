@@ -1,0 +1,28 @@
+# candidate vs frozen oracle over rounds 85-92 (lane's own past waves)
+# candidate: .ufo/waves/round-93/K93ExecTool/seat-route.mjs
+98a5a3a341b2b41540206caa5378d2ff5dacf02015f8aedf160b9d0f72b6efe9  .ufo/waves/round-93/K93ExecTool/seat-route.mjs
+# date: 2026-11-06T21:01:02Z  READY at run time: present
+
+## 1. --json diff, 16 fields + session(realpath), type-strict, per seat
+candidate=.ufo/waves/round-93/K93ExecTool/seat-route.mjs sha256=98a5a3a341b2b41540206caa5378d2ff5dacf02015f8aedf160b9d0f72b6efe9
+CANDIDATE_VS_ORACLE: waves=8 seats=100 fields_agree=1600 fields_disagree=0
+PER_WAVE: r85=208/208 r86=192/192 r87=224/224 r88=192/192 r89=208/208 r90=192/192 r91=192/192 r92=192/192
+
+## 2. human mode, --strict, every wave in range (exit map 0/1/2/64)
+r85 strict exit=0  SEAT_ROUTE: OK seats=13 served=13 dead=0 aborted=0 silent=0 absent=0 fallback=10
+r86 strict exit=1  SEAT_ROUTE: DRIFT seats=12 served=7 dead=5 aborted=0 silent=0 absent=0 fallback=4 drift=K86Review,K86Critic,K86Mutation,K86Sentinel,K86Revenger
+r87 strict exit=1  SEAT_ROUTE: DRIFT seats=14 served=7 dead=7 aborted=0 silent=0 absent=0 fallback=3 drift=K87ExecClose,K87ExecSources,K87Review,K87Critic,K87Mutation,K87Revenger,K87Review2
+r88 strict exit=0  SEAT_ROUTE: OK seats=12 served=12 dead=0 aborted=0 silent=0 absent=0 fallback=0
+r89 strict exit=1  SEAT_ROUTE: DRIFT seats=13 served=9 dead=4 aborted=0 silent=0 absent=0 fallback=5 drift=K89ScribeSources,K89ScribeLesson,K89Critic,K89Sentinel
+r90 strict exit=0  SEAT_ROUTE: OK seats=12 served=12 dead=0 aborted=0 silent=0 absent=0 fallback=6
+r91 strict exit=0  SEAT_ROUTE: OK seats=12 served=12 dead=0 aborted=0 silent=0 absent=0 fallback=4
+r92 strict exit=0  SEAT_ROUTE: OK seats=12 served=12 dead=0 aborted=0 silent=0 absent=0 fallback=2
+
+## 3. human_r92.txt (first seat line, verbatim)
+SEAT K92ExecTool role=executor captured=amr/deepseek-v4.1-flash answered=amr/deepseek-v4.1-flash fallback=false error_attempts=0 recovered_attempts=0 superseded_by=- upstream=- resolved=amr/deepseek-v4.1-flash:max chain=[mistral/deepseek-v4-1-flash-1017:max,commandcode/deepseek/deepseek-v4.1-flash:max,cursor/deepseek-v41-flash-1017:max,devin/deepseek-v4-1-flash:max,opencode-go/deepseek-v4.1-flash:max,opencode-zen/deepseek-v4.1-flash:max] flag_hops=0 revert_hops=0 aborted=0 final=served yielded=true last_error=null
+
+## 4. READY binding and a second, hand-derived fixture set
+READY: 98a5a3a341b2b41540206caa5378d2ff5dacf02015f8aedf160b9d0f72b6efe9  seat-route.mjs sha256: 98a5a3a341b2b41540206caa5378d2ff5dacf02015f8aedf160b9d0f72b6efe9  (equal)
+# all runs above were made against the READY bytes (mtime 17:57:49, sha unchanged at READY time)
+CANDIDATE_VS_ORACLE_FIXTURES: fixtures=20 checks_agree=320 checks_disagree=0
+# fixtures are built at run time by oracle_attack.py in scratch; hand-derived from plan.md, not from the oracle

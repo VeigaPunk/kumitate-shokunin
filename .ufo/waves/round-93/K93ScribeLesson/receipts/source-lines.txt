@@ -1,0 +1,114 @@
+# capture lines quoted (upstream pin 79fa222e8390aed3494f4bc6746814e6c74c21cf)
+# types.ts 1260-1284
+export type AssistantRetryRecoveryKind = "credential" | "model" | "wait" | "plain";
+
+/** Persisted presentation state for an assistant error superseded by an automatic retry saga. */
+export type AssistantRetryRecovery =
+	| {
+			kind: "auto-retry";
+			status: "recovered";
+			attempt: number;
+			recoveredAt: string;
+			recovery: AssistantRetryRecoveryKind;
+			note: string;
+			supersededBy?: {
+				timestamp: number;
+				responseId?: string;
+				provider: string;
+				model: string;
+			};
+	  }
+	| {
+			kind: "auto-retry";
+			status: "superseded";
+			attempt: number;
+			recovery: AssistantRetryRecoveryKind;
+			note: string;
+	  };
+# types.ts 1324-1341
+	retryRecovery?: AssistantRetryRecovery;
+	responseId?: string; // Provider-specific response/message identifier when the upstream API exposes one
+	/**
+	 * Name of the upstream provider an aggregator routed this request to, as
+	 * reported in the response (e.g. OpenRouter's top-level `provider` field:
+	 * `"OpenAI"`, `"Anthropic"`, `"Together"`). Distinct from `provider`, which
+	 * is the configured gateway we called (`"openrouter"`). Undefined for direct
+	 * providers that expose no such field.
+	 */
+	upstreamProvider?: string;
+	/**
+	 * Concrete model that produced this turn when it is knowable independently
+	 * of the requested id: reported by a router that selected one, or recovered
+	 * from a signed thinking block (Anthropic signatures name the serving
+	 * model). Compared against `model` to notice a gateway serving something
+	 * other than what was requested.
+	 */
+	upstreamModel?: string;
+# turn-recovery.ts 1034-1062
+			let retryRecovery: AssistantRetryRecovery;
+			if (completion.status === "recovered") {
+				retryRecovery = {
+					kind: "auto-retry",
+					status: "recovered",
+					attempt: pending.attempt,
+					recoveredAt: new Date().toISOString(),
+					recovery: pending.recovery,
+					note: pending.note,
+					supersededBy: {
+						timestamp: completion.supersedingMessage.timestamp,
+						...(completion.supersedingMessage.responseId === undefined
+							? {}
+							: { responseId: completion.supersedingMessage.responseId }),
+						provider: completion.supersedingMessage.provider,
+						model: completion.supersedingMessage.model,
+					},
+				};
+			} else {
+				retryRecovery = {
+					kind: "auto-retry",
+					status: "superseded",
+					attempt: pending.attempt,
+					recovery: pending.recovery,
+					note: pending.note,
+				};
+			}
+			entry.message.retryRecovery = retryRecovery;
+			retryErrors.push({
+# turn-recovery.ts 2258-2262 / 2548-2551 / 2614-2618
+			if (this.#activeRetryFallback) this.#activeRetryFallback.served = servedBeforeSwap;
+			return false;
+		}
+		this.#host.sessionManager.appendModelChange(candidateSelector, EPHEMERAL_MODEL_CHANGE_ROLE, true);
+		this.#host.settings.getStorage()?.recordModelUsage(candidateSelector);
+		this.#markFallbackRouted();
+		await this.#host.setModelWithProviderSessionReset(baseModel);
+		this.#host.sessionManager.appendModelChange(baseSelector, EPHEMERAL_MODEL_CHANGE_ROLE, true);
+		this.#host.settings.getStorage()?.recordModelUsage(baseSelector);
+		// as fallback-served.
+		this.clearActiveRetryFallback();
+		await this.#host.setModelWithProviderSessionReset(primaryModel);
+		this.#host.sessionManager.appendModelChange(primarySelector, EPHEMERAL_MODEL_CHANGE_ROLE);
+		this.#host.settings.getStorage()?.recordModelUsage(primarySelector);
+# session-entries.ts 14,37,148-156,290-300
+import type { RetryFallbackRole } from "./retry-fallback-chains";
+export const EPHEMERAL_MODEL_CHANGE_ROLE = "fallback";
+export interface ModelChangeEntry extends SessionEntryBase {
+	type: "model_change";
+	/** Model in "provider/modelId" format */
+	model: string;
+	/** Role: "default", "smol", "slow", etc. Undefined treated as "default" */
+	role?: string;
+	/** True when this transition selected a retry-fallback model rather than the configured model. */
+	resolvedModelIsFallback?: boolean;
+}
+	modelRole?: string;
+	/** Initially resolved provider/model selector for historical display. */
+	resolvedModel?: string;
+	/** The model came from a per-call `model`; cold revival re-checks it against the current operator grants. */
+	perCallModel?: boolean;
+	/** Exact canonical provider/id[@upstream] identity, without a thinking suffix; required for per-call revival. */
+	perCallModelIdentity?: string;
+	/** Configured thinking selector, or null when unset; required for per-call revival. */
+	perCallThinkingLevel?: ConfiguredThinkingLevel | null;
+	/** Subagent's `subagent:<id>` retry fallback role as installed at spawn; cold revival reinstalls it. Absent when none was installed or on older files. */
+	retryFallback?: RetryFallbackRole;

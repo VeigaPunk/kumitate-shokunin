@@ -1,0 +1,42 @@
+# K93Mutation — single-point mutants of the FINAL candidate (sha256 98a5a3a341b2b41540206caa5378d2ff5dacf02015f8aedf160b9d0f72b6efe9 == K93ExecTool/READY)
+# pristine copy: /fast/scratch/hyaku/kumitate-r93/K93Mutation/pristine.mjs (same sha256); mutant sources: mut/<id>.mjs (+unified diffs in mutants-diff.txt)
+# baseline detector on pristine: node pristine.mjs --selftest -> PASS held=54/54; seat-form counter -> HELD agree=221/221 RUNTIME: CLEAN (baseline-pristine.txt)
+# counter command: python3 .ufo/waves/round-93/probe/probe93-c1.py --tool mut/<id>.mjs --sample-a .ufo/waves/round-92/probe/sampleA.tsv --fixtures .ufo/waves/round-93/probe/fixtures --after 2026-11-06T18:47:06.000Z --waves .ufo/waves/round-91/w1-results.json,.ufo/waves/round-92/w1-results.json --out .ufo/waves/round-93/K93Mutation/mut/<id>.txt
+# detectors: (a) node <mutant> --selftest  (b) frozen seat-form counter (runtime on). Verdict: killed-by-selftest | killed-by-counter | SURVIVED.
+# id | line | change | selftest | counter | verdict
+M01-status-equality | line 340-340 | recovered status equality: 'recovered' -> 'Recovered' | selftest: PASS 54/54 | counter: UNMET 160/221 (A=29/61 F=14/16 H=101/120 W=16/24) | killed-by-counter
+M02-superseded-object-test | line 341-341 | supersededBy object test: isPlainObject(rr.supersededBy) -> rr.supersededBy !== undefined | selftest: PASS 54/54 | counter: HELD 221/221 (A=61/61 F=16/16 H=120/120 W=24/24) | SURVIVED
+M03-qmodel-empty-model | line 206-206 | ? rule: drop the empty-string model check (model === '') | selftest: FAIL 53/54 | counter: UNMET 220/221 (A=61/61 F=15/16 H=120/120 W=24/24) | killed-by-selftest
+M04-upstream-error-turns | line 337 | served-only upstream: insert error-turn upstreamProvider push into the error branch | selftest: FAIL 53/54 | counter: UNMET 220/221 (A=61/61 F=15/16 H=120/120 W=24/24) | killed-by-selftest
+M05-upstream-empty-string | line 330-330 | upstream: drop the non-empty-string check (up !== '') | selftest: FAIL 53/54 | counter: UNMET 220/221 (A=61/61 F=15/16 H=120/120 W=24/24) | killed-by-selftest
+M06-first-session-init | line 305-305 | first session_init: if (!sessionInitSeen) -> if (true) (last row wins) | selftest: FAIL 53/54 | counter: UNMET 220/221 (A=61/61 F=15/16 H=120/120 W=24/24) | killed-by-selftest
+M07-chain-list-test | line 309-310 | chain list test: accept a non-list chain as [chain] | selftest: FAIL 53/54 | counter: UNMET 220/221 (A=61/61 F=15/16 H=120/120 W=24/24) | killed-by-selftest
+M08-chain-nonstring-filter | line 310-310 | chain: filter(() => true) (keep non-string items) | selftest: FAIL 53/54 | counter: UNMET 220/221 (A=61/61 F=15/16 H=120/120 W=24/24) | killed-by-selftest
+M09-flag-strict-true | line 288-288 | flag_hops: === true -> truthy | selftest: FAIL 52/54 | counter: UNMET 220/221 (A=61/61 F=15/16 H=120/120 W=24/24) | killed-by-selftest
+M10-revert-role-fallback | line 289-289 | revert_hops: role === 'fallback' -> role !== undefined | selftest: FAIL 53/54 | counter: UNMET 9/221 (A=8/61 F=1/16 H=0/120 W=0/24) | killed-by-selftest
+M11-error-key-name | line 375-375 | record key error_attempts -> errors | selftest: FAIL 47/54 | counter: UNMET 0/221 (A=0/61 F=0/16 H=0/120 W=0/24) | killed-by-selftest
+M12-dedupe-upstream | line 330-330 | upstream distinct: drop the !seenUpstream.has(up) guard | selftest: FAIL 53/54 | counter: UNMET 218/221 (A=61/61 F=15/16 H=120/120 W=22/24) | killed-by-selftest
+M13-recovered-loose | line 340-340 | recovered_attempts: status === 'recovered' -> any object retryRecovery | selftest: FAIL 53/54 | counter: UNMET 218/221 (A=60/61 F=14/16 H=120/120 W=24/24) | killed-by-selftest
+M14-resolved-string-only | line 307-307 | resolved: typeof string test -> ?? null | selftest: FAIL 53/54 | counter: UNMET 220/221 (A=61/61 F=15/16 H=120/120 W=24/24) | killed-by-selftest
+M16-dedupe-superseded | line 343-343 | superseded_by distinct: if (!seenSuperseded.has(hop)) -> if (true) | selftest: FAIL 53/54 | counter: UNMET 197/221 (A=50/61 F=15/16 H=111/120 W=21/24) | killed-by-selftest
+M17-served-retryrecovery | line 329 | served turns: insert retryRecovery.supersededBy processing into the served branch | selftest: FAIL 53/54 | counter: UNMET 220/221 (A=61/61 F=15/16 H=120/120 W=24/24) | killed-by-selftest
+M15-chain-default-null | line 311-311 | chain absent: default null -> [] | selftest: FAIL 52/54 | counter: UNMET 219/221 (A=61/61 F=14/16 H=120/120 W=24/24) | killed-by-selftest
+#
+# ROWS=17  KILLED=16  SURVIVED=1  KILL_RATIO=16/17 = 0.9412 (94.1%)
+#
+## Survivor analysis
+
+M02-superseded-object-test (line 341; SURVIVED selftest + counter): violates plan.md §Frozen field definitions
+`superseded_by`: entries are taken only «when retryRecovery is an object and its supersededBy is an object».
+The mutant accepts any non-undefined supersededBy (strings, arrays, null) and feeds it to turnModel().
+On the frozen scored sets the defect is output-invisible: F93Supersede's string row ("q/two") maps to `?`
+and the same file already yields `?` from the {provider:"q"} row, so distinct-first-seen dedupe collapses it;
+no scored transcript carries supersededBy: null. `?`-dedupe masks the object test.
+Arms that kill it:
+  (a) one-member synthetic: error turn, retryRecovery {status:'failed', supersededBy:'q/two'}, no other error row
+      -> oracle superseded_by=[] vs mutant ["?"]  (reproduced: probe/str-superseded.jsonl, output in this receipt dir)
+  (b) supersededBy:null -> mutant fail-closes rc=2 ('Cannot destructure property provider ... as it is null') vs oracle []
+      (reproduced: probe/null-superseded.jsonl)
+  (c) any real held-out/A/W transcript with a non-object, non-null supersededBy whose `?` is not already listed.
+This is a frozen-detector coverage gap (F93Supersede's string member is masked); it is NOT a kill event — the
+shipped candidate is correct on all scored sets. A counter improvement would be a lone-string supersededBy fixture.

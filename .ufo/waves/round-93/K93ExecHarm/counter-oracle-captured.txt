@@ -1,0 +1,30 @@
+# COUNTER finding (not a kill event): oracle93 'captured' falls through to the default model_change when the first
+# subagent:<seat> row exists but its 'model' is not a string; v1 (admitted) and the v2 candidate read null there.
+# Frozen text: 'captured: model of the first model_change row whose role is subagent:<seat>; if none, of the first
+# model_change whose role is absent (or null) or default; else null.' 'if none' = no such ROW (v1's admitted reading, scripts/seat-route.mjs@cd7ee03d).
+
+## fixture A (non-string model on the subagent row)
+{"type":"model_change","role":"subagent:SeatX","model":42}
+{"type":"model_change","role":"default","model":"p/default"}
+{"type":"message","message":{"role":"assistant","provider":"p","model":"default","stopReason":"stop","content":[]}}
+
+## fixture B (model key absent on the subagent row)
+{"type":"model_change","role":"subagent:SeatX"}
+{"type":"model_change","role":"default","model":"p/default"}
+{"type":"message","message":{"role":"assistant","provider":"p","model":"default","stopReason":"stop","content":[]}}
+
+## commands and outputs (file named SeatX.jsonl so the seat role matches; run 2026-11-06)
+### /fast/scratch/hyaku/kumitate-r93/K93ExecHarm/fx-oracle/SeatX.jsonl
+oracle93:  captured= "p/default"
+v2 cand:   captured= null
+v1 base:   captured= null
+### /fast/scratch/hyaku/kumitate-r93/K93ExecHarm/fx-oracle/miss/SeatX.jsonl
+oracle93:  captured= "p/default"
+v2 cand:   captured= null
+v1 base:   captured= null
+
+## reachability
+F set: F93CapDefault.jsonl does not cover this shape (its subagent role is 'subagent:Someone', so no row matches the seat at all).
+A set: no disagreement observed (battery-diff-final.txt: V1_VALUE_DRIFT 0 over 61 transcripts).
+H set: held out; a real transcript with a non-string/absent 'model' on the first subagent row plus a later default row would score the definition-faithful tool UNMET.
+Severity: masking/misfire risk on oracle agreement only; no candidate defect and no kill clause (c) trigger.

@@ -1,0 +1,49 @@
+## H gate: fabricated members are scored (scratch sessions root; ~/.omp untouched)
+cmd=python3 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/probe/probe93-c1.py --tool /fast/scratch/hyaku/kumitate-r93/K93CriticB/oracle-as-tool2.py --sample-a /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-92/probe/sampleA.tsv --fixtures /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/probe/fixtures --after 2026-11-06T21:40:00.000Z --sessions-root /fast/scratch/hyaku/kumitate-r93/K93CriticB/forgeroot2 --waves /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/w1-results.json,/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-92/w1-results.json --runtime off --out /fast/scratch/hyaku/kumitate-r93/K93CriticB/h_forge2_counter.receipt.txt
+rc=0
+forged_h_members=60 forged_seat_files=24
+C93_C1: HELD agree=161/161 A=61/61 F=16/16 H=60/60 W=24/24 h_pool=60 last_wave_located=12 thin_fields=0 after=2026-11-06T21:40:00.000Z tool_sha256=7b2b2e08b13ab8783994aa0cf458b2c0667566b5ae28c90727478306b32c19fa
+H_ITEM_count=60
+
+## H gate: 60 forged members alone (no wave seat planted)
+cmd=python3 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/probe/probe93-c1.py --tool /fast/scratch/hyaku/kumitate-r93/K93CriticB/oracle-as-tool.py --sample-a /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-92/probe/sampleA.tsv --fixtures /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/probe/fixtures --after 2026-11-06T21:40:00.000Z --sessions-root /fast/scratch/hyaku/kumitate-r93/K93CriticB/forgeroot --waves /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/w1-results.json,/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-92/w1-results.json --runtime off --out /fast/scratch/hyaku/kumitate-r93/K93CriticB/h_forge_counter.receipt.txt
+rc=1
+C93_C1: UNMET agree=161/161 A=61/61 F=16/16 H=60/60 W=24/24 h_pool=60 last_wave_located=0 thin_fields=0 after=2026-11-06T21:40:00.000Z tool_sha256=7b2b2e08b13ab8783994aa0cf458b2c0667566b5ae28c90727478306b32c19fa
+forged_members=60 all_first_ts_forged_ge_after=true all_mtime=1600000000
+
+## H draw mechanics (mtime knob, string compare, hash order)
+draw_h fresh-mtime  pool=0 items=[]
+draw_h backdated    pool=3 items=['JunkTs.jsonl', 'PlusOneOffset.jsonl', 'ForgedA.jsonl']
+first_ts equal-instant '+00:00' ='2026-11-06T21:40:00.000+00:00'  (string < 'Z' => excluded)
+first_ts +01:00 same instant     ='2026-11-06T22:40:00.000+01:00'  (string > 'Z' => included)
+first_ts junk 'zzz'              ='zzz'  (string >= after => included)
+hmax=1 picks EqualInstant.jsonl (sha 238c53f3ab2554a9)
+hash-grind: g000000.jsonl sha 7ca61c3c4b66adb4 < ForgedA sha d8fdb0caf835fc0a (attempts=0)
+draw_h hmax=1 now picks JunkTs.jsonl (ground path)
+counter rc=1
+  H_ITEM /fast/scratch/hyaku/kumitate-r93/K93CriticB/hroot/-Projects-shokunin/2026-11-06T22-00-00-000Z_deadbeef/JunkTs.jsonl
+  H_ITEM /fast/scratch/hyaku/kumitate-r93/K93CriticB/hroot/-Projects-shokunin/2026-11-06T22-00-00-000Z_deadbeef/g000000.jsonl
+  H_ITEM /fast/scratch/hyaku/kumitate-r93/K93CriticB/hroot/-Projects-shokunin/2026-11-06T22-00-00-000Z_deadbeef/PlusOneOffset.jsonl
+  H_ITEM /fast/scratch/hyaku/kumitate-r93/K93CriticB/hroot/-Projects-shokunin/2026-11-06T22-00-00-000Z_deadbeef/ForgedA.jsonl
+  C93_C1: UNMET agree=0/93 A=0/61 F=0/16 H=0/4 W=0/12 h_pool=4 last_wave_located=0 thin_fields=0 after=2026-11-06T21:40:00.000Z tool_sha256=e8d1ca4ce3294c4677821379a19da143176901cd3343d698821de0a2fa3c41a1
+
+## H feasibility on the REAL root (read-only measurement)
+sessions_root=/home/vgpnk/.omp/agent/sessions files=28006 touched_last_8h=461 with_session_row=461 walk_s=0.1
+now=2026-11-06T21:03:08Z local=2026-11-06T18:03:08-0300
+HOUR 2026-11-06T02 count=2
+HOUR 2026-11-06T10 count=6
+HOUR 2026-11-06T11 count=4
+HOUR 2026-11-06T12 count=4
+HOUR 2026-11-06T13 count=30
+HOUR 2026-11-06T14 count=1
+HOUR 2026-11-06T15 count=51
+HOUR 2026-11-06T16 count=3
+HOUR 2026-11-06T17 count=1
+HOUR 2026-11-06T18 count=113
+HOUR 2026-11-06T19 count=109
+HOUR 2026-11-06T20 count=124
+HOUR 2026-11-06T21 count=13
+CUTOFF freeze (2026-11-06T20:53:14.000Z): started=41 non_live_now=0
+CUTOFF after (2026-11-06T21:40:00.000Z): started=0 non_live_now=0
+started_last_90min=211 => approx 2.3/min
+GATE needs >=60 transcripts whose first session ts >= 2026-11-06T21:40:00.000Z AND mtime>=900s before scoring

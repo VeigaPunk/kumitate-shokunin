@@ -1,0 +1,14 @@
+draw_h fresh-mtime  pool=0 items=[]
+draw_h backdated    pool=3 items=['JunkTs.jsonl', 'PlusOneOffset.jsonl', 'ForgedA.jsonl']
+first_ts equal-instant '+00:00' ='2026-11-06T21:40:00.000+00:00'  (string < 'Z' => excluded)
+first_ts +01:00 same instant     ='2026-11-06T22:40:00.000+01:00'  (string > 'Z' => included)
+first_ts junk 'zzz'              ='zzz'  (string >= after => included)
+hmax=1 picks EqualInstant.jsonl (sha 238c53f3ab2554a9)
+hash-grind: g000000.jsonl sha 7ca61c3c4b66adb4 < ForgedA sha d8fdb0caf835fc0a (attempts=0)
+draw_h hmax=1 now picks JunkTs.jsonl (ground path)
+counter rc=1
+  H_ITEM /fast/scratch/hyaku/kumitate-r93/K93CriticB/hroot/-Projects-shokunin/2026-11-06T22-00-00-000Z_deadbeef/JunkTs.jsonl
+  H_ITEM /fast/scratch/hyaku/kumitate-r93/K93CriticB/hroot/-Projects-shokunin/2026-11-06T22-00-00-000Z_deadbeef/g000000.jsonl
+  H_ITEM /fast/scratch/hyaku/kumitate-r93/K93CriticB/hroot/-Projects-shokunin/2026-11-06T22-00-00-000Z_deadbeef/PlusOneOffset.jsonl
+  H_ITEM /fast/scratch/hyaku/kumitate-r93/K93CriticB/hroot/-Projects-shokunin/2026-11-06T22-00-00-000Z_deadbeef/ForgedA.jsonl
+  C93_C1: UNMET agree=0/93 A=0/61 F=0/16 H=0/4 W=0/12 h_pool=4 last_wave_located=0 thin_fields=0 after=2026-11-06T21:40:00.000Z tool_sha256=e8d1ca4ce3294c4677821379a19da143176901cd3343d698821de0a2fa3c41a1

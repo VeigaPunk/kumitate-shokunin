@@ -1,0 +1,6 @@
+O1 oracle  --results rc=124 dt=8.0s out=''
+O1 cand    --results rc=0 dt=0.0s out='[{"seat":"FifoSeat","role":null,"session":null,"final":"absent"}]'
+O2 oracle  rc=0 session_outside_root=true final=served
+O2 cand    rc=0 final=absent session=None
+O3 oracle  --file fifo rc=124 dt=8.0s
+O3 cand    --file fifo rc=2 dt=0.0s stderr='SEAT_ROUTE: FAILCLOSED transcript is not a file: /fast/scratch/hyaku/kumitate-r93/K93Sentinel/fifo-root/cwd/orch/FifoSea'

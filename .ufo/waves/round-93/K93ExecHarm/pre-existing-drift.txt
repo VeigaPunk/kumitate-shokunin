@@ -1,0 +1,35 @@
+# Why proxy-check reads DRIFT at the freeze rev b6204949, in base and in the candidate tree alike
+# (mid-round pre-close state, not a candidate effect)
+
+## A_wave (declared=1381 computed=1399): runnable .ufo files
+36277d499388c68ef2645d92f44e722d454c9820 count=1381
+b6204949e3bb17df9d6cf0cc3f59ea0c4b362061 count=1399
+the 18 added by b6204949:
+  A	.ufo/waves/round-93/controls/ablate93.py
+  A	.ufo/waves/round-93/controls/ctl-chainprimary.py
+  A	.ufo/waves/round-93/controls/ctl-errname.py
+  A	.ufo/waves/round-93/controls/ctl-flagtruthy.py
+  A	.ufo/waves/round-93/controls/ctl-parseerr0.py
+  A	.ufo/waves/round-93/controls/ctl-positive.py
+  A	.ufo/waves/round-93/controls/ctl-recoveredloose.py
+  A	.ufo/waves/round-93/controls/ctl-redact23.py
+  A	.ufo/waves/round-93/controls/ctl-resolvedcaptured.py
+  A	.ufo/waves/round-93/controls/ctl-revertrole.py
+  A	.ufo/waves/round-93/controls/ctl-supersedefromhops.py
+  A	.ufo/waves/round-93/controls/ctl-typeloose.py
+  A	.ufo/waves/round-93/controls/ctl-upstreamall.py
+  A	.ufo/waves/round-93/controls/ctl-v1names.py
+  A	.ufo/waves/round-93/controls/run-controls93.sh
+  A	.ufo/waves/round-93/probe/make-fixtures93.py
+  A	.ufo/waves/round-93/probe/oracle93.py
+  A	.ufo/waves/round-93/probe/probe93-c1.py
+
+## C2 (declared=236 computed=237): corpus/README.md rows
+36277d49 rows=236
+36277d49 C2_total notes=237
+b6204949 rows=237
+b6204949 C2_total notes=237
+the one row added by b6204949 (round-92 spotcheck adoption, plan.md: 'Round-92 spot-check adopted before this freeze'):
+  +| `lessons/round-92-verifier-spotcheck.md` | Non-author round-92 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
+
+## conclusion: A_wave +18 = the 15 round-93 control scripts + make-fixtures93.py + oracle93.py + probe93-c1.py (freeze scaffolding); C2 +1 = the round-92 verifier-spotcheck README row adopted before the freeze. Both are carried into r93; the candidate adds no file. battery-base.txt and battery-cand.txt carry the same three terms before and after the swap; battery-cand-pinfix.txt shows only the pin term clears.

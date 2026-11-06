@@ -1,0 +1,39 @@
+python 3.14.8
+case                               py-equal   py-canon-a py-canon-b node-eq
+-0 vs 0 (int form)                 True       0          0         
+1 vs 1.0                           False      1          1.0       
+true vs 1                          False      true       1         
+false vs 0                         False      false      0         
+null vs []                         False      null       []        
+1e2 vs 100                         False      100.0      100       
+1e2 vs 100.0                       True       100.0      100.0     
+\u00e9 vs é                        True       "\u00e9"   "\u00e9"  
+\u0041 vs A                        True       "A"        "A"       
+lone surrogate \ud800 vs U+FFFD    False      "\ud800"   "\ufffd"  
+2**53 vs 2**53+1                   False      9007199254740992 9007199254740993
+10**30 vs 1e30                     False      10000000000000000000000000 1e+30     
+NaN vs null-ish                    False      NaN        null      
+-0.0 vs 0.0                        False      -0.0       0.0       
+
+node JSON.parse/== view:
+  -0 vs 0 (int form)                 node-eq=False  jsonA=0            jsonB=0           
+  1 vs 1.0                           node-eq=True   jsonA=1            jsonB=1           
+  true vs 1                          node-eq=False  jsonA=true         jsonB=1           
+  false vs 0                         node-eq=False  jsonA=false        jsonB=0           
+  null vs []                         node-eq=False  jsonA=null         jsonB=[]          
+  1e2 vs 100                         node-eq=True   jsonA=100          jsonB=100         
+  1e2 vs 100.0                       node-eq=True   jsonA=100          jsonB=100         
+  \u00e9 vs é                        node-eq=True   jsonA="é"          jsonB="é"         
+  \u0041 vs A                        node-eq=True   jsonA="A"          jsonB="A"         
+  lone surrogate \ud800 vs U+FFFD    node-eq=False  jsonA="\ud800"     jsonB="�"         
+  2**53 vs 2**53+1                   node-eq=True   jsonA=9007199254740992 jsonB=9007199254740992
+  10**30 vs 1e30                     node-eq=True   jsonA=1e+30        jsonB=1e+30       
+  NaN vs null-ish                    node-eq=False  jsonA=None         jsonB=null        
+  -0.0 vs 0.0                        node-eq=False  jsonA=0            jsonB=0           
+
+CONTRADICTION (py-equal but node distinguishes):
+  -0 vs 0 (int form)                 py canon EQUAL, node !=  ('-0' vs '0')
+
+## counter diff() on the textual -0 (python int('-0') == 0)
+canon(0) = 0 | canon(json.loads("-0")) = 0
+diff({"error_attempts":0}, json.loads("{"error_attempts":-0}")) = []

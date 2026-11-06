@@ -1,0 +1,43 @@
+LEVEL RULE: model comparison strips a trailing ':level' suffix (split(':',1)[0])
+wave seats  loc    absent not_resolved unrecovered  aggregator   err    recov  upstreams
+85   13     13     0      10           0            0            10     10     -
+    not_resolved ('K85ExecGate', 'devin/swe-2:max', 'commandcode/deepseek/deepseek-v4.1-flash')
+    not_resolved ('K85ExecFixture', 'devin/swe-2:max', 'commandcode/deepseek/deepseek-v4.1-flash')
+    not_resolved ('K85ExecHistory', 'devin/swe-2:max', 'commandcode/deepseek/deepseek-v4.1-flash')
+    not_resolved ('K85ExecSelftest', 'devin/swe-2:max', 'commandcode/deepseek/deepseek-v4.1-flash')
+    not_resolved ('K85ExecPins', 'devin/swe-2:max', 'commandcode/deepseek/deepseek-v4.1-flash')
+    not_resolved ('K85Review', 'devin/swe-2:max', 'commandcode/deepseek/deepseek-v4.1-flash')
+    not_resolved ('K85Critic', 'devin/swe-2:max', 'commandcode/deepseek/deepseek-v4.1-flash')
+    not_resolved ('K85Mutation', 'devin/swe-2:max', 'commandcode/deepseek/deepseek-v4.1-flash')
+    not_resolved ('K85Sentinel', 'devin/swe-2:max', 'commandcode/deepseek/deepseek-v4.1-flash')
+    not_resolved ('K85Cheat', 'devin/swe-2:max', 'commandcode/deepseek/deepseek-v4.1-flash')
+    flag_hops=10 revert_hops=0
+86   12     12     0      0            5            0            13     6      -
+    unrecovered ('K86Review', 1)
+    unrecovered ('K86Critic', 1)
+    unrecovered ('K86Mutation', 3)
+    unrecovered ('K86Sentinel', 1)
+    unrecovered ('K86Revenger', 1)
+    flag_hops=7 revert_hops=0
+87   14     14     0      0            1            0            89     71     -
+    unrecovered ('K87ExecSources', 2)
+    flag_hops=11 revert_hops=0
+88   12     12     0      0            0            0            0      0      -
+    flag_hops=0 revert_hops=0
+89   13     13     0      3            0            0            81     72     -
+    not_resolved ('K89ExecDebt', 'zai/glm-5.3-flashx:high', 'anthropic/claude-haiku-5-5')
+    not_resolved ('K89ExecReceipts', 'zai/glm-5.3-flashx:high', 'anthropic/claude-haiku-5-5')
+    not_resolved ('K89Review', 'zai/glm-5.3-flashx:high', 'anthropic/claude-haiku-5-5')
+    flag_hops=20 revert_hops=0
+90   12     12     0      3            0            0            6      6      -
+    not_resolved ('K90Connector', 'zai/glm-5.3-flash:max', 'anthropic/claude-haiku-5-5')
+    not_resolved ('K90Sentinel', 'zai/glm-5.3-flash:max', 'anthropic/claude-haiku-5-5')
+    not_resolved ('K90Reviewer', 'zai/glm-5.3-flashx:high', 'commandcode/z-ai/glm-5.3-flash')
+    flag_hops=6 revert_hops=3
+91   12     12     0      1            0            2            13     13     Stealth
+    not_resolved ('K91Scout', 'google-antigravity/claude-opus-5-5:high', 'minimax-code/MiniMax-M3.1-Flash')
+    aggregator ('K91ExecInst', ['Stealth'])
+    aggregator ('K91ExecCarry', ['Stealth'])
+    flag_hops=6 revert_hops=1
+92   12     12     0      0            0            0            3      3      -
+    flag_hops=3 revert_hops=0

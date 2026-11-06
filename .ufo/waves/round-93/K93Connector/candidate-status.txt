@@ -1,0 +1,38 @@
+# candidate status at 2026-11-06T20:58:36Z
+$ ls -la .ufo/waves/round-93/K93ExecTool/
+total 68
+drwxr-xr-x 1 vgpnk vgpnk    48 Nov  6 17:58 .
+drwxr-xr-x 1 vgpnk vgpnk   450 Nov  6 17:57 ..
+-rw-r--r-- 1 vgpnk vgpnk 18624 Nov  6 17:58 score1.txt
+-rwxr-xr-x 1 vgpnk vgpnk 48682 Nov  6 17:57 seat-route.mjs
+$ cat .ufo/waves/round-93/K93ExecTool/READY
+cat: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/K93ExecTool/READY: No such file or directory
+
+=> READY absent: the candidate exists but is unpublished. Per seat spec, candidate-independent work first;
+   the candidate was NOT attacked by this seat. Oracle/positive-control cross-read instead (below).
+
+## positive control receipt (read-only, frozen)
+RUNTIME: SKIPPED
+C93_C1: HELD agree=221/221 A=61/61 F=16/16 H=120/120 W=24/24 h_pool=229 last_wave_located=12 thin_fields=0 after=2026-11-06T18:47:06.000Z tool_sha256=d08d70e9fa5d163bedb787f00362f29bafbd3531f5e3d1d91e14a5b43a8c0911
+rc=0
+
+## A set vs H set independence: drawn independently, never asserted
+$ grep -nE "def draw_h|def score_files|seen" .ufo/waves/round-93/probe/probe93-c1.py
+82:def draw_h(sroot, after, hmax, now):
+96:def score_files(tool, items, log, label, seen):
+106:        seen.append((label, orc))
+115:def score_wave(tool, results, sroot, log, seen):
+126:        seen.append(("W", o))
+153:def field_cover(seen):
+156:        allv = {canon(o[f]) for _, o in seen if f in o}
+157:        realv = {canon(o[f]) for lab, o in seen if lab != "F" and f in o}
+223:    log, seen = [], []
+224:    aa, na = score_files(tool, sample_a, log, "A", seen)
+225:    af, nf = score_files(tool, fixtures, log, "F", seen)
+227:    ah, nh = score_files(tool, hitems, log, "H", seen)
+232:        g, n, loc = score_wave(tool, w, a["--sessions-root"], log, seen)
+236:    cover = field_cover(seen)
+  -> draw_h() (probe93-c1.py:82-93) walks the sessions root and keeps first_ts >= --after;
+     it is passed no exclusion set, so A and H are disjoint only because sampleA is pre-freeze by
+     construction (plan.md: "A the round-92 frozen stratified sample (pre-freeze real transcripts)").
+     A transcript with first session ts >= --after can be scored in both sets and nothing reports it.

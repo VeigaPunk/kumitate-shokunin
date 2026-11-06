@@ -1,0 +1,6 @@
+# L1 re-mutation of K93Mutation survivors against the integrated bytes (selftest 63 arms)
+tool_sha256=7273ad2b91eff7a60372c1cdffefaeb55d60ef6889fbfecfc89e84f29c7d7bc8 candidate_READY=f86bde984ef8697a7351c0d7b1c78bcda0cf59d6b514d43b4b52f3d2d5829f1a
+M01 sed s/rr.status === 'recovered'/'Recovered'/ -> SEAT_ROUTE_SELFTEST: FAIL held=62/63 (killed)
+M02 sed isPlainObject(rr.supersededBy) -> rr.supersededBy !== undefined -> rc=1, selftest crashes on supersededBy:null: TypeError: Ca (killed)
+M02b isPlainObject -> truthy-and-not-string -> SEAT_ROUTE_SELFTEST: FAIL held=62/63 (killed)
+ROWS_KILLED=3 of 3

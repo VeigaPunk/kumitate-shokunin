@@ -1,0 +1,12 @@
+== node opens its own entry script (v1 copy under the wave dir), manual strace:
+2043503 openat(AT_FDCWD, "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/K93ExecRuntime/x3-v1.mjs", O_RDONLY|O_CLOEXEC) = 20
+2043503 openat(AT_FDCWD, "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/K93ExecRuntime/wave-r92-copy.json", O_RDONLY|O_CLOEXEC) = 20
+
+== x5 relative-path open (manual strace):
+2676128 openat(AT_FDCWD, ".ufo/waves/round-93/probe/fixtures/F93Flags.jsonl", O_RDONLY|O_CLOEXEC) = 20
+2676128 openat(AT_FDCWD, "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/probe/fixtures/F93Flags.jsonl", O_RDONLY|O_CLOEXEC) = 20
+
+== x6 symlink alias (manual strace):
+2676179 openat(AT_FDCWD, "/fast/scratch/hyaku/kumitate-r93/K93ExecRuntime/x6-symlink-alias.mjs", O_RDONLY|O_CLOEXEC) = 20
+2676179 symlink("/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-93/probe/fixtures/F93Flags.jsonl", "/fast/scratch/hyaku/kumitate-r93/K93ExecRuntime/alias-2676179.jsonl") = 0
+2676179 openat(AT_FDCWD, "/fast/scratch/hyaku/kumitate-r93/K93ExecRuntime/alias-2676179.jsonl", O_RDONLY|O_CLOEXEC) = 20

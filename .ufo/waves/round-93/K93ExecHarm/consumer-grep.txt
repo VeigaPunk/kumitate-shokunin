@@ -1,0 +1,54 @@
+# consumer grep at b6204949 (lane root)
+
+## grep -rn 'seat-route' scripts/ SKILL.md .ufo/pins/
+scripts/proxy-check.mjs:580:  'pin.seat-route': 'scripts/seat-route.mjs', // round 92: per-seat captured route vs answering models (C1)
+SKILL.md:284:### `scripts/omp-global-config.mjs` — seat-route resolver
+SKILL.md:589:Registry home per the fleet protocol's §Gate standard (round 34). Thirty-two gate rows over thirty-one gate files (round 92 adds `seat-route`; round 87 adds `receipt-bind`) (each can exit 1 on a real defect; `report-receipt-diff` round 64, `harm-matrix` and `make-dispatch-actual` registered in round 76 (Q68 debt), `spotcheck-adopt` round 76 is new, `ready-handoff` round 81 is new, and the `plan-before-ready` **map-arm** row is the same gate's round-64 row — the round-63 row above it stays as that gate's historical record; `inline-dispatch-evidence` and `plan-before-ready` round 63; `anchor-truth` added round 38, `wave-census` round 41, `gate-mutants` round 42, `omp-census` round 44, `bind-oracle` round 49, `counter-pins` round 54, `source-capture` round 55, `source-dupes` round 56, `receipt-evidence` round 58, `cite-sources` round 59, `dispatch-evidence` round 60);
+SKILL.md:647:| seat-route | gate | `node scripts/seat-route.mjs --file <transcript>.jsonl [--json]` / `node scripts/seat-route.mjs --results <wave>-results.json [--sessions-root DIR] [--json] [--strict]` / `node scripts/seat-route.mjs --selftest` → one record per seat (`seat`, `captured`, `answered`, `fallback`, `errors`, `aborted`, `last_error` redacted, `yielded`, `final`, `parse_errors`; wave mode adds `role` and `session`), human mode `SEAT …` lines plus `SEAT_ROUTE: OK\|DRIFT seats=… served=… dead=… aborted=… silent=… absent=… fallback=…`; exit map 0 ok · 1 (`--strict`) a dead/absent/silent seat · 2 fail-closed · 64 usage; contract `kumitate-seat-route-v1` (round 92): reads the harness-written omp seat transcripts under `~/.omp/agent/sessions` — the captured `model_change` route is reported separately from the models that actually answered, so a fallback is named rather than mistaken for the dispatched route (Amendment 44; r91 `K91Scout` captured `google-antigravity/claude-opus-5-5`, answered by `minimax-code/MiniMax-M3.1-Flash`); never reads the round-92 probe tree | `--selftest` (`SEAT_ROUTE_SELFTEST: PASS held=n/n`) | `.ufo/pins/counter-pins.json` (the round-92 frozen instruments); `pin.seat-route` in `kumitate-gate-pins-v1` |
+SKILL.md:703:Forty-seven items (round 92 adds the seat-route transcript reading, item 47; round 78; items 38-39 are the Kimi score-derivation check and the OMP shape-receipt live comparison added this round; items 36-37 (round 77) are the OMP shape-receipt offline re-derivation and the adopt-journal crash-recovery probe; round 64's item 33 is the plan-before-ready map-arm suite, item 32 the jj seat-containment demo re-run, item 31 the report-vs-receipt diff suite, item 30 the round dispatch-evidence gate — repaired this round so the frozen grammar can actually run it; item 29 the README source-id citation gate, item 28 the receipt-evidence gate, item 27 the corpus coverage-map bimap gate; item 26 is the SOURCES duplicate-URL ratchet; item 25 is the opened-source byte-persistence gate; item 24 is the frozen-counter registry gate; item 23 remains the receipt-attest hermetic suite). Item 14 replaces the round-49/50 adjacency-fidelity
+SKILL.md:765:- [ ] Seat-route transcript reading (round 92; contract `kumitate-seat-route-v1`; the real run names a wave's `<wave>-results.json` and the sessions root, e.g. `node scripts/seat-route.mjs --results .ufo/waves/round-92/w1-results.json --json`; the selftest is this item) — `node scripts/seat-route.mjs --selftest` → exit 0 + `SEAT_ROUTE_SELFTEST: PASS`
+.ufo/pins/readme-map.json:238:    "knowledge/seat-route-from-session-transcripts.md",
+
+## grep -rn 'SEAT_ROUTE' scripts/ (other than the tool itself)
+(none)
+
+## import/require of seat-route anywhere in scripts/
+(none)
+
+## key-name use outside the tool
+scripts/claims-check.mjs:790:      if (f.severity === 'error') totals.errors += 1;
+scripts/claims-check.mjs:837:    lines.push('SUMMARY: errors=' + totals.errors + ' warnings=' + totals.warnings);
+scripts/claims-check.mjs:1038:        ok: j.totals.errors === Number(m[1]) && j.totals.warnings === Number(m[2]) && j.verdict === 'DRIFT' && j.schema === CONTRACT,
+scripts/claims-check.mjs:1039:        detail: `json=${j.totals.errors}/${j.totals.warnings} text=${m[1]}/${m[2]} verdict=${j.verdict}`,
+scripts/kimi-census.mjs:480:    lines.push(`TOTALS: members=${v.totals.members} checked=${v.totals.checked} errors=${v.totals.errors} info=${v.totals.info} chain=${v.totals.chain}`);
+scripts/proxy-check.mjs:2649:        ok: gatePinsRun.status === 0 && j.verdict === 'MATCH' && j.errors === 0
+scripts/proxy-check.mjs:2807:          && j.errors === 0 && j.warnings === 1,
+scripts/proxy-check.mjs:3010:          && j.findings.length === 1 && j.findings[0].kind === 'SELF_NOT_A_DIR' && j.errors === 1,
+scripts/round-gate.mjs:919:        ok: r1.status === 0 && k.ok && v !== null && v.verdict === 'CLEAN' && v.checks === 10 && v.errors === 0 && v.warnings === 0,
+scripts/round-gate.mjs:938:      return { ok: r3.status === 1 && k.ok && v !== null && v.checks === 5 && v.errors === 1, detail: `exit=${r3.status} kinds=[${k.got}] ${verdictLine(r3)}` };
+scripts/round-gate.mjs:1018:        ok: r11.status === 0 && k.ok && f && f.severity === 'warning' && v !== null && v.verdict === 'CLEAN' && v.warnings === 1 && v.errors === 0,
+scripts/round-gate.mjs:1049:        ok: r14.status === 1 && v !== null && v.verdict === 'DRIFT' && v.errors === 0 && v.warnings === 1,
+scripts/round-gate.mjs:1300:          && j.findings.length === 0 && j.errors === 0 && j.warnings === 0 && typeof j.durationMs === 'number'
+scripts/round-gate.mjs:1311:          && f.severity === 'error' && typeof f.detail === 'string' && j.errors === 1,
+scripts/round-gate.mjs:1320:          && j.findings.length === 1 && j.findings[0].kind === 'REPORTS_DIR_MISSING' && j.errors === 1,
+scripts/round-gate.mjs:1529:          && j.excludedRound === 5 && j.findings.length === 0 && j.errors === 0 && j.warnings === 0,
+scripts/surface-probe.mjs:59: *   errors    `manifest.errors` is a `fail("X")`-derived vocabulary (79 codes
+scripts/surface-probe.mjs:112: *   that `manifest.errors` therefore omits.
+scripts/surface-probe.mjs:813:  const declared = new Set((Array.isArray(manifest.errors) ? manifest.errors : []).filter((c) => typeof c === 'string'));
+scripts/surface-probe.mjs:819:    `fail("X") codes in the digest-covered bytes but absent from manifest.errors: ${undeclared.join(', ')}`,
+scripts/surface-probe.mjs:822:    `manifest.errors codes with no fail("X") site in the digest-covered bytes: ${phantom.join(', ')}`);
+scripts/surface-probe.mjs:841:      `assigned to a code: field as a literal but absent from manifest.errors (which is derived from fail("X") only): ${offManifest.join(', ')}`,
+scripts/surface-probe.mjs:930:    errors: isPlainObject(manifest) && Array.isArray(manifest.errors) ? manifest.errors.length : 0,
+scripts/surface-probe.mjs:961:  L.push(`  surfaces=${t.surfaces} checks=${t.checks} passed=${t.checksPassed} errors=${t.errors} warnings=${t.warnings} notes=${t.notes}`);
+scripts/surface-probe.mjs:967:    `surfaces=${t.surfaces}`, `checks=${t.checks}`, `errors=${t.errors}`, `warnings=${t.warnings}`,
+scripts/surface-probe.mjs:1411:    const declaredErrors = undeclaredCode.built.manifest.errors;
+scripts/surface-probe.mjs:1422:      manifestText: JSON.stringify({ ...phantomCode.built.manifest, errors: [...phantomCode.built.manifest.errors, 'GHOST_CODE'] }),
+scripts/surface-probe.mjs:1432:    check('literal `code:` value outside manifest.errors → ERROR_CODE_OFF_MANIFEST warn, non-gating', () => {
+
+## seat-route mentions in corpus/README.md and corpus/knowledge
+corpus/README.md:272:| `knowledge/seat-route-from-session-transcripts.md` | Seat route from omp session transcripts (`seat-route` v1): captured route vs answeri
+corpus/README.md:273:| `lessons/round-92.md` | Round-92 fresh start: `seat-route` scored on a post-freeze wave, ten pre-data controls, constructions that still 
+corpus/knowledge/seat-route-from-session-transcripts.md:2:verified-at: 596f675366ac5822aac5ea1ffc56b1189b17f65c (round-92 freeze: plan.md, oracle92.py, probe92-
+corpus/knowledge/seat-route-from-session-transcripts.md:3:recheck: `curl -fsSL https://raw.githubusercontent.com/can1357/oh-my-pi/79fa222e8390aed3494f4bc6746814
+corpus/knowledge/seat-route-from-session-transcripts.md:93:final=yielded 120/133. At M the shipped `scripts/seat-route.mjs` (sha256 `cd7ee03d…`) reads
+corpus/knowledge/seat-route-from-session-transcripts.md:96:2 of 12 seats answered by a model other than their captured route (`close/seat-route-r92-w1.txt`); ov

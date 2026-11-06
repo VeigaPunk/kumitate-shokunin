@@ -1,0 +1,75 @@
+# sibling-overlap scan receipts (K93Connector), 2026-11-06T20:58:22Z
+
+## R1: fleet-wide grep for the v2-new field names (proves no sibling duplicates them)
+$ grep -rn --exclude-dir={.ufo,.git,corpus,.jj} -E "retryRecovery|supersededBy|upstreamProvider" . | grep -v "^./kumitate-shokunin/"
+  -> 0 lines outside kumitate-shokunin/
+
+## R2: every instrument outside kumitate that names the omp sessions tree or its row types
+$ grep -rln --exclude-dir={.ufo,.git,corpus,.jj} -E "\.omp/agent" . | grep -v "^./kumitate-shokunin/"
+./.scratch/goal-20261022-hyaku-12h.md
+./.scratch/goal-20261023-hyaku-24h.md
+./.scratch/goal-20261025-hyaku-12h.md
+./.scratch/goal-20261025-hyaku-run7.md
+./.scratch/goal-20261026-hyaku-run8.md
+./.scratch/goal-20261026-hyaku-run9.md
+./.scratch/goal-20261027-hyaku-run10.md
+./.scratch/goal-20261028-hyaku-run11.md
+./.scratch/goal-20261029-hyaku-run12.md
+./.scratch/goal-20261030-hyaku-run13.md
+./.scratch/goal-20261103-hyaku-run15.md
+./.tower/comms/inbox/20261024-r100-recovery-census-tower-survey-summary.md
+./ROADMAP.md
+./chousa-shokunin/tools/research-gate.sh
+./kaidoku-shokunin/PROVINCE.md
+./kaidoku-shokunin/SKILL.md
+./kaidoku-shokunin/tools/round-44/control-fixtures/pos/PROVINCE.md
+./kaidoku-shokunin/tools/round-49/control-fixtures/pos/PROVINCE.md
+./kaidoku-shokunin/tools/round-78/surface-recheck.py
+./kaidoku-shokunin/tools/round-79/pointer-bind.py
+./kaidoku-shokunin/tools/round-80/pointer-bind.py
+./kasegi-shokunin/SKILL.md
+./kotoba-shokunin/SKILL.md
+./kotoba-shokunin/verifiers/check_omp_catalogue_repro.py
+./kotoba-shokunin/verifiers/check_omp_root_semantics.py
+./kotoba-shokunin/verifiers/check_omp_root_semantics_v2.py
+./kotoba-shokunin/verifiers/compare_harness_independent.py
+./kotoba-shokunin/verifiers/omp-skill-roots-semantics.tsv
+./kotoba-shokunin/verifiers/omp-skill-roots.tsv
+./kotoba-shokunin/verifiers/verify_harness_claims.py
+./kotoba-shokunin/verifiers/verify_harness_independent.py
+./mado-shokunin/PROVINCE.md
+./mado-shokunin/tools/mado-tripwire.py
+./mori-shokunin/SKILL.md
+./mori-shokunin/tools/mori-job-runway.py
+./mori-shokunin/tools/mori-round17-context-check.py
+./revenger-shokunin/SKILL.md
+./scripts/hyaku/hyaku.env
+./scripts/hyaku/inline-dispatcher.py
+./scripts/hyaku/lane-addendum.md
+./souji-shokunin/tests/fixtures/r14-census-boundary.py
+./souji-shokunin/tests/fixtures/r15-census-config.py
+./souji-shokunin/tests/fixtures/r17-census-hygiene.py
+./souji-shokunin/tools/souji-census.sh
+./souji-shokunin/tools/souji-evidence-cache.py
+./souji-shokunin/tools/souji-preservation-evidence.py
+./souji-shokunin/tools/souji-seat-audit.py
+./tameshi-shokunin/SKILL.md
+./tameshi-shokunin/tools/wave-route-mix.py
+./tsukuroi-shokunin/tools/check-scrub-grounding-r45.py
+./tsukuroi-shokunin/tools/check-scrub-record-r42.py
+./tsukuroi-shokunin/tools/check-scrub-record-r43.py
+./tsukuroi-shokunin/tools/check-scrub-record-r44.py
+
+## R3: rows-per-reader, the five instruments that read CONTENT (not shape)
+mori-shokunin/tools/mori-seat-terminal.py                      sha256=9b90acbecb322033 lines=3119
+mado-shokunin/tools/mado-tripwire.py                           sha256=cd9da20c2f562efb lines=3465
+tsukuroi-shokunin/tools/check-scrub-grounding-r45.py           sha256=a1eb402dffae97fc lines=424
+kotoba-shokunin/verifiers/check_omp_root_semantics.py          sha256=6e826f3bf8d45853 lines=663
+kumitate-shokunin/scripts/inline-dispatch-evidence.mjs         sha256=9f1978a93deb0001 lines=597
+
+## R4: v2-new-field mentions inside those five (none)
+mori-shokunin/tools/mori-seat-terminal.py:0
+mado-shokunin/tools/mado-tripwire.py:0
+tsukuroi-shokunin/tools/check-scrub-grounding-r45.py:0
+kotoba-shokunin/verifiers/check_omp_root_semantics.py:0
+kumitate-shokunin/scripts/inline-dispatch-evidence.mjs:0

@@ -1,0 +1,53 @@
+# battery CAND (M-sim: base tree b6204949 with scripts/seat-route.mjs replaced by the READY candidate)
+# host=Linux 7.2.11-arch1-1 node=v24.21.0
+# cand_tree=/fast/scratch/hyaku/kumitate-r93/K93ExecHarm/cand
+# candidate=/fast/scratch/hyaku/kumitate-r93/K93ExecHarm/cand/scripts/seat-route.mjs sha256=98a5a3a341b2b41540206caa5378d2ff5dacf02015f8aedf160b9d0f72b6efe9
+# READY line=98a5a3a341b2b41540206caa5378d2ff5dacf02015f8aedf160b9d0f72b6efe9
+# clone=/fast/scratch/hyaku/kumitate-r93/K93ExecHarm/clone.KBYwi3 (M-sim: candidate overlaid on b6204949 worktree, git status: M scripts/seat-route.mjs)
+
+## cmd: node scripts/seat-route.mjs --selftest  (cwd=/fast/scratch/hyaku/kumitate-r93/K93ExecHarm/cand)
+SEAT_ROUTE_SELFTEST: PASS held=54/54
+EXIT=0
+
+## cmd: node scripts/proxy-check.mjs  (cwd=/fast/scratch/hyaku/kumitate-r93/K93ExecHarm/cand)
+PROXY  error  A_WAVE_DRIFT  A_wave: declared=1381 computed=1399 delta=+18
+PROXY  error  C2_DRIFT  C2: declared=236 computed=237 delta=+1
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=236 computed=237 delta=+1
+PROXY  error  GATE_PIN_DRIFT  pin.seat-route: declared=cd7ee03dd814da01f6c73ad4113022c2484dea182f95b0a84e07f9b6810ccfac computed=98a5a3a341b2b41540206caa5378d2ff5dacf02015f8aedf160b9d0f72b6efe9
+PROXY: DRIFT (A_WAVE_DRIFT term=A_wave declared=1381 computed=1399 delta=+18; C2_DRIFT term=C2 declared=236 computed=237 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=236 computed=237 delta=+1; GATE_PIN_DRIFT term=pin.seat-route declared=cd7ee03dd814da01f6c73ad4113022c2484dea182f95b0a84e07f9b6810ccfac computed=98a5a3a341b2b41540206caa5378d2ff5dacf02015f8aedf160b9d0f72b6efe9; src-rev=31c465f15669; source=snapshot)
+EXIT=1
+
+## cmd: node scripts/proxy-check.mjs --strict  (cwd=/fast/scratch/hyaku/kumitate-r93/K93ExecHarm/cand)
+PROXY  error  A_WAVE_DRIFT  A_wave: declared=1381 computed=1399 delta=+18
+PROXY  error  C2_DRIFT  C2: declared=236 computed=237 delta=+1
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=236 computed=237 delta=+1
+PROXY  error  GATE_PIN_DRIFT  pin.seat-route: declared=cd7ee03dd814da01f6c73ad4113022c2484dea182f95b0a84e07f9b6810ccfac computed=98a5a3a341b2b41540206caa5378d2ff5dacf02015f8aedf160b9d0f72b6efe9
+PROXY: DRIFT (A_WAVE_DRIFT term=A_wave declared=1381 computed=1399 delta=+18; C2_DRIFT term=C2 declared=236 computed=237 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=236 computed=237 delta=+1; GATE_PIN_DRIFT term=pin.seat-route declared=cd7ee03dd814da01f6c73ad4113022c2484dea182f95b0a84e07f9b6810ccfac computed=98a5a3a341b2b41540206caa5378d2ff5dacf02015f8aedf160b9d0f72b6efe9; src-rev=31c465f15669; source=snapshot)
+EXIT=1
+
+## cmd: node scripts/counter-pins.mjs  (cwd=/fast/scratch/hyaku/kumitate-r93/K93ExecHarm/cand)
+COUNTER_PINS: CLEAN pins=50
+EXIT=0
+
+## cmd: node scripts/sources-check.mjs  (cwd=/fast/scratch/hyaku/kumitate-r93/K93ExecHarm/cand)
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/counter-receipt-discrimination.md:1  S243 used-by omits corpus/knowledge/counter-receipt-discrimination.md
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/failure-recovery-replay.md:1  S028 used-by omits corpus/knowledge/failure-recovery-replay.md
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/failure-recovery-replay.md:1  S124 used-by omits corpus/knowledge/failure-recovery-replay.md
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/kimi-plane-single-derivation.md:1  S041 used-by omits corpus/knowledge/kimi-plane-single-derivation.md
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/receipt-invisible-prefix-fields.md:1  S258 used-by omits corpus/knowledge/receipt-invisible-prefix-fields.md
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/self-asserted-instants.md:1  S237 used-by omits corpus/knowledge/self-asserted-instants.md
+SOURCES  info  LEGACY_NO_HEADER  count=38
+SOURCES_CHECK: CLEAN (rows=206 tiers=A:174,B:22,C:10 status=queued:14,mined:164,rejected:28 entries_with_source=46 legacy=38)
+EXIT=0
+
+## cmd: sha256sum scripts/seat-route.mjs  (cwd=/fast/scratch/hyaku/kumitate-r93/K93ExecHarm/cand)
+98a5a3a341b2b41540206caa5378d2ff5dacf02015f8aedf160b9d0f72b6efe9  scripts/seat-route.mjs
+
+## cmd: node scripts/round-gate.mjs --round 92 --repo <clone> ...  (cwd=/fast/scratch/hyaku/kumitate-r93/K93ExecHarm/clone.KBYwi3; M-sim worktree)
+ROUND_GATE: CLEAN (round=92 lane=kumitate checks=10 errors=0 warnings=0)
+EXIT=0
+
+## cmd: node scripts/round-gate.mjs --round 92 --close ... (close arm; detached clone has no upstream)
+round-gate: fail-closed — UPSTREAM_MISSING: --repo /fast/scratch/hyaku/kumitate-r93/K93ExecHarm/clone.KBYwi3: exit 128 fatal: HEAD does not point to a branch
+ROUND_GATE: FAIL-CLOSED (UPSTREAM_MISSING) --repo /fast/scratch/hyaku/kumitate-r93/K93ExecHarm/clone.KBYwi3: exit 128 fatal: HEAD does not point to a branch
+EXIT=2

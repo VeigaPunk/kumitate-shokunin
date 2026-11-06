@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * seat-route.mjs — kumitate lane tool, contract `kumitate-seat-route-v1` (round 92).
+ * seat-route.mjs — kumitate lane tool, contract `kumitate-seat-route-v2` (round 93).
  *
  *   node scripts/seat-route.mjs --file T.jsonl [--json]
  *   node scripts/seat-route.mjs --results R.json [--sessions-root DIR] [--json] [--strict]
@@ -23,13 +23,33 @@
  *
  * FIELDS (frozen by the round plan's § Claim C1 and implemented here, from the plan text alone):
  *   seat       file name without `.jsonl`.
- *   captured   `model` of the first `model_change` row whose `role` is `subagent:<seat>`; if none, of
- *              the first `model_change` whose `role` is absent (or null) or `default`; else null.
+ *   captured   `model` of the first `model_change` row whose `role` is `subagent:<seat>`; if there is
+ *              no such row, or its `model` is not a string, of the first `model_change` whose `role` is
+ *              absent (or null) or `default`; else null.
  *   turns      the `message` rows whose `message.role` is `assistant`, in file order. A turn's model is
  *              `provider + "/" + model` (either missing or empty → `?`).
  *   answered   distinct turn models of turns whose `stopReason` is `stop`, `toolUse` or `length`,
  *              in first-seen order.
- *   errors     count of turns with `stopReason` `error`; aborted: count with `aborted`.
+ *   error_attempts     count of turns with `stopReason` `error`. omp persists one error row per failed
+ *              retry ATTEMPT, not per request, so this is not a failed-request count (v1 called it
+ *              `errors`; that name is gone from the records).
+ *   recovered_attempts error turns whose `retryRecovery` is an object whose `status` is exactly
+ *              `recovered`.
+ *   superseded_by      over error turns in file order: when `retryRecovery` is an object and its
+ *              `supersededBy` is an object, `supersededBy.provider + "/" + supersededBy.model` under
+ *              the `?` rule (either missing, non-string or empty → `?`); distinct, first-seen order.
+ *              `retryRecovery` on a served turn is ignored.
+ *   upstream   over served turns in file order, `upstreamProvider` when it is a non-empty string
+ *              (the provider an aggregator actually routed to); distinct, first-seen order.
+ *   resolved   `resolvedModel` of the FIRST `session_init` row when a string, else null; null when
+ *              there is no `session_init` row.
+ *   chain      `retryFallback.chain` of the FIRST `session_init` row when that is an object and
+ *              `chain` is a list: its string items in order (non-strings dropped, an empty list stays
+ *              `[]`); otherwise null.
+ *   flag_hops  `model_change` rows whose `resolvedModelIsFallback` is JSON `true` (not `1`).
+ *   revert_hops `model_change` rows whose `resolvedModelIsFallback` is not JSON `true` and whose
+ *              `role` is the string `fallback` — the revert-to-primary hop reuses that role.
+ *   aborted    count of turns with `aborted`.
  *   last_error of the last `error` turn, `errorMessage`'s first line, trimmed, every run of 24 or more
  *              characters from `[A-Za-z0-9_-]` replaced by `<redacted>`, then cut to 120 characters;
  *              null when no error turn (a non-string `errorMessage` reads as the empty string). This is
@@ -50,8 +70,10 @@
  * This is a deliberate choice, not a lookup failure that a caller may paper over.
  *
  * HUMAN MODE prints one line per seat and a verdict line:
- *   SEAT <name> role=<role|-> captured=<model|-> answered=<a,b|-> fallback=<true|false> errors=<n>
- *        aborted=<n> final=<served|dead|aborted|silent|other|absent> yielded=<true|false> last_error=<json|null>
+ *   SEAT <name> role=<role|-> captured=<model|-> answered=<a,b|-> fallback=<true|false>
+ *        error_attempts=<n> recovered_attempts=<n> superseded_by=<a,b|-> upstream=<a,b|->
+ *        resolved=<model|-> chain=<a,b|-> flag_hops=<n> revert_hops=<n> aborted=<n>
+ *        final=<served|dead|aborted|silent|other|absent> yielded=<true|false> last_error=<json|null>
  *   SEAT_ROUTE: OK seats=… served=… dead=… aborted=… silent=… absent=… fallback=…
  *   SEAT_ROUTE: DRIFT …              (only with --strict, exit 1)
  * `final=other` seats are counted in seats= but in none of the named strata.
@@ -66,7 +88,7 @@ import { spawnSync } from 'node:child_process';
 import { StringDecoder } from 'node:string_decoder';
 import { fileURLToPath } from 'node:url';
 
-const CONTRACT = 'kumitate-seat-route-v1';
+const CONTRACT = 'kumitate-seat-route-v2';
 const SELF = fileURLToPath(import.meta.url);
 const CHUNK = 1 << 20;
 const SERVED_STOPS = new Set(['stop', 'toolUse', 'length']);
@@ -186,19 +208,37 @@ function turnModel(message) {
   return `${provider}/${model}`;
 }
 
+/** Python `str.isspace()` — the oracle's `strip()` semantics, which differ from ECMAScript `trim()`:
+ * JS strips U+FEFF (Python keeps it) and keeps U+0085 / U+001C-U+001F (Python strips them). */
+function isPySpace(c) {
+  return (c >= 0x09 && c <= 0x0d) || (c >= 0x1c && c <= 0x20) || c === 0x85 || c === 0xa0
+    || c === 0x1680 || (c >= 0x2000 && c <= 0x200a) || c === 0x2028 || c === 0x2029
+    || c === 0x202f || c === 0x205f || c === 0x3000;
+}
+
+/** `s.strip()` with Python's whitespace set (every member is BMP, so code units suffice). */
+function pyStrip(s) {
+  let start = 0;
+  let end = s.length;
+  while (start < end && isPySpace(s.charCodeAt(start))) start += 1;
+  while (end > start && isPySpace(s.charCodeAt(end - 1))) end -= 1;
+  return s.slice(start, end);
+}
+
 function isRedactUnit(c) {
   return (c >= 48 && c <= 57) || (c >= 65 && c <= 90) || (c >= 97 && c <= 122) || c === 95 || c === 45;
 }
 
 /**
- * First line, trimmed, runs of >= 24 `[A-Za-z0-9_-]` → `<redacted>`, cut to 120 characters (code
- * points). One linear scan that stops at the cap: a multi-MB single-line errorMessage never reaches a
+ * First line, trimmed with Python's `str.strip()` whitespace set (the oracle's), runs of >= 24
+ * `[A-Za-z0-9_-]` → `<redacted>`, cut to 120 characters (code points). An error turn whose
+ * `errorMessage` is not a string (JSON null included) reads as the empty string, not as null. One linear scan that stops at the cap: a multi-MB single-line errorMessage never reaches a
  * regex replace (seat K92Sentinel finding RD-6: `String.replace` threw RangeError above ~5.3 MB).
  */
 function redactLastError(raw) {
   const text = typeof raw === 'string' ? raw : '';
   const nl = text.indexOf('\n');
-  const line = (nl < 0 ? text : text.slice(0, nl)).trim();
+  const line = pyStrip(nl < 0 ? text : text.slice(0, nl));
   const out = [];
   let i = 0;
   while (i < line.length && out.length < LAST_ERROR_CAP) {
@@ -228,9 +268,20 @@ function readTranscript(path, seat) {
   let hasDefault = false;
   const answered = [];
   const seenModels = new Set();
-  let errors = 0;
+  let errorAttempts = 0;
+  let recoveredAttempts = 0;
+  const supersededBy = [];
+  const seenSuperseded = new Set();
+  const upstream = [];
+  const seenUpstream = new Set();
+  let sessionInitSeen = false;
+  let resolved = null;
+  let chain = null;
+  let flagHops = 0;
+  let revertHops = 0;
   let aborted = 0;
-  let lastErrorMessage = null;
+  let hasErrorTurn = false;
+  let lastErrorMessage;
   let yielded = false;
   let turnCount = 0;
   let lastStopReason;
@@ -252,6 +303,10 @@ function readTranscript(path, seat) {
     if (row.type === 'model_change') {
       const role = row.role;
       const model = typeof row.model === 'string' ? row.model : null;
+      // plan: flag_hops counts `resolvedModelIsFallback` exactly JSON `true`; every other row whose
+      // role is `fallback` is the revert-to-primary hop (turn-recovery reuses that role).
+      if (row.resolvedModelIsFallback === true) flagHops += 1;
+      else if (role === 'fallback') revertHops += 1;
       if (role === `subagent:${seat}`) {
         if (!hasSubagent) {
           hasSubagent = true;
@@ -262,6 +317,18 @@ function readTranscript(path, seat) {
           hasDefault = true;
           defaultModel = model;
         }
+      }
+      continue;
+    }
+    if (row.type === 'session_init') {
+      // Only the FIRST session_init row states the configured route; later rows are ignored whole.
+      if (!sessionInitSeen) {
+        sessionInitSeen = true;
+        resolved = typeof row.resolvedModel === 'string' ? row.resolvedModel : null;
+        const rb = row.retryFallback;
+        chain = isPlainObject(rb) && Array.isArray(rb.chain)
+          ? rb.chain.filter((item) => typeof item === 'string')
+          : null;
       }
       continue;
     }
@@ -279,10 +346,27 @@ function readTranscript(path, seat) {
         seenModels.add(model);
         answered.push(model);
       }
+      const up = message.upstreamProvider;
+      if (typeof up === 'string' && up !== '' && !seenUpstream.has(up)) {
+        seenUpstream.add(up);
+        upstream.push(up);
+      }
     }
     if (stop === 'error') {
-      errors += 1;
+      hasErrorTurn = true;
+      errorAttempts += 1;
       lastErrorMessage = message.errorMessage;
+      const rr = message.retryRecovery;
+      if (isPlainObject(rr)) {
+        if (rr.status === 'recovered') recoveredAttempts += 1;
+        if (isPlainObject(rr.supersededBy)) {
+          const hop = turnModel(rr.supersededBy);
+          if (!seenSuperseded.has(hop)) {
+            seenSuperseded.add(hop);
+            supersededBy.push(hop);
+          }
+        }
+      }
     } else if (stop === 'aborted') {
       aborted += 1;
     }
@@ -296,7 +380,12 @@ function readTranscript(path, seat) {
     }
   }
 
-  const captured = hasSubagent ? subagentModel : (hasDefault ? defaultModel : null);
+  // A `subagent:<seat>` row whose `model` is not a string states no model, so the configured default
+  // row is the route that was actually captured (the oracle's reading; the plan text is silent on a
+  // non-string model and v1 coerced it to null without consulting the default row).
+  const captured = subagentModel !== null && subagentModel !== undefined
+    ? subagentModel
+    : (hasDefault ? defaultModel : null);
 
   let final;
   if (turnCount === 0) final = 'silent';
@@ -309,9 +398,16 @@ function readTranscript(path, seat) {
     seat,
     captured,
     answered,
-    errors,
+    error_attempts: errorAttempts,
+    recovered_attempts: recoveredAttempts,
+    superseded_by: supersededBy,
+    upstream,
+    resolved,
+    chain,
+    flag_hops: flagHops,
+    revert_hops: revertHops,
     aborted,
-    last_error: lastErrorMessage === null ? null : redactLastError(lastErrorMessage),
+    last_error: hasErrorTurn ? redactLastError(lastErrorMessage) : null,
     yielded,
     final,
     fallback: captured !== null && answered.some((m) => m !== captured),
@@ -474,9 +570,15 @@ function humanLine(rec) {
   const role = rec.role === undefined || rec.role === null ? '-' : tok(String(rec.role));
   const captured = rec.captured === null || rec.captured === undefined ? '-' : tok(rec.captured);
   const answered = rec.answered === undefined || rec.answered.length === 0 ? '-' : rec.answered.map(tok).join(',');
+  const listOf = (v) => (Array.isArray(v) && v.length > 0 ? v.map(tok).join(',') : '-');
+  const scalarOf = (v) => (typeof v === 'string' ? tok(v) : '-');
+  const chainOf = (v) => (Array.isArray(v) ? `[${v.map(tok).join(',')}]` : '-');
   const lastError = rec.last_error === null || rec.last_error === undefined ? 'null' : JSON.stringify(rec.last_error);
   return `SEAT ${tok(String(rec.seat ?? '-'))} role=${role} captured=${captured} answered=${answered}`
-    + ` fallback=${Boolean(rec.fallback)} errors=${rec.errors ?? 0} aborted=${rec.aborted ?? 0}`
+    + ` fallback=${Boolean(rec.fallback)} error_attempts=${rec.error_attempts ?? 0}`
+    + ` recovered_attempts=${rec.recovered_attempts ?? 0} superseded_by=${listOf(rec.superseded_by)}`
+    + ` upstream=${listOf(rec.upstream)} resolved=${scalarOf(rec.resolved)} chain=${chainOf(rec.chain)}`
+    + ` flag_hops=${rec.flag_hops ?? 0} revert_hops=${rec.revert_hops ?? 0} aborted=${rec.aborted ?? 0}`
     + ` final=${rec.final} yielded=${Boolean(rec.yielded)} last_error=${lastError}`;
 }
 
@@ -582,8 +684,20 @@ function selftest() {
       ));
       const r = rec(f);
       check('clean-served', r.final === 'served' && r.captured === 'p/one' && r.answered.length === 1
-        && r.answered[0] === 'p/one' && r.fallback === false && r.errors === 0 && r.aborted === 0
+        && r.answered[0] === 'p/one' && r.fallback === false && r.error_attempts === 0 && r.aborted === 0
         && r.last_error === null && r.yielded === false, JSON.stringify(r));
+    }
+    // 1b a subagent row whose model is not a string states no model: the default row's model is captured
+    {
+      const f = write('capnonstr.jsonl', jsonl(
+        mc(77, `subagent:${S}`),
+        mc('D/m', 'default'),
+        turn({ provider: 'D', model: 'm', stopReason: 'stop' }),
+      ));
+      const r = rec(f);
+      check('captured-nonstring-falls-through', r.captured === 'D/m' && r.fallback === false, JSON.stringify(r));
+      const g = rec(write('capnonstr2.jsonl', jsonl(mc(77, `subagent:${S}`), turn({ provider: 'p', model: 'x', stopReason: 'stop' }))));
+      check('captured-nonstring-no-default', g.captured === null, JSON.stringify(g));
     }
     // 2 captured from roleless default when no subagent row
     {
@@ -637,13 +751,13 @@ function selftest() {
         turn({ provider: 'p', model: 'one', stopReason: 'error', errorMessage: '402 payment required: sk-abcdefghijklmnopqrstuvwx\nstack line 2' }),
       ));
       const r = rec(f);
-      check('dead', r.final === 'dead' && r.errors === 1 && r.last_error === '402 payment required: <redacted>', JSON.stringify(r));
+      check('dead', r.final === 'dead' && r.error_attempts === 1 && r.last_error === '402 payment required: <redacted>', JSON.stringify(r));
     }
     // 8 aborted
     {
       const f = write('aborted.jsonl', jsonl(turn({ provider: 'p', model: 'one', stopReason: 'aborted' })));
       const r = rec(f);
-      check('aborted', r.final === 'aborted' && r.aborted === 1 && r.errors === 0, JSON.stringify(r));
+      check('aborted', r.final === 'aborted' && r.aborted === 1 && r.error_attempts === 0, JSON.stringify(r));
     }
     // 9 error then recovered on the same model
     {
@@ -653,7 +767,7 @@ function selftest() {
         turn({ provider: 'p', model: 'one', stopReason: 'stop' }),
       ));
       const r = rec(f);
-      check('errfix', r.final === 'served' && r.errors === 1 && r.answered.length === 1
+      check('errfix', r.final === 'served' && r.error_attempts === 1 && r.answered.length === 1
         && r.fallback === false && r.last_error === 'boom', JSON.stringify(r));
     }
     // 10 silent
@@ -696,6 +810,27 @@ function selftest() {
       ));
       const r = rec(f);
       check('nonstring-error', r.last_error === '' && r.final === 'dead', JSON.stringify(r));
+    }
+    // 14b JSON null errorMessage on an error turn reads as "" (not null); no error turn stays null
+    {
+      const f = write('errnull.jsonl', jsonl(
+        turn({ provider: 'p', model: 'one', stopReason: 'error', errorMessage: null }),
+      ));
+      const r = rec(f);
+      check('error-null-message', r.last_error === '' && r.final === 'dead' && r.error_attempts === 1, JSON.stringify(r));
+      const g = rec(write('errnone.jsonl', jsonl(turn({ provider: 'p', model: 'one', stopReason: 'stop' }))));
+      check('no-error-turn-null', g.last_error === null, JSON.stringify(g));
+    }
+    // 14c trimming follows Python `str.strip()`, not ECMAScript `trim()`: BOM kept, NEL/U+001C stripped
+    {
+      const r1 = rec(write('bom.jsonl', jsonl(turn({ provider: 'p', model: 'one', stopReason: 'error', errorMessage: '\ufeffbom first line' }))));
+      check('trim-keeps-bom', r1.last_error === '\ufeffbom first line', JSON.stringify(r1.last_error));
+      const r2 = rec(write('nel.jsonl', jsonl(turn({ provider: 'p', model: 'one', stopReason: 'error', errorMessage: '\u0085nel lead' }))));
+      check('trim-strips-nel', r2.last_error === 'nel lead', JSON.stringify(r2.last_error));
+      const r3 = rec(write('sep.jsonl', jsonl(turn({ provider: 'p', model: 'one', stopReason: 'error', errorMessage: '\u001csep lead\u001f' }))));
+      check('trim-strips-1c1f', r3.last_error === 'sep lead', JSON.stringify(r3.last_error));
+      const r4 = rec(write('nbsp.jsonl', jsonl(turn({ provider: 'p', model: 'one', stopReason: 'error', errorMessage: '\u00a0nbsp lead\u3000' }))));
+      check('trim-strips-unicode-space', r4.last_error === 'nbsp lead', JSON.stringify(r4.last_error));
     }
     // 15 yield detection
     {
@@ -753,6 +888,125 @@ function selftest() {
     {
       const line = humanLine({ seat: 'A\nSEAT_ROUTE: OK seats=9', role: 'x', captured: null, answered: [], final: 'absent' });
       check('human-escape', !line.includes('\n') && line.startsWith('SEAT "A\\nSEAT_ROUTE'), line);
+    }
+    // 17h error_attempts / recovered_attempts: object with `status` exactly `recovered` only
+    {
+      const f = write('recovered.jsonl', jsonl(
+        turn({ provider: 'p', model: 'one', stopReason: 'error', retryRecovery: { status: 'recovered' } }),
+        turn({ provider: 'p', model: 'one', stopReason: 'error', retryRecovery: { status: 'recovered', attempt: 2 } }),
+        turn({ provider: 'p', model: 'one', stopReason: 'error', retryRecovery: { status: 'Recovered' } }),
+        turn({ provider: 'p', model: 'one', stopReason: 'error', retryRecovery: {} }),
+        turn({ provider: 'p', model: 'one', stopReason: 'error' }),
+        turn({ provider: 'p', model: 'one', stopReason: 'error', retryRecovery: 'recovered' }),
+        turn({ provider: 'p', model: 'one', stopReason: 'stop' }),
+      ));
+      const r = rec(f);
+      // two exact `recovered` rows vs one `Recovered`: a case-swapped status test reads 1, not 2 (K93Mutation M01)
+      check('recovered-attempts', r.error_attempts === 6 && r.recovered_attempts === 2
+        && Number.isInteger(r.error_attempts) && Number.isInteger(r.recovered_attempts), JSON.stringify(r));
+    }
+    // 17i superseded_by: object → provider/model under `?`; non-object ignored; missing/empty → `?`
+    {
+      const f = write('supersede.jsonl', jsonl(
+        turn({ provider: 'p', model: 'a', stopReason: 'error', retryRecovery: { status: 'superseded', supersededBy: { provider: 'stealth', model: 'm1' } } }),
+        turn({ provider: 'p', model: 'a', stopReason: 'error', retryRecovery: { status: 'superseded', supersededBy: { provider: 'stealth', model: 'm1' } } }),
+        turn({ provider: 'p', model: 'a', stopReason: 'error', retryRecovery: { status: 'superseded', supersededBy: 'stealth/m2' } }),
+        turn({ provider: 'p', model: 'a', stopReason: 'error', retryRecovery: { status: 'superseded', supersededBy: { provider: 'stealth' } } }),
+        turn({ provider: 'p', model: 'a', stopReason: 'error', retryRecovery: { status: 'superseded', supersededBy: { provider: 9, model: 'x' } } }),
+        turn({ provider: 'p', model: 'a', stopReason: 'error', retryRecovery: { status: 'superseded', supersededBy: { provider: '', model: '' } } }),
+      ));
+      const r = rec(f);
+      // the `?` rule is the v1 whole-token rule: either component missing/non-string/empty → `?`.
+      check('superseded-by', JSON.stringify(r.superseded_by) === '["stealth/m1","?"]', JSON.stringify(r.superseded_by));
+    }
+    // 17i' a lone non-object supersededBy (string, null, array) adds nothing — K93Mutation survivor M02
+    // (`isPlainObject(rr.supersededBy)` → `!== undefined`) was masked by the `?` row above.
+    {
+      const f = write('supersede-lone.jsonl', jsonl(
+        turn({ provider: 'p', model: 'a', stopReason: 'error', retryRecovery: { status: 'failed', supersededBy: 'q/two' } }),
+        turn({ provider: 'p', model: 'a', stopReason: 'error', retryRecovery: { status: 'failed', supersededBy: null } }),
+        turn({ provider: 'p', model: 'a', stopReason: 'error', retryRecovery: { status: 'failed', supersededBy: ['q', 'two'] } }),
+      ));
+      const r = rec(f);
+      check('superseded-by-lone-nonobject', JSON.stringify(r.superseded_by) === '[]' && r.error_attempts === 3, JSON.stringify(r));
+    }
+    // 17j retryRecovery on a served turn never feeds recovered_attempts or superseded_by
+    {
+      const f = write('servedrr.jsonl', jsonl(
+        turn({ provider: 'p', model: 'a', stopReason: 'stop', retryRecovery: { status: 'recovered', supersededBy: { provider: 'x', model: 'y' } } }),
+      ));
+      const r = rec(f);
+      check('served-retryrecovery-ignored', r.recovered_attempts === 0 && JSON.stringify(r.superseded_by) === '[]', JSON.stringify(r));
+    }
+    // 17k upstream: served turns only, non-empty string only, distinct first-seen
+    {
+      const f = write('upstream.jsonl', jsonl(
+        turn({ provider: 'p', model: 'a', stopReason: 'stop', upstreamProvider: 'Stealth' }),
+        turn({ provider: 'p', model: 'a', stopReason: 'toolUse', upstreamProvider: 'Stealth' }),
+        turn({ provider: 'p', model: 'a', stopReason: 'error', upstreamProvider: 'Ignored' }),
+        turn({ provider: 'p', model: 'a', stopReason: 'length', upstreamProvider: '' }),
+        turn({ provider: 'p', model: 'a', stopReason: 'stop', upstreamProvider: 42 }),
+        turn({ provider: 'p', model: 'a', stopReason: 'stop', upstreamProvider: 'Other' }),
+      ));
+      const r = rec(f);
+      check('upstream-served-only', JSON.stringify(r.upstream) === '["Stealth","Other"]', JSON.stringify(r.upstream));
+    }
+    // 17l first session_init wins; a non-string resolvedModel reads null
+    {
+      const f = write('sinit.jsonl', jsonl(
+        { type: 'session_init', resolvedModel: 'p/first', retryFallback: { chain: ['p/a', 'p/b'] } },
+        { type: 'session_init', resolvedModel: 'p/second', retryFallback: { chain: ['p/z'] } },
+        turn({ provider: 'p', model: 'first', stopReason: 'stop' }),
+      ));
+      const r = rec(f);
+      check('session-init-first', r.resolved === 'p/first' && JSON.stringify(r.chain) === '["p/a","p/b"]', JSON.stringify(r));
+      const g = rec(write('sinit2.jsonl', jsonl({ type: 'session_init', resolvedModel: 7, retryFallback: { chain: ['p/a'] } })));
+      check('resolved-nonstring', g.resolved === null && JSON.stringify(g.chain) === '["p/a"]', JSON.stringify(g));
+    }
+    // 17m chain: non-list → null, [] stays [], non-string items dropped, no session_init → null
+    {
+      const r1 = rec(write('chainbad.jsonl', jsonl({ type: 'session_init', retryFallback: { chain: 'p/a' } })));
+      check('chain-nonlist', r1.chain === null, JSON.stringify(r1));
+      const r2 = rec(write('chainempty.jsonl', jsonl({ type: 'session_init', retryFallback: { chain: [] } })));
+      check('chain-empty', JSON.stringify(r2.chain) === '[]', JSON.stringify(r2));
+      const r3 = rec(write('chainmixed.jsonl', jsonl({ type: 'session_init', retryFallback: { chain: ['p/a', 3, null, 'p/b'] } })));
+      check('chain-nonstring-drop', JSON.stringify(r3.chain) === '["p/a","p/b"]', JSON.stringify(r3));
+      const r4 = rec(write('chainnone.jsonl', jsonl({ type: 'title', title: '' })));
+      check('no-session-init', r4.resolved === null && r4.chain === null, JSON.stringify(r4));
+      const r5 = rec(write('chainnorb.jsonl', jsonl({ type: 'session_init', resolvedModel: 'p/a', retryFallback: 'x' })));
+      check('chain-no-retryfallback', r5.chain === null && r5.resolved === 'p/a', JSON.stringify(r5));
+    }
+    // 17n flag_hops is JSON true only (not 1); revert_hops is role `fallback` without that flag
+    {
+      const f = write('hops.jsonl', jsonl(
+        mc('p/primary', `subagent:${S}`),
+        mc('p/fb', 'default', { resolvedModelIsFallback: true }),
+        mc('p/fb', 'fallback', { resolvedModelIsFallback: true }),
+        mc('p/revert', 'fallback'),
+        mc('p/revert2', 'fallback', { resolvedModelIsFallback: false }),
+        mc('p/one', 'fallback', { resolvedModelIsFallback: 1 }),
+        mc('p/def', 'default'),
+      ));
+      const r = rec(f);
+      check('flag-hops-true-only', r.flag_hops === 2, `flag_hops=${r.flag_hops}`);
+      check('revert-hops', r.revert_hops === 3, `revert_hops=${r.revert_hops}`);
+      check('hops-types', Number.isInteger(r.flag_hops) && Number.isInteger(r.revert_hops)
+        && r.revert_hops !== true, JSON.stringify(r));
+    }
+    // 17o v2 record shape: `errors` is gone, ints are ints, chain null vs [] is distinct
+    {
+      const f = write('shape.jsonl', jsonl(turn({ provider: 'p', model: 'one', stopReason: 'stop' })));
+      const r = rec(f);
+      check('errors-renamed', !('errors' in r) && Object.prototype.hasOwnProperty.call(r, 'error_attempts'), Object.keys(r).join(','));
+      check('v2-types', Number.isInteger(r.error_attempts) && Number.isInteger(r.recovered_attempts)
+        && Number.isInteger(r.flag_hops) && Number.isInteger(r.revert_hops)
+        && Array.isArray(r.superseded_by) && Array.isArray(r.upstream)
+        && r.resolved === null && r.chain === null, JSON.stringify(r));
+      const line = humanLine(r);
+      check('human-v2-fields', line.includes('error_attempts=0') && line.includes('recovered_attempts=0')
+        && line.includes('superseded_by=-') && line.includes('upstream=-') && line.includes('resolved=-')
+        && line.includes('chain=-') && line.includes('flag_hops=0') && line.includes('revert_hops=0')
+        && !line.includes(' errors='), line);
     }
     // 18 wave mode absent + 19 unsafe name + 20 tie-break + 21 role/session realpath
     {
