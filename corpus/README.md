@@ -274,6 +274,7 @@ fixture suite, `--strict` to fail on warnings.
 | `lessons/round-92-verifier-spotcheck.md` | Non-author round-92 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 | `knowledge/seat-route-retry-fields.md` | Seat route retry fields (`seat-route` v2): `error_attempts` per failed attempt, `recovered_attempts`, `superseded_by` from `retryRecovery`, `upstream` from `upstreamProvider`, the first `session_init` `resolved`/`chain`, `flag_hops` vs `revert_hops` (the reused `fallback` role) | S267/S268/S269/S270; `.ufo/waves/round-93/` |
 | `lessons/round-93.md` | Round-93 `seat-route` v2: Q86 counter (type-strict, synthetic F set, held-out post-freeze H, runtime clause), 15 pre-data controls, counter findings (runtime clause evadable, H author-writable), mistakes M93-1/M93-2 | LOG.md round 93; `.ufo/waves/round-93/` |
+| `lessons/round-93-verifier-spotcheck.md` | Non-author round-93 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 
 ## Known gaps
 
