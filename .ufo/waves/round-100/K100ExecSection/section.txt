@@ -1,0 +1,130 @@
+# section scope: id rows outside `## Registry` (census vs tools)
+
+Readers compared per fixture:
+  census : bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-100/K100ExecSection/fixtures/section-before.md --today 2026-11-07  (subset: validate --file <fixture> --today 2026-11-07)
+  base   : node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-100/K100ExecSection/base/cite-sources.mjs --readme <r> --sources <fixture>   |   node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-100/K100ExecSection/base/source-capture.mjs --registry <regD/regC> --sources <fixture>
+  ref    : node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-100/K100ExecSection/ref/ctl-positive/cite-sources.mjs ... (L1 reference ctl-positive, rule R100)
+  sec/fc/both : node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-100/K100ExecSection/fixed-<v>/... (minimal census-parity fixes, diffs in fix-<v>.diff)
+ROW = id recognised as a registry row; NOT-ROW = id rejected; census codes: E06 in-registry row (tier Z<cells>),
+E12 id-shaped row outside Registry, E01 wrong field count, E02 malformed id. Fixture ids carry tier Z1 so every
+census-recognised in-registry row emits an E06 line naming it. Full receipts: receipts/, fixtures: fixtures/.
+
+## section-before  (census exit=1)
+fixture: fixtures/section-before.md
+census lines: file	E12	S101 row outside Registry section ; file	E06	S901 tier=Z1
+census read: E06(in-registry)={S901} E12(outside)={S101} E01(bad-fields)={} E02(bad-id)={}
+  cite S101: base=ROW ref=ROW sec=NOT-ROW fc=ROW both=NOT-ROW
+  cite S901: base=ROW ref=ROW sec=ROW fc=ROW both=ROW
+  capture base: rows=['S101', 'S901'] not-rows=[]
+  capture ref: rows=['S101', 'S901'] not-rows=[]
+  capture sec: rows=['S901'] not-rows=['S101']
+  capture fc: rows=['S101', 'S901'] not-rows=[]
+  capture both: rows=['S901'] not-rows=['S101']
+
+## section-search-log  (census exit=1)
+fixture: fixtures/section-search-log.md
+census lines: file	E12	S102 row outside Registry section ; file	E06	S901 tier=Z1
+census read: E06(in-registry)={S901} E12(outside)={S102} E01(bad-fields)={} E02(bad-id)={}
+  cite S102: base=ROW ref=ROW sec=NOT-ROW fc=ROW both=NOT-ROW
+  cite S901: base=ROW ref=ROW sec=ROW fc=ROW both=ROW
+  capture base: rows=['S102', 'S901'] not-rows=[]
+  capture ref: rows=['S102', 'S901'] not-rows=[]
+  capture sec: rows=['S901'] not-rows=['S102']
+  capture fc: rows=['S102', 'S901'] not-rows=[]
+  capture both: rows=['S901'] not-rows=['S102']
+
+## section-after-h1  (census exit=1)
+fixture: fixtures/section-after-h1.md
+census lines: file	E06	S901 tier=Z1 ; file	E12	S103 row outside Registry section
+census read: E06(in-registry)={S901} E12(outside)={S103} E01(bad-fields)={} E02(bad-id)={}
+  cite S901: base=ROW ref=ROW sec=ROW fc=ROW both=ROW
+  cite S103: base=ROW ref=ROW sec=NOT-ROW fc=ROW both=NOT-ROW
+  capture base: rows=['S103', 'S901'] not-rows=[]
+  capture ref: rows=['S103', 'S901'] not-rows=[]
+  capture sec: rows=['S901'] not-rows=['S103']
+  capture fc: rows=['S103', 'S901'] not-rows=[]
+  capture both: rows=['S901'] not-rows=['S103']
+
+## section-fence-out  (census exit=1)
+fixture: fixtures/section-fence-out.md
+census lines: file	E06	S901 tier=Z1 ; file	E12	S104 row outside Registry section
+census read: E06(in-registry)={S901} E12(outside)={S104} E01(bad-fields)={} E02(bad-id)={}
+  cite S901: base=ROW ref=ROW sec=ROW fc=ROW both=ROW
+  cite S104: base=ROW ref=ROW sec=NOT-ROW fc=ROW both=NOT-ROW
+  capture base: rows=['S104', 'S901'] not-rows=[]
+  capture ref: rows=['S104', 'S901'] not-rows=[]
+  capture sec: rows=['S901'] not-rows=['S104']
+  capture fc: rows=['S104', 'S901'] not-rows=[]
+  capture both: rows=['S901'] not-rows=['S104']
+
+## section-fence-in  (census exit=1)
+fixture: fixtures/section-fence-in.md
+census lines: file	E06	S901 tier=Z1 ; file	E06	S105 tier=Z1
+census read: E06(in-registry)={S105, S901} E12(outside)={} E01(bad-fields)={} E02(bad-id)={}
+  cite S901: base=ROW ref=ROW sec=ROW fc=ROW both=ROW
+  cite S105: base=ROW ref=ROW sec=ROW fc=ROW both=ROW
+  capture base: rows=['S105', 'S901'] not-rows=[]
+  capture ref: rows=['S105', 'S901'] not-rows=[]
+  capture sec: rows=['S105', 'S901'] not-rows=[]
+  capture fc: rows=['S105', 'S901'] not-rows=[]
+  capture both: rows=['S105', 'S901'] not-rows=[]
+
+## section-h3  (census exit=1)
+fixture: fixtures/section-h3.md
+census lines: file	E12	S106 row outside Registry section ; file	E06	S901 tier=Z1
+census read: E06(in-registry)={S901} E12(outside)={S106} E01(bad-fields)={} E02(bad-id)={}
+  cite S106: base=ROW ref=ROW sec=NOT-ROW fc=ROW both=NOT-ROW
+  cite S901: base=ROW ref=ROW sec=ROW fc=ROW both=ROW
+  capture base: rows=['S106', 'S901'] not-rows=[]
+  capture ref: rows=['S106', 'S901'] not-rows=[]
+  capture sec: rows=['S901'] not-rows=['S106']
+  capture fc: rows=['S106', 'S901'] not-rows=[]
+  capture both: rows=['S901'] not-rows=['S106']
+
+## section-nospace  (census exit=1)
+fixture: fixtures/section-nospace.md
+census lines: file	E12	S107 row outside Registry section ; file	E06	S901 tier=Z1
+census read: E06(in-registry)={S901} E12(outside)={S107} E01(bad-fields)={} E02(bad-id)={}
+  cite S107: base=ROW ref=ROW sec=NOT-ROW fc=ROW both=NOT-ROW
+  cite S901: base=ROW ref=ROW sec=ROW fc=ROW both=ROW
+  capture base: rows=['S107', 'S901'] not-rows=[]
+  capture ref: rows=['S107', 'S901'] not-rows=[]
+  capture sec: rows=['S901'] not-rows=['S107']
+  capture fc: rows=['S107', 'S901'] not-rows=[]
+  capture both: rows=['S901'] not-rows=['S107']
+
+## section-cr  (census exit=1)
+fixture: fixtures/section-cr.md
+census lines: file	E06	S901 tier=Z1 ; file	E12	S108 row outside Registry section
+census read: E06(in-registry)={S901} E12(outside)={S108} E01(bad-fields)={} E02(bad-id)={}
+  cite S901: base=ROW ref=ROW sec=ROW fc=ROW both=ROW
+  cite S108: base=ROW ref=ROW sec=NOT-ROW fc=ROW both=NOT-ROW
+  capture base: rows=['S108', 'S901'] not-rows=[]
+  capture ref: rows=['S108', 'S901'] not-rows=[]
+  capture sec: rows=['S901'] not-rows=['S108']
+  capture fc: rows=['S108', 'S901'] not-rows=[]
+  capture both: rows=['S901'] not-rows=['S108']
+
+## section-indent3  (census exit=1)
+fixture: fixtures/section-indent3.md
+census lines: file	E06	S901 tier=Z1 ; file	E06	S109 tier=Z1
+census read: E06(in-registry)={S109, S901} E12(outside)={} E01(bad-fields)={} E02(bad-id)={}
+  cite S901: base=ROW ref=ROW sec=ROW fc=ROW both=ROW
+  cite S109: base=ROW ref=ROW sec=ROW fc=ROW both=ROW
+  capture base: rows=['S109', 'S901'] not-rows=[]
+  capture ref: rows=['S109', 'S901'] not-rows=[]
+  capture sec: rows=['S109', 'S901'] not-rows=[]
+  capture fc: rows=['S109', 'S901'] not-rows=[]
+  capture both: rows=['S109', 'S901'] not-rows=[]
+
+## section-indent4  (census exit=1)
+fixture: fixtures/section-indent4.md
+census lines: file	E12	S110 row outside Registry section ; file	E12	S901 row outside Registry section
+census read: E06(in-registry)={} E12(outside)={S110, S901} E01(bad-fields)={} E02(bad-id)={}
+  cite S110: base=ROW ref=ROW sec=NOT-ROW fc=ROW both=NOT-ROW
+  cite S901: base=ROW ref=ROW sec=NOT-ROW fc=ROW both=NOT-ROW
+  capture base: rows=['S110', 'S901'] not-rows=[]
+  capture ref: rows=['S110', 'S901'] not-rows=[]
+  capture sec: FAIL-CLOSED: SOURCE_CAPTURE: FAIL-CLOSED reason=sources doc carries no S### rows
+  capture fc: rows=['S110', 'S901'] not-rows=[]
+  capture both: FAIL-CLOSED: SOURCE_CAPTURE: FAIL-CLOSED reason=sources doc carries no S### rows

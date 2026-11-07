@@ -1,0 +1,13 @@
+source-capture rule parity (BASE vs candidate, LF fixtures)
+case	base_exit	cand_exit	same_stdout	base_first	cand_first
+clean	0	0	True	SOURCE_CAPTURE: CLEAN captures=1 exemptions=0	SOURCE_CAPTURE: CLEAN captures=1 exemptions=0
+dup	2	2	True	SOURCE_CAPTURE: FAIL-CLOSED reason=sources doc has duplicate row id S700	SOURCE_CAPTURE: FAIL-CLOSED reason=sources doc has duplicate row id S700
+dup-tabpad	2	2	True	SOURCE_CAPTURE: FAIL-CLOSED reason=sources doc has duplicate row id S700	SOURCE_CAPTURE: FAIL-CLOSED reason=sources doc has duplicate row id S700
+empty-registry	2	2	True	SOURCE_CAPTURE: FAIL-CLOSED reason=sources doc carries no S### rows	SOURCE_CAPTURE: FAIL-CLOSED reason=sources doc carries no S### rows
+orphan-exemption	1	1	True	SOURCE_CAPTURE: DRIFT captures=1 exemptions=1 bad=1 first=S701:orphan-exemption	SOURCE_CAPTURE: DRIFT captures=1 exemptions=1 bad=1 first=S701:orphan-exemption
+uncaptured	1	1	True	SOURCE_CAPTURE: DRIFT captures=1 exemptions=0 bad=1 first=S702:uncaptured	SOURCE_CAPTURE: DRIFT captures=1 exemptions=0 bad=1 first=S702:uncaptured
+
+out-of-claim probes (report-only): census verdict vs cite-sources candidate
+case	census	candidate_cite
+row-outside-registry	E12,E06	CITE_SOURCES: DRIFT ghosts=1 first=S732
+malformed-10cell-row	E01	CITE_SOURCES: DRIFT ghosts=2 first=S730

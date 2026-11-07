@@ -293,6 +293,8 @@ fixture suite, `--strict` to fail on warnings.
 | `knowledge/sources-check-cell-trim-class.md` | Registry cells trimmed with the census blank class `[ \t]` (R99), not JS `trim()` nor Unicode White_Space; 44-class table, cross-reader/locale matrix, per-kind effects, census-internal used-by split | S276, S277, S278, S279; `.ufo/waves/round-99/` |
 | `lessons/round-99.md` | R99 sources-check cell trim, M2 survivor arms, read-order log + Q93, used-by trade (24/44 vs 37/44 UTF-8), counter gaps, routed `\s` readers | LOG.md round 99; `.ufo/waves/round-99/` |
 | `lessons/round-99-verifier-spotcheck.md` | Non-author round-99 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
+| `knowledge/row-id-reader-class.md` | Registry row ids for cite-sources and source-capture read as the census `row_pass` (R100): LF records, 0–3 SP indent, SP/TAB id pad; the `m`-flag record hole; section scope routed | S276, S277, S274, S280, S281; `.ufo/waves/round-100/` |
+| `lessons/round-100.md` | R100 row-id readers, M2 undrawn-class arms, Q94 control witness, Q95 gate battery, S269–S281 capture binding | LOG.md round 100; `.ufo/waves/round-100/` |
 
 ## Known gaps
 

@@ -1,0 +1,33 @@
+mutant	note	cite_exit	cite_verdict	capture_exit	capture_verdict	killed
+M01-nothing	BASE JS \s readers (do-nothing)	1	FAIL	1	FAIL	1
+M02-k99	capture keeps the m-flag ^ (CR/LS/PS start rows)	0	PASS	1	FAIL	1
+M03-citeonly	source-capture left at BASE	0	PASS	1	FAIL	1
+M04-captureonly	cite-sources left at BASE	1	FAIL	0	PASS	1
+M05-indent-blank	TAB accepted in the capture indent	0	PASS	1	FAIL	1
+M06-indent4	four-space indent accepted	1	FAIL	1	FAIL	1
+M07-spaceonly	TAB pads refused	1	FAIL	1	FAIL	1
+M08-nbsp	NBSP accepted as a pad	1	FAIL	1	FAIL	1
+M09-leadjs	leading pad keeps JS \s	1	FAIL	1	FAIL	1
+M10-trailjs	trailing pad keeps JS \s	1	FAIL	1	FAIL	1
+M11-padcap3	blank pads capped at 3	1	FAIL	1	FAIL	1
+M12-noanchor	id cell not closed by a pipe	1	FAIL	1	FAIL	1
+M13-unicode-digits	any Unicode decimal digit	0	PASS	1	FAIL	1
+M14-ci	case-insensitive id	0	PASS	1	FAIL	1
+M15-splitany	every JS line terminator splits capture records	0	PASS	1	FAIL	1
+M16-vt-blank	VT accepted as a blank pad	1	FAIL	1	FAIL	1
+M17-indent-cap2	3-SP indent not a row	1	FAIL	1	FAIL	1
+M18-indent-min1	column-0 row not a row	1	FAIL	1	FAIL	1
+M19-split-crlf	split(/\r?\n/): trailing CR stripped per record	0	PASS	0	PASS	0
+M20-digits4	3-digit ids not rows	1	FAIL	1	FAIL	1
+M21-cite-no-close	cite only: id cell not closed by a pipe	1	FAIL	0	PASS	1
+M22-cite-gflag	cite only: /g makes String.match return no groups	1	FAIL	0	PASS	1
+M23-cap-mflag	capture only: m flag with per-LF-record match	0	PASS	1	FAIL	1
+M24-cite-unanchored	cite only: row gate not anchored to record start	1	FAIL	0	PASS	1
+M25-cap-split-crlf-only	capture only: records split on CRLF only (LF file = one record)	0	PASS	1	FAIL	1
+M26-cap-indent4	capture only: 4-char indent gate	0	PASS	1	FAIL	1
+M27-cap-no-close	capture only: id cell not closed by a pipe	0	PASS	1	FAIL	1
+M28-cite-indent-blank	cite only: TAB accepted in the indent	1	FAIL	0	PASS	1
+M29-cite-digits2	cite only: 1-2 digit ids read as row ids	0	PASS	0	PASS	0
+M30-cap-digits2	capture only: 1-2 digit ids read as row ids	0	PASS	0	PASS	0
+M31-cite-digitsplus	cite only: S + 1+ digits (citedIds still gates 3+)	0	PASS	0	PASS	0
+M32-cite-splitany	cite only: every JS line terminator splits records	0	PASS	0	PASS	0

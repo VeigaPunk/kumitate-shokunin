@@ -1,0 +1,310 @@
+[
+ {
+  "lane": "kake-shokunin",
+  "file": "kake-shokunin/scripts/citing_set.py",
+  "line": 189,
+  "literal": "S[0-9]{3,}",
+  "flags": "python-re",
+  "indent": "unknown",
+  "pad": "ASCII SP/TAB only (census-conformant)",
+  "notes": [],
+  "source": "_POPULATION_ID_RE = re.compile(r\"S[0-9]{3,}\")"
+ },
+ {
+  "lane": "kake-shokunin",
+  "file": "kake-shokunin/scripts/id_resolver.py",
+  "line": 55,
+  "literal": "(?<![A-Za-z0-9_])S\\d{3,}(?![A-Za-z0-9_])",
+  "flags": "python-re",
+  "indent": "unknown",
+  "pad": "ASCII SP/TAB only (census-conformant)",
+  "notes": [],
+  "source": "ID_RE = re.compile(r\"(?<![A-Za-z0-9_])S\\d{3,}(?![A-Za-z0-9_])\")"
+ },
+ {
+  "lane": "kake-shokunin",
+  "file": "kake-shokunin/scripts/id_resolver.py",
+  "line": 57,
+  "literal": "^S\\d{3,}$",
+  "flags": "python-re",
+  "indent": "unknown",
+  "pad": "ASCII SP/TAB only (census-conformant)",
+  "notes": [],
+  "source": "ID_CELL_RE = re.compile(r\"^S\\d{3,}$\")"
+ },
+ {
+  "lane": "kumitate-shokunin",
+  "file": "kumitate-shokunin/scripts/cite-sources.mjs",
+  "line": 26,
+  "literal": "/\\bS[0-9]{3,}\\b/g",
+  "flags": "g",
+  "indent": "not a row-gate literal",
+  "pad": "unknown",
+  "notes": [
+   "`g` flag"
+  ],
+  "source": "const ID_RE = /\\bS[0-9]{3,}\\b/g;"
+ },
+ {
+  "lane": "kumitate-shokunin",
+  "file": "kumitate-shokunin/scripts/cite-sources.mjs",
+  "line": 36,
+  "literal": "/^ {0,3}\\|\\s*(S[0-9]{3,})\\s*\\|/",
+  "flags": "",
+  "indent": "0-3 ASCII SP (census-conformant)",
+  "pad": "JS \\s -- accepts NBSP/VT/FF/CR/U+FEFF/U+2028 (DIVERGES)",
+  "notes": [],
+  "source": "const m = line.match(/^ {0,3}\\|\\s*(S[0-9]{3,})\\s*\\|/);"
+ },
+ {
+  "lane": "kumitate-shokunin",
+  "file": "kumitate-shokunin/scripts/round-gate.mjs",
+  "line": 411,
+  "literal": "/^ {0,3}\\|[ \\t]*S\\d{3,}[ \\t]*\\|/",
+  "flags": "",
+  "indent": "0-3 ASCII SP (census-conformant)",
+  "pad": "ASCII SP/TAB only (census-conformant)",
+  "notes": [],
+  "source": "const SOURCES_ROW_RE = /^ {0,3}\\|[ \\t]*S\\d{3,}[ \\t]*\\|/;"
+ },
+ {
+  "lane": "kumitate-shokunin",
+  "file": "kumitate-shokunin/scripts/source-capture.mjs",
+  "line": 77,
+  "literal": "/^S[0-9]{3,}$/",
+  "flags": "",
+  "indent": "not a row-gate literal",
+  "pad": "unknown",
+  "notes": [],
+  "source": "const SID = /^S[0-9]{3,}$/;"
+ },
+ {
+  "lane": "kumitate-shokunin",
+  "file": "kumitate-shokunin/scripts/source-capture.mjs",
+  "line": 157,
+  "literal": "/^\\s*\\|\\s*(S[0-9]{3,})\\s*\\|/gm",
+  "flags": "gm",
+  "indent": "JS \\s -- accepts TAB/NBSP/4+ SP (DIVERGES)",
+  "pad": "JS \\s -- accepts NBSP/VT/FF/CR/U+FEFF/U+2028 (DIVERGES)",
+  "notes": [
+   "`m` flag: `^` also matches after CR/U+2028/U+2029 (DIVERGES: gawk RS=LF)",
+   "`g` flag"
+  ],
+  "source": "for (const m of raw.matchAll(/^\\s*\\|\\s*(S[0-9]{3,})\\s*\\|/gm)) {"
+ },
+ {
+  "lane": "kumitate-shokunin",
+  "file": "kumitate-shokunin/scripts/source-dupes.mjs",
+  "line": 79,
+  "literal": "/^S[0-9]{3,}$/",
+  "flags": "",
+  "indent": "not a row-gate literal",
+  "pad": "unknown",
+  "notes": [],
+  "source": "const SID = /^S[0-9]{3,}$/;"
+ },
+ {
+  "lane": "kumitate-shokunin",
+  "file": "kumitate-shokunin/scripts/sources-check.mjs",
+  "line": 237,
+  "literal": "/^\\|[ \\t]*S\\d{3,}[ \\t]*\\|/",
+  "flags": "",
+  "indent": "not a row-gate literal",
+  "pad": "ASCII SP/TAB only (census-conformant)",
+  "notes": [],
+  "source": "if (/^\\|[ \\t]*S\\d{3,}[ \\t]*\\|/.test(line)) {"
+ },
+ {
+  "lane": "kumitate-shokunin",
+  "file": "kumitate-shokunin/scripts/sources-check.mjs",
+  "line": 249,
+  "literal": "/^S\\d{3,}$/",
+  "flags": "",
+  "indent": "not a row-gate literal",
+  "pad": "unknown",
+  "notes": [],
+  "source": "const validId = /^S\\d{3,}$/.test(id);"
+ },
+ {
+  "lane": "kumitate-shokunin",
+  "file": "kumitate-shokunin/scripts/sources-check.mjs",
+  "line": 374,
+  "literal": "/\\bS\\d{3,}\\b/g",
+  "flags": "g",
+  "indent": "not a row-gate literal",
+  "pad": "unknown",
+  "notes": [
+   "`g` flag"
+  ],
+  "source": "const sourceIds = [...new Set((lines[0].match(/\\bS\\d{3,}\\b/g) ?? []))];"
+ },
+ {
+  "lane": "kumitate-shokunin",
+  "file": "kumitate-shokunin/scripts/sources-check.mjs",
+  "line": 1219,
+  "literal": "/^\\\\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\\\\|/",
+  "flags": "",
+  "indent": "not a row-gate literal",
+  "pad": "unknown",
+  "notes": [],
+  "source": "'malformed=$(awk -F\"|\" \\'/^\\\\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\\\\|/ && NF!=13 {n++} END{print n+0}\\' \"$file\") || exit 11',"
+ },
+ {
+  "lane": "kumitate-shokunin",
+  "file": "kumitate-shokunin/scripts/sources-check.mjs",
+  "line": 1220,
+  "literal": "/^\\\\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\\\\|/",
+  "flags": "",
+  "indent": "not a row-gate literal",
+  "pad": "unknown",
+  "notes": [],
+  "source": "'duplicates=$(awk -F\"|\" \\'/^\\\\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\\\\|/ {i=$2; gsub(/[[:space:]]/,\"\",i); print i}\\' \"$file\" | sort | uniq -d | wc -l) || ex"
+ },
+ {
+  "lane": "tabi-shokunin",
+  "file": "tabi-shokunin/scripts/check-bidi-runtime.mjs",
+  "line": 474,
+  "literal": "/^ {0,3}\\|[ \\t]*S[0-9]{3,}[ \\t]*\\|/",
+  "flags": "",
+  "indent": "0-3 ASCII SP (census-conformant)",
+  "pad": "ASCII SP/TAB only (census-conformant)",
+  "notes": [],
+  "source": "if (!/^ {0,3}\\|[ \\t]*S[0-9]{3,}[ \\t]*\\|/.test(line)) continue;"
+ },
+ {
+  "lane": "tabi-shokunin",
+  "file": "tabi-shokunin/scripts/check-bidi-runtime.mjs",
+  "line": 527,
+  "literal": "/^S\\d{3,}$/",
+  "flags": "",
+  "indent": "not a row-gate literal",
+  "pad": "unknown",
+  "notes": [],
+  "source": "if (!/^S\\d{3,}$/.test(id)) continue;"
+ },
+ {
+  "lane": "tabi-shokunin",
+  "file": "tabi-shokunin/scripts/check-bidi-runtime.mjs",
+  "line": 739,
+  "literal": "/\\bS\\d{3,}\\b/g",
+  "flags": "g",
+  "indent": "not a row-gate literal",
+  "pad": "unknown",
+  "notes": [
+   "`g` flag"
+  ],
+  "source": "const cited = [...srcLine.matchAll(/\\bS\\d{3,}\\b/g)].map((m) => m[0]);"
+ },
+ {
+  "lane": "tabi-shokunin",
+  "file": "tabi-shokunin/scripts/check-decision-table.mjs",
+  "line": 122,
+  "literal": "/^ {0,3}\\|[ \\t]*S[0-9]{3,}[ \\t]*\\|/",
+  "flags": "",
+  "indent": "0-3 ASCII SP (census-conformant)",
+  "pad": "ASCII SP/TAB only (census-conformant)",
+  "notes": [],
+  "source": "if (!/^ {0,3}\\|[ \\t]*S[0-9]{3,}[ \\t]*\\|/.test(line)) continue;"
+ },
+ {
+  "lane": "tabi-shokunin",
+  "file": "tabi-shokunin/scripts/check-decision-table.mjs",
+  "line": 275,
+  "literal": "/^S[0-9]{3,}$/",
+  "flags": "",
+  "indent": "not a row-gate literal",
+  "pad": "unknown",
+  "notes": [],
+  "source": "if (!/^S[0-9]{3,}$/.test(source) || !rows.has(source)) { fail(\"r1-row-missing\"); continue; }"
+ },
+ {
+  "lane": "tabi-shokunin",
+  "file": "tabi-shokunin/scripts/check-frontier-admission.mjs",
+  "line": 126,
+  "literal": "/^ {0,3}\\|[ \\t]*S[0-9]{3,}[ \\t]*\\|/",
+  "flags": "",
+  "indent": "0-3 ASCII SP (census-conformant)",
+  "pad": "ASCII SP/TAB only (census-conformant)",
+  "notes": [],
+  "source": "if (!/^ {0,3}\\|[ \\t]*S[0-9]{3,}[ \\t]*\\|/.test(line)) continue;"
+ },
+ {
+  "lane": "tabi-shokunin",
+  "file": "tabi-shokunin/scripts/check-frontier-admission.mjs",
+  "line": 241,
+  "literal": "/\\bS[0-9]{3,}\\b/g",
+  "flags": "g",
+  "indent": "not a row-gate literal",
+  "pad": "unknown",
+  "notes": [
+   "`g` flag"
+  ],
+  "source": "if (m) for (const x of m[1].matchAll(/\\bS[0-9]{3,}\\b/g)) if (!ids.includes(x[0])) ids.push(x[0]);"
+ },
+ {
+  "lane": "tabi-shokunin",
+  "file": "tabi-shokunin/scripts/check-release-pins.mjs",
+  "line": 75,
+  "literal": "/^ {0,3}\\|\\s*S\\d{3,}\\s*\\|/",
+  "flags": "",
+  "indent": "0-3 ASCII SP (census-conformant)",
+  "pad": "unknown",
+  "notes": [],
+  "source": "const ROW_RE = /^ {0,3}\\|\\s*S\\d{3,}\\s*\\|/;"
+ },
+ {
+  "lane": "tabi-shokunin",
+  "file": "tabi-shokunin/scripts/check-source-reopen-receipt.mjs",
+  "line": 172,
+  "literal": "/^S[0-9]{3,}$/",
+  "flags": "",
+  "indent": "not a row-gate literal",
+  "pad": "unknown",
+  "notes": [],
+  "source": "if (typeof row.supersession === \"string\" && /^S[0-9]{3,}$/.test(row.supersession)) {"
+ },
+ {
+  "lane": "tabi-shokunin",
+  "file": "tabi-shokunin/scripts/check-sources.mjs",
+  "line": 25,
+  "literal": "/^\\|[ \\t\\v\\f\\r]*S[0-9]{3,}[ \\t\\v\\f\\r]*\\|/",
+  "flags": "",
+  "indent": "not a row-gate literal",
+  "pad": "unknown",
+  "notes": [],
+  "source": "const rowPattern = /^\\|[ \\t\\v\\f\\r]*S[0-9]{3,}[ \\t\\v\\f\\r]*\\|/;"
+ },
+ {
+  "lane": "tabi-shokunin",
+  "file": "tabi-shokunin/scripts/check-sources.mjs",
+  "line": 296,
+  "literal": "/^supersedes\\s+S[0-9]{3,}\\b/",
+  "flags": "",
+  "indent": "not a row-gate literal",
+  "pad": "unknown",
+  "notes": [],
+  "source": "if (seenUrls.has(url) && !/^supersedes\\s+S[0-9]{3,}\\b/.test(teaches)) {"
+ },
+ {
+  "lane": "tabi-shokunin",
+  "file": "tabi-shokunin/scripts/check-sources.mjs",
+  "line": 473,
+  "literal": "/^\\\\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\\\\|/",
+  "flags": "",
+  "indent": "not a row-gate literal",
+  "pad": "unknown",
+  "notes": [],
+  "source": "const rowProgram = '/^\\\\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\\\\|/ { n++ } END { print n+0 }';"
+ },
+ {
+  "lane": "tabi-shokunin",
+  "file": "tabi-shokunin/scripts/check-sources.mjs",
+  "line": 474,
+  "literal": "/^\\\\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\\\\|/",
+  "flags": "",
+  "indent": "not a row-gate literal",
+  "pad": "unknown",
+  "notes": [],
+  "source": "const tierProgram = '/^\\\\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\\\\|/ { t=$5; gsub(/[[:space:]]/,\"\",t); n[t]++ } END { for(k in n) printf \"%s=%d \", k, n[k]; p"
+ }
+]

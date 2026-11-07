@@ -1,0 +1,39 @@
+K100Mutation — exact commands (lane reads; all writes in seat dir / scratch)
+
+# 0. scratch + seed
+  mkdir -p /fast/scratch/hyaku/kumitate-r100/K100Mutation
+  S=/fast/scratch/hyaku/kumitate-r100/K100Mutation
+
+# 1. regenerate the 16 frozen controls (candidate-independent baseline)
+  TMPDIR=$S python3 kumitate-shokunin/.ufo/waves/round-100/probe/make-controls100.py $S/gen
+  for d in $S/gen/ctl-*; do node "$d/cite-sources.mjs" --selftest; echo $?; \
+      node "$d/source-capture.mjs" --selftest; echo $?; done   # -> base-controls-selftest.txt
+
+# 2. shipped-selftest panel (ctl-positive = BASE tools + L1 reference reader lines)
+  TMPDIR=$S python3 .ufo/waves/round-100/K100Mutation/mutate.py \
+    --cite $S/gen/ctl-positive/cite-sources.mjs --capture $S/gen/ctl-positive/source-capture.mjs \
+    --work $S/mut-baseline --out .ufo/waves/round-100/K100Mutation/baseline-ctlpositive
+
+# 3. candidate panel (bytes = READY / candidates.sha256)
+  TMPDIR=$S python3 .ufo/waves/round-100/K100Mutation/mutate.py \
+    --cite .ufo/waves/round-100/K100ExecTool/cite-sources.mjs \
+    --capture .ufo/waves/round-100/K100ExecTool/source-capture.mjs \
+    --work $S/mut-candidate --out .ufo/waves/round-100/K100Mutation/cand-e887b982
+
+# 4. reference PASS lines
+  TMPDIR=$S node .ufo/waves/round-100/K100ExecTool/cite-sources.mjs --selftest   # 25/25, exit 0
+  TMPDIR=$S node .ufo/waves/round-100/K100ExecTool/source-capture.mjs --selftest # 33/33, exit 0
+
+# 5. frozen counter on every per-tool survivor (mutant on one tool, reference on the other)
+  python3 .ufo/waves/round-100/K100Mutation/counter.py \
+    --panel .ufo/waves/round-100/K100Mutation/cand-e887b982/mutants.json \
+    --work $S/mut-candidate \
+    --ref-cite .ufo/waves/round-100/K100ExecTool/cite-sources.mjs \
+    --ref-capture .ufo/waves/round-100/K100ExecTool/source-capture.mjs \
+    --out .ufo/waves/round-100/K100Mutation/cand-counters --scratch $S/counter-work2 --max-parallel 2
+
+# 6. behaviour fingerprints (equivalence classification, not the frozen counter)
+  node .ufo/waves/round-100/K100Mutation/equivalence.mjs --cite <c> --capture <p> --work $S/eq-<tag>
+
+# 7. report
+  cd .ufo/waves/round-100/K100Mutation && python3 report.py   # -> mutants.md

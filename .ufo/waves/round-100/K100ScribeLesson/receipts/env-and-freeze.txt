@@ -1,0 +1,14 @@
+$ node --version; bash --version | head -1; gawk --version | head -1
+v24.21.0
+GNU bash, version 5.3.20(1)-release (x86_64-pc-linux-gnu)
+GNU Awk 5.4.1, API 4.1, PMA Avon 8-g1, (GNU MPFR 4.2.2, GNU MP 6.3.0)
+
+$ sha256sum .ufo/waves/round-100/open/read-order.log .ufo/waves/round-100/plan.md
+1601565a5d98591d71cf01e1161690fd30b197820f2e150c33c3bc35ba4c12a1  .ufo/waves/round-100/open/read-order.log
+22e56a982253d5f06868ebfb662d753bf66bdfbf7bc3844c2fc077849c3c6f1f  .ufo/waves/round-100/plan.md
+
+$ git ls-tree -r --name-only 445196e4 -- .ufo/waves/round-100/ | grep read-order
+.ufo/waves/round-100/open/read-order.log
+
+$ git ls-tree -r --name-only 445196e4 | grep -c "read-order-check"
+2

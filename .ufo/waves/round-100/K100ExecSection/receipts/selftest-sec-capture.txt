@@ -1,0 +1,17 @@
+$ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-100/K100ExecSection/fixed-sec/source-capture.mjs --selftest  (TMPDIR=/fast/scratch/hyaku/kumitate-r100/K100ExecSection)
+exit=1
+case clean: FAIL exit=2 last="SOURCE_CAPTURE: FAIL-CLOSED reason=sources doc carries no S### rows"
+case hash-mismatch: FAIL exit=2 last="SOURCE_CAPTURE: FAIL-CLOSED reason=sources doc carries no S### rows"
+case capture-absent: FAIL exit=2 last="SOURCE_CAPTURE: FAIL-CLOSED reason=sources doc carries no S### rows"
+case not-a-regular-file: FAIL exit=2 last="SOURCE_CAPTURE: FAIL-CLOSED reason=sources doc carries no S### rows"
+case bytes-mismatch: FAIL exit=2 last="SOURCE_CAPTURE: FAIL-CLOSED reason=sources doc carries no S### rows"
+case path-escape: FAIL exit=2 last="SOURCE_CAPTURE: FAIL-CLOSED reason=sources doc carries no S### rows"
+case uncaptured: FAIL exit=2 last="SOURCE_CAPTURE: FAIL-CLOSED reason=sources doc carries no S### rows"
+case orphan-capture: FAIL exit=2 last="SOURCE_CAPTURE: FAIL-CLOSED reason=sources doc carries no S### rows"
+case captures-empty: FAIL exit=2 last="SOURCE_CAPTURE: FAIL-CLOSED reason=sources doc carries no S### rows"
+case registry-not-json: PASS
+case registry-version: PASS
+case capture-exempt-conflict: PASS
+case sources-absent: PASS
+SOURCE_CAPTURE_SELFTEST: FAIL (4/13)
+VERDICT: FAIL

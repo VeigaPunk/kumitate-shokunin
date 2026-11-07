@@ -1,0 +1,46 @@
+# consumers.txt — who consumes cite-sources.mjs / source-capture.mjs output (seat K100ExecHarm, rev 445196e)
+
+Evidence: grep 'cite-sources|source-capture' over lane scripts/, SKILL.md, .ufo/pins (2026-11-07);
+grep 'SOURCE_CAPTURE:|CITE_SOURCES:' over lane scripts/; battery runs base vs ctl-positive
+(base.txt / cand.txt / battery-diff.txt in this dir). No writer/edit arm was run; this is a read-only inventory.
+
+1. scripts/harm-matrix-gates.json (registry executed by scripts/harm-matrix.mjs)
+   - entry id "source-capture": runs `node scripts/source-capture.mjs`, verdict `^SOURCE_CAPTURE: (\w+)`, clean=[CLEAN]
+   - entry id "cite-sources-selftest": `node scripts/cite-sources.mjs --selftest`, clean=[PASS]
+   - entry id "source-capture-selftest": `node scripts/source-capture.mjs --selftest`, clean=[PASS]
+   - NO plain cite-sources entry exists in the registry.
+   - R100 impact: none measurable. Battery: plain source-capture verdict identical base vs cand
+     (SOURCE_CAPTURE: DRIFT captures=95 exemptions=111 bad=11 first=S269:uncaptured, exit 1 — the pre-existing
+     S269..S279 uncaptured drift); both selftests identical PASS. Verdict words unchanged => harm-matrix reading unchanged.
+
+2. scripts/proxy-check.mjs:563,567 (pin map of kumitate-gate-pins-v1)
+   - 'pin.source-capture' -> scripts/source-capture.mjs; 'pin.cite-sources' -> scripts/cite-sources.mjs.
+   - Reads: computes sha256 of each pinned gate's working-tree bytes and compares to the SCORECARD-declared sha
+     (declared 39bdeb39… for source-capture, 7211be84… for cite-sources — seen in the drift lines).
+   - R100 impact: +2 GATE_PIN_DRIFT lines (both tools) in `proxy-check` and `proxy-check --strict`
+     (measured, battery-diff.txt). Verdict word stays DRIFT (already DRIFT at base from A_wave/C2 bookkeeping),
+     so the harm-matrix proxy-check gate reading is unchanged. Expected pin bookkeeping, re-declared at adoption
+     (r94-r99 precedent per plan.md).
+
+3. .ufo/pins/counter-pins.json (consumed by scripts/counter-pins.mjs)
+   - 50 pins; pins ONLY source-capture (round 55, path scripts/source-capture.mjs, sha256 39bdeb39…).
+     cite-sources is NOT counter-pinned.
+   - counter-pins.mjs hashes the working-tree file => R100 bytes => `COUNTER_PINS: DRIFT pins=50 bad=1
+     first=source-capture:hash-mismatch`, exit 0 -> 1 (measured, battery-diff.txt lines 45-46).
+   - This is a THIRD pin surface beyond the two proxy pin lines and is NOT covered by the assignment's
+     stated expected diff ("identical except proxy pin lines for the two tools"). Same bookkeeping class
+     (pin re-declared in the same adoption commit), but it is an exit-map flip on a battery command —
+     surfaced for L1's K3 judgement, not judged here.
+
+4. SKILL.md rows 628/634 (gate-registry table) and 743/751 (closure checklists)
+   - Documentation of CLI/verdict formats/contract ids (`kumitate-source-capture-v1`, `kumitate-cite-sources-v1`).
+   - R100 preserves verdict lines, exit maps and contract ids => no byte change needed; no runtime reader of
+     these rows exists in lane scripts (grep found only prose matches).
+
+5. .ufo/waves/round-100/close/battery.sh (K3 harness)
+   - Runs both tools and both selftests directly (13 commands); measured base vs cand above.
+
+Negative result: grep 'SOURCE_CAPTURE:|CITE_SOURCES:' over lane scripts/ matches ONLY the two tools' own
+emitters and harm-matrix-gates.json — no other script parses their output. .ufo/pins/source-captures.json and
+corpus/ files are INPUTS to the gates, not consumers. The frozen probe counter runs the tools as subprocesses
+and parses verdict lines; R100 leaves verdict formats untouched (ctl-positive HELD per controls/OBSERVED.txt).

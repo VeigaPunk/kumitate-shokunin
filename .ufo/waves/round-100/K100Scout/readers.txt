@@ -1,0 +1,160 @@
+# readers.txt -- inventory of SOURCES row-id readers in the fleet (K100Scout, round 100)
+
+Scope: every code path under `/home/vgpnk/Projects/shokunin/*-shokunin/scripts/`
+that reads a `corpus/SOURCES.md` row id and decides something from it.
+Report-only: no sibling lane was edited.
+
+The census row gate (scripts/sources-census.sh, row_pass, gawk RS=LF):
+  row gate  : `^ {0,3}\|`   (0-3 ASCII SP then a pipe)
+  id cell   : field 2, trimmed of ASCII SP/TAB only (POSIX blank)
+  id form   : `^S[0-9]{3,}$`
+  records   : one LF-delimited record is one line (gawk RS=LF)
+
+Verdict key:
+  CONFORMANT -- the reader recognises a row id exactly as the census does
+  DIVERGES   -- the reader recognises a row id the census does not read as valid
+  STRICTER   -- the reader reads a strict subset of the census rows (no false ids)
+  N/A        -- an id-token or id-form class, not a SOURCES row reader
+
+## Readers (curated)
+
+| # | lane | file:line | what it reads | regex / class | split mode | census-conformant? |
+|---|---|---|---|---|---|---|
+| 1 | kumitate-shokunin | `kumitate-shokunin/scripts/cite-sources.mjs:36` | registry id set (the claim's reader 1) | `line.match(/^ {0,3}\|\s*(S[0-9]{3,})\s*\|/) over text.split('\n')` | per LF record, NO `m` flag | **DIVERGES (id-cell pad is JS \s: NBSP, every Zs, VT, FF, CR, U+FEFF, U+2028/U+2029)** |
+| 2 | kumitate-shokunin | `kumitate-shokunin/scripts/source-capture.mjs:157` | registry id set (the claim's reader 2) | `raw.matchAll(/^\s*\|\s*(S[0-9]{3,})\s*\|/gm)` | whole file, `gm` flags | **DIVERGES (id-cell pad is JS \s AND `^\s*` indent is JS \s AND the `m` flag lets `^` match after CR/U+2028/U+2029)** |
+| 3 | kumitate-shokunin | `kumitate-shokunin/scripts/round-gate.mjs:411` | SOURCES-declared upstream pins (row shape + 40-hex pin cells) | `const SOURCES_ROW_RE = /^ {0,3}\|[ \t]*S\d{3,}[ \t]*\|/;` | per LF record (sourcesText.split('\n')), NO `m` flag | **CONFORMANT** |
+| 4 | kumitate-shokunin | `kumitate-shokunin/scripts/sources-check.mjs:237` | row-outside-Registry probe (E12 shape) and the main id reader at line 232-249 | `/^\|[ \t]*S\d{3,}[ \t]*\|/ (E12 probe); id = trim(fields[1]) with trim = value.replace(/^[ \t]+|[ \t]+$/g, '')` | per LF record (sourceText.split(/\r?\n/)); the E12 probe is column-0 only | **CONFORMANT for the id cell; STRICTER for the row gate** |
+| 5 | kumitate-shokunin | `kumitate-shokunin/scripts/source-dupes.mjs:165` | live duplicate-URL groups (W04) | `row gate /^ {0,3}\|/ then cells = line0.replace(/^ {0,3}/, '').split('|').map(c => c.trim()); id = cells[1]; SID = /^S[0-9]{3,}$/` | per LF record (raw.split('\n')), NO `m` flag | **CONFORMANT in row gate; the id-cell trim is JS \s (not census blank)** |
+| 6 | kumitate-shokunin | `kumitate-shokunin/scripts/cite-sources.mjs:26` | README cited-id tokens (not a SOURCES row reader) | `const ID_RE = /\bS[0-9]{3,}\b/g;` | README text, per LF record | **N/A** |
+| 7 | kumitate-shokunin | `kumitate-shokunin/scripts/sources-check.mjs:374` | knowledge-entry cited-id tokens (not a SOURCES row reader) | `lines[0].match(/\bS\d{3,}\b/g)` | knowledge entry text | **N/A** |
+| 8 | tabi-shokunin | `tabi-shokunin/scripts/check-bidi-runtime.mjs:474` | registry rows of the bidi-runtime fixture (parseRegistry) | `/^ {0,3}\|[ \t]*S[0-9]{3,}[ \t]*\|/ then cells = line.trim().split('|')` | per LF record (text.split('\n')), NO `m` flag | **CONFORMANT in row gate and id-cell pad; STRICTER in field count** |
+| 9 | tabi-shokunin | `tabi-shokunin/scripts/check-decision-table.mjs:122` | registry rows (decision-table check) | `/^ {0,3}\|[ \t]*S[0-9]{3,}[ \t]*\|/ then cells = line.trim().split('|')` | per LF record, NO `m` flag | **CONFORMANT in row gate and id-cell pad** |
+| 10 | tabi-shokunin | `tabi-shokunin/scripts/check-frontier-admission.mjs:126` | registry rows (frontier-admission check) | `/^ {0,3}\|[ \t]*S[0-9]{3,}[ \t]*\|/ then cells = line.trim().split('|')` | per LF record, NO `m` flag | **CONFORMANT in row gate and id-cell pad** |
+| 11 | tabi-shokunin | `tabi-shokunin/scripts/check-release-pins.mjs:75` | registry rows (release pins) | `const ROW_RE = /^ {0,3}\|\s*S\d{3,}\s*\|/;` | per LF record, NO `m` flag | **DIVERGES (id-cell pad is JS \s)** |
+| 12 | tabi-shokunin | `tabi-shokunin/scripts/check-sources.mjs:25` | registry rows (tabi sources gate) | `const rowPattern = /^\|[ \t\v\f\r]*S[0-9]{3,}[ \t\v\f\r]*\|/;` | per LF record, NO `m` flag | **STRICTER in row gate; DIVERGES in id-cell pad** |
+| 13 | tabi-shokunin | `tabi-shokunin/scripts/check-c2-knowledge-round41.mjs:42` | two hard-coded registry rows S146/S147 (c2-knowledge check) | `new RegExp(`^\\|\\s*${sid}\\s*\\|`, 'm')  — then cells = line.split('|').map(c => c.trim())` | whole-file regex with the `m` flag | **DIVERGES (id-cell pad is JS \s AND the `m` flag)** |
+| 14 | tabi-shokunin | `tabi-shokunin/scripts/check-instrument-registry-r68.mjs:65` | a DIFFERENT registry (an instrument registry section), not corpus/SOURCES.md | `cells = l.split('|').slice(1, -1).map(c => c.trim()); row gate: l.startsWith('|')` | per LF record | **N/A (not a corpus/SOURCES.md row reader)** |
+| 15 | tabi-shokunin | `tabi-shokunin/scripts/check-source-reopen-receipt.mjs:109` | one registry row, by id (source reopen receipt) | `new RegExp(`^\\|[\\s]*${sid}[\\s]*\\|`, "m")  — then cells = line.split("|").map(c => c.trim())` | whole-file regex with the `m` flag | **DIVERGES (id-cell pad is JS \s AND the `m` flag)** |
+| 16 | kake-shokunin | `kake-shokunin/scripts/id_resolver.py:57` | registry id set (parse_registry) | `ROW_RE = re.compile(r"^ {0,3}\|\s*([^|]*?)\s*(?:\|(.*))?$"); ID_CELL_RE = re.compile(r"^S\d{3,}$"); sid = m.group(1).strip()` | per line (text.splitlines()), NO `m` flag equivalent | **DIVERGES (id-cell pad is Python `\s`, which is a superset of POSIX blank: it matches NBSP, U+2028, U+2029, U+0085, U+FEFF and every Zs)** |
+| 17 | kake-shokunin | `kake-shokunin/scripts/citing_set.py:189` | population id tokens (not a SOURCES row reader) | `_POPULATION_ID_RE = re.compile(r"S[0-9]{3,}")` | token class over citing files | **N/A** |
+| 18 | kake-shokunin | `kake-shokunin/scripts/id_resolver.py:55` | cited-id tokens (not a SOURCES row reader) | `ID_RE = re.compile(r"(?<![A-Za-z0-9_])S\d{3,}(?![A-Za-z0-9_])")` | token class over citing files | **N/A** |
+
+## Notes per reader
+
+1. `kumitate-shokunin/scripts/cite-sources.mjs:36` — DIVERGES (id-cell pad is JS \s: NBSP, every Zs, VT, FF, CR, U+FEFF, U+2028/U+2029)
+   row gate `^ {0,3}\|` matches the census exactly; only the id-cell pad differs (census trims ASCII SP/TAB only). The `m`-flag record break does not apply here.
+
+2. `kumitate-shokunin/scripts/source-capture.mjs:157` — DIVERGES (id-cell pad is JS \s AND `^\s*` indent is JS \s AND the `m` flag lets `^` match after CR/U+2028/U+2029)
+   three independent divergences: (a) id-cell pad; (b) `^\s*` accepts any JS white-space indent (TAB, NBSP, 4+ SP) where the census gate is `^ {0,3}\|`; (c) `m` + JS line terminators (LF, CR, U+2028, U+2029) vs gawk RS=LF -- a row following a CR/U+2028 on the same LF record is a row for this reader and not for the census.
+
+3. `kumitate-shokunin/scripts/round-gate.mjs:411` — CONFORMANT
+   row gate `^ {0,3}\|` and id-cell pad `[ \t]*` are exactly the census shape; the file comment at line 410 says so explicitly. Reads only rows in `## Registry` (inReg tracked the census way) and requires exactly 13 split fields (NF==13).
+
+4. `kumitate-shokunin/scripts/sources-check.mjs:237` — CONFORMANT for the id cell; STRICTER for the row gate
+   the id cell is trimmed of ASCII SP/TAB only -- exactly the census trim. The row gate differs in two ways: the main reader accepts any line starting with `|` (column 0 only) after normalizeMarkdownIndent() strips 1-3 leading SP, and the E12 probe is column-0 only (no 0-3 SP indent allowed). Both are stricter than the census gate, so neither can invent an id the census rejects.
+
+5. `kumitate-shokunin/scripts/source-dupes.mjs:165` — CONFORMANT in row gate; the id-cell trim is JS \s (not census blank)
+   row gate and the 13-field check match the census; the cell trim is JS `.trim()` (ECMA WhiteSpace+LineTerminator), so a non-blank pad would be trimmed here and not by the census. Same id form `^S[0-9]{3,}$`. Divergence surface is the pad only.
+
+6. `kumitate-shokunin/scripts/cite-sources.mjs:26` — N/A
+   this is the citation-side token class over corpus/README.md, not a SOURCES row reader. The claim explicitly leaves the README citation reader unchanged.
+
+7. `kumitate-shokunin/scripts/sources-check.mjs:374` — N/A
+   token class over corpus/knowledge/*.md, not a SOURCES row reader.
+
+8. `tabi-shokunin/scripts/check-bidi-runtime.mjs:474` — CONFORMANT in row gate and id-cell pad; STRICTER in field count
+   same `^ {0,3}\|` + `[ \t]*` shape as the census; requires exactly 13 cells (census NF==13 too) and trims each cell with JS `.trim()`. Selftest-only tool: its fixtures are generated by the script itself.
+
+9. `tabi-shokunin/scripts/check-decision-table.mjs:122` — CONFORMANT in row gate and id-cell pad
+   same shape as the census; also requires /cells.length === 13/.
+
+10. `tabi-shokunin/scripts/check-frontier-admission.mjs:126` — CONFORMANT in row gate and id-cell pad
+   same shape as the census; requires exactly 13 cells.
+
+11. `tabi-shokunin/scripts/check-release-pins.mjs:75` — DIVERGES (id-cell pad is JS \s)
+   row gate matches the census exactly; the id-cell pad is JS \s, so a non-blank pad (NBSP, VT, FF, CR, U+FEFF, U+2028/U+2029) is trimmed here and not by the census. Same class of divergence as cite-sources:36, in a sibling lane.
+
+12. `tabi-shokunin/scripts/check-sources.mjs:25` — STRICTER in row gate; DIVERGES in id-cell pad
+   row gate is column-0 only (no 0-3 SP indent allowed -- stricter than the census `^ {0,3}\|`), and the pad class is `[ \t\v\f\r]*`, i.e. it accepts VT/FF/CR as pad where the census trims SP/TAB only. So it can accept a row id the census reads as E02.
+
+13. `tabi-shokunin/scripts/check-c2-knowledge-round41.mjs:42` — DIVERGES (id-cell pad is JS \s AND the `m` flag)
+   row gate is column-0 only (stricter than the census `^ {0,3}\|`), the id-cell pad is JS `\s`, and the `m` flag makes `^` match after CR/U+2028/U+2029. Fixed ids (S146, S147) are looked up, so the blast radius is two rows, not the whole registry.
+
+14. `tabi-shokunin/scripts/check-instrument-registry-r68.mjs:65` — N/A (not a corpus/SOURCES.md row reader)
+   reads `## <instrument>` inside a different registry file, not a SOURCES.md row id. Listed only because the id-token scan surfaced it; it is out of the claim's scope.
+
+15. `tabi-shokunin/scripts/check-source-reopen-receipt.mjs:109` — DIVERGES (id-cell pad is JS \s AND the `m` flag)
+   row gate column-0 only (stricter than the census), id-cell pad JS `\s`, `m` flag lets `^` match after CR/U+2028/U+2029. One id per lookup, so the blast radius is a single row.
+
+16. `kake-shokunin/scripts/id_resolver.py:57` — DIVERGES (id-cell pad is Python `\s`, which is a superset of POSIX blank: it matches NBSP, U+2028, U+2029, U+0085, U+FEFF and every Zs)
+   row gate `^ {0,3}\|` matches the census exactly. The pad `\s*` and the `.strip()` are Unicode-aware, so a non-blank pad is trimmed here and not by the census. Python `\s` also matches U+2028/U+2029, which JS `\s` does NOT -- so this reader is a slightly wider superset than the JS one. `splitlines()` splits on more than LF (it also splits on U+2028/U+2029/U+0085/CR), so its record model is neither the census's nor the JS readers'.
+
+17. `kake-shokunin/scripts/citing_set.py:189` — N/A
+   token class, not a SOURCES row reader.
+
+18. `kake-shokunin/scripts/id_resolver.py:55` — N/A
+   token class over citing files, not a SOURCES row reader.
+
+## Raw scan (all regex literals mentioning an S### id class in any lane scripts/ tree)
+
+Produced by `K100Scout/reader_inventory.mjs <fleet-root>`: every regex literal in every
+file under `*-shokunin/scripts/` whose body mentions `S[0-9]` or `S\d`, with the line it
+sits on and the flags in force.
+
+| lane | file:line | literal | flags |
+|---|---|---|---|
+| kake-shokunin | `kake-shokunin/scripts/citing_set.py:189` | `S[0-9]{3,}` | `python-re` |
+| kake-shokunin | `kake-shokunin/scripts/id_resolver.py:55` | `(?<![A-Za-z0-9_])S\d{3,}(?![A-Za-z0-9_])` | `python-re` |
+| kake-shokunin | `kake-shokunin/scripts/id_resolver.py:57` | `^S\d{3,}$` | `python-re` |
+| kumitate-shokunin | `kumitate-shokunin/scripts/cite-sources.mjs:26` | `/\bS[0-9]{3,}\b/g` | `g` |
+| kumitate-shokunin | `kumitate-shokunin/scripts/cite-sources.mjs:36` | `/^ {0,3}\|\s*(S[0-9]{3,})\s*\|/` | `` |
+| kumitate-shokunin | `kumitate-shokunin/scripts/round-gate.mjs:411` | `/^ {0,3}\|[ \t]*S\d{3,}[ \t]*\|/` | `` |
+| kumitate-shokunin | `kumitate-shokunin/scripts/source-capture.mjs:77` | `/^S[0-9]{3,}$/` | `` |
+| kumitate-shokunin | `kumitate-shokunin/scripts/source-capture.mjs:157` | `/^\s*\|\s*(S[0-9]{3,})\s*\|/gm` | `gm` |
+| kumitate-shokunin | `kumitate-shokunin/scripts/source-dupes.mjs:79` | `/^S[0-9]{3,}$/` | `` |
+| kumitate-shokunin | `kumitate-shokunin/scripts/sources-check.mjs:237` | `/^\|[ \t]*S\d{3,}[ \t]*\|/` | `` |
+| kumitate-shokunin | `kumitate-shokunin/scripts/sources-check.mjs:249` | `/^S\d{3,}$/` | `` |
+| kumitate-shokunin | `kumitate-shokunin/scripts/sources-check.mjs:374` | `/\bS\d{3,}\b/g` | `g` |
+| kumitate-shokunin | `kumitate-shokunin/scripts/sources-check.mjs:1219` | `/^\\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\\|/` | `` |
+| kumitate-shokunin | `kumitate-shokunin/scripts/sources-check.mjs:1220` | `/^\\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\\|/` | `` |
+| tabi-shokunin | `tabi-shokunin/scripts/check-bidi-runtime.mjs:474` | `/^ {0,3}\|[ \t]*S[0-9]{3,}[ \t]*\|/` | `` |
+| tabi-shokunin | `tabi-shokunin/scripts/check-bidi-runtime.mjs:527` | `/^S\d{3,}$/` | `` |
+| tabi-shokunin | `tabi-shokunin/scripts/check-bidi-runtime.mjs:739` | `/\bS\d{3,}\b/g` | `g` |
+| tabi-shokunin | `tabi-shokunin/scripts/check-decision-table.mjs:122` | `/^ {0,3}\|[ \t]*S[0-9]{3,}[ \t]*\|/` | `` |
+| tabi-shokunin | `tabi-shokunin/scripts/check-decision-table.mjs:275` | `/^S[0-9]{3,}$/` | `` |
+| tabi-shokunin | `tabi-shokunin/scripts/check-frontier-admission.mjs:126` | `/^ {0,3}\|[ \t]*S[0-9]{3,}[ \t]*\|/` | `` |
+| tabi-shokunin | `tabi-shokunin/scripts/check-frontier-admission.mjs:241` | `/\bS[0-9]{3,}\b/g` | `g` |
+| tabi-shokunin | `tabi-shokunin/scripts/check-release-pins.mjs:75` | `/^ {0,3}\|\s*S\d{3,}\s*\|/` | `` |
+| tabi-shokunin | `tabi-shokunin/scripts/check-source-reopen-receipt.mjs:172` | `/^S[0-9]{3,}$/` | `` |
+| tabi-shokunin | `tabi-shokunin/scripts/check-sources.mjs:25` | `/^\|[ \t\v\f\r]*S[0-9]{3,}[ \t\v\f\r]*\|/` | `` |
+| tabi-shokunin | `tabi-shokunin/scripts/check-sources.mjs:296` | `/^supersedes\s+S[0-9]{3,}\b/` | `` |
+| tabi-shokunin | `tabi-shokunin/scripts/check-sources.mjs:473` | `/^\\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\\|/` | `` |
+| tabi-shokunin | `tabi-shokunin/scripts/check-sources.mjs:474` | `/^\\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\\|/` | `` |
+
+Raw scan hits: 27.
+
+## Summary
+
+CONFORMANT: 6  ·  DIVERGES: 6  ·  STRICTER: 1  ·  N/A: 4
+
+Readers that recognise a row id the census does not (DIVERGES), with the exact cause:
+
+- `kumitate-shokunin/scripts/cite-sources.mjs:36` — DIVERGES (id-cell pad is JS \s: NBSP, every Zs, VT, FF, CR, U+FEFF, U+2028/U+2029)
+- `kumitate-shokunin/scripts/source-capture.mjs:157` — DIVERGES (id-cell pad is JS \s AND `^\s*` indent is JS \s AND the `m` flag lets `^` match after CR/U+2028/U+2029)
+- `tabi-shokunin/scripts/check-release-pins.mjs:75` — DIVERGES (id-cell pad is JS \s)
+- `tabi-shokunin/scripts/check-c2-knowledge-round41.mjs:42` — DIVERGES (id-cell pad is JS \s AND the `m` flag)
+- `tabi-shokunin/scripts/check-source-reopen-receipt.mjs:109` — DIVERGES (id-cell pad is JS \s AND the `m` flag)
+- `kake-shokunin/scripts/id_resolver.py:57` — DIVERGES (id-cell pad is Python `\s`, which is a superset of POSIX blank: it matches NBSP, U+2028, U+2029, U+0085, U+FEFF and every Zs)
+
+Readers that already match the census exactly (CONFORMANT):
+
+- `kumitate-shokunin/scripts/round-gate.mjs:411` — SOURCES-declared upstream pins (row shape + 40-hex pin cells)
+- `kumitate-shokunin/scripts/sources-check.mjs:237` — row-outside-Registry probe (E12 shape) and the main id reader at line 232-249
+- `kumitate-shokunin/scripts/source-dupes.mjs:165` — live duplicate-URL groups (W04)
+- `tabi-shokunin/scripts/check-bidi-runtime.mjs:474` — registry rows of the bidi-runtime fixture (parseRegistry)
+- `tabi-shokunin/scripts/check-decision-table.mjs:122` — registry rows (decision-table check)
+- `tabi-shokunin/scripts/check-frontier-admission.mjs:126` — registry rows (frontier-admission check)
+
+The claim under test covers the two kumitate readers (`cite-sources.mjs:36`,
+`source-capture.mjs:157`). The sibling-lane DIVERGES rows above are report-only and are
+NOT edited by this seat; they are routed as fleet-level follow-ups.

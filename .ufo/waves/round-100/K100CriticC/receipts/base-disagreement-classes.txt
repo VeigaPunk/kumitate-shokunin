@@ -1,0 +1,44 @@
+### pad-char-U+000B
+file: receipts/minimal-base/pad-char-U+000B/SOURCES.md
+test row bytes: ["|\\x0b\\x0b\\x0bS153852 | fixture | docs | Z0168T0 | scope | line 1 | teaches | queued | 2026-01-01 | 90d | \\u2014 |", "| S50633\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b| fixture | docs | Z0168T1 | scope | line 1 | teaches | queued | 2026-01-01 | 90d | \\u2014 |", "|\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0bS549\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b| fixture | docs | Z0168T2 | scope | line 1 | teaches | queued | 2026-01-01 | 90d | \\u2014 |"]
+census valid: ['S91726']  census E-codes: {'E02': 3}
+BASE cite: [["S153852", false, true], ["S50633", false, true], ["S549", false, true]]
+BASE capture recognised: ['S153852', 'S50633', 'S549', 'S91726'] expected: ['S91726']
+CAND cite: [["S153852", false, false], ["S50633", false, false], ["S549", false, false]]
+CAND capture recognised: ['S91726']
+
+### indent-char-U+000D
+file: receipts/minimal-base/indent-char-U+000D/SOURCES.md
+test row bytes: ["\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r| S287010 | fixture | docs | Z0014T0 | scope | line 1 | teaches | queued | 2026-01-01 | 90d | \\u2014 |"]
+census valid: ['S91350']  census E-codes: {}
+BASE cite: [["S287010", false, false]]
+BASE capture recognised: ['S287010', 'S91350'] expected: ['S91350']
+CAND cite: [["S287010", false, false]]
+CAND capture recognised: ['S91350']
+
+### prefix-break-U+000D-x
+file: receipts/minimal-base/prefix-break-U+000D-x/SOURCES.md
+test row bytes: ["x\\r| S49785 | fixture | docs | Z0372T0 | scope | line 1 | teaches | queued | 2026-01-01 | 90d | \\u2014 |"]
+census valid: ['S99824']  census E-codes: {}
+BASE cite: [["S49785", false, false]]
+BASE capture recognised: ['S49785', 'S99824'] expected: ['S99824']
+CAND cite: [["S49785", false, false]]
+CAND capture recognised: ['S99824']
+
+### crlf-pad-nbsp
+file: receipts/minimal-base/crlf-pad-nbsp/SOURCES.md
+test row bytes: ["|\\xa0S2389\\xa0| fixture | docs | Z0421T0 | scope | line 1 | teaches | queued | 2026-01-01 | 90d | \\u2014 |"]
+census valid: ['S96005']  census E-codes: {'E02': 1}
+BASE cite: [["S2389", false, true]]
+BASE capture recognised: ['S2389', 'S96005'] expected: ['S96005']
+CAND cite: [["S2389", false, false]]
+CAND capture recognised: ['S96005']
+
+### rand-mix-00
+file: receipts/minimal-base/rand-mix-00/SOURCES.md
+test row bytes: ["\\u2003|\\x14\\u2028 S18945\\u2061\\u2064\\x15| fixture | docs | Z0449T0 | scope | line 1 | teaches | queued | 2026-01-01 | 90d | \\u2014 |"]
+census valid: ['S91422']  census E-codes: {}
+BASE cite: [["S18945", false, false]]
+BASE capture recognised: ['S91422'] expected: ['S91422']
+CAND cite: [["S18945", false, false]]
+CAND capture recognised: ['S91422']

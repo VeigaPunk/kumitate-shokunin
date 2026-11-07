@@ -1,0 +1,23 @@
+K100ExecTool arm-teeth — each frozen control line pair applied to the R100 candidates;
+failing NEW (r100-*) selftest cases per tool. cite/capture column = which tool line
+differs from ctl-positive (rule R100). Every differing tool must be killed by >= 1 new case.
+
+control                diff             killed-by(cite)                          killed-by(capture)                       verdict
+ctl-captureonly        cite             r100-pad-nbsp-not-row,r100-pad-u2003-not-row,r100-pad-vt-not-row,r100-pad-cr-not-row,r100-pad-feff-not-row,r100-pad-u2028-not-row,r100-leadpad-not-row,r100-trailpad-not-row -                                        KILLED
+ctl-ci                 cite/capture     -                                        r100-lowercase-not-row                   KILLED (cite side verdict-equivalent: citations are uppercase-ASCII only; killed via capture)
+ctl-citeonly           capture          -                                        r100-pad-nbsp-not-row,r100-pad-u2003-not-row,r100-pad-vt-not-row,r100-pad-cr-not-row,r100-pad-feff-not-row,r100-pad-u2028-not-row,r100-leadpad-not-row,r100-trailpad-not-row,r100-indent4-not-row,r100-indent-tab-not-row,r100-indent-nbsp-not-row,r100-samerecord-cr-not-row,r100-samerecord-cr-bare-not-row,r100-samerecord-u2028-not-row KILLED
+ctl-indent-blank       capture          -                                        r100-indent-tab-not-row                  KILLED
+ctl-indent4            cite/capture     r100-indent4-not-row                     r100-indent4-not-row                     KILLED
+ctl-k99                capture          -                                        r100-samerecord-cr-not-row,r100-samerecord-cr-bare-not-row,r100-samerecord-u2028-not-row KILLED
+ctl-leadjs             cite/capture     r100-leadpad-not-row                     r100-leadpad-not-row                     KILLED
+ctl-nbsp               cite/capture     r100-pad-nbsp-not-row                    r100-pad-nbsp-not-row,r100-leadpad-not-row,r100-trailpad-not-row KILLED
+ctl-noanchor           cite/capture     r100-trailpad-not-row,r100-s123x-not-row r100-trailpad-not-row,r100-s123x-not-row KILLED
+ctl-nothing            cite/capture     r100-pad-nbsp-not-row,r100-pad-u2003-not-row,r100-pad-vt-not-row,r100-pad-cr-not-row,r100-pad-feff-not-row,r100-pad-u2028-not-row,r100-leadpad-not-row,r100-trailpad-not-row r100-pad-nbsp-not-row,r100-pad-u2003-not-row,r100-pad-vt-not-row,r100-pad-cr-not-row,r100-pad-feff-not-row,r100-pad-u2028-not-row,r100-leadpad-not-row,r100-trailpad-not-row,r100-indent4-not-row,r100-indent-tab-not-row,r100-indent-nbsp-not-row,r100-samerecord-cr-not-row,r100-samerecord-cr-bare-not-row,r100-samerecord-u2028-not-row KILLED
+ctl-padcap3            cite/capture     r100-blankpad-rows                       r100-blankpad-rows                       KILLED
+ctl-positive           -                -                                        -                                        KILLED
+ctl-spaceonly          cite/capture     r100-blankpad-rows                       r100-blankpad-rows                       KILLED
+ctl-splitany           capture          -                                        r100-samerecord-cr-not-row,r100-samerecord-cr-bare-not-row,r100-samerecord-u2028-not-row KILLED
+ctl-trailjs            cite/capture     r100-trailpad-not-row                    r100-trailpad-not-row                    KILLED
+ctl-unicode-digits     cite/capture     -                                        r100-fullwidth-not-row                   KILLED (cite side verdict-equivalent: citations are uppercase-ASCII only; killed via capture)
+
+TEETH: 15/15 KILLED (ctl-positive = reference, no violation)

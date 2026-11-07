@@ -1,0 +1,70 @@
+=== crlf: CRLF rows (census-valid: CR sits in the last field)
+  census: exit=1 findings=['file\tE06\tS001 tier=Z1', 'file\tE06\tS002 tier=Z2']
+  cite BASE: exit=0 CITE_SOURCES: CLEAN cited=2
+  cite CAND: exit=0 CITE_SOURCES: CLEAN cited=2
+  cap  BASE: exit=0 SOURCE_CAPTURE: CLEAN captures=1 exemptions=1
+  cap  CAND: exit=0 SOURCE_CAPTURE: CLEAN captures=1 exemptions=1
+
+=== tabindent: TAB-indented row: census not a row; BASE capture over-reads
+  census: exit=1 findings=['file\tE06\tS002 tier=Z2']
+  cite BASE: exit=1 CITE_SOURCES: DRIFT ghosts=1 first=S001
+  cite CAND: exit=1 CITE_SOURCES: DRIFT ghosts=1 first=S001
+  cap  BASE: exit=0 SOURCE_CAPTURE: CLEAN captures=1 exemptions=1
+  cap  CAND: exit=1 SOURCE_CAPTURE: DRIFT captures=1 exemptions=1 bad=1 first=S001:orphan-capture
+
+=== nbspad: NBSP id pad: census E02; BASE reads it, CAND does not (ghost + orphan)
+  census: exit=1 findings=['file\tE06\tS001 tier=Z1', 'file\tE02\t\xa0S002\xa0', 'file\tE06\t\xa0S002\xa0 tier=Z2']
+  cite BASE: exit=0 CITE_SOURCES: CLEAN cited=2
+  cite CAND: exit=1 CITE_SOURCES: DRIFT ghosts=1 first=S002
+  cap  BASE: exit=0 SOURCE_CAPTURE: CLEAN captures=1 exemptions=1
+  cap  CAND: exit=1 SOURCE_CAPTURE: DRIFT captures=1 exemptions=1 bad=1 first=S002:orphan-exemption
+
+=== allmalformed: only row malformed: CAND capture FAIL-CLOSED "no S### rows" (exit map change)
+  census: exit=1 findings=['file\tE02\t\xa0S002\xa0', 'file\tE06\t\xa0S002\xa0 tier=Z2']
+  cite BASE: exit=0 CITE_SOURCES: CLEAN cited=1
+  cite CAND: exit=1 CITE_SOURCES: DRIFT ghosts=1 first=S002
+  cap  BASE: exit=0 SOURCE_CAPTURE: CLEAN captures=1 exemptions=0
+  cap  CAND: exit=2 SOURCE_CAPTURE: FAIL-CLOSED reason=sources doc carries no S### rows
+
+=== duptwin: clean row + NBSP-padded twin: BASE duplicate FAIL-CLOSED, CAND CLEAN
+  census: exit=1 findings=['file\tE06\tS001 tier=Z1', 'file\tE02\t\xa0S001\xa0', 'file\tE06\t\xa0S001\xa0 tier=Z2']
+  cite BASE: exit=0 CITE_SOURCES: CLEAN cited=1
+  cite CAND: exit=0 CITE_SOURCES: CLEAN cited=1
+  cap  BASE: exit=2 SOURCE_CAPTURE: FAIL-CLOSED reason=sources doc has duplicate row id S001
+  cap  CAND: exit=0 SOURCE_CAPTURE: CLEAN captures=1 exemptions=0
+
+=== crbreak: row after CR on the same LF record: BASE capture reads it (m flag), CAND does not
+  census: exit=1 findings=['file\tE06\tS001 tier=Z1']
+  cite BASE: exit=1 CITE_SOURCES: DRIFT ghosts=1 first=S002
+  cite CAND: exit=1 CITE_SOURCES: DRIFT ghosts=1 first=S002
+  cap  BASE: exit=0 SOURCE_CAPTURE: CLEAN captures=1 exemptions=1
+  cap  CAND: exit=1 SOURCE_CAPTURE: DRIFT captures=1 exemptions=1 bad=1 first=S002:orphan-exemption
+
+=== lsbreak: row after U+2028 on the same LF record: same shape as CR
+  census: exit=1 findings=['file\tE06\tS001 tier=Z1']
+  cite BASE: exit=1 CITE_SOURCES: DRIFT ghosts=1 first=S002
+  cite CAND: exit=1 CITE_SOURCES: DRIFT ghosts=1 first=S002
+  cap  BASE: exit=0 SOURCE_CAPTURE: CLEAN captures=1 exemptions=1
+  cap  CAND: exit=1 SOURCE_CAPTURE: DRIFT captures=1 exemptions=1 bad=1 first=S002:orphan-exemption
+
+=== indent4: 4-SP indent: census not a row; BASE capture over-reads
+  census: exit=1 findings=['file\tE06\tS001 tier=Z1']
+  cite BASE: exit=1 CITE_SOURCES: DRIFT ghosts=1 first=S002
+  cite CAND: exit=1 CITE_SOURCES: DRIFT ghosts=1 first=S002
+  cap  BASE: exit=0 SOURCE_CAPTURE: CLEAN captures=1 exemptions=1
+  cap  CAND: exit=1 SOURCE_CAPTURE: DRIFT captures=1 exemptions=1 bad=1 first=S002:orphan-exemption
+
+=== vtpad: VT id pad (JS \s, not a line terminator): same shape as NBSP
+  census: exit=1 findings=['file\tE06\tS001 tier=Z1', 'file\tE02\t', 'file\tE06\t']
+  cite BASE: exit=0 CITE_SOURCES: CLEAN cited=2
+  cite CAND: exit=1 CITE_SOURCES: DRIFT ghosts=1 first=S002
+  cap  BASE: exit=0 SOURCE_CAPTURE: CLEAN captures=1 exemptions=1
+  cap  CAND: exit=1 SOURCE_CAPTURE: DRIFT captures=1 exemptions=1 bad=1 first=S002:orphan-exemption
+
+=== nelpad: NEL id pad (NOT JS \s): BASE already agrees with census; neutral
+  census: exit=1 findings=['file\tE06\tS001 tier=Z1', 'file\tE02\t', 'file\tE06\t']
+  cite BASE: exit=1 CITE_SOURCES: DRIFT ghosts=1 first=S002
+  cite CAND: exit=1 CITE_SOURCES: DRIFT ghosts=1 first=S002
+  cap  BASE: exit=1 SOURCE_CAPTURE: DRIFT captures=1 exemptions=1 bad=1 first=S002:orphan-exemption
+  cap  CAND: exit=1 SOURCE_CAPTURE: DRIFT captures=1 exemptions=1 bad=1 first=S002:orphan-exemption
+

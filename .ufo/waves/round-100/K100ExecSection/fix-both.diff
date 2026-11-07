@@ -1,0 +1,49 @@
+# fix-both: minimal diff vs BASE 5e2f9856271525760ade3b08892f6df7601fa689 — brings the JS row readers to fleet-census parity
+# sec = census section gate (rows only inside `## Registry`, heading rules verbatim from row_pass)
+# fc  = census 13-field gate (gawk NF==13 on the 0-3-SP-stripped record)
+# both fixes are applied to scripts/cite-sources.mjs and scripts/source-capture.mjs
+
+--- a/scripts/cite-sources.mjs
++++ b/scripts/cite-sources.mjs (fix-both)
+@@ -32,9 +32,17 @@
+ 
+ function registryIds(text) {
+   const ids = new Set();
++  let inRegistry = false;
+   for (const line of text.split('\n')) {
+-    const m = line.match(/^ {0,3}\|\s*(S[0-9]{3,})\s*\|/);
+-    if (m) ids.add(m[1]);
++    if (/^ {0,3}##[ \t]/.test(line)) {
++      const rest = line.replace(/^ {0,3}/, '').slice(2);
++      inRegistry = rest.replace(/^[ \t]+/, '').replace(/[ \t]+$/, '') === 'Registry';
++      continue;
++    }
++    if (/^ {0,3}#[ \t]/.test(line)) { inRegistry = false; continue; }
++    if (!inRegistry) continue;
++    const m = line.match(/^ {0,3}\|[ \t]*(S[0-9]{3,})[ \t]*\|/);
++    if (m && line.replace(/^ {0,3}/, '').split('|').length === 13) ids.add(m[1]);
+   }
+   return ids;
+ }
+
+--- a/scripts/source-capture.mjs
++++ b/scripts/source-capture.mjs (fix-both)
+@@ -154,7 +154,17 @@
+     return { ok: false, reason: `sources doc unreadable: ${e.code || 'EIO'}` };
+   }
+   const ids = new Set();
+-  for (const m of raw.matchAll(/^\s*\|\s*(S[0-9]{3,})\s*\|/gm)) {
++  let inRegistry = false;
++  for (const line of raw.split('\n')) {
++    if (/^ {0,3}##[ \t]/.test(line)) {
++      const rest = line.replace(/^ {0,3}/, '').slice(2);
++      inRegistry = rest.replace(/^[ \t]+/, '').replace(/[ \t]+$/, '') === 'Registry';
++      continue;
++    }
++    if (/^ {0,3}#[ \t]/.test(line)) { inRegistry = false; continue; }
++    if (!inRegistry) continue;
++    const m = line.match(/^ {0,3}\|[ \t]*(S[0-9]{3,})[ \t]*\|/);
++    if (!m || !(line.replace(/^ {0,3}/, '').split('|').length === 13)) continue;
+     if (ids.has(m[1])) {
+       return { ok: false, reason: `sources doc has duplicate row id ${m[1]}` };
+     }

@@ -1,0 +1,11 @@
+$ grep -c "^miss .*D-indent-SP4" .ufo/waves/round-100/controls/pre-repair/ctl-indent4.txt
+0
+exit=1
+
+$ grep -c "^miss .*D-indent-SP4" .ufo/waves/round-100/controls/ctl-indent4.txt
+2
+exit=0
+
+$ grep -o "rows=[0-9]*" .ufo/waves/round-100/controls/pre-repair/ctl-indent4.txt .ufo/waves/round-100/controls/ctl-indent4.txt
+.ufo/waves/round-100/controls/pre-repair/ctl-indent4.txt:rows=132
+.ufo/waves/round-100/controls/ctl-indent4.txt:rows=135

@@ -1,0 +1,29 @@
+gen100.py seed=edb7db46958057b2 fixtures=507 rows=1191 test_rows=684
+family counts: {'indent': 159, 'pad': 117, 'prefix': 140, 'crlf': 16, 'digits': 17, 'rand': 40, 'suffix': 9, 'nul': 5, 'whole': 3, 'bom': 1}
+distinct U+code points per role: {'indent': 96, 'pad': 96, 'prefix': 95, 'nul': 1}
+Unicode White_Space (LF excluded): 24/24 covered; missing=[]
+Zs: 17/17 covered; missing=[]
+Cf per seat spec: 14/14 covered; missing=[]
+C0+C1+DEL (LF excluded): 64/64 covered; missing=[]
+indent lengths: 0..10 (systematic SP run 0-10 + per-char 1-10 + 10-length repeats)
+pad lengths: 0..10 (per-char 1-10 lead/trail/both + mixed 0-10)
+digit id forms: ascii 3-digit min, ascii 10-digit, fullwidth, arabic-indic, ext-arabic, devanagari, bengali, thai, mixed ascii/fullwidth, two-digits, trailing/leading letter, dash, inner space, double-S, two ids
+
+== seed A (edb7db46958057b2) ==
+fixtures=507 in_scope=495 report=12 model_vs_census_mismatches=0 elapsed=25.5s
+  base cite 615/672 agree (disagree 57) | capture 392/495 agree (disagree 103)
+  ref  cite 672/672 agree (disagree 0) | capture 495/495 agree (disagree 0)
+  cand cite 672/672 agree (disagree 0) | capture 495/495 agree (disagree 0)
+== seed B (6864463af4d02acc) ==
+fixtures=507 in_scope=495 report=12 model_vs_census_mismatches=0 elapsed=65.6s
+  base cite 614/672 agree (disagree 58) | capture 395/495 agree (disagree 100)
+  ref  cite 672/672 agree (disagree 0) | capture 495/495 agree (disagree 0)
+  cand cite 672/672 agree (disagree 0) | capture 495/495 agree (disagree 0)
+== two-seed totals ==
+  cand cite 1344/1344 (disagree 0) | capture 990/990 (disagree 0)
+  ref  cite 1344/1344 (disagree 0) | capture 990/990 (disagree 0)
+  base cite 1229/1344 (disagree 115) | capture 787/990 (disagree 203)
+== boundary supplement (6 hand cases: EOF w/o LF, CR-only EOF, CRLF EOF, NBSP pad, 60-SP pads, S000) ==
+  base cite 5/6 | capture 5/6
+  ref  cite 6/6 | capture 6/6
+  cand cite 6/6 | capture 6/6

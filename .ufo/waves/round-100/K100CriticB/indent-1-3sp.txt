@@ -1,0 +1,13 @@
+# rows with 1-3 SP indent (census rows, sources-check column-0 gate misses)
+live_indented_rows 0
+history_indented_rows 0 revs 363
+# lane SOURCES row readers (grep)
+kumitate-shokunin/scripts/cite-sources.mjs:26:const ID_RE = /\bS[0-9]{3,}\b/g;
+kumitate-shokunin/scripts/cite-sources.mjs:36:    const m = line.match(/^ {0,3}\|\s*(S[0-9]{3,})\s*\|/);
+kumitate-shokunin/scripts/round-gate.mjs:118: *   URL on a `corpus/SOURCES.md` registry row (`^ {0,3}\|[ \t]*S\d{3,}[ \t]*\|`) whose
+kumitate-shokunin/scripts/round-gate.mjs:411:const SOURCES_ROW_RE = /^ {0,3}\|[ \t]*S\d{3,}[ \t]*\|/;
+kumitate-shokunin/scripts/source-capture.mjs:77:const SID = /^S[0-9]{3,}$/;
+kumitate-shokunin/scripts/source-capture.mjs:157:  for (const m of raw.matchAll(/^\s*\|\s*(S[0-9]{3,})\s*\|/gm)) {
+kumitate-shokunin/scripts/source-dupes.mjs:79:const SID = /^S[0-9]{3,}$/;
+# sources-check row gate
+233:    if (!line.startsWith('|')) continue;

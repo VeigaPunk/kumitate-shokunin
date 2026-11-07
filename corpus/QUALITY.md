@@ -1639,3 +1639,66 @@ Q39–Q41 were added in round 50 (r49 verifier-spotcheck defects 4–5 and the R
   committer time, which is conservative in one direction only: a read that happened before the commit but is
   logged after it fails, while a fabricated earlier timestamp passes. The log binds rounds from 99 on; r98's
   missing log is reported, not retro-filled.
+
+### Q94` registration. Freeze `445196e4609b76f23d706403b7bebf1135066952`; lane base
+`5e2f9856271525760ade3b08892f6df7601fa689`.
+
+## Mistakes
+
+| class | evidence pointer | captured-by | fix |
+|---|---|---|---|
+| **M100-1 — round 100's own load order: three canonical/binding inputs were opened after the claim line, and the frozen plan cites a checker receipt that is not in the frozen tree.** | `.ufo/waves/round-100/open/read-order.log`: `claim` at `04:20:37-03:00`; `canonical … SKILL.md`, `canonical … PROTOCOL-APPENDIX.md` and `binding skill://shokunin` at `04:26:06-03:00`. Checker on the **frozen log**: `python3 .ufo/waves/round-99/probe/read-order-check.py --log .ufo/waves/round-100/open/read-order.log --freeze 445196e4609b76f23d706403b7bebf1135066952` → `READ_ORDER: DRIFT MISSING_CANONICAL MISSION.md`, exit 1 (`.ufo/waves/round-100/K100ScribeLesson/receipts/read-order-check.txt`) — the fleet line packs `AXES.md MISSION.md LEARNING.md CORPUS.md` into one path field, so four required canonical inputs are invisible to the checker. The split copy reads the ordering defect: `DRIFT CANONICAL_AFTER_CLAIM line=22 kimi-shokunin/skills/shokunin/SKILL.md`, exit 1 (`.ufo/waves/round-100/close-l1/read-order-split.txt`). The plan's cited receipt `open/read-order-check.txt` is absent from the frozen tree: `git ls-tree -r 445196e4 -- .ufo/waves/round-100/open/` lists 8 files, not that one (`ls .ufo/waves/round-100/open/read-order-check.txt` → ENOENT); the plan text citing it is `git show 445196e4:.ufo/waves/round-100/plan.md \| sed -n '12p'`. | Q93 (the r99 checker), **run only at freeze and not treated as a freeze blocker**: the plan discloses the DRIFT instead of repairing the order; Q93 checks the log's ordering, not whether the plan's other cited receipts exist. | The claim was not revised (the late reads contain no rule the claim contradicts) — r100 records the DRIFT as M100-1 rather than hiding it. Durable remedy for the next freeze: write one log line per canonical input, run the checker after the last read and **before** the claim line is authored, and make exit 1 block the freeze; cite only receipts that exist in the frozen tree and reproduce the quoted line with the named command. |
+| **M100-2 — the counter's first control run let the violating `ctl-indent4` read `HELD`: the control was frozen without its violation being drawn.** | Pre-repair receipt `.ufo/waves/round-100/controls/pre-repair/ctl-indent4.txt`: `C100_C1: HELD a=1 b=1 c=1 d=1 rows=132 … seed=4d8286d93b69c3e6`, `ctl-indent4 exit=0`; post-repair `.ufo/waves/round-100/controls/ctl-indent4.txt`: `C100_C1: UNMET a=0 b=0 c=1 d=1 rows=135 … seed=dadf710f58aaa2bc`, `ctl-indent4 exit=1`, with `miss a D-indent-SP4:S765593:want=false:got=true`. Cause (plan § Pre-freeze counter repair): the generator appended a random extra space to every non-row indent, so on that seed the 4-SP witness was drawn as 5 SP and a ` {0,4}` reader was never tested; the pre-repair battery also drew 132 rows, three fewer than the 135 of the repaired generator. Reachability command: `grep -c '^miss .*D-indent-SP4' controls/pre-repair/ctl-indent4.txt` → `0`, exit 1, vs the repaired receipt → `2`, exit 0 (`.ufo/waves/round-100/K100ScribeLesson/receipts/q94-control-reachability.txt`). | **none** — Q92 requires the *counter* to name and exercise fixture classes; no criterion required a *negative control* to prove its own violating witness was drawn. Pre-repair `rows=132` vs post-repair `rows=135` in the 16 receipts is the only artifact that shows the battery changed. | Generator rewritten to draw each indent class exactly (`4`, `5`, `6` SP; `3 SP + TAB`; `TAB + 3 SP` added) and all 16 controls re-run before the freeze; `controls/OBSERVED.txt` then reads 16/16 `match=yes` (15 `UNMET`, `ctl-positive` `HELD`). The post-repair ctl-indent4 receipt shows the witness class in its `miss` lines. |
+| **M100-3 — a frozen plan's prose count of its own battery disagrees with the frozen artifacts** | `plan.md` § C1 says "Battery (~135 rows, all 13-field, inside `## Registry` …)"; the counter prints `rows=135` on every post-repair control (`controls/OBSERVED.txt` lines carry `seed=` but not rows; the per-control receipts do: `grep -o 'rows=[0-9]*' controls/*.txt` → `rows=135` ×16) and `rows=132` ×16 pre-repair. The prose count is right post-repair and was wrong pre-repair (132) — the same generator defect as M100-2, seen as a count rather than a verdict. | **none** — no criterion compares plan prose to the frozen battery size; the pre-repair receipts were superseded, not retained as the frozen set. | Counts in the knowledge entry are derived from the run by command, never from plan prose (same rule as M99-3); the frozen plan is not amended (K4). Reported here so the round's own count history is auditable. |
+
+## Q94 — a pre-data control is admitted only when its run proves its witness was drawn (round 100)
+
+- **Rule.** Every negative control names the witness class it must diverge on, and the frozen run that scores it
+  must emit at least one disagreement line for that class — `miss a <class>:…` or `miss b extra:…:<class>` for the
+  counter, or the equivalent one-line failure for any other instrument. A control whose expected verdict is `UNMET`
+  while its run prints `HELD` is a generator defect: the battery did not reach the intended witness, and no verdict
+  from that run may be frozen. The control receipt carries the witness class, not only the verdict word.
+- **Grounding.** M100-2: r100's first control run read `ctl-indent4` as `C100_C1: HELD a=1 b=1 c=1 d=1 rows=132`
+  (exit 0) because the generator appended a random extra space to every non-row indent, so the 4-SP witness was
+  drawn as 5 SP and a ` {0,4}` reader was never tested. Post-repair the same control reads
+  `UNMET a=0 b=0` with `miss a D-indent-SP4:S765593:want=false:got=true` and `rows=135`.
+  Receipts: `.ufo/waves/round-100/controls/pre-repair/ctl-indent4.txt`, `.ufo/waves/round-100/controls/ctl-indent4.txt`.
+- **Who checks.** The L1 before the freeze: run the frozen counter per control on a pinned seed; require the expected
+  verdict **and** the witness line; commit both receipts (`OBSERVED.txt` plus one file per control).
+- **Command.**
+  `node .ufo/waves/round-100/probe/probe100-c1.mjs --cite <ctl>/cite-sources.mjs --capture <ctl>/source-capture.mjs --work <scratch> --seed <seed>`
+  per control, then `grep -c '^miss .*D-indent-SP4' <receipt>` for `ctl-indent4` → non-zero.
+  This seat: `0`/exit 1 on the pre-repair receipt, `2`/exit 0 on the repaired one
+  (`.ufo/waves/round-100/K100ScribeLesson/receipts/q94-control-reachability.txt`).
+- **Fails when.** A control prints its expected verdict with no `miss`/`extra` line for its witness class; or a
+  control declared `UNMET` prints `HELD` (the pre-repair ctl-indent4 shape).
+- **Shown able to fail.** The pre-repair receipt is the failing shape; the repaired receipt is the pass shape. Both
+  are frozen files, so the failing shape cannot be re-executed from the current generator — its bytes are not
+  retained. That limit is why the grep runs against the receipts, not against a regenerated pre-repair control.
+- **Limit (observed).** A `miss` line proves the run drew a row of that class, not that it drew it once or that the
+  class is the reader's only divergent axis; the witness name is a substring match on the counter's class label.
+  The criterion constrains controls, not the counter's class grid (Q92's subject).
+
+### Q95 — a round's close battery runs every lane gate that reads a file the round writes (round 100)
+
+- **Rule.** Before freezing, the L1 lists the lane gates whose inputs the round will write (here `corpus/SOURCES.md`
+  feeds `sources-check`, `cite-sources`, `source-capture`, `source-dupes` and the census) and puts every one of them in
+  the open and close battery. A gate that is red at open is recorded with its first finding and either repaired in the
+  round or routed with an owner; it is never left out of the battery.
+- **Grounding.** M100-4: `source-capture` read `DRIFT bad=11 first=S269:uncaptured` and `source-dupes` read
+  `DRIFT … new-duplicate:git-scm.com/docs/gitrevisions ids=S253,S271` at the round-100 base — rows S269–S279 (rounds
+  93–99) were appended with capture bytes committed in their wave dirs but never bound in `.ufo/pins/source-captures.json`,
+  and S271 (round 94) duplicated S253's URL unpinned. The r94–r99 close batteries ran `sources-check` and the census
+  only, so seven rounds closed with two SOURCES gates red and their SKILL checklist items (`SKILL.md` source-capture and
+  source-dupes rows) failing (`.ufo/waves/round-100/close-l1/checklists-at-freeze.txt`: `CHECKLIST: 37/47 pass`, items 743 and 744 FAIL).
+- **Who checks.** The L1 at open (battery-before) and at close (battery-final); the closure reads both receipts.
+- **Command.** `bash .ufo/waves/round-100/close/battery.sh <lane dir> <label>` — round 100 adds `cite-sources`,
+  `source-capture` and both selftests to the r99 battery; `node scripts/source-dupes.mjs` is run beside it.
+- **Fails when.** A battery command exits non-zero at close with no repair or routed owner named in the lesson, or a
+  gate reading a written file is absent from the battery.
+- **Shown able to fail.** `.ufo/waves/round-100/open/battery-before.txt`: `SOURCE_CAPTURE: DRIFT captures=95 exemptions=111 bad=11`,
+  exit 1; after binding S269–S281 (9 committed captures, 2 exemptions with reasons, S280/S281 MDN captures) and pinning
+  the S253/S271 group, `SOURCE_CAPTURE: CLEAN captures=106 exemptions=113` and `SOURCE_DUPES: CLEAN groups=8 known=8`
+  (`.ufo/waves/round-100/close/battery-final.txt`).
+- **Limit (observed).** The list of gates per written file is authored, not derived; `surface-probe --checklists`
+  remains the complete sweep, and it also carries host-bound reds (OMP shape, kimi score) the lane cannot repair.

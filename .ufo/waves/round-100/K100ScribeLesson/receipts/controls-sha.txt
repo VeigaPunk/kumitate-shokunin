@@ -1,0 +1,5 @@
+$ python3 .ufo/waves/round-100/probe/make-controls100.py /fast/scratch/hyaku/kumitate-r100/K100ScribeLesson/controls
+controls=16 out=/fast/scratch/hyaku/kumitate-r100/K100ScribeLesson/controls
+
+$ cd /fast/scratch/hyaku/kumitate-r100/K100ScribeLesson/controls && sha256sum -c <(awk '{print $1"  "$2}' <lane>/.ufo/waves/round-100/controls/controls-sha256.txt)
+OK=32 BAD=0

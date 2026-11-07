@@ -1,0 +1,71 @@
+# derived from reader-sweep.txt: 3 comment lines, header line 4, data from line 5
+
+== cite (column 4): classes where reader=yes and census!=valid
+$ awk -F'\t' 'NR>4 && $4=="yes" && $3!="valid"{print $1}' .ufo/waves/round-100/K100ScribeLesson/receipts/reader-sweep.txt | sed -E 's/-(lead|trail|both)$//' | sort | uniq -c
+      3 C-pad-BOM
+      3 C-pad-CR
+      3 C-pad-EMSP
+      3 C-pad-ENSP
+      3 C-pad-FF
+      3 C-pad-IDSP
+      3 C-pad-LS
+      3 C-pad-MMSP
+      3 C-pad-NBSP
+      3 C-pad-NNBSP
+      3 C-pad-OGHAM
+      3 C-pad-PS
+      3 C-pad-THINSP
+      3 C-pad-VT
+-- axes: pad=42 indent=0 break=0
+
+== cap (column 5): classes where reader=yes and census!=valid
+$ awk -F'\t' 'NR>4 && $5=="yes" && $3!="valid"{print $1}' .ufo/waves/round-100/K100ScribeLesson/receipts/reader-sweep.txt | sed -E 's/-(lead|trail|both)$//' | sort | uniq -c
+      3 C-pad-BOM
+      3 C-pad-CR
+      3 C-pad-EMSP
+      3 C-pad-ENSP
+      3 C-pad-FF
+      3 C-pad-IDSP
+      3 C-pad-LS
+      3 C-pad-MMSP
+      3 C-pad-NBSP
+      3 C-pad-NNBSP
+      3 C-pad-OGHAM
+      3 C-pad-PS
+      3 C-pad-THINSP
+      3 C-pad-VT
+      1 D-indent-BOM
+      1 D-indent-EMSP
+      1 D-indent-FF
+      1 D-indent-IDSP
+      1 D-indent-NBSP
+      1 D-indent-SP3TAB
+      1 D-indent-SP4
+      1 D-indent-SP5
+      1 D-indent-SP6
+      1 D-indent-SPTAB
+      1 D-indent-TAB
+      1 D-indent-TAB3SP
+      1 D-indent-TABSP
+      1 D-indent-VT
+      1 E-break-CR-bare
+      1 E-break-CR-text
+      1 E-break-FF-bare
+      1 E-break-LS-bare
+      1 E-break-LS-text
+      1 E-break-PS-bare
+      1 E-break-PS-text
+      1 E-break-VT-bare
+-- axes: pad=42 indent=14 break=8
+
+== schk (column 6): classes where reader=yes and census!=valid
+$ awk -F'\t' 'NR>4 && $6=="yes" && $3!="valid"{print $1}' .ufo/waves/round-100/K100ScribeLesson/receipts/reader-sweep.txt | sed -E 's/-(lead|trail|both)$//' | sort | uniq -c
+-- axes: pad=0 indent=0 break=0
+
+== citeRef (column 7): classes where reader=yes and census!=valid
+$ awk -F'\t' 'NR>4 && $7=="yes" && $3!="valid"{print $1}' .ufo/waves/round-100/K100ScribeLesson/receipts/reader-sweep.txt | sed -E 's/-(lead|trail|both)$//' | sort | uniq -c
+-- axes: pad=0 indent=0 break=0
+
+== capRef (column 8): classes where reader=yes and census!=valid
+$ awk -F'\t' 'NR>4 && $8=="yes" && $3!="valid"{print $1}' .ufo/waves/round-100/K100ScribeLesson/receipts/reader-sweep.txt | sed -E 's/-(lead|trail|both)$//' | sort | uniq -c
+-- axes: pad=0 indent=0 break=0

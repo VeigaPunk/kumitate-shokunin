@@ -1,0 +1,82 @@
+# row shape: malformed/duplicate/BOM rows (census vs tools)
+
+Readers compared per fixture:
+  census : bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-100/K100ExecSection/fixtures/shape-fields12.md --today 2026-11-07  (subset: validate --file <fixture> --today 2026-11-07)
+  base   : node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-100/K100ExecSection/base/cite-sources.mjs --readme <r> --sources <fixture>   |   node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-100/K100ExecSection/base/source-capture.mjs --registry <regD/regC> --sources <fixture>
+  ref    : node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-100/K100ExecSection/ref/ctl-positive/cite-sources.mjs ... (L1 reference ctl-positive, rule R100)
+  sec/fc/both : node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-100/K100ExecSection/fixed-<v>/... (minimal census-parity fixes, diffs in fix-<v>.diff)
+ROW = id recognised as a registry row; NOT-ROW = id rejected; census codes: E06 in-registry row (tier Z<cells>),
+E12 id-shaped row outside Registry, E01 wrong field count, E02 malformed id. Fixture ids carry tier Z1 so every
+census-recognised in-registry row emits an E06 line naming it. Full receipts: receipts/, fixtures: fixtures/.
+
+## shape-fields12  (census exit=1)
+fixture: fixtures/shape-fields12.md
+census lines: file	E06	S901 tier=Z1 ; file	E01	S111 fields=10
+census read: E06(in-registry)={S901} E12(outside)={} E01(bad-fields)={S111} E02(bad-id)={}
+  cite S901: base=ROW ref=ROW sec=ROW fc=ROW both=ROW
+  cite S111: base=ROW ref=ROW sec=ROW fc=NOT-ROW both=NOT-ROW
+  capture base: rows=['S111', 'S901'] not-rows=[]
+  capture ref: rows=['S111', 'S901'] not-rows=[]
+  capture sec: rows=['S111', 'S901'] not-rows=[]
+  capture fc: rows=['S901'] not-rows=['S111']
+  capture both: rows=['S901'] not-rows=['S111']
+
+## shape-fields14  (census exit=1)
+fixture: fixtures/shape-fields14.md
+census lines: file	E06	S901 tier=Z1 ; file	E01	S112 fields=12
+census read: E06(in-registry)={S901} E12(outside)={} E01(bad-fields)={S112} E02(bad-id)={}
+  cite S901: base=ROW ref=ROW sec=ROW fc=ROW both=ROW
+  cite S112: base=ROW ref=ROW sec=ROW fc=NOT-ROW both=NOT-ROW
+  capture base: rows=['S112', 'S901'] not-rows=[]
+  capture ref: rows=['S112', 'S901'] not-rows=[]
+  capture sec: rows=['S112', 'S901'] not-rows=[]
+  capture fc: rows=['S901'] not-rows=['S112']
+  capture both: rows=['S901'] not-rows=['S112']
+
+## shape-dup  (census exit=1)
+fixture: fixtures/shape-dup.md
+census lines: file	E06	S901 tier=Z1 ; file	E06	S113 tier=Z1 ; file	E03	S113 duplicate id ; file	E06	S113 tier=Z1
+census read: E06(in-registry)={S113, S901} E12(outside)={} E01(bad-fields)={} E02(bad-id)={}
+  cite S901: base=ROW ref=ROW sec=ROW fc=ROW both=ROW
+  cite S113: base=ROW ref=ROW sec=ROW fc=ROW both=ROW
+  capture base: FAIL-CLOSED: SOURCE_CAPTURE: FAIL-CLOSED reason=sources doc has duplicate row id S113
+  capture ref: FAIL-CLOSED: SOURCE_CAPTURE: FAIL-CLOSED reason=sources doc has duplicate row id S113
+  capture sec: FAIL-CLOSED: SOURCE_CAPTURE: FAIL-CLOSED reason=sources doc has duplicate row id S113
+  capture fc: FAIL-CLOSED: SOURCE_CAPTURE: FAIL-CLOSED reason=sources doc has duplicate row id S113
+  capture both: FAIL-CLOSED: SOURCE_CAPTURE: FAIL-CLOSED reason=sources doc has duplicate row id S113
+
+## shape-bom  (census exit=1)
+fixture: fixtures/shape-bom.md
+census lines: file	E12	S901 row outside Registry section ; file	E12	S114 row outside Registry section
+census read: E06(in-registry)={} E12(outside)={S114, S901} E01(bad-fields)={} E02(bad-id)={}
+  cite S901: base=ROW ref=ROW sec=NOT-ROW fc=ROW both=NOT-ROW
+  cite S114: base=ROW ref=ROW sec=NOT-ROW fc=ROW both=NOT-ROW
+  capture base: rows=['S114', 'S901'] not-rows=[]
+  capture ref: rows=['S114', 'S901'] not-rows=[]
+  capture sec: FAIL-CLOSED: SOURCE_CAPTURE: FAIL-CLOSED reason=sources doc carries no S### rows
+  capture fc: rows=['S114', 'S901'] not-rows=[]
+  capture both: FAIL-CLOSED: SOURCE_CAPTURE: FAIL-CLOSED reason=sources doc carries no S### rows
+
+## shape-escpipe  (census exit=1)
+fixture: fixtures/shape-escpipe.md
+census lines: file	E06	S901 tier=Z1 ; file	E01	S115\ fields=12 ; file	E02	S115\
+census read: E06(in-registry)={S901} E12(outside)={} E01(bad-fields)={S115\} E02(bad-id)={S115\}
+  cite S901: base=ROW ref=ROW sec=ROW fc=ROW both=ROW
+  cite S115: base=NOT-ROW ref=NOT-ROW sec=NOT-ROW fc=NOT-ROW both=NOT-ROW
+  capture base: rows=['S901'] not-rows=['S115']
+  capture ref: rows=['S901'] not-rows=['S115']
+  capture sec: rows=['S901'] not-rows=['S115']
+  capture fc: rows=['S901'] not-rows=['S115']
+  capture both: rows=['S901'] not-rows=['S115']
+
+## shape-emptyid  (census exit=1)
+fixture: fixtures/shape-emptyid.md
+census lines: file	E06	S901 tier=Z1 ; file	E02	 ; file	E06	 tier=Z1
+census read: E06(in-registry)={, S901} E12(outside)={} E01(bad-fields)={} E02(bad-id)={}
+  cite S901: base=ROW ref=ROW sec=ROW fc=ROW both=ROW
+  cite S116: base=NOT-ROW ref=NOT-ROW sec=NOT-ROW fc=NOT-ROW both=NOT-ROW
+  capture base: rows=['S901'] not-rows=['S116']
+  capture ref: rows=['S901'] not-rows=['S116']
+  capture sec: rows=['S901'] not-rows=['S116']
+  capture fc: rows=['S901'] not-rows=['S116']
+  capture both: rows=['S901'] not-rows=['S116']

@@ -1,0 +1,29 @@
+$ git log --oneline -3
+7c3bca09 round-100: M — cite-sources/source-capture read SOURCES row ids as the census row_pass does (R100), selftests 8->25 and 13->33
+2abafa0e round-100: w1 spec (12 seats) + validated dispatch + read-order check at freeze
+445196e4 round-100: freeze C1 plan, counter probe100-c1, 16 pre-data controls, read-order log, open receipts
+
+$ sha256sum scripts/cite-sources.mjs scripts/source-capture.mjs scripts/sources-check.mjs scripts/round-gate.mjs
+e887b982eff4bcfe5d15e47b2c105ebabf4b4dd9cae7ec4fdf8599fccdab9ace  scripts/cite-sources.mjs
+ad3227d6571838ccefa10aa3778c9777730f5e1ad9a89f03f528d6f2d7104355  scripts/source-capture.mjs
+75ac6972d8573be9018ed32f21b6e67407438c32a7b8f0d695fb2c47a66ab40a  scripts/sources-check.mjs
+84ebaf9f2632114cfea3b24abe0a61efec7d8447763a7392c5ef6f7f949349c9  scripts/round-gate.mjs
+
+$ cat .ufo/waves/round-100/K100ExecTool/READY
+e887b982eff4bcfe5d15e47b2c105ebabf4b4dd9cae7ec4fdf8599fccdab9ace  cite-sources.mjs
+ad3227d6571838ccefa10aa3778c9777730f5e1ad9a89f03f528d6f2d7104355  source-capture.mjs
+
+== appended 2026-11-07T04:56:57-03:00: HEAD bytes vs worktree
+$ git show 7c3bca09:scripts/cite-sources.mjs | sha256sum
+e887b982eff4bcfe5d15e47b2c105ebabf4b4dd9cae7ec4fdf8599fccdab9ace  -
+$ git show 7c3bca09:scripts/source-capture.mjs | sha256sum
+ad3227d6571838ccefa10aa3778c9777730f5e1ad9a89f03f528d6f2d7104355  -
+$ sha256sum scripts/cite-sources.mjs scripts/source-capture.mjs
+9b9aeefd7f06123ed2cdfcb8b8c9173cc21764e00a027e06efa43b41a2b71b85  scripts/cite-sources.mjs
+4b39fa14e24dea3e91954630e0711468133252745772034ea7b2dd2bed9d13e1  scripts/source-capture.mjs
+$ git status --porcelain scripts/ .ufo/pins/
+ M .ufo/pins/source-captures.json
+ M .ufo/pins/source-dupes.json
+ M scripts/cite-sources.mjs
+ M scripts/source-capture.mjs
+# note: the two reader files changed in the worktree at 04:56:24/04:56:36 (mtime), after this seat read them; not this seat's edit and not reverted.

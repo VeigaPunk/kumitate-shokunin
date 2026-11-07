@@ -292,12 +292,12 @@ The K census decision supplies both members and findings; the score is now
 
 <!-- kumitate-proxy-v1
 A=37
-A_wave=1755
+A_wave=1839
 C=47
 C1=19
 C1_total=19
-C2=257
-C2_total=257
+C2=260
+C2_total=260
 S_members=88
 S_sections=88
 R_members=92
@@ -337,11 +337,11 @@ pin.counter-rerun=c002523fc39b521f57a3ee86c3ff154e06aea8ccd6738501138460141abc36
 pin.receipt-attest=ba5139b1290b204054c043df3140554757116e6fbaf19783b502a24ed1b2ce31
 pin.receipt-bind=f39aab5c3de0e708c6f9f8d77b20b2ede540bc61518620a55521318ce66cc5e1
 pin.counter-pins=060d5d8662701340da24f483316053be86bed246510c541a0518492e7b29028e
-pin.source-capture=39bdeb39298672dd3ed81036013de542ad6925587cb84f330ab69de6799d28f5
+pin.source-capture=c9f22275a148c0294bc2c9a835729f6d9cd123e71638b7d3bb6f6300ac1d6084
 pin.source-dupes=ead88b22fbd1525d13dd46c67b427041dc331d202a005285adea813c32530d7a
 pin.readme-map=263d961c3f42ed3da2479c4c985edd6eadd06f7c151b97370a619ff6880b2afe
 pin.receipt-evidence=0ea6b66df7dcff4dc9381c688a5182fb1fe2c3be5353df7a52d3c6f2e006972c
-pin.cite-sources=7211be845cd994e6dc3bf1b1ed821a0464d9aa1cce6f4695412095a9fc2921a6
+pin.cite-sources=da16e32b5397070631c1dd03a4b04ad3672f7f7bb0d0fb98adec0b98d0b8dc9d
 pin.dispatch-evidence=765a7aa3ef6b11f18548da4a91f98c42e07b825229135c30010f092cc1af65cc
 pin.make-dispatch-actual=f0194314e98e87e86eb1329f36411e249911f9a0120aa4feb702562a54bf3dc9
 pin.inline-dispatch-evidence=9f1978a93deb0001396008f48ceae2f154bf7bdc145fff36721e29ef9ce1e741
@@ -4768,3 +4768,33 @@ locale, pin blank and route the census split, or keep BASE JS — measured both 
 source-capture.mjs:157 `\s` row readers → census class (K99ExecSibling fixes measured, not landed). (3) Counter gaps
 (K99CriticA): provenance sniffing, census delegation, undrawn classes, pad runs >16, the five unpadded cells,
 empty-id rows. (4) Carried: round-gate status/URL classes; M93-3/M93-5/R93-D1/F93; census gawk/bash CR L0.
+
+## Round 100 — declaration and disposition (2026-11-07, attempt 1)
+
+ONE C1 operability claim: R100 `cite-sources` (line 36) and `source-capture` (line 157) recognise a SOURCES row id as the
+census `row_pass` does — one LF record per line, 0–3 ASCII SP indent, id cell padded with SP/TAB only, `S` + 3+ ASCII
+digits closed by `|`; source-capture drops the `m`-flag `matchAll` (a row after CR/U+2028/U+2029 on one LF record is not a
+row). Integer 9 is terminal under f_O; every coverage row stays 10. Sourced S280/S281 (MDN, opened this round) with
+S276/S277/S274. Pre-freeze r99 spot-check adoption `5e2f9856`; freeze `445196e4`: plan, counter `probe100-c1.mjs`, 16
+pre-data controls (positive HELD, 15 negatives UNMET incl. the K99 draft fix `ctl-k99`; all match after the M100-2 generator
+repair, `.ufo/waves/round-100/controls/OBSERVED.txt`). Spec `2abafa0e`. M `7c3bca09` (READY `e887b982`/`ad3227d6`) HELD
+twice; M2 `4897e20c` (`da16e32b`/`c9f22275`) HELD twice under the same frozen counter
+(`.ufo/waves/round-100/close/probe-m2-{1,2}.txt`): a=1 b=1 c=1 d=1. Selftests cite 8→25→45, capture 13→33→54; REMUT 15/15 at
+M and M2; M2_TEETH 18/18 (K100CriticA), M2_SURVIVORS 2/2 (K100Mutation). K100CriticC 1344/1344 + 990/990 vs BASE 115/203
+disagreements; K100Reviewer 20/20.
+Verdict: HELD. No capability row; repaired instruments, not invented score gain. Counter does not certify R100 alone (14
+HELD wrong constructions, all killed by M2 arms). Prospective: 0 live/historical rows diverge (K100Scout, K100CriticB 363
+revisions). Hygiene (not claimed): source-capture DRIFT bad=11 → CLEAN (S269–S281 bound), source-dupes S253/S271 pinned
+(M100-4, Q95). `pin.cite-sources` 7211be84… → da16e32b…, `pin.source-capture` 39bdeb39… → c9f22275… (also counter-pins).
+SOURCES 217→219; Q94, Q95, lesson, knowledge `row-id-reader-class.md`, SKILL rows and map updated.
+Wave w1 12 seats (executor3, scribe2, scout1, connector1, reviewer1, critic3, mutation-tester1), 0 dead.
+
+**Round 100 proxy bookkeeping (close).** `A_wave` 1755 → 1839 (wave seat scripts, probe, generator, close helpers),
+`C2`/`C2_total` 257 → 260 (r99 spot-check + `row-id-reader-class.md` + `lessons/round-100.md` rows).
+
+## Round 101 pre-registration (written by round 100). Candidates, not commitments
+
+(1) Section scope for cite-sources/source-capture (K100ExecSection `fix-both.diff`, 0 live impact). (2) Counter hardening:
+remove fixture markers, census-oracle hash pin, census-independence arm (K100CriticA/B), NUL oracle SETUP (K100CriticC).
+(3) Duplicate-id / malformed-row contract of source-capture vs census E03/E01. (4) Carried: used-by L0 `kumitate | round-99`,
+census CR L0 `kumitate | round-96`, remaining checklist reds.

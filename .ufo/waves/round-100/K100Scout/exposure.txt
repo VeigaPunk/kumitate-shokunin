@@ -1,0 +1,153 @@
+# exposure.txt -- fleet SOURCES.md row-reader exposure (K100Scout, round 100)
+
+Scanned 21 current fleet lane
+corpus/SOURCES.md files (sha256-pinned) and
+79 committed revisions of
+kumitate-shokunin/corpus/SOURCES.md (79 commits, git log -- corpus/SOURCES.md).
+Total files scanned: 100.
+
+Classes measured (per file, one LF-delimited record = one line, gawk RS=LF):
+  (i)   a record carrying CR (not immediately before LF), U+2028, U+2029 or U+0085;
+  (ii)  an id row whose indent is anything other than 0-3 ASCII SP
+        (census row gate `^ {0,3}\|`; the capture reader `^\s*\|` accepts more);
+  (iii) a census id cell (field 2) whose pad carries a character other than
+        ASCII SP/TAB (the census trims POSIX blank only; the JS readers trim JS \s).
+Supplementary:
+  (iv)  a capture-reader row found INSIDE an LF record (after CR/U+2028/U+2029),
+        i.e. a row the `m`-flag reader sees and the census (RS=LF) does not;
+  (v)   reader/census id-set divergence (ids a reader accepts that the census
+        does not read as a valid registry id).
+
+Reader regexes under study, asserted verbatim against the lane sources:
+  cite-sources.mjs:36    /^ {0,3}\|\s*(S[0-9]{3,})\s*\|/   flags=[]
+  source-capture.mjs:157 /^\s*\|\s*(S[0-9]{3,})\s*\|/gm flags=[gm]
+
+Method: K100Scout/scan_exposure.mjs (exact ECMAScript semantics; the two
+reader regexes are read out of the lane sources at run time, not transcribed).
+Positive control: K100Scout/selftest_scan.mjs -- a synthetic registry carrying
+one instance of every class must be flagged, a clean one must not (11/11 PASS).
+Model validation: the scanner's census-row model was compared row-for-row with
+the live `scripts/sources-census.sh census --file` on all 21 pinned snapshots
+(live_census.tsv) -- all 21 match exactly.
+
+## Per-lane table (current fleet corpus/SOURCES.md, sha256-pinned)
+
+| lane | sha256 (first 16) | census rows (model) | census rows (live) | match | E02 (live) | (i) | (ii) | (iii) | (iv) | cite-only ids | capture-only ids |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| audio-shokunin | fe8a064df79fd092 | 15 | 15 | yes | none | 0 | 0 | 0 | 0 | 0 | 0 |
+| chousa-shokunin | 296c6a62a30cd42e | 213 | 213 | yes | none | 0 | 0 | 0 | 0 | 0 | 0 |
+| game-dev-2d-shokunin | a046d2c4bb235e53 | 31 | 31 | yes | none | 0 | 0 | 0 | 0 | 0 | 0 |
+| game-dev-3d-shokunin | dc95c043da258003 | 36 | 36 | yes | none | 0 | 0 | 0 | 0 | 0 | 0 |
+| kagi-shokunin | fa69564f610e5192 | 114 | 114 | yes | none | 0 | 0 | 0 | 0 | 0 | 0 |
+| kaidoku-shokunin | 92fe6c95a85d9c2f | 233 | 233 | yes | none | 0 | 0 | 0 | 0 | 0 | 0 |
+| kake-shokunin | 78c68ce7abca205a | 224 | 224 | yes | none | 0 | 0 | 0 | 0 | 0 | 0 |
+| kama-shokunin | 98f147aed96fd23b | 343 | 343 | yes | none | 0 | 0 | 0 | 0 | 0 | 0 |
+| kasegi-shokunin | 7549517d225fce5f | 132 | 132 | yes | none | 0 | 0 | 0 | 0 | 0 | 0 |
+| kengaku-shokunin | 1f4c2354b813eb82 | 341 | 341 | yes | none | 0 | 0 | 0 | 0 | 0 | 0 |
+| kotoba-shokunin | 0ac7cb3553448659 | 211 | 211 | yes | none | 0 | 0 | 0 | 0 | 0 | 0 |
+| kotodama-shokunin | ba0662497083430a | 951 | 951 | yes | none | 0 | 0 | 0 | 0 | 0 | 0 |
+| kumitate-shokunin | c5ebff4a89695d14 | 217 | 217 | yes | none | 0 | 0 | 0 | 0 | 0 | 0 |
+| lore-shokunin | 9fc435e8095f8f86 | 32 | 32 | yes | none | 0 | 0 | 0 | 0 | 0 | 0 |
+| mado-shokunin | a0fd98212f15ab3b | 453 | 453 | yes | none | 0 | 0 | 0 | 0 | 0 | 0 |
+| mori-shokunin | 76e82268dfd16efd | 416 | 416 | yes | none | 0 | 0 | 0 | 0 | 0 | 0 |
+| revenger-shokunin | 477fc32c76a195df | 509 | 509 | yes | none | 0 | 0 | 0 | 0 | 0 | 0 |
+| souji-shokunin | 443cbf6c05afe125 | 251 | 251 | yes | none | 0 | 0 | 0 | 0 | 0 | 0 |
+| tabi-shokunin | 0af61d865a7d744f | 206 | 206 | yes | none | 0 | 0 | 0 | 0 | 0 | 0 |
+| tameshi-shokunin | 491de5003e432516 | 177 | 177 | yes | none | 0 | 0 | 0 | 0 | 0 | 0 |
+| tsukuroi-shokunin | 72948990671f9a71 | 373 | 373 | yes | none | 0 | 0 | 0 | 0 | 0 | 0 |
+
+Fleet totals over the 21 current lane files: (i)=0 (ii)=0 (iii)=0 (iv)=0 cite-only=0 capture-only=0
+Model/live census row counts agree on all 21 lanes.
+
+## Per-revision table (kumitate-shokunin/corpus/SOURCES.md, 79 commits)
+
+| commit | census rows | (i) | (ii) | (iii) | (iv) | cite-only ids | capture-only ids |
+|---|---|---|---|---|---|---|---|
+| 05b3176915de | 136 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 0d2185b3df57 | 162 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 125287f347a0 | 177 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 13060d9b8db4 | 175 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 15084153a022 | 134 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 1530a7552134 | 37 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 165b83044d33 | 133 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 19b4e440e83e | 187 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 1a8eed5aaa32 | 20 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 1c06b6700e51 | 167 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 1c1a855a0bae | 180 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 1d83c79e717c | 215 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 1e00955a657a | 156 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 227b9e6e7c93 | 99 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 269dadb6a567 | 95 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 2cf2e2aa03e6 | 217 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 2ed8a5f8b133 | 139 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 2f8475cdeca3 | 208 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 357e4e730574 | 171 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 35abe21ba640 | 145 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 378b6e732a1a | 99 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 37e8f66973c5 | 61 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 3876217622ce | 164 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 3b1483801fe6 | 158 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 3d5760a8a474 | 32 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 4c9e40759d09 | 28 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 4dc470a131e1 | 166 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 4e1f3a7978b8 | 45 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 4e4f4713a7a2 | 98 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 4e58bb0ee48a | 38 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 50548ae5b4a4 | 123 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 509afb1d6ec5 | 173 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 589d25e4c2dc | 99 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 647de5c18a3f | 214 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 654d1b28e33d | 34 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 6777f3063e97 | 213 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 67ebb32dab08 | 97 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 68940c66f748 | 112 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 69d3c774a96f | 155 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 6b2a45178c72 | 76 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 6cbd6750aa28 | 173 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 6d8faede281e | 134 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 728799fc8055 | 105 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 76bdda4bde02 | 152 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 77ebfe379421 | 203 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 7817d2009301 | 192 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 7a8afb5fa029 | 197 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 7c2f12c82702 | 206 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 82c9c7efb9d9 | 200 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 84cb1d5d8e70 | 52 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 8eb113fd2d91 | 108 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 980a16afc7ca | 79 | 0 | 0 | 0 | 0 | 0 | 0 |
+| a476977dd76c | 101 | 0 | 0 | 0 | 0 | 0 | 0 |
+| a745a3b0e022 | 133 | 0 | 0 | 0 | 0 | 0 | 0 |
+| a882a334eaf7 | 184 | 0 | 0 | 0 | 0 | 0 | 0 |
+| ab5dde401b7c | 103 | 0 | 0 | 0 | 0 | 0 | 0 |
+| ab8f60138810 | 182 | 0 | 0 | 0 | 0 | 0 | 0 |
+| adedf6719127 | 79 | 0 | 0 | 0 | 0 | 0 | 0 |
+| beb8a934e9b2 | 165 | 0 | 0 | 0 | 0 | 0 | 0 |
+| c4396021c31e | 177 | 0 | 0 | 0 | 0 | 0 | 0 |
+| c54943320249 | 126 | 0 | 0 | 0 | 0 | 0 | 0 |
+| c938c068f4db | 33 | 0 | 0 | 0 | 0 | 0 | 0 |
+| c9a084bf03fb | 45 | 0 | 0 | 0 | 0 | 0 | 0 |
+| cd7f69d31b0d | 101 | 0 | 0 | 0 | 0 | 0 | 0 |
+| ce58e03ebb5a | 212 | 0 | 0 | 0 | 0 | 0 | 0 |
+| d140f2883170 | 175 | 0 | 0 | 0 | 0 | 0 | 0 |
+| d21decd2c0cf | 210 | 0 | 0 | 0 | 0 | 0 | 0 |
+| d3f64dc43027 | 189 | 0 | 0 | 0 | 0 | 0 | 0 |
+| d47393ebb7d9 | 161 | 0 | 0 | 0 | 0 | 0 | 0 |
+| d5f67ee26298 | 77 | 0 | 0 | 0 | 0 | 0 | 0 |
+| d81978cdfefd | 61 | 0 | 0 | 0 | 0 | 0 | 0 |
+| e158ee96bdf5 | 160 | 0 | 0 | 0 | 0 | 0 | 0 |
+| e47266ae093e | 166 | 0 | 0 | 0 | 0 | 0 | 0 |
+| e4a49432b36f | 116 | 0 | 0 | 0 | 0 | 0 | 0 |
+| eca7debd9aa6 | 180 | 0 | 0 | 0 | 0 | 0 | 0 |
+| f0dc6d1160e6 | 120 | 0 | 0 | 0 | 0 | 0 | 0 |
+| f4f67ec5931e | 159 | 0 | 0 | 0 | 0 | 0 | 0 |
+| f874353902d0 | 139 | 0 | 0 | 0 | 0 | 0 | 0 |
+| fae386aa9e05 | 38 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+Revision totals over the 79 commits: (i)=0 (ii)=0 (iii)=0 (iv)=0 cite-only=0 capture-only=0
+
+## RESULT
+
+Scanned 100 files (21 current lane + 79 revisions).
+Totals: (i)=0  (ii)=0  (iii)=0  (iv)=0  cite-only=0  capture-only=0
+
+**CLEAN -- expected 0 confirmed.** No live or historical SOURCES.md in the fleet carries a CR/LS/PS/NEL record break, a non-0-3-SP id-row indent, or a non-blank id-cell pad, and no reader/census id-set divergence exists in any scanned file. The divergence the claim closes is therefore prospective, not a live incident (consistent with the plan's disclosed limit 1).

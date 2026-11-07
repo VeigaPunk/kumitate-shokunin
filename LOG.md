@@ -3199,3 +3199,18 @@ selftest pinned no trim class) and M99-3 (plan "47 pad classes" vs 44 in the cou
 `sources-check-cell-trim-class.md`, Q93, SKILL row and README map updated.
 
 - 2026-11-07 — round 99: C1 operability R99 HELD at M/M2; axis 9→9 terminal; every coverage row unchanged; one v1 wave 12 seats; S278/S279; QUALITY Q93; lesson `corpus/lessons/round-99.md`.
+
+## Round 100 — cite-sources and source-capture read registry row ids as the census does (2026-11-07, attempt 1)
+
+Declared one C1 operability claim (lowest non-retired, 9 terminal), sourced on S280/S281 (MDN Input boundary assertion and
+Lexical grammar, opened this round) with S276/S277/S274: R100 — both tools recognise a SOURCES row id as the census `row_pass`
+(LF records, 0–3 SP indent, SP/TAB id pad, ASCII digits). Motivating evidence: r99 K99ExecSibling (both readers wider than the
+census on a fixture) and this round's do-nothing control (`.ufo/waves/round-100/controls/ctl-nothing.txt`: a_miss=42 b_miss=64),
+plus `ctl-k99` showing the K99 draft fix keeps the `m`-flag record hole (six misses). Pre-freeze spot-check adoption
+`5e2f9856`; freeze `445196e4`; spec/dispatch `2abafa0e`, 12 seats, WAVE-DONE, none dead. M `7c3bca09` (HELD twice, REMUT
+15/15); M2 `4897e20c` adds arms for the wave's 14 HELD constructions and 2 mutation survivors (HELD twice, 18/18, 2/2).
+Hygiene: source-capture and source-dupes, red since r93/r94, now CLEAN (M100-4, Q95). Lesson `corpus/lessons/round-100.md`
+mines M100-1 (read order after the claim; frozen log fails the r99 checker), M100-2 (first control run let ctl-indent4 HELD),
+M100-3 (plan prose count), M100-4. Q94, Q95, S280/S281, knowledge, SKILL and map updated.
+
+- 2026-11-07 — round 100: C1 operability R100 HELD at M/M2; axis 9→9 terminal; coverage unchanged; one v1 wave 12 seats; S280/S281; QUALITY Q94/Q95; lesson `corpus/lessons/round-100.md`.
