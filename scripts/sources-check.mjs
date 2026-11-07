@@ -6,7 +6,7 @@
  * Reads only `corpus/SOURCES.md` and direct `corpus/knowledge/*.md` entries.
  * It does not use the network or modify the live tree. `--selftest` creates
  * and removes isolated fixtures under the operating-system temporary directory.
- *
+ * Section membership follows the fleet census `row_pass` grammar (R97).
  * Findings (fleet `sources-census.sh validate` correspondence):
  *   error ROW_MALFORMED       E01  a `| S[0-9]{3,} |` row has split-field count != 13
  *         ID_FORM             E02  a registry row id is not `S[0-9]{3,}`
@@ -189,6 +189,7 @@ function runCheck(opts) {
     return failClosed('READ_FAILED', `cannot read corpus/SOURCES.md (${error?.code ?? 'unknown error'})`);
   }
   const sourceLines = sourceText.split(/\r?\n/).map(normalizeMarkdownIndent);
+  const rawLines = sourceText.split('\n');
   const findings = [];
   const add = (severity, kind, path, line, detail) => {
     findings.push({ severity, kind, path, ...(line === null ? {} : { line }), detail });
@@ -196,12 +197,12 @@ function runCheck(opts) {
   const headings = Object.create(null);
   const sectionAtLine = [];
   let activeSection = null;
-  for (let index = 0; index < sourceLines.length; index += 1) {
-    const match = /^## (.+?)\s*$/.exec(sourceLines[index]);
-    if (match) {
-      activeSection = match[1];
+  for (let index = 0; index < rawLines.length; index += 1) {
+    const raw = rawLines[index];
+    if (/^ {0,3}##[ \t]/.test(raw)) {
+      activeSection = raw.replace(/^ {0,3}##/, '').replace(/^[ \t]+|[ \t]+$/g, '');
       headings[activeSection] = true;
-    } else if (/^#(?:\s|$)/.test(sourceLines[index])) {
+    } else if (/^ {0,3}#[ \t]/.test(raw)) {
       activeSection = null;
     }
     sectionAtLine[index] = activeSection;
@@ -736,6 +737,79 @@ function selfTest() {
           && [1, 2, 3].every((id) => run.stdout.includes(`id=S99${id}`)),
         detail: `exit=${run.status} outside=${outsideFindings.length} last=${finalLine(run)}`,
       };
+    });
+    // R97 section-grammar teeth: each arm pins one clause of the census `row_pass` reader.
+    const r97Cases = [
+      // [label, registryHeading, expectedRows, expectedOutsideIds, extra]
+      ['r97sec-crlf-heading', '## Registry\r', 0, ['S001', 'S002']],
+      ['r97sec-tab-after-h2', '##\tRegistry', 1, []],
+      ['r97sec-double-space-heading', '##  Registry', 1, []],
+      ['r97sec-vt-trail', '## Registry\u000b', 0, ['S001', 'S002']],
+      ['r97sec-ff-trail', '## Registry\f', 0, ['S001', 'S002']],
+      ['r97sec-nbsp', '## Registry ', 0, ['S001', 'S002']],
+      ['r97sec-bare-h1', null, 1, [], { clearing: '#' }],
+      ['r97sec-h1-tab', null, 0, ['S001', 'S002'], { clearing: '#\tx' }],
+      ['r97sec-h1-clears', '## Registry', 0, ['S001', 'S002'], { clearing: '# Title' }],
+      ['r97sec-empty-h2', '## Registry', 0, ['S001', 'S002'], { clearing: '## ' }],
+      ['r97sec-tab-indent-h2', '\t## Registry', 0, ['S001', 'S002']],
+      ['r97sec-4space-h2', '    ## Registry', 0, ['S001', 'S002']],
+      ['r97sec-lowercase', '## registry', 0, ['S001', 'S002']],
+      ['r97sec-closeseq', '## Registry ##', 0, ['S001', 'S002']],
+      ['r97sec-h3-inside', '## Registry', 1, [], { h3: '### x' }],
+      ['r97sec-vt-sep-h2', '## Registry', 1, [], { clearing: '##\u000bRegistry' }],
+      ['r97sec-vt-h1', '## Registry', 1, [], { clearing: '#\u000bTitle' }],
+      ['r97sec-row-before-heading', null, 1, ['S000'], { preRow: true }],
+      ['r97sec-cr-only-line', '## Registry\r\r', 0, ['S001', 'S002']],
+      ['r97sec-pre-heading-row', '## Registry', 1, ['S000'], { preRow: true }],
+      ['r97sec-empty-after-registry', '## Registry', 0, ['S001', 'S002'], { emptyAfter: true }],
+    ];
+    for (const [label, heading, expectedRows, expectedOutside, extra = {}] of r97Cases) {
+      check(`${label}: section grammar pinned`, () => {
+        const rows = [makeRow({ id: 'S001', status: 'mined', usedBy: 'corpus/knowledge/alpha.md' })];
+        const outside = expectedOutside.includes('S002') ? [makeRow({ id: 'S002', status: 'queued', usedBy: '—' })] : [];
+        const root = makeDefault(label, { rows, outsideRows: outside });
+        const sourcePath = join(root, 'corpus', 'SOURCES.md');
+        let text = readFileSync(sourcePath, 'utf8');
+        if (extra.preRow) text = `${makeRow({ id: 'S000', status: 'queued', usedBy: '—' })}\n${text}`;
+        if (heading !== null) text = text.replace(/^## Registry$/m, heading);
+        if (extra.clearing) text = text.replace(/^## Registry$/m, `## Registry\n${extra.clearing}`);
+        if (extra.h3) text = text.replace(/^(## Registry)$/m, `$1\n${extra.h3}`);
+        if (extra.emptyAfter) text = text.replace(/^(## Registry)$/m, `$1\n## `);
+        writeFileSync(sourcePath, text);
+        const run = runTool(tmp, ['--self', root, '--today', FIXTURE_TODAY, '--json']);
+        let parsed; try { parsed = JSON.parse(run.stdout); } catch { return { ok: false, detail: `exit=${run.status} stdout=${run.stdout.slice(0, 120)}` }; }
+        const outsideIds = (parsed.findings ?? []).filter((f) => f.kind === 'ROW_OUTSIDE_REGISTRY').map((f) => (f.detail.match(/id=(\S+)/) ?? [])[1]);
+        const rowsOk = parsed.counts?.rows === expectedRows;
+        const outsideOk = JSON.stringify(outsideIds) === JSON.stringify(expectedOutside);
+        for (const seen of textKinds({ stdout: run.stdout })) observed.add(seen);
+        return { ok: rowsOk && outsideOk, detail: `exit=${run.status} rows=${parsed.counts?.rows}/${expectedRows} outside=[${outsideIds}] want=[${expectedOutside}]` };
+      });
+    }
+    check('r97sec-census-parity: outside ids match census E12 when census present', () => {
+      const { existsSync: fsExists, readFileSync: fsRead } = { existsSync, readFileSync };
+      const censusCandidates = [
+        '/home/vgpnk/Projects/shokunin/scripts/sources-census.sh',
+        join(HERE, '..', '..', 'scripts', 'sources-census.sh'),
+      ];
+      const censusPath = censusCandidates.find((p) => fsExists(p));
+      if (!censusPath) return { skip: true, detail: 'census script absent' };
+      const root = makeDefault('r97-census-parity', {
+        rows: [makeRow({ id: 'S001', status: 'queued', usedBy: '—' })],
+        outsideRows: [makeRow({ id: 'S998', status: 'queued', usedBy: '—' })],
+      });
+      const sourcePath = join(root, 'corpus', 'SOURCES.md');
+      let text = fsRead(sourcePath, 'utf8');
+      text = text.replace(/^## Registry$/m, '## Registry\r');
+      writeFileSync(sourcePath, text);
+      const run = runTool(tmp, ['--self', root, '--today', FIXTURE_TODAY, '--json']);
+      let parsed; try { parsed = JSON.parse(run.stdout); } catch { return { ok: false, detail: `exit=${run.status}` }; }
+      const outsideIds = (parsed.findings ?? []).filter((f) => f.kind === 'ROW_OUTSIDE_REGISTRY').map((f) => (f.detail.match(/id=(\S+)/) ?? [])[1]);
+      const out = capSpawnSync('bash', [censusPath, 'validate', '--file', sourcePath, '--today', FIXTURE_TODAY], {
+        env: { SHOKUNIN_ROOT: '/home/vgpnk/Projects/shokunin' }, bind: [tmp], timeout: 10_000,
+      });
+      if (out.status !== 0 && out.status !== 1) return { skip: true, detail: `census exit=${out.status}` };
+      const censusIds = String(out.stdout ?? '').split('\n').filter((l) => l.includes('\tE12\t')).map((l) => (l.split('\t')[2] ?? '').trim().split(' ')[0]);
+      return { ok: JSON.stringify(outsideIds) === JSON.stringify(censusIds), detail: `tool=[${outsideIds}] census=[${censusIds}]` };
     });
     check('reflip: does not satisfy the rejected-row flip: marker', () => {
       const root = makeDefault('reflip-is-not-flip', {
