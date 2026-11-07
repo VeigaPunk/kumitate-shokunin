@@ -1,0 +1,18 @@
+# live working-tree round-gate at 2026-11-06T21:00 (~) — observation only, not the READY candidate
+lane HEAD=54add172b5613e98e32d8761c2efd549e240baf2 (L1 M94-1 README adoption)
+scripts/round-gate.mjs in the working tree is UNCOMMITTED: sha256=158062f8ac7bf51235d78aa90cb12bd38807ea093712e99ffe047490cb36ed33 size=100663 mtime=2026-11-06 20:59:40 (committed gate at HEAD is 09d4d792, 1567 L)
+SCORECARD.md pin.round-gate is still 09d4d792 (not re-pinned for the working-tree bytes)
+
+quick battery in a clone of HEAD 54add172, base gate 09d4d792 vs the working-tree snapshot:
+proxy-check          base_exit=1 cand_exit=1 identical
+readme-map           base_exit=0 cand_exit=0 identical
+sources-check        base_exit=0 cand_exit=0 identical
+counter-pins         base_exit=0 cand_exit=0 identical
+spotcheck-adopt      base_exit=0 cand_exit=0 identical
+round-gate-tracked   base_exit=0 cand_exit=0 identical
+round-gate-r93       base_exit=1 cand_exit=0 DIFF
+round-gate-selftest  base_exit=0 cand_exit=0 DIFF
+cand verdicts:
+  round-gate-r93: ROUND_GATE: CLEAN (round=93 lane=kumitate checks=10 errors=0 warnings=0)
+  round-gate-selftest: ROUND_GATE_SELFTEST: 75/75 pass
+  round-gate-tracked: ROUND_GATE: CLEAN (mode=tracked checked=76 errors=0 warnings=0)

@@ -1,0 +1,37 @@
+--- /fast/scratch/hyaku/kumitate-r94/K94Reviewer/cand-snapshot-2045.mjs	2026-11-06 20:48:03.718555130 -0300
++++ /fast/scratch/hyaku/kumitate-r94/K94Reviewer/cand-snapshot-v2.mjs	2026-11-06 20:51:19.147564181 -0300
+@@ -119,12 +119,13 @@
+  *   status cell (8th column) is not `rejected`. No SOURCES.md -> no declared
+  *   pins. The registry is read lazily, once per run, and only when some token
+  *   reached the declared step; in text mode the COMMIT_CITED_UNRESOLVED detail
+- *   may carry `declared=<n>`. Only
+- *   read-only object probes (`git cat-file -e <tok>^{commit}`, `git merge-base
+- *   --is-ancestor`) touch `--origin`, lazily, and only for tokens the lane and
+- *   main repos did not resolve; the origin tree is never written. If main or
+- *   origin is not a git work tree the resolution space is incomplete and such
+- *   tokens are not findings (`--json` `citations.unverifiable`).
++ *   may carry `declared=<n>`.
++ *   Only read-only object probes (`git cat-file -e <tok>^{commit}`,
++ *   `git merge-base --is-ancestor`) touch `--origin`, lazily, and only for
++ *   tokens the lane and main repos did not resolve; the origin tree is never
++ *   written. If main or origin is not a git work tree the resolution space is
++ *   incomplete and such tokens are not findings (`--json`
++ *   `citations.unverifiable`).
+  *   Fail-closed tokens (exit 2): REPORTS_DIR_MISSING, NOT_A_GIT_WORKTREE,
+  *   NO_CLOSED_ROUND, NO_FILED_REPORTS, UPSTREAM_MISSING, MAIN_REPO_NOT_GIT,
+  *   INTERNAL_ERROR. NO_FILED_REPORTS is `--tracked` with fewer than two
+@@ -348,12 +349,10 @@
+   return [...out];
+ }
+ 
+-/**
+- * SOURCES-declared upstream pins (round 94). The lane's own registry
++/* SOURCES-declared upstream pins (round 94). The lane's own registry
+  * (`corpus/SOURCES.md`) is the only place a pin can be declared: a file that is
+  * absent, unreadable or not a registry declares nothing, and the whole step
+- * then behaves as it did before this rule existed.
+- */
++ * then behaves as it did before this rule existed. */
+ /** A registry row: `| S<3+ digits> |` at indentation <= 3. */
+ const SOURCES_ROW_RE = /^ {0,3}\|\s*S\d{3,}\s*\|/;
+ /** The `http(s)://` URLs on a registry row; a match stops at whitespace or a cell pipe. */

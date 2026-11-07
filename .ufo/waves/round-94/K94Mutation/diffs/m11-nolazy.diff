@@ -1,0 +1,15 @@
+--- /fast/scratch/hyaku/kumitate-r94/K94Mutation/pristine/round-gate.mjs	2026-11-06 20:59:11.615435142 -0300
++++ /fast/scratch/hyaku/kumitate-r94/K94Mutation/mutants-v2/m11-nolazy.mjs	2026-11-06 20:51:57.093629364 -0300
+@@ -425,11 +425,7 @@
+     /* Read at most once per run, and only when a token reaches the declared
+        step: a report with no cited token, or one whose tokens all resolve in a
+        probeable repo, never touches corpus/SOURCES.md. */
+-    let sourcesPins = null;
+-    const declaredPinsNow = () => {
+-      if (sourcesPins === null) sourcesPins = declaredPins(readText(join(repo, 'corpus', 'SOURCES.md')));
+-      return sourcesPins;
+-    };
++    const declaredPinsNow = () => declaredPins(readText(join(repo, 'corpus', 'SOURCES.md')));
+     const isCommit = (dir, t) => git(dir, ['cat-file', '-e', `${t}^{commit}`]).status === 0;
+     const probe = (which, t) => {
+       const cache = which === 'lane' ? laneCache : which === 'main' ? mainCache : originCache;

@@ -1,0 +1,98 @@
+{
+  "contract": "kumitate-round-gate-v1",
+  "mode": "audit",
+  "round": 61,
+  "lane": "kumitate",
+  "repo": "/home/vgpnk/Projects/shokunin/kumitate-shokunin",
+  "reportsDir": "/home/vgpnk/Projects/shokunin/.ufo/reports",
+  "verdict": "DRIFT",
+  "checks": [
+    {
+      "id": "REPORT_THIN",
+      "severity": "error",
+      "ok": true,
+      "detail": "(bytes=13108)"
+    },
+    {
+      "id": "REPORT_HEADINGS",
+      "severity": "error",
+      "ok": true,
+      "detail": "headings=15"
+    },
+    {
+      "id": "REPORT_ROUND_MISMATCH",
+      "severity": "error",
+      "ok": true,
+      "detail": "names round 61"
+    },
+    {
+      "id": "REPORT_SHONEN_MISSING",
+      "severity": "warning",
+      "ok": true,
+      "detail": "SHONEN heading present"
+    },
+    {
+      "id": "COMMIT_CITED_UNRESOLVED",
+      "severity": "error",
+      "ok": false,
+      "detail": "cited=13 unresolved=2 [ab902da2fa30d051455a5f3563627e2c23c3a74d 4247d2d]"
+    },
+    {
+      "id": "COMMIT_CITED_NOT_ANCESTOR",
+      "severity": "error",
+      "ok": true,
+      "detail": "cited=13 notAncestor=0"
+    },
+    {
+      "id": "SCORECARD_ROW_MISSING",
+      "severity": "error",
+      "ok": false,
+      "detail": "no table row starting \"| 61 |\" in /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md"
+    },
+    {
+      "id": "SCORECARD_PLAN_MISSING",
+      "severity": "warning",
+      "ok": true,
+      "detail": "## Planned names round 94"
+    },
+    {
+      "id": "LOG_ENTRY_MISSING",
+      "severity": "error",
+      "ok": true,
+      "detail": "entry for round 61"
+    },
+    {
+      "id": "COMMIT_MISSING",
+      "severity": "error",
+      "ok": true,
+      "detail": "message marker in \"round-61 verifier spot-check (integrator, hyaku): non-author admit/reject\""
+    }
+  ],
+  "findings": [
+    {
+      "severity": "error",
+      "kind": "COMMIT_CITED_UNRESOLVED",
+      "detail": "cited=13 unresolved=2 [ab902da2fa30d051455a5f3563627e2c23c3a74d 4247d2d]"
+    },
+    {
+      "severity": "error",
+      "kind": "SCORECARD_ROW_MISSING",
+      "detail": "no table row starting \"| 61 |\" in /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md"
+    }
+  ],
+  "errors": 2,
+  "warnings": 0,
+  "citations": {
+    "checked": 13,
+    "external": [],
+    "unresolved": [
+      "ab902da2fa30d051455a5f3563627e2c23c3a74d",
+      "4247d2d"
+    ],
+    "notAncestor": [],
+    "unverifiable": [],
+    "mainProbeable": true,
+    "originProbeable": true
+  },
+  "durationMs": 231
+}

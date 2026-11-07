@@ -1,0 +1,32 @@
+# round-gate byte-pin inventory (lane at 73317eca, 2026-11-06T20:55:35-03:00)
+
+## grep -n round-gate scripts/*.mjs scripts/*.sh | grep -Ei "pin|sha256|GATE_PINS"
+scripts/proxy-check.mjs:131: *   pins  sha256 hex of `<self>/scripts/{cite-check,surface-probe,round-gate,
+scripts/proxy-check.mjs:208: *     pin.cite-check pin.surface-probe pin.round-gate pin.proxy-check
+scripts/proxy-check.mjs:542:  'pin.round-gate': 'scripts/round-gate.mjs',
+scripts/proxy-check.mjs:1883:    const parentV1Keys = 'A A_wave C C1 C1_total C2 C2_total S_members S_sections R_members R_sections coverage_script coverage_runtime C1k C1k_total K_members K_sections K_findings coverage_kimi C1o C1o_total O_members O_findings O_bound coverage_omp pin.cite-check pin.surface-probe pin.round-gate pin.proxy-check pin.claims-check pin.kimi-census';
+scripts/proxy-check.mjs:2620:    fxWrite(join(driftPin.dir, SCORECARD_FILE), F1.scorecard.replace(/(\npin\.round-gate=)[0-9a-f]{64}\n/u, `$1${zeroPin}\n`));
+scripts/proxy-check.mjs:2625:      const shaped = f ? new RegExp(`^pin\\.round-gate: declared=${zeroPin} computed=[0-9a-f]{64}$`, 'u').test(f.detail) : false;
+
+## SCORECARD.md pin line
+321:pin.round-gate=09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594
+
+## .ufo/pins/*.json mentioning round-gate:
+
+## scripts/proxy-check.mjs PINS map (round-gate row)
+542:  'pin.round-gate': 'scripts/round-gate.mjs',
+
+## fleet MANIFEST.json: occurrences of round-gate and of the old sha
+round-gate=11 sha09d4d792=0
+
+## SKILL.md checklist items invoking round-gate / proxy-check --strict
+723:- [ ] Round-gate hermetic suite — `node scripts/round-gate.mjs --selftest` → exit 0 + `VERDICT: PASS`
+724:- [ ] Round-close artifact audit — `node scripts/round-gate.mjs` → exit 0 + `ROUND_GATE: CLEAN`
+725:- [ ] Filed-report tracking — `node scripts/round-gate.mjs --tracked` → exit 0 + `ROUND_GATE: CLEAN`
+726:- [ ] Proxy recompute (`--strict` since round 42: a missing or renamed `kumitate-gate-pins-v1` block re-raises `PIN_UNPINNED`, which strict mode fails) — `node scripts/proxy-check.mjs --strict` → exit 0 + `PROXY: MATCH`
+
+## harm-matrix-gates.json row
+18:  {"id": "round-gate-selftest", "argv": ["node", "scripts/round-gate.mjs", "--selftest"], "verdict": "^ROUND_GATE_SELFTEST: \\d+/\\d+ (\\w+)", "clean": ["pass"], "timeout": 120, "scope": "sandbox-pure"},
+
+## files carrying the old sha (live tree)
+./SCORECARD.md

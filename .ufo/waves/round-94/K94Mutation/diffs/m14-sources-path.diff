@@ -1,0 +1,11 @@
+--- /fast/scratch/hyaku/kumitate-r94/K94Mutation/pristine/round-gate.mjs	2026-11-06 20:59:11.615435142 -0300
++++ /fast/scratch/hyaku/kumitate-r94/K94Mutation/mutants-v2/m14-sources-path.mjs	2026-11-06 20:51:57.095679379 -0300
+@@ -427,7 +427,7 @@
+        probeable repo, never touches corpus/SOURCES.md. */
+     let sourcesPins = null;
+     const declaredPinsNow = () => {
+-      if (sourcesPins === null) sourcesPins = declaredPins(readText(join(repo, 'corpus', 'SOURCES.md')));
++      if (sourcesPins === null) sourcesPins = declaredPins(readText(join(repo, 'SOURCES.md')));
+       return sourcesPins;
+     };
+     const isCommit = (dir, t) => git(dir, ['cat-file', '-e', `${t}^{commit}`]).status === 0;

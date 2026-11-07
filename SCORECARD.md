@@ -4565,11 +4565,12 @@ control generator, 8 controls, open receipts); wave spec + validated dispatch `7
 | do-nothing control | `C94_C1: UNMET a=0/1 b=7/7 c=77/77 d=1/2 e=1/1` (`controls/ctl-nothing.txt`) |
 | other pre-data controls | blanket `UNMET b=0/7 c=70/77 d=0/2 e=0/1`; substring, anyline, contains, norejfilter, slashonly `UNMET d=1/2`; positive `HELD` (`controls/`) |
 | predicate at M | `C94_C1: HELD a=1/1 b=7/7 c=77/77 d=2/2 e=1/1 tool_sha256=158062f8…` twice (`close/probe1.txt`, `close/probe2.txt`) = the bytes at M and `pin.round-gate` |
+| predicate at M2 (final bytes) | after WAVE-DONE, K94Mutation reported 4 survivors on the shipped selftest (m07 `{40}`→`{7,40}`, m08 `S\d{3,}`→`S\d+`, m10 case-sensitive `rejected`, m16 fail-closed JSON without `declared`); M2 `2cba824a` adds arms (xii)–(xiv) and a fail-closed `declared`-key arm (selftest 75 → 79), the four re-applied mutants now fail (`close-l1/survivor-remut.txt`, 4/4 killed); `C94_C1: HELD a=1/1 b=7/7 c=77/77 d=2/2 e=1/1 tool_sha256=11f83a1a…` twice (`close/probe-m2-1.txt`, `close/probe-m2-2.txt`) = `pin.round-gate` |
 | kill rules | K1 no (HELD); K2 the shipped selftest kills all seven rule shapes (`K94ExecTool/arm-teeth.txt`) and the four integration mutants (`close-l1/integration-mutants.txt`); K3 harm battery at M CLEAN except the proxy bookkeeping terms re-declared below (`close/kill-and-harm.txt`); K4 plan/probe/controls/open unchanged since the freeze (same receipt) |
 | caveat | K94CriticA: 7 of 12 wrong-but-plausible gates also reach HELD (five latent rule clauses, (a) membership not equality, (c) blind to unexercised checks); the shipped bytes rest on K94Reviewer's hand review and the selftest arms, not on the counter alone |
 
 **Verdict (lane's reading): C1 HELD.** Axes: operability 9 unchanged (terminal), every coverage row 10 unchanged;
-no axis harmed. Selftest 61 → 75; SOURCES 208 → 210 (S271, S272); QUALITY Q88; knowledge
+no axis harmed. Selftest 61 → 79 (75 at M, 79 at M2); SOURCES 208 → 210 (S271, S272); QUALITY Q88; knowledge
 `round-gate-declared-pins.md`. No capability row (an instrument repair, not a new repertoire item).
 
 ## Round 95 pre-registration (written by round 94). Candidates, not commitments

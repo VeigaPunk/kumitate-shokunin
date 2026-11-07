@@ -1,0 +1,93 @@
+{
+  "contract": "kumitate-round-gate-v1",
+  "mode": "audit",
+  "round": 63,
+  "lane": "kumitate",
+  "repo": "/fast/scratch/hyaku/kumitate-r94/K94CriticB/junk/lane",
+  "reportsDir": "/fast/scratch/hyaku/kumitate-r94/K94CriticB/junk/reports",
+  "verdict": "DRIFT",
+  "checks": [
+    {
+      "id": "REPORT_THIN",
+      "severity": "error",
+      "ok": true,
+      "detail": "(bytes=17479)"
+    },
+    {
+      "id": "REPORT_HEADINGS",
+      "severity": "error",
+      "ok": true,
+      "detail": "headings=7"
+    },
+    {
+      "id": "REPORT_ROUND_MISMATCH",
+      "severity": "error",
+      "ok": true,
+      "detail": "names round 63"
+    },
+    {
+      "id": "REPORT_SHONEN_MISSING",
+      "severity": "warning",
+      "ok": true,
+      "detail": "SHONEN heading present"
+    },
+    {
+      "id": "COMMIT_CITED_UNRESOLVED",
+      "severity": "error",
+      "ok": true,
+      "detail": "cited=17 unresolved=0"
+    },
+    {
+      "id": "COMMIT_CITED_NOT_ANCESTOR",
+      "severity": "error",
+      "ok": true,
+      "detail": "cited=17 notAncestor=0"
+    },
+    {
+      "id": "SCORECARD_ROW_MISSING",
+      "severity": "error",
+      "ok": false,
+      "detail": "no table row starting \"| 63 |\" in /fast/scratch/hyaku/kumitate-r94/K94CriticB/junk/lane/SCORECARD.md"
+    },
+    {
+      "id": "SCORECARD_PLAN_MISSING",
+      "severity": "warning",
+      "ok": true,
+      "detail": "## Planned names round 94"
+    },
+    {
+      "id": "LOG_ENTRY_MISSING",
+      "severity": "error",
+      "ok": true,
+      "detail": "entry for round 63"
+    },
+    {
+      "id": "COMMIT_MISSING",
+      "severity": "error",
+      "ok": true,
+      "detail": "message marker in \"round-63 verifier spot-check (integrator, hyaku): non-author admit/reject\""
+    }
+  ],
+  "findings": [
+    {
+      "severity": "error",
+      "kind": "SCORECARD_ROW_MISSING",
+      "detail": "no table row starting \"| 63 |\" in /fast/scratch/hyaku/kumitate-r94/K94CriticB/junk/lane/SCORECARD.md"
+    }
+  ],
+  "errors": 1,
+  "warnings": 0,
+  "citations": {
+    "checked": 17,
+    "external": [],
+    "declared": [
+      "9237a72"
+    ],
+    "unresolved": [],
+    "notAncestor": [],
+    "unverifiable": [],
+    "mainProbeable": true,
+    "originProbeable": true
+  },
+  "durationMs": 339
+}

@@ -29,6 +29,11 @@ each `UNMET d=1/2`. At M, twice: `C94_C1: HELD a=1/1 b=7/7 c=77/77 d=2/2 e=1/1 t
   `ROUND_GATE  info  COMMIT_CITED_DECLARED  declared=<n> [<tokens>]` after K94CriticB showed a declaration was
   invisible in the mode the checklist runs. Both narrow, never widen, the frozen sentence. Four integration
   mutants killed 4/4 (`close-l1/integration-mutants.txt`).
+  **M2 `2cba824a` (final bytes `11f83a1a…`):** K94Mutation (16 mutants on READY bytes, 18 on M) left four
+  survivors — m07 (`{40}`→`{7,40}`), m08 (`S\d{3,}`→`S\d+`), m10 (case-sensitive `rejected`), m16 (fail-closed
+  JSON without `declared`); m11 (read once vs per token) argued equivalent. The L1 added arms (xii)–(xiv) and a
+  fail-closed `declared`-key arm (selftest 79/79); re-applied to the M2 bytes the four mutants fail
+  (`close-l1/survivor-remut.txt`). Counter at M2 `HELD` twice (`close/probe-m2-1.txt`, `close/probe-m2-2.txt`).
 - **admit — S271** (gitrevisions `<sha1>` entry), opened 2026-11-06: https://git-scm.com/docs/gitrevisions,
   HTTP 200, sha256 `60bfaca3…`; quote (rendered lines 2179–2180, 17 words): "The full SHA-1 object name (40-byte
   hexadecimal string), or a leading substring that is unique within the repository." W04 vs S253 (same page,

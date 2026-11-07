@@ -1,0 +1,20 @@
+
+<--- Last few GCs --->
+
+[265651:0x2ce0e000]      928 ms: Mark-Compact (reduce) 5.6 (8.2) -> 4.5 (6.2) MB, pooled: 0 MB, 8.29 / 0.00 ms  (average mu = 0.991, current mu = 0.991) low memory notification; GC in old space requested
+[265651:0x2ce0e000]      937 ms: Mark-Compact (reduce) 4.5 (6.2) -> 4.5 (6.2) MB, pooled: 0 MB, 8.29 / 0.00 ms  (average mu = 0.982, current mu = 0.003) low memory notification; GC in old space requested
+
+FATAL ERROR: Committing semi space failed. Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+ 1: 0x931db0  [/run/user/1000/fnm_multishells/1589455_1794007303555/bin/node]
+ 2: 0x75968e node::OOMErrorHandler(char const*, v8::OOMDetails const&) [/run/user/1000/fnm_multishells/1589455_1794007303555/bin/node]
+ 3: 0xc70d60  [/run/user/1000/fnm_multishells/1589455_1794007303555/bin/node]
+ 4: 0xc70e4f  [/run/user/1000/fnm_multishells/1589455_1794007303555/bin/node]
+ 5: 0xf14725  [/run/user/1000/fnm_multishells/1589455_1794007303555/bin/node]
+ 6: 0xfa0a36  [/run/user/1000/fnm_multishells/1589455_1794007303555/bin/node]
+ 7: 0xf240cb  [/run/user/1000/fnm_multishells/1589455_1794007303555/bin/node]
+ 8: 0xf24b9d  [/run/user/1000/fnm_multishells/1589455_1794007303555/bin/node]
+ 9: 0xf25679  [/run/user/1000/fnm_multishells/1589455_1794007303555/bin/node]
+10: 0xf29af0  [/run/user/1000/fnm_multishells/1589455_1794007303555/bin/node]
+11: 0x19c77d1  [/run/user/1000/fnm_multishells/1589455_1794007303555/bin/node]

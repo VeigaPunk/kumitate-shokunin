@@ -1,0 +1,60 @@
+arm-teeth — each rule-shape forgery applied to the round-94 candidate, selftest run per mutant
+candidate: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-94/K94ExecTool/round-gate.mjs
+
+m-declared-removed	exit=1	ROUND_GATE_SELFTEST: 66/71 pass
+	FAILS	(i) an 8-hex prefix of a 40-hex URL segment on a mined registry row → declared, no finding
+	FAILS	(ii) a cited full 40-hex pin that is a complete URL segment → declared, no finding
+	FAILS	(iii) pin followed by `#fragment` (`/commit/<pin>#diff`) → declared, no finding
+	FAILS	text mode: COMMIT_CITED_UNRESOLVED detail carries `declared=<n>` beside the unresolved list
+	FAILS	hermeticity: --selftest passes under a polluted env and bogus dir flags
+
+m-blanket	exit=1	ROUND_GATE_SELFTEST: 61/71 pass
+	FAILS	COMMIT_CITED_UNRESOLVED → exactly [COMMIT_CITED_UNRESOLVED]
+	FAILS	(iv) pin present only as a non-URL digest inside a registry row → COMMIT_CITED_UNRESOLVED
+	FAILS	(v) pin in a URL on a prose line outside the registry → unresolved
+	FAILS	(vi) pin in a URL on a `rejected` registry row → unresolved
+	FAILS	(vii) token taken from the middle of a declared pin → unresolved (prefix, not contains)
+	FAILS	(viii) no corpus/SOURCES.md → no declared pins, unresolved, never INTERNAL_ERROR
+	FAILS	text mode: COMMIT_CITED_UNRESOLVED detail carries `declared=<n>` beside the unresolved list
+	FAILS	bare run (no --origin): both candidates absent keeps the derived canonical default (unverifiable, no finding)
+	FAILS	hermeticity: --selftest passes under a polluted env and bogus dir flags
+	FAILS	every declared finding kind fires in at least one fixture
+
+m-substring	exit=1	ROUND_GATE_SELFTEST: 66/71 pass
+	FAILS	(iv) pin present only as a non-URL digest inside a registry row → COMMIT_CITED_UNRESOLVED
+	FAILS	(v) pin in a URL on a prose line outside the registry → unresolved
+	FAILS	(vi) pin in a URL on a `rejected` registry row → unresolved
+	FAILS	(vii) token taken from the middle of a declared pin → unresolved (prefix, not contains)
+	FAILS	hermeticity: --selftest passes under a polluted env and bogus dir flags
+
+m-anyline	exit=1	ROUND_GATE_SELFTEST: 69/71 pass
+	FAILS	(v) pin in a URL on a prose line outside the registry → unresolved
+	FAILS	hermeticity: --selftest passes under a polluted env and bogus dir flags
+
+m-contains	exit=1	ROUND_GATE_SELFTEST: 69/71 pass
+	FAILS	(vii) token taken from the middle of a declared pin → unresolved (prefix, not contains)
+	FAILS	hermeticity: --selftest passes under a polluted env and bogus dir flags
+
+m-norejfilter	exit=1	ROUND_GATE_SELFTEST: 69/71 pass
+	FAILS	(vi) pin in a URL on a `rejected` registry row → unresolved
+	FAILS	hermeticity: --selftest passes under a polluted env and bogus dir flags
+
+m-slashonly	exit=1	ROUND_GATE_SELFTEST: 69/71 pass
+	FAILS	(iii) pin followed by `#fragment` (`/commit/<pin>#diff`) → declared, no finding
+	FAILS	hermeticity: --selftest passes under a polluted env and bogus dir flags
+
+targets: (i) url8 (ii) full (iii) commitfrag (iv) digest (v) prose (vi) rejected (vii) mid (viii) no-SOURCES (ix) declared-array (x) text detail
+distinct failing arms across mutants: 13
+  (i)
+  (ii)
+  (iii)
+  (iv)
+  (v)
+  (vi)
+  (vii)
+  (viii)
+  COMMIT_CITED_UNRESOLVED → exactly [COMMIT_CITED_UNRESOLVED]
+  bare run (no --origin): both candidates absent keeps the derived canonical default (unverifiable, no finding)
+  every declared finding kind fires in at least one fixture
+  hermeticity: --selftest passes under a polluted env and bogus dir flags
+  text mode: COMMIT_CITED_UNRESOLVED detail carries `declared=<n>` beside the unresolved list

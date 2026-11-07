@@ -1,0 +1,54 @@
+# cross-lane transfer scan
+CMD: python3 .ufo/waves/round-94/K94Connector/scripts/transfer_scan.py (gate-style backticked tokens 7-40 hex, split on .. / ..., resolve lane->main->origin via 'git cat-file --batch-check <tok>^{commit}', then prefix-match against that lane's non-rejected URL segments)
+
+  kama-shokunin r45: ['704366d7']
+  kama-shokunin r49: ['caa8191d']
+  kama-shokunin r54: ['704366d76f8748cf9ad3df62a464bfcc8d1ae6ad']
+  kama-shokunin r79: ['39febd2a']
+  kama-shokunin r80: ['39febd2a']
+  kama-shokunin r88: ['704366d7']
+  kama-shokunin r89: ['6c01da62']
+  kengaku-shokunin r31: ['66f92766']
+  kengaku-shokunin r33: ['9be8d8fe']
+  kengaku-shokunin r34: ['2fd12b88aafdd04a52c298e3940bcb189f9766d6']
+  kengaku-shokunin r35: ['2fd12b88']
+  kengaku-shokunin r38: ['2fd12b88']
+  kengaku-shokunin r39: ['2fd12b88']
+  kengaku-shokunin r40: ['2fd12b88']
+  kengaku-shokunin r41: ['2fd12b88']
+  kengaku-shokunin r42: ['2fd12b88']
+  kengaku-shokunin r43: ['2fd12b88']
+  kengaku-shokunin r44: ['2fd12b88']
+  kengaku-shokunin r45: ['2fd12b88']
+  kengaku-shokunin r46: ['2fd12b88']
+  kengaku-shokunin r52: ['2fd12b88aafdd04a52c298e3940bcb189f9766d6']
+  kengaku-shokunin r56: ['2fd12b88']
+  kengaku-shokunin r57: ['2fd12b88']
+  kengaku-shokunin r59: ['2fd12b88']
+  kengaku-shokunin r61: ['2fd12b88']
+  kengaku-shokunin r62: ['2fd12b88']
+  kengaku-shokunin r63: ['2fd12b88']
+  kengaku-shokunin r69: ['2fd12b88']
+  kengaku-shokunin r71: ['2fd12b88']
+  kengaku-shokunin r81: ['2fd12b88']
+
+# spot-check the two largest flip families
+-- 2fd12b88 --
+kengaku-shokunin: no
+chousa-shokunin: no
+.: no
+origin: no
+kengaku-shokunin/corpus/SOURCES.md
+-- 50fe5cc63f9cd6e89b87a2c9ccf96a444f4cfdb7 --
+kengaku-shokunin: no
+chousa-shokunin: no
+.: no
+origin: no
+chousa-shokunin/corpus/SOURCES.md
+
+# only kumitate ships a round-gate
+kumitate-shokunin/scripts/round-gate.mjs
+count=1
+
+# kengaku pin usage: reports citing 2fd12b88
+30

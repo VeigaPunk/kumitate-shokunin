@@ -1,0 +1,13 @@
+# broad scan — backticked 40-hex tokens within ±100 chars of github.com / upstream / pin wording
+CMD: python3 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-94/K94Connector/scripts/scan_reports2.py (all .ufo/reports/round-*/*.md)
+
+strict hits: 431
+files: 238 lanes: 20
+lanes: ['SOURCES', 'chousa', 'game-dev-3d', 'kagi', 'kaidoku', 'kake', 'kama', 'kasegi', 'kengaku', 'kotoba', 'kotodama', 'kumitate', 'lore', 'mado', 'mori', 'revenger', 'souji', 'tabi', 'tameshi', 'tsukuroi']
+github-context hits: 2 upstream: 10 pin-word: 425
+  KUMITATE r35: 1
+  KUMITATE r36: 3
+
+# interpretation: the 'pin' window is broad (lane-commit pins included); the rule-relevant class is the
+# transfer scan: tokens that resolve in NO repo (lane/main/origin) AND prefix a SOURCES pin segment.
+CMD: python3 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-94/K94Connector/scripts/transfer_scan.py — result: 61 reports, 13 lanes (see 04-transfer.txt)

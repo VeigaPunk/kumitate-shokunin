@@ -1,0 +1,35 @@
+# census.txt — sources-census.sh validate on the round-94 draft rows (seat K94ScribeSources, 2026-11-06)
+#
+# Method: corpus/ copied to $SCR/val; lane root entries symlinked into $SCR/val (so E11 used-by paths resolve as they do in the lane); the three draft rows inserted inside '## Registry' right after S270. Validator run: bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file <SCR>/val/corpus/SOURCES.md
+# --file sets the used-by base to dirname(file)/.. = $SCR/val, i.e. the lane root mirror.
+
+## RUN A — rows exactly as drafted, no knowledge entry on disk (honest pre-integration state)
+# exit=1, 11 lines: 9 W04 warnings + 2 E11
+file	W04	S034 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics across scopes
+file	W04	S068 duplicate url github.com/can1357/oh-my-pi/tree/45c35e40c46166dc726ccc52f5d27f40f2449f99 across scopes
+file	W04	S084 duplicate url infection.github.io/guide across scopes
+file	W04	S095 duplicate url raw.githubusercontent.com/containers/bubblewrap/v0.13.1/bwrap.xml across scopes
+file	W04	S123 duplicate url docs.langchain.com/oss/python/langgraph/checkpointers across scopes
+file	W04	S126 duplicate url docs.temporal.io/encyclopedia/detecting-activity-failures across scopes
+file	W04	S247 duplicate url arxiv.org/abs/2212.06118 across scopes
+file	W04	S271 duplicate url git-scm.com/docs/gitrevisions across scopes
+file	W04	S272 duplicate url docs.github.com/en/repositories/working-with-files/using-files/getting-permanent-links-to-files across scopes
+file	E11	S271 missing used-by corpus/knowledge/round-gate-declared-pins.md
+file	E11	S272 missing used-by corpus/knowledge/round-gate-declared-pins.md
+
+## RUN B — same rows + a SCRATCH-ONLY one-line placeholder at corpus/knowledge/round-gate-declared-pins.md (created in $SCR/val only, never in the lane) so E11's path check can be satisfied
+# exit=0, 10 lines: the ok line + 9 W04 warnings, no E-code
+file	W04	S034 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics across scopes
+file	W04	S068 duplicate url github.com/can1357/oh-my-pi/tree/45c35e40c46166dc726ccc52f5d27f40f2449f99 across scopes
+file	W04	S084 duplicate url infection.github.io/guide across scopes
+file	W04	S095 duplicate url raw.githubusercontent.com/containers/bubblewrap/v0.13.1/bwrap.xml across scopes
+file	W04	S123 duplicate url docs.langchain.com/oss/python/langgraph/checkpointers across scopes
+file	W04	S126 duplicate url docs.temporal.io/encyclopedia/detecting-activity-failures across scopes
+file	W04	S247 duplicate url arxiv.org/abs/2212.06118 across scopes
+file	W04	S271 duplicate url git-scm.com/docs/gitrevisions across scopes
+file	W04	S272 duplicate url docs.github.com/en/repositories/working-with-files/using-files/getting-permanent-links-to-files across scopes
+file	ok	/fast/scratch/hyaku/kumitate-r94/K94ScribeSources/val/corpus/SOURCES.md
+
+## Reading
+# E11 in run A names exactly the two rows whose used-by is the round-94 knowledge entry (S271, S272); both vanish once corpus/knowledge/round-gate-declared-pins.md lands. No E01-E10, E12 findings for S271-S273 in either run: field count (NF=13), id shape, kind=docs/docs/code, tier A, status mined, opened 2026-11-06, recheck on-release/180d/on-release are all accepted.
+# W04 for S271 pairs with S253 and W04 for S272 pairs with S033 — same page, different scope, the lane's existing pattern (7 other W04s pre-date this change); warnings do not change exit status.

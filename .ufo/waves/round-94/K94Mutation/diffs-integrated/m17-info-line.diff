@@ -1,0 +1,13 @@
+--- /fast/scratch/hyaku/kumitate-r94/K94Mutation/integrated/round-gate.mjs	2026-11-06 21:00:37.875317629 -0300
++++ /fast/scratch/hyaku/kumitate-r94/K94Mutation/mutants-v3/m17-info-line.mjs	2026-11-06 21:08:37.407782591 -0300
+@@ -786,10 +786,6 @@
+       const lines = findings.map((f) => `ROUND_GATE  ${f.severity}  ${f.kind}  ${f.detail}`);
+       // Round-94 integration (K94CriticB 1c): a declared pin is never a finding, so a green round
+       // would hide it in text mode; one info line discloses it (JSON: `citations.declared`).
+-      if (citations.declared.length) {
+-        lines.push(`ROUND_GATE  info  COMMIT_CITED_DECLARED  declared=${citations.declared.length}`
+-          + ` [${citations.declared.join(' ')}]`);
+-      }
+       lines.push(`ROUND_GATE: ${verdict} (round=${round} lane=${opts.lane} checks=${items.length}`
+         + ` errors=${errors} warnings=${warnings})`);
+       process.stdout.write(`${lines.join('\n')}\n`);

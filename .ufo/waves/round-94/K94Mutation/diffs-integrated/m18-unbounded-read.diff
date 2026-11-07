@@ -1,0 +1,11 @@
+--- /fast/scratch/hyaku/kumitate-r94/K94Mutation/integrated/round-gate.mjs	2026-11-06 21:00:37.875317629 -0300
++++ /fast/scratch/hyaku/kumitate-r94/K94Mutation/mutants-v3/m18-unbounded-read.mjs	2026-11-06 21:08:37.408024971 -0300
+@@ -461,7 +461,7 @@
+        probeable repo, never touches corpus/SOURCES.md. */
+     let sourcesPins = null;
+     const declaredPinsNow = () => {
+-      if (sourcesPins === null) sourcesPins = declaredPins(readRegistry(join(repo, 'corpus', 'SOURCES.md')));
++      if (sourcesPins === null) sourcesPins = declaredPins(readText(join(repo, 'corpus', 'SOURCES.md')));
+       return sourcesPins;
+     };
+     const isCommit = (dir, t) => git(dir, ['cat-file', '-e', `${t}^{commit}`]).status === 0;

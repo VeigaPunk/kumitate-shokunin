@@ -1,0 +1,41 @@
+# sibling citation instruments — kake (the only other lane with commit-citation gates)
+CMD: grep -n 'EXTERNAL_RE|adjudicat' kake-shokunin/scripts/citation_lint.py ; grep -n 'cat-file|is-ancestor|declared' kake-shokunin/scripts/instrument_receipts.py ; grep -rn SOURCES <both>
+
+## citation_lint.py — external classification
+     7	to a git object in the lane repository. Contexts and exclusions are named
+     8	classes (each exercised by the selftest); tokens named in the committed
+     9	adjudication ledger (corpus/quality/citation-adjudications.md) are reported as
+    10	adjudicated, not violations.
+    11	
+    12	Citation context: the token's line names a commit-bearing relation
+    13	(commit/base/revision/tip/HEAD/landed/hash/ancestor/parent). Excluded classes:
+    14	content digests (sha256/sha/digest on the line), beat/marker pins, external
+    15	repositories named on the same line (ufo-fsd-alpha, ds4cc-marketplace,
+    16	webzites, charter, lucario, marketplace upstream, fleet repo, sandbox runs),
+    17	and tokens glued to alphanumerics/UUID dashes or without a-f letters.
+    18	
+    19	Exit map: 0 clean (no unadjudicated violations), 1 violations found,
+    20	2 could-not-evaluate, 64 usage.
+    44	PIN_RE = re.compile(r"\bbeat\b|marker|pinned|\bpin\b|sentinel|etag", re.I)
+    45	EXTERNAL_RE = re.compile(
+    46	    r"ufo-fsd-alpha|ds4cc-marketplace|plazir|webzites|charter|lucario|origin-work|"
+    47	    r"burnerchrome|marketplace|upstream|sandbox|fleet repo|spotcheck|render\.yaml", re.I)
+    48	ADJUDICATION_ROW_RE = re.compile(r"^\|\s*`([0-9a-f]{7,40})`\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|")
+    49	
+    50	
+
+## instrument_receipts.py — resolvable revision requirement
+    63	The receipt's declared ``revision`` must be a 40-hex commit id that
+    64	``git cat-file -e <rev>^{commit}`` resolves and that is an ancestor of (or
+    65	equal to) the measured revision (``git merge-base --is-ancestor``); otherwise
+    66	every population file is a ``receipt_revision_invalid`` mismatch.  The declared
+
+## neither reads SOURCES.md
+kake-shokunin/scripts/citation_lint.py:0
+kake-shokunin/scripts/instrument_receipts.py:0
+
+## corroboration (sibling seat, read-only): w1/K94Scout.md
+268:| `kake-shokunin/scripts/citation_lint.py` | Commit-citation hygiene gate: a dead hex token in a commit context is a violation; "external" is excluded by **name on the line** (
+269:| `kake-shokunin/scripts/instrument_receipts.py` | Requires a declared receipt revision to satisfy `git cat-file -e <rev>^{commit}` **and** `git merge-base --is-ancestor` — a
+273:Conclusion for sibling practice: **the round-94 rule is novel in the fleet.** No sibling gate
+388:   sibling commit-citation gates (kake `citation_lint.py`, `instrument_receipts.py`) require

@@ -1,0 +1,20 @@
+# r93 erratum vs the gate's reading of the same bytes, 2026-11-06T23:53:04Z
+## fleet report lines 122-127 (erratum)
+## Erratum (appended after filing, per Q87; text above unchanged)
+
+`node scripts/round-gate.mjs --round 93 --main-repo /home/vgpnk/Projects/shokunin` (run from the lane) reads
+`COMMIT_CITED_UNRESOLVED cited=10 unresolved=1 [79fa222e]`: `79fa222e` in § Sources & frontier is the
+upstream oh-my-pi commit `79fa222e8390aed3494f4bc6746814e6c74c21cf` that S269 pins
+(github.com/can1357/oh-my-pi), not a lane or fleet commit; the other 9 cited hashes resolve. The gate's
+
+## gate at lane base a6e4da96 (open/round-gate-r93-before.txt)
+# node scripts/round-gate.mjs --round 93 at lane a6e4da96e828e900150c08d0a801266a53caab63
+ROUND_GATE  error  COMMIT_CITED_UNRESOLVED  cited=11 unresolved=2 [79fa222e 79fa222e8390aed3494f4bc6746814e6c74c21cf]
+ROUND_GATE: DRIFT (round=93 lane=kumitate checks=10 errors=1 warnings=0)
+
+## gate at M 2f8475cd (this seat)
+ROUND_GATE  error  COMMIT_CITED_UNRESOLVED  cited=11 unresolved=2 [79fa222e 79fa222e8390aed3494f4bc6746814e6c74c21cf]
+ROUND_GATE: DRIFT (round=93 lane=kumitate checks=10 errors=1 warnings=0)
+
+## delta: the erratum reports cited=10 unresolved=1 [79fa222e]; the bytes as filed contain BOTH the short
+## token and the full 40-hex pin quoted by the erratum -> cited=11 unresolved=2.

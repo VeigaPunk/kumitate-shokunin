@@ -1,0 +1,20 @@
+# exact invocations (scratch S=/fast/scratch/hyaku/kumitate-r94/K94ExecHarm; lane clone at 73317eca)
+# base side
+node scripts/proxy-check.mjs
+node scripts/readme-map.mjs
+node scripts/sources-check.mjs
+node scripts/counter-pins.mjs
+node scripts/spotcheck-adopt.mjs --check
+node scripts/round-gate.mjs --tracked --reports-dir /home/vgpnk/Projects/shokunin/.ufo/reports --main-repo /home/vgpnk/Projects/shokunin
+node scripts/round-gate.mjs --round 93 --reports-dir /home/vgpnk/Projects/shokunin/.ufo/reports --main-repo /home/vgpnk/Projects/shokunin
+node scripts/round-gate.mjs --selftest
+bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file $S/lane/corpus/SOURCES.md
+# per-round (base gate bytes from a scratch copy beside cap-spawn.mjs)
+node $S/basegate/round-gate.mjs --round <12|46|53|57|61|62|63|93> --repo $S/lane --reports-dir /home/vgpnk/Projects/shokunin/.ufo/reports --main-repo /home/vgpnk/Projects/shokunin
+# candidate side: cp <snapshot> $S/lane/scripts/round-gate.mjs;
+#   sed -E -i 's/^pin\.round-gate=[0-9a-f]{64}$/pin.round-gate=<cand sha>/' $S/lane/SCORECARD.md; then the same battery.
+# fleet-shaped checklist (one sandbox per side, lane clone inside a fleet clone):
+#   cd $S/{fbase,fcand}/kumitate-shokunin && node scripts/surface-probe.mjs --checklists
+# controls replay
+python3 .ufo/waves/round-94/probe/make-controls94.py scripts/round-gate.mjs $S/ctl-regen
+node .ufo/waves/round-94/probe/probe94-c1.mjs --tool $S/ctl-regen/ctl-positive.mjs --work $S/probe-ctl --freeze 73317eca18c3927fc3c92fe492cd882dc4cda953

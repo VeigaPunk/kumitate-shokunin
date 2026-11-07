@@ -1,0 +1,11 @@
+--- /fast/scratch/hyaku/kumitate-r94/K94Mutation/pristine/round-gate.mjs	2026-11-06 20:59:11.615435142 -0300
++++ /fast/scratch/hyaku/kumitate-r94/K94Mutation/mutants-v2/m07-pin-7-40.mjs	2026-11-06 20:51:57.089601046 -0300
+@@ -358,7 +358,7 @@
+ /** The `http(s)://` URLs on a registry row; a match stops at whitespace or a cell pipe. */
+ const SOURCES_URL_RE = /https?:\/\/[^\s|)`'"<>]+/g;
+ /** A complete URL path segment that is one full 40-hex commit id. */
+-const SOURCES_PIN_RE = /^[0-9a-f]{40}$/;
++const SOURCES_PIN_RE = /^[0-9a-f]{7,40}$/;
+ /** URL split points for the path-segment rule: `/`, `?`, `#`. */
+ const SOURCES_SEGMENT_RE = /[/?#]/;
+ 

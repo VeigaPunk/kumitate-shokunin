@@ -1,0 +1,11 @@
+--- /fast/scratch/hyaku/kumitate-r94/K94Mutation/pristine/round-gate.mjs	2026-11-06 20:59:11.615435142 -0300
++++ /fast/scratch/hyaku/kumitate-r94/K94Mutation/mutants-v2/m15-row-inverted.mjs	2026-11-06 20:51:57.098690964 -0300
+@@ -371,7 +371,7 @@
+   const pins = new Set();
+   if (typeof sourcesText !== 'string') return pins;
+   for (const line of sourcesText.split('\n')) {
+-    if (!SOURCES_ROW_RE.test(line)) continue;
++    if (SOURCES_ROW_RE.test(line)) continue;
+     const status = (line.split('|')[8] ?? '').trim();
+     if (status.toLowerCase() === 'rejected') continue;
+     for (const m of line.matchAll(SOURCES_URL_RE)) {

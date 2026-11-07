@@ -1,0 +1,11 @@
+--- /fast/scratch/hyaku/kumitate-r94/K94Mutation/pristine/round-gate.mjs	2026-11-06 20:59:11.615435142 -0300
++++ /fast/scratch/hyaku/kumitate-r94/K94Mutation/mutants-v2/m04-contains.mjs	2026-11-06 20:51:57.088362013 -0300
+@@ -383,7 +383,7 @@
+ 
+ /** A token is declared iff it is a prefix of one of the declared pins. */
+ function isDeclaredPin(tok, pins) {
+-  for (const p of pins) if (p.startsWith(tok)) return true;
++  for (const p of pins) if (p.includes(tok)) return true;
+   return false;
+ }
+ 

@@ -1,0 +1,93 @@
+# gate citation block (BASE at 791b1fdd == freeze 73317eca for these paths)
+(empty diff above = gate/SOURCES identical between freeze and HEAD)
+   326	/** Backticked commit-citation tokens: split ranges on `..`/`...`, keep bare hex. */
+   327	function citationTokens(reportText) {
+   328	  const out = new Set();
+   329	  for (const m of reportText.matchAll(/`([^`\n]+)`/g)) {
+   330	    for (const part of m[1].split(/\.\.\.?/)) {
+   331	      const tok = part.trim();
+   332	      if (/^[0-9a-f]{7,40}$/.test(tok)) out.add(tok);
+   333	    }
+   334	  }
+   335	  return [...out];
+   336	}
+   337	
+   338	function runChecks({ repo, reportsDir, round, lane, close, mainRepo, origin }) {
+   339	  const items = [];
+   340	  const add = (id, severity, ok, detail) => { items.push({ id, severity, ok, detail }); };
+   341	  const citations = {
+   366	
+   367	    /* cited commits --------------------------------------------------------- */
+   368	    const tokens = citationTokens(report);
+   369	    citations.checked = tokens.length;
+   370	    const laneCache = new Map();
+   371	    const mainCache = new Map();
+   372	    const originCache = new Map();
+   373	    const isCommit = (dir, t) => git(dir, ['cat-file', '-e', `${t}^{commit}`]).status === 0;
+   374	    const probe = (which, t) => {
+   375	      const cache = which === 'lane' ? laneCache : which === 'main' ? mainCache : originCache;
+   376	      if (!cache.has(t)) {
+   377	        const dir = which === 'lane' ? repo : which === 'main' ? mainRepo : origin;
+   378	        const reachable = which === 'lane' ? true : (which === 'main' ? mainProbeableNow() : originProbeableNow());
+   379	        cache.set(t, reachable && isCommit(dir, t));
+   380	      }
+   381	      return cache.get(t);
+   382	    };
+   383	    for (const t of tokens) {
+   384	      if (probe('lane', t)) {
+   385	        const anc = git(repo, ['merge-base', '--is-ancestor', t, 'HEAD']);
+   386	        if (anc.status !== 0) {
+   387	          citations.notAncestor.push(t);
+   388	        }
+   389	      } else if (probe('main', t)) {
+   390	        citations.external.push(t);
+   391	      } else if (probe('origin', t)) {
+   392	        citations.external.push(t);
+   393	      } else if (mainProbeableNow() && originProbeableNow()) {
+   394	        citations.unresolved.push(t);
+   395	      } else {
+   396	        citations.unverifiable.push(t);
+   397	      }
+   398	    }
+   399	    citations.mainProbeable = mainProbeable;
+   400	    citations.originProbeable = originProbeable;
+   401	    const citedDetail = (what, list) => (tokens.length === 0
+   402	      ? 'no cited commit tokens'
+   403	      : `cited=${tokens.length} ${what}=${list.length}${list.length ? ` [${list.join(' ')}]` : ''}`
+   404	        + (citations.unverifiable.length ? ` unverifiable=${citations.unverifiable.length}` : ''));
+   405	    add('COMMIT_CITED_UNRESOLVED', 'error', citations.unresolved.length === 0, citedDetail('unresolved', citations.unresolved));
+   406	    add('COMMIT_CITED_NOT_ANCESTOR', 'error', citations.notAncestor.length === 0, citedDetail('notAncestor', citations.notAncestor));
+   407	  }
+   408	
+   409	  /* scorecard -------------------------------------------------------------- */
+   410	  const scorecardPath = join(repo, 'SCORECARD.md');
+
+# text run round 93
+ROUND_GATE  error  COMMIT_CITED_UNRESOLVED  cited=11 unresolved=2 [79fa222e 79fa222e8390aed3494f4bc6746814e6c74c21cf]
+ROUND_GATE: DRIFT (round=93 lane=kumitate checks=10 errors=1 warnings=0)
+
+# json citation fields, red rounds
+--- round 12 ---
+verdict DRIFT
+checked 5 unresolved ['23e476e21'] external ['ee907f1cf', 'daa371583'] notAncestor []
+--- round 46 ---
+verdict DRIFT
+checked 11 unresolved ['7af3d978'] external [] notAncestor []
+--- round 53 ---
+verdict DRIFT
+checked 7 unresolved ['b717dc035bf687a3039123f4c70527bd3774f510'] external [] notAncestor []
+--- round 57 ---
+verdict DRIFT
+checked 17 unresolved ['1cd6d667e20075fd2e77e6e655bc755f95e3d940'] external [] notAncestor []
+--- round 61 ---
+verdict DRIFT
+checked 13 unresolved ['ab902da2fa30d051455a5f3563627e2c23c3a74d', '4247d2d'] external [] notAncestor []
+--- round 62 ---
+verdict DRIFT
+checked 5 unresolved ['4247d2da937842bd6846874d548b7125b356e14c'] external [] notAncestor []
+--- round 63 ---
+verdict DRIFT
+checked 17 unresolved ['9237a72'] external [] notAncestor []
+--- round 93 ---
+verdict DRIFT
+checked 11 unresolved ['79fa222e', '79fa222e8390aed3494f4bc6746814e6c74c21cf'] external [] notAncestor []

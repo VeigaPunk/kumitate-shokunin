@@ -1,0 +1,41 @@
+# provenance of the 7 red rounds' unresolved tokens, 2026-11-06T23:49:23Z
+
+## 23e476e21 (round 12)
+159:  reordered code (`23e476e21`, 2026-09-24) — its `expect` block is correct; the
+grep -rl in lane: 53 files
+
+## 7af3d978 (round 46)
+83:  - A counter observing the thing under test through that thing's own output (A3 outside observation, shown on `7af3d978`: 6/6 → 0/6).
+Sandbox commits used -c user.name=ctl -c user.email=ctl@ctl -c core.hooksPath=/dev/null -c commit.gpgsign=false; A=aea741b9909d5ffc8f1925a7a3e5903fab5fc9be, runner SHA256=2948e9cde2232792d4c5c6038f057796d43d10be3c4b981e47f7b970d95c271b; B=7af3d978d89d5b3bf71b5955d963f30b1ebafcbb, runner SHA256=6452f9ceb434f70c78847ae2d935fa26303c2c9dd6f044ea17b1992346255544. B changes one behavior-bearing line: includes('setTimeout') to startsWith('setTimeout'). Both complete sources follow.
+
+## b717dc03… (round 53)
+35:  scratch repo rev `b717dc035bf687a3039123f4c70527bd3774f510`).
+scratch-held-doctrine.txt
+scratch-held.txt
+
+## 1cd6d667… (round 57)
+85:  `1cd6d667e20075fd2e77e6e655bc755f95e3d940`). Reuse audit: attempt-1's
+scratch-held-attest.txt
+scratch-held-doctrine.txt
+
+## ab902da2… and 4247d2d (round 61)
+65:  - Falsifier: the fabrication fixture at rev `ab902da2fa30d051455a5f3563627e2c23c3a74d` reads HELD 4/4.
+73:  - Falsifier: the forged commit `4247d2d` reads HELD 6/6.
+$ node .ufo/waves/round-61/probe/dispatch61-probe.mjs /tmp/kumitate-r61/CritControlC1/a4-full-fabrication ab902da2fa30d051455a5f3563627e2c23c3a74d
+DISPATCH61: DISPATCH61_HELD held=4/4 checks=4 rev=ab902da2fa30d051455a5f3563627e2c23c3a74d rule=P61
+bundle list-heads:
+4247d2da937842bd6846874d548b7125b356e14c refs/heads/fixture-forgery
+be4a820c344d4eb2f94b999c3b5d649e76ab70f1 refs/heads/master
+4247d2da937842bd6846874d548b7125b356e14c refs/heads/r61-c2-forgery
+be4a820c344d4eb2f94b999c3b5d649e76ab70f1 refs/remotes/origin/HEAD
+be4a820c344d4eb2f94b999c3b5d649e76ab70f1 refs/remotes/origin/master
+4247d2da937842bd6846874d548b7125b356e14c HEAD
+
+## 4247d2da… (round 62)
+9:- Archived the available C2 falsifier: `.ufo/waves/round-61/controls/r61-c2-full-forgery.bundle`, revision `4247d2da937842bd6846874d548b7125b356e14c`, bundle SHA-256 `c5c0154010d5becc752179bee2cbf81c8fb5dc8a8bd7ed8debb2a20ec9f0526b`, 16,488,385 bytes; `git bundle verify` reports a complete history. C1 scratch repository was absent and was not synthesized. `w1/C2Bundle.md`.
+
+## 9237a72 (round 63)
+79:Stale-lane: respawn-per-round driver; no other mission of this lane is open. Tool installs/updates: none (node v24.21.0 pre-existing; no pacman, uv or npx use). Open L0 questions: two appended to `.ufo/l0-questions.md` (post-freeze control changes; the host Kimi root's four missing members). Open items carried: the R56-V3 readme-map recurrence (a closure spot-check file lands without a map row — nine times now; the proposed `readme-map-close.mjs`/`readme-map-append.mjs` mechanism in `build/K63R2ExecReadmeMapFinal/` is not landed), Audit19 residuals, the Q51 grounding hash `9237a72` that resolves nowhere, and the counters' declared holes above.
+30:**Q52 hex sweep (57 distinct 7-40-hex tokens in QUALITY.md):** 47 resolve as lane commits; `7b0581ed` resolves in the fleet; `c7f7c401`/`0c1f9b22`/`03a258d6`/`6faa34ab`/`d6068d1b`/`3a32dd34` are sha256/receipt-content prefixes (labeled as such in context); `0011223344556677`/`aabbccddeeff0011` are command-example seeds. **Unresolvable anywhere: `59a40c84`, `34a9aee0` (Q58 :977-978) and `9237a72` (Q51 :903 — 0 hits in `git log --all` and `git fsck --lost-found`; also absent from the fleet ODB).**
+55:9. **K63R2ReviewQuality-9 — low (Q52 sweep, outside my two criteria).** Q51's grounding (:903) cites r49 commit `9237a72`, which resolves in neither the lane nor the fleet ODB (its companions `01b70bb`, `c432cc9` resolve). Dead citation in a landed criterion.
+companions: 01b70bb=commit c432cc9=commit

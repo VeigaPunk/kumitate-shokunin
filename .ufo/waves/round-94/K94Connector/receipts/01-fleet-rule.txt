@@ -1,0 +1,60 @@
+# fleet rule — cited hash / ancestor
+   116	fleet.
+   117	A lane report **lands last** — written only after the lane's child-repo work is committed, and it
+   118	must cite that commit's hash. Landed means committed, so changes that exist only in a working tree
+   119	do not count for the round. The cited hash is the lane repo's `HEAD` when the report is written: a
+   120	hash the repo does not contain fails verification, and one that is not an ancestor of `HEAD` at
+   121	closure is a conformance defect (`git merge-base --is-ancestor <hash> HEAD` is the check).
+   122	A lane whose report is still uncommitted when its mission completes has not satisfied this clause.
+   123	Corrections land as new commits, never by amending a cited one (amending or rewriting orphans the
+   124	record); append-only files (`LOG.md`) take an appended correction entry pointing at the superseded
+   125	text, never an in-place rewrite. Landed also means landed *by the lane*: the commit that adds
+   126	`.ufo/reports/round-<N>/<id>.md` carries the lane identity, since any later fleet-level commit can
+   194	heading with one `[x]`/`[ ]`/`[~]` line per box **and** the minimum substance above — work
+   195	performed, at least one evidence pointer, changes landed in the child repo each tied to a `LOG.md`
+   196	entry, and a checkable commit-hash citation. A contentless **completion marker** at that path
+   197	closes nothing: it never fires the driver's completion signal, the lane's mission stays open until
+   198	the stale-lane rule below fires, and the integrator records that lane-round `failed` at closure
+   199	(§Appendix, "Marker vs report"). A filed
+   200	report recording no lane work — no changes, no evidence pointer, no resolvable commit — is a marker,
+   201	not a report: the integrator records that lane-round `failed`, keeps the marker file as a
+   202	conformance defect, and names the counter advancement in the round notes. A short report naming a
+   203	real committed round-work hash is a *defective* report, not a marker: status `ok`, minimum-content
+   204	defect recorded. A marker naming nothing checkable is `failed` whatever the lane actually did — real
+   205	work sitting unattributed in child repos does not rescue it. This does not relax step 1: contract
+   228	the integrator closes every lane-round that terminated since its last pass plus any older one still
+   229	carrying an unresolved row (step 4). After closing, the integrator:
+   230	1. Reads every lane report and verifies each cited child-repo commit exists *and is an ancestor of
+   231	   the lane repo's `HEAD`*; verifies no participating repo is left with uncommitted round work
+   232	   (uncommitted aggregator-owned files are reported, not lane debt); checks each report for the
+   233	   contract-required `SHONEN` heading; checks the round's dispatched `.ufo/prompts/*.md` carried the
+   344	
+   345	Everywhere the protocol says *evidence*, it means a resolvable pointer: a repo path, a command and
+   346	its output, a commit, or an external document — never a naked assertion. A `LOG.md` entry without a
+   347	pointer is not evidence; an unreachable claim in a lane report does not exist.
+   366	- **A falsified claim in an append-only file gets a named correction entry in the lane's next
+   367	  round** — appended, never rewritten; it stays on the routed-defect queue until it lands.
+   368	- **Commits are cited by hash, never by subject or tag** — `git rev-parse round-4` fails wherever
+   369	  the tag doesn't exist.
+   370	- **Drift pins.** A pin counts only if its expected values are **persisted inside the repo** (a
+
+# closure-prompt step 1
+    19	never pass a model parameter; you write only the two artifacts in steps 4–5):
+    20	1. **Step-1 conformance.** The report is committed in the fleet repo by the lane identity
+    21	   (`git log --format='%an %H' -- <report>`); it has the `SHONEN` heading with one line per box;
+    22	   every cited lane commit exists and `git -C {{LANE_CWD}} merge-base --is-ancestor <hash> <branch>`
+    23	   holds (the lane repo is jj-colocated, so git HEAD may be detached — test ancestry against the
+    24	   branch ref, never `@{u}`); the lane repo has no uncommitted round work and is pushed
+
+# driver completion check (report_of)
+   183	# report_of — content check, not existence (H5): a real report carries a SHONEN
+   184	# heading or bold-list marker and >= MIN_REPORT_BYTES. A same-round launch/gate
+   185	# baseline suppresses unchanged bytes by digest; mtime is never a completion signal.
+   186	# Spell out ASCII case variants under C locale, plus both macron bytes, for locale-independent matching.
+   187	report_of() {
+   188	  local f="$UFO/reports/round-$2/$1.md"
+   189	  local baseline="$UFO/state/$1.report-baseline"
+   190	  local baseline_round='' baseline_digest='' extra='' digest
+
+# grep for a declared/external-pin category in the fleet contract
+NO MATCH (no declared/external-pin category in the fleet contract)

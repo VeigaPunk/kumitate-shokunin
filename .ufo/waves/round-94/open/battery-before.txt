@@ -1,0 +1,21 @@
+## node scripts/proxy-check.mjs
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=239 computed=240 delta=+1
+PROXY: DRIFT (A_WAVE_DRIFT term=A_wave declared=1471 computed=1477 delta=+6; C2_DRIFT term=C2 declared=239 computed=240 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=239 computed=240 delta=+1; src-rev=31c465f15669; source=snapshot)
+exit=0
+## node scripts/readme-map.mjs
+README_MAP: CLEAN files=240 rows=240 covered=240
+exit=0
+## node scripts/sources-check.mjs
+SOURCES  info  LEGACY_NO_HEADER  count=38
+SOURCES_CHECK: CLEAN (rows=208 tiers=A:176,B:22,C:10 status=queued:14,mined:166,rejected:28 entries_with_source=47 legacy=38)
+exit=0
+## node scripts/counter-pins.mjs
+COUNTER_PINS: CLEAN pins=50
+exit=0
+## node scripts/spotcheck-adopt.mjs --check
+SPOTCHECK_COVERAGE: CLEAN spotchecks=60 uncovered=0
+MAP: CLEAN
+exit=0
+## node scripts/round-gate.mjs --tracked
+ROUND_GATE: CLEAN (mode=tracked checked=76 errors=0 warnings=0)
+exit=0

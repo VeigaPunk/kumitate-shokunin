@@ -1,0 +1,11 @@
+--- /fast/scratch/hyaku/kumitate-r94/K94Mutation/integrated/round-gate.mjs	2026-11-06 21:00:37.875317629 -0300
++++ /fast/scratch/hyaku/kumitate-r94/K94Mutation/mutants-v3/m13-prefix-exact.mjs	2026-11-06 21:08:37.407074691 -0300
+@@ -417,7 +417,7 @@
+ 
+ /** A token is declared iff it is a prefix of one of the declared pins. */
+ function isDeclaredPin(tok, pins) {
+-  for (const p of pins) if (p.startsWith(tok)) return true;
++  for (const p of pins) if (p === tok) return true;
+   return false;
+ }
+ 

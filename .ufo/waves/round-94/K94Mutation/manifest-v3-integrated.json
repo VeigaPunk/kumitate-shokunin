@@ -1,0 +1,133 @@
+{
+ "source": "/fast/scratch/hyaku/kumitate-r94/K94Mutation/integrated/round-gate.mjs",
+ "source_sha256": "158062f8ac7bf51235d78aa90cb12bd38807ea093712e99ffe047490cb36ed33",
+ "bytes": 100663,
+ "mutants": [
+  {
+   "name": "m01-blanket",
+   "why": "ctl-blanket shape: every unresolvable token declared",
+   "expect": "KILLED-by-selftest",
+   "sha256": "e5abd450ab72af7aace14c8081ec576fa3ce1efcec46a2afb5c6ad62972c2408",
+   "bytes_delta": -31
+  },
+  {
+   "name": "m02-substring",
+   "why": "ctl-substring shape: token anywhere in SOURCES.md",
+   "expect": "KILLED-by-selftest",
+   "sha256": "16633e192185a6e1920654730f1f0e0277ae9b4951432864895c803ad1e45640",
+   "bytes_delta": 29
+  },
+  {
+   "name": "m03-anyline",
+   "why": "ctl-anyline shape: URLs on any line, any status",
+   "expect": "KILLED-by-selftest",
+   "sha256": "e25a2fec13052bf5f93a65c17d2f5a64b42379d8add838d71f71af11ce944b32",
+   "bytes_delta": -88
+  },
+  {
+   "name": "m04-contains",
+   "why": "ctl-contains shape: segment contains token, not prefix",
+   "expect": "KILLED-by-selftest",
+   "sha256": "a54f9349d591cbb7bea5a3b73297157533df5e8698c856b131d986f606a32427",
+   "bytes_delta": -2
+  },
+  {
+   "name": "m05-norejfilter",
+   "why": "ctl-norejfilter shape: rejected rows declare pins",
+   "expect": "KILLED-by-selftest",
+   "sha256": "ca647e184b39c44446941cb1f0eb024e48a8b8c807dd23a016b6b2bf4af4e4ad",
+   "bytes_delta": -55
+  },
+  {
+   "name": "m06-slashonly",
+   "why": "ctl-slashonly shape: a #fragment hides the pin",
+   "expect": "KILLED-by-selftest",
+   "sha256": "91bff00bdb20cf06df0df0f84bf25a730126c4898798b8d6bd624c978d928076",
+   "bytes_delta": -2
+  },
+  {
+   "name": "m07-pin-7-40",
+   "why": "regex boundary: a 7-39 hex segment becomes a \"pin\"",
+   "expect": "SURVIVED-expected",
+   "sha256": "61381c9e9b85753328837a539b8461caf6178a0db4fa5423432d36eee08e8d8d",
+   "bytes_delta": 2
+  },
+  {
+   "name": "m08-row-sdigits",
+   "why": "regex boundary: S1/S12 rows now count as registry rows",
+   "expect": "SURVIVED-expected",
+   "sha256": "c2d5d1a14260a97d7fd601c80f9bcf4754fd358e780999f885093a09314fd049",
+   "bytes_delta": -3
+  },
+  {
+   "name": "m09-status-idx7",
+   "why": "status cell read from column 7 (teaches) instead of 8",
+   "expect": "KILLED-by-selftest",
+   "sha256": "0e998bc306830f6ac8ca4c57c73e4c26552943df15f2daec467ee9db364d5028",
+   "bytes_delta": 0
+  },
+  {
+   "name": "m10-rejected-case",
+   "why": "`rejected` matched case-sensitively",
+   "expect": "SURVIVED-expected",
+   "sha256": "f751bf87da0e2cde92efe023fb06db452c0850b430e47647767ffd552e07a394",
+   "bytes_delta": -14
+  },
+  {
+   "name": "m11-nolazy",
+   "why": "lazy read removed (re-reads per token)",
+   "expect": "EQUIVALENT-expected",
+   "sha256": "3fd530554ef9d0f2d89c43107983b54dbe6294fd5ca2c738929359a3c28980ce",
+   "bytes_delta": -109
+  },
+  {
+   "name": "m12-push-unresolved",
+   "why": "declared tokens pushed to unresolved",
+   "expect": "KILLED-by-selftest",
+   "sha256": "e23494e5f2b8ffa242f109dcadaf54b34fcf28b91173ec573bc2afd865880770",
+   "bytes_delta": 2
+  },
+  {
+   "name": "m13-prefix-exact",
+   "why": "prefix rule -> exact-match rule (8-hex short forms die)",
+   "expect": "KILLED-by-selftest",
+   "sha256": "061f21b82765bfd79dd798df23087718cbdfbbac83cf56f66ddcac194e3aaab8",
+   "bytes_delta": -8
+  },
+  {
+   "name": "m14-sources-path",
+   "why": "SOURCES.md read from repo root, not corpus/",
+   "expect": "KILLED-by-selftest",
+   "sha256": "e5a7be11c67125aab85e745fe304b3cfa77d268b867aa1e2bff9572c71bf24ac",
+   "bytes_delta": -10
+  },
+  {
+   "name": "m15-row-inverted",
+   "why": "registry rows skipped, non-registry lines scanned",
+   "expect": "KILLED-by-selftest",
+   "sha256": "e98eb4a0886239f1f2f8d86a3bc72a89de79c0fd7b6465fbae2e8dd93e0cfa8b",
+   "bytes_delta": -1
+  },
+  {
+   "name": "m17-info-line",
+   "why": "integration text disclosure line removed",
+   "expect": "KILLED-by-selftest",
+   "sha256": "37079bb4e577dcf1ec6ef1bb170c5774bb9261e312ce72c45a8799db73bca11f",
+   "bytes_delta": -198
+  },
+  {
+   "name": "m18-unbounded-read",
+   "why": "bounded registry read reverted to readText (FIFO hang)",
+   "expect": "KILLED-by-selftest-hang",
+   "sha256": "5870c6c3649aef1d4cd29f61ef09457f30a15592c23b9a052c05c6c81efa5aef",
+   "bytes_delta": -4
+  },
+  {
+   "name": "m16-failclosed-shape",
+   "why": "fail-closed --json citations loses the new `declared` key",
+   "expect": "SURVIVED-expected",
+   "sha256": "40673955f50fc074fd805e20f865545bc5d1e55ea487512935e8e3f0e8ca3e8d",
+   "bytes_delta": -14
+  }
+ ]
+}

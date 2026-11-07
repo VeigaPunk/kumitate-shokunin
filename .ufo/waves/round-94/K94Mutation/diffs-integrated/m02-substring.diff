@@ -1,0 +1,11 @@
+--- /fast/scratch/hyaku/kumitate-r94/K94Mutation/integrated/round-gate.mjs	2026-11-06 21:00:37.875317629 -0300
++++ /fast/scratch/hyaku/kumitate-r94/K94Mutation/mutants-v3/m02-substring.mjs	2026-11-06 21:08:37.404376600 -0300
+@@ -484,7 +484,7 @@
+         citations.external.push(t);
+       } else if (probe('origin', t)) {
+         citations.external.push(t);
+-      } else if (isDeclaredPin(t, declaredPinsNow())) {
++      } else if ((readText(join(repo, 'corpus', 'SOURCES.md')) ?? '').includes(t)) {
+         citations.declared.push(t);
+       } else if (mainProbeableNow() && originProbeableNow()) {
+         citations.unresolved.push(t);

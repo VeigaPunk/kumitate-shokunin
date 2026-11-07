@@ -1,0 +1,18 @@
+base: ROUND_GATE_SELFTEST: 61/61 pass · VERDICT: PASS · exit 0
+cand: ROUND_GATE_SELFTEST: 71/71 pass · VERDICT: PASS · exit 0
+blocks base=61 cand=71 cand-only=11 base-only=1
+cand-only blocks:
+  + (i) an 8-hex prefix of a 40-hex URL segment on a mined registry row → declared, no finding
+  + (ii) a cited full 40-hex pin that is a complete URL segment → declared, no finding
+  + (iii) pin followed by `#fragment` (`/commit/<pin>#diff`) → declared, no finding
+  + (iv) pin present only as a non-URL digest inside a registry row → COMMIT_CITED_UNRESOLVED
+  + (v) pin in a URL on a prose line outside the registry → unresolved
+  + (vi) pin in a URL on a `rejected` registry row → unresolved
+  + (vii) token taken from the middle of a declared pin → unresolved (prefix, not contains)
+  + (viii) no corpus/SOURCES.md → no declared pins, unresolved, never INTERNAL_ERROR
+  + --json citations.declared is always present and empty when nothing is declared
+  + hermeticity: --selftest passes under a polluted env and bogus dir flags
+  + text mode: COMMIT_CITED_UNRESOLVED detail carries `declared=<n>` beside the unresolved list
+base-only blocks:
+  - hermeticity: --selftest passes under a polluted env and bogus dir flags
+all other 60 case blocks byte-identical after mkdtemp-normalization; the hermeticity block differs only in its embedded tail count (61/61 -> 71/71).

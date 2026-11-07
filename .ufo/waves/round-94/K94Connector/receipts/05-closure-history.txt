@@ -1,0 +1,46 @@
+# closure history — kumitate unresolved tokens (six spotchecks + r12 lesson absence)
+
+## r46 corpus/lessons/round-46-verifier-spotcheck.md
+    25	| cited control commits | `git cat-file -t 7af3d978` (report:83). The receipts also cite 9800b17f, 3f5dd9f6 and 76df5c28 | `fatal: Not a valid object name` for all four. They are scratch-clone commits | defect R46-4 (minor) |
+   187	- **R46-4. Unresolvable control commits.** `7af3d978`, `9800b17f`, `3f5dd9f6` and `76df5c28` are cited as control or
+   188	  calibration commits but exist only in scratch clones. Fix: commit the control patches, or mark these hashes as
+   189	  scratch-only in the receipts.
+   190	- **R46-5. ReviewC1Diff low findings.** A verdict-flush race at `cap-run.mjs:182-183`, and the budget regex rejecting
+
+## r53 report:35 + spotcheck token mention
+    35	  scratch repo rev `b717dc035bf687a3039123f4c70527bd3774f510`).
+spotcheck mentions of b717dc03: 1
+
+## r57 report:85 + spotcheck conformance table (no token mention)
+    85	  `1cd6d667e20075fd2e77e6e655bc755f95e3d940`). Reuse audit: attempt-1's
+spotcheck mentions of 1cd6d667: 0
+    24	  bucket statement), report path + required sections, commit-then-push,
+    25	  push scope, L0 side channel, SHONEN heading, commit-hash citation rule,
+
+## r61 spotcheck
+    41	| fixture revs cited as falsifier evidence | same | `ab902da2fa30…` (C1 fabrication) and `4247d2d` (C2 forgery) do **not** resolve in the lane repo. They exist only in `/tmp/kumitate-r61/CritControlC1/a4-full-fabrication`, `/tmp/kumitate-r61/CritControlC2/…`, and `/tmp/kumitate-r61-a2/fleet/…` | **defect** (R61-V1) |
+   213	- **R61-V1 — falsifier fixtures live only in tmpfs.** `ab902da2…` and `4247d2d`
+   214	  are cited as evidence, but they resolve only under `/tmp/kumitate-r61*`, which
+
+## r62 spotcheck
+    59	3. **R61-V2 remains open** (fourth consecutive round noted): inherited `dispatch61/doctrine61` probes still accept the fabricated C1 and forged C2 (bundle archived, revision `4247d2da…`). Land the repaired counters or retire the predicates.
+
+## r63 spotcheck D5
+    91	- **D5 (carried).** Audit19 residuals, the Q51 hash `9237a72` that resolves nowhere, the six W04 duplicate-URL warnings (S034/S068/S084/S095/S123/S126), and the counters' declared holes (stub tool reads `INLINE63_HELD`; attacker-hosted row URL passes T5) stay open — the next round should aim a claim at one of them rather than another new surface.
+
+## r12 (no verifier-spotcheck file: ABSENT)
+    97	6. **The citation gate is red, and the red is not this lane's.**
+    98	   `node scripts/cite-check.mjs` → `CITE_CHECK: DRIFT (files=44 tokens=3737
+    99	   errors=15 warnings=75)` while this file was still being written; the durable
+   100	   reading is the close run, where all errors sit inside the third-party
+   149	  (reorder landed in `23e476e21`, owner: origin runtime lane).
+
+## r93 closure + erratum
+    24	| non-commit hashes in report | `cd7ee03d…` | sha256 of v1 `scripts/seat-route.mjs` (`controls/table.txt:15` `tool_sha256=cd7ee03d…`), not a commit; `79fa222e` is the upstream oh-my-pi pin of S269 (stated in the report erratum) | not a defect of ancestry |
+    25	| lane pushed, no leftovers | `scripts/hyaku/jj-lane.sh state …/kumitate-shokunin`; `git status --porcelain` | `local=remote=60bfb976… ahead=0 behind=0 tracked=0 untracked=0`; porcelain empty | pass |
+    30	lane mined it as M93-5); (b) the lane's own `round-gate.mjs` reads `COMMIT_CITED_UNRESOLVED … [79fa222e]`
+    31	(report erratum) — the gate's citation scan cannot tell an external upstream pin from a lane commit; red
+   119	2. `round-gate.mjs` citation scan flags external upstream pins (`79fa222e`) as unresolved lane commits —
+   120	   teach it external-pin context or a declared pin list (report erratum; M93-5 family).
+   125	`COMMIT_CITED_UNRESOLVED cited=10 unresolved=1 [79fa222e]`: `79fa222e` in § Sources & frontier is the
+   126	upstream oh-my-pi commit `79fa222e8390aed3494f4bc6746814e6c74c21cf` that S269 pins

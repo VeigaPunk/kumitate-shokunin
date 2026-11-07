@@ -1,0 +1,23 @@
+337a338,352
+> function declaredPins94(repo) {
+>   const pins = [];
+>   const text = readText(join(repo, 'corpus', 'SOURCES.md'));
+>   if (text === null) return pins;
+>   for (const line of text.split('\n')) {
+>     if (!/^ {0,3}\|\s*S\d{3,}\s*\|/.test(line)) continue;
+>     const cells = line.split('|').map((c) => c.trim());
+>     if (/^rejected$/i.test(cells[8] ?? '')) continue;
+>     for (const m of line.matchAll(/https?:\/\/[^\s|)`'"<>]+/g)) {
+>       for (const seg of m[0].split(/[/?#]/)) if (/^[0-9a-f]{40}$/.test(seg)) pins.push(seg);
+>     }
+>   }
+>   return pins;
+> }
+> 
+342c357
+<     checked: 0, external: [], unresolved: [], notAncestor: [], unverifiable: [],
+---
+>     checked: 0, external: [], declared: [], unresolved: [], notAncestor: [], unverifiable: [],
+392a408,409
+>       } else if (declaredPins94(repo).some((p) => p.startsWith(t))) {
+>         citations.declared.push(t);

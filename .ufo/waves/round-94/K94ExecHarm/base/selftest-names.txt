@@ -1,0 +1,64 @@
+`### shonen` (lowercase, level 3) satisfies the SHONEN check → no findings
+a token resolving in --origin is external (no finding) and lands in --json citations.external
+bare run (no --origin): both candidates absent keeps the derived canonical default (unverifiable, no finding)
+bare run (no --origin): falls back to the legacy ~/Projects/origin-work/ufo-fsd-alpha when the new path is absent
+bare run (no --origin): resolves to the first existing candidate ~/Projects/ufo-fsd-alpha
+body-only marker satisfies COMMIT_MISSING scan (`--format=%B`) → no findings
+clean audit fixture → exit 0, CLEAN, checks=10, no findings
+--close on a clean, pushed fixture → exit 0, CLEAN, checks=13
+COMMIT_CITED_NOT_ANCESTOR → exactly [COMMIT_CITED_NOT_ANCESTOR] (side-branch commit)
+COMMIT_CITED_UNRESOLVED → exactly [COMMIT_CITED_UNRESOLVED]
+COMMIT_MISSING (marker names the wrong N) → exactly [COMMIT_MISSING]
+COMMIT_MISSING (no marker) → exactly [COMMIT_MISSING]
+default --round = latest closed round for the lane (5, not 2)
+env override: KUMITATE_REPORTS_DIR/MAIN_REPO/LANE are honored (lane=other via env)
+every declared finding kind fires in at least one fixture
+fail-closed: --close with a non-git --main-repo → exit 2 (MAIN_REPO_NOT_GIT)
+fail-closed: --close with no upstream on --repo → exit 2 (UPSTREAM_MISSING)
+fail-closed: no closed round derivable (no --round, no <lane>.md) → exit 2 (NO_CLOSED_ROUND)
+fail-closed: --repo does not exist → exit 2
+fail-closed: --repo is a plain dir (not a work tree) → exit 2 (NOT_A_GIT_WORKTREE)
+fail-closed: --reports-dir missing → exit 2 (REPORTS_DIR_MISSING)
+fail-closed: --tracked with no usable --main-repo → exit 2 (MAIN_REPO_NOT_GIT)
+hermeticity: a planted GIT_DIR/GIT_WORK_TREE/GIT_INDEX_FILE canary never reaches a fixture git writer
+hermeticity: --selftest passes under a polluted env and bogus dir flags
+--json drift: verdict DRIFT, findings carry severity/kind/detail
+--json fail-closed: one schema object with verdict FAIL-CLOSED and the token as the finding kind
+--json shape: frozen keys, contract id, checks=10, findings=[]
+kumitate round-gate --selftest (hermetic, node v24.21.0)
+LOG_ENTRY_MISSING → exactly [LOG_ENTRY_MISSING]
+mirror collision: `round-10` does not satisfy N=1 → REPORT_ROUND_MISMATCH
+## Planned body naming `round-6` satisfies the plan check (separator optional)
+## Planned naming round 11 satisfies a round-5 audit (no false positive)
+precedence: CLI --reports-dir/--lane beat a polluted env (flag > env)
+prefix collision: `round-1` does not satisfy N=10 → REPORT_ROUND_MISMATCH
+REPORT_HEADINGS → exactly [REPORT_HEADINGS, REPORT_SHONEN_MISSING] (headingless fixture)
+REPORT_MISSING → exit 1, DRIFT, exactly [REPORT_MISSING], checks=5
+REPORT_ROUND_MISMATCH → exactly [REPORT_ROUND_MISMATCH]
+REPORT_SHONEN_MISSING → warning only, exit 0 CLEAN, warnings=1
+REPORT_THIN → exit 1, exactly [REPORT_THIN], detail `(bytes=<n>)`
+REPORT_UNTRACKED (ls-files) → exactly [REPORT_UNTRACKED]
+REPORT_UNTRACKED (tracked but unpushed) → exactly [REPORT_UNTRACKED] via `@{u}..HEAD`
+ROUND_GATE_SELFTEST: 61/61 pass
+SCORECARD_PLAN_MISSING (no ## Planned) → warning only, exit 0 CLEAN
+SCORECARD_PLAN_MISSING when ## Planned names only a past round → warning only
+SCORECARD_ROW_MISSING → exactly [SCORECARD_ROW_MISSING]
+SCORECARD_ROW_MISSING fires when `<N>` appears in prose ending `|` but no table row exists
+--strict promotes REPORT_SHONEN_MISSING to exit 1, DRIFT
+--strict promotes SCORECARD_PLAN_MISSING to exit 1, DRIFT, errors=0 warnings=1
+text mode prints `ROUND_GATE  error  REPORT_THIN  (bytes=<n>)` (two-space columns)
+--tracked: 3 filed reports, highest excluded, rest tracked → exit 0, CLEAN, checked=2
+--tracked --json: mode=tracked, checked=2, excludedRound=5, findings=[]
+--tracked: oldest filed report untracked → exit 1, DRIFT, exactly [REPORT_UNTRACKED]
+--tracked: only one filed report (the in-flight round) → exit 2 (NO_FILED_REPORTS)
+--tracked: reports under a dir outside --main-repo → one REPORT_UNTRACKED per report (`outside …`)
+--tracked runs no other audit check: a bogus --repo does not change the verdict
+TREE_DIRTY → exactly [TREE_DIRTY], detail names entries=6 and the first 5 only
+UNPUSHED → exactly [UNPUSHED], detail `ahead=1`
+usage: empty --repo value → exit 64
+usage: invalid --lane → exit 64
+usage: non-numeric --round → exit 64
+usage: --round without a value → exit 64
+usage: --tracked with --close → exit 64 (mutually exclusive modes)
+usage: unknown flag → exit 64 with usage on stderr
+VERDICT: PASS

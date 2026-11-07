@@ -1,0 +1,13 @@
+--- /fast/scratch/hyaku/kumitate-r94/K94Mutation/integrated/round-gate.mjs	2026-11-06 21:00:37.875317629 -0300
++++ /fast/scratch/hyaku/kumitate-r94/K94Mutation/mutants-v3/m03-anyline.mjs	2026-11-06 21:08:37.404660070 -0300
+@@ -405,9 +405,7 @@
+   const pins = new Set();
+   if (typeof sourcesText !== 'string') return pins;
+   for (const line of sourcesText.split('\n')) {
+-    if (!SOURCES_ROW_RE.test(line)) continue;
+-    const status = (line.split('|')[8] ?? '').trim();
+-    if (status.toLowerCase() === 'rejected') continue;
++    // ctl-anyline shape: no registry-row filter, no status filter
+     for (const m of line.matchAll(SOURCES_URL_RE)) {
+       for (const seg of m[0].split(SOURCES_SEGMENT_RE)) if (SOURCES_PIN_RE.test(seg)) pins.add(seg);
+     }

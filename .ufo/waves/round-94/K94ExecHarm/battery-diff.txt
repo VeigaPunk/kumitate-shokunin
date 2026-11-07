@@ -1,0 +1,92 @@
+# K94ExecHarm — round-gate swap harm battery (kill rule K3)
+
+Seat K94ExecHarm, round 94 (hyaku run 15). Lane base/freeze `73317eca18c3927fc3c92fe492cd882dc4cda953`
+(detached); candidate `scripts/round-gate.mjs` sha256 `341726f3854ce424c433dfe7d4321301bc9803bc72b0b6a1657e9387f82dae20`
+(snapshot copied from `.ufo/waves/round-94/K94ExecTool/round-gate.mjs`, builder-scored `C94_C1: HELD`;
+`K94ExecTool/READY` later read the same sha, `READY-MATCHES-CANDIDATE`).
+Sandbox: `/fast/scratch/hyaku/kumitate-r94/K94ExecHarm/lane` (`git clone --shared`, detached at the freeze;
+`git rev-parse --show-toplevel` asserted) and a fleet-shaped sandbox
+`/fast/scratch/hyaku/kumitate-r94/K94ExecHarm/{fbase,fcand}` (fleet clone + lane clone, so round-gate's
+`resolve(HERE,'..','..')` main-repo/reports defaults resolve as they do live). Receipts: same tree `base/`
+and `cand/`.
+
+Tool pin inventory (who pins round-gate bytes):
+- `SCORECARD.md:321` `pin.round-gate=09d4d792…` — the only machine re-pin site (proxy-check
+  `PINS['pin.round-gate']`); re-pinned in the SANDBOX copy only, to the candidate sha (receipt `cand/repin.txt`).
+- `.ufo/pins/*.json`: none mention round-gate. Fleet `MANIFEST.json`: prose only, no sha.
+- Nothing else in `scripts/` parses round-gate bytes or its `--json`; `harm-matrix-gates.json` runs
+  `round-gate --selftest` (verdict PASS at both revisions).
+- Old sha `09d4d792…` carriers in the lane at measurement: 183 files = `SCORECARD.md` (1, the live pin) +
+  `.ufo/waves/**` frozen records (182; 34 under `round-94/` by construction, 148 historical). No live
+  gate/pin file besides SCORECARD.md carries it.
+
+Battery (base vs candidate, identical sandbox tree; candidate run has `pin.round-gate` re-pinned):
+
+| tool (K3 list) | BASE | CAND | class |
+|---|---|---|---|
+| `proxy-check.mjs` | exit1 `PROXY: DRIFT` (A_wave 1471→1473, C2_total 239→240, coverage 10→9) | exit1 identical bytes | same |
+| `readme-map.mjs` | exit1 `README_MAP: DRIFT files=240 rows=239 …` | exit1 identical | same |
+| `sources-check.mjs` | exit0 `SOURCES_CHECK: CLEAN (rows=208 …)` | exit0 identical | same |
+| `counter-pins.mjs` | exit0 `COUNTER_PINS: CLEAN pins=50` | exit0 identical | same |
+| `spotcheck-adopt.mjs --check` | exit1 `SPOTCHECK_COVERAGE: DRIFT …`/`MAP: DRIFT` | exit1 identical | same |
+| `round-gate.mjs --tracked` (live reports dirs) | exit0 `CLEAN checked=76` | exit0 identical | same |
+| census validate (`sources-census.sh validate --file …/SOURCES.md`) | exit0, 7×W04 | exit0 identical | same |
+| `node scripts/surface-probe.mjs --checklists` | exit1 `CHECKLIST: 37/47 pass` `VERDICT: FAIL` | exit1 `CHECKLIST: 38/47 pass` `VERDICT: FAIL` | 724 FAIL→PASS only (see below) |
+| **extra** `round-gate.mjs --round 93` | exit1 `DRIFT` `COMMIT_CITED_UNRESOLVED unresolved=2 [79fa222e …]` | exit0 `CLEAN`, `citations.declared=[79fa222e, 79fa222e8390…]`, `unresolved=[]` | expected claim (r93) |
+| **extra** `round-gate.mjs --selftest` | exit0 `61/61 pass VERDICT: PASS` | exit0 `71/71 pass VERDICT: PASS` (+10 arms (i)–(viii), `declared` JSON arm, `declared=<n>` text arm; 61 existing cases unchanged) | same/expected |
+| **extra** fleet-shaped bare audit (`round-gate.mjs`) | exit1 `DRIFT round=93` | exit0 `CLEAN round=93` | expected claim |
+| **extra** `proxy-check.mjs --strict` (checklist item 726) | exit1 same 3 DRIFTs | exit1 identical | same |
+| **extra** `round-gate --round 93 --json` structural diff | base JSON | only `citations.declared` added, `citations.unresolved` emptied, `findings` emptied, `errors 1→0`, `verdict DRIFT→CLEAN`; checks vector otherwise identical | expected claim |
+
+Per-round audit (same lane tree, base gate bytes run from a scratch copy beside `cap-spawn.mjs`; receipts
+`base/rounds/r<N>.out`, `cand/rounds/r<N>.out`):
+
+| round | BASE | CAND | class |
+|---|---|---|---|
+| 12 | exit1 DRIFT unresolved=`[23e476e21]` | byte-identical | same |
+| 46 | exit1 DRIFT unresolved=`[7af3d978]` | byte-identical | same |
+| 53 | exit1 DRIFT unresolved=`[b717dc035bf687a3039123f4c70527bd3774f510]` | byte-identical | same |
+| 57 | exit1 DRIFT unresolved=`[1cd6d667e20075fd2e77e6e655bc755f95e3d940]` | byte-identical | same |
+| 61 | exit1 DRIFT unresolved=`[ab902da2fa30d051455a5f3563627e2c23c3a74d 4247d2d]` | byte-identical | same |
+| 62 | exit1 DRIFT unresolved=`[4247d2da937842bd6846874d548b7125b356e14c]` | byte-identical | same |
+| 63 | exit1 DRIFT unresolved=`[9237a72]` | byte-identical | same |
+| 93 | exit1 DRIFT `COMMIT_CITED_UNRESOLVED cited=11 unresolved=2 [79fa222e 79fa222e8390…]` | exit0 CLEAN, no finding | expected claim |
+
+Expected pin drift (demonstrated, `cand/proxy-UNREPINNED.out`): with the candidate installed and the OLD pin,
+proxy-check adds `PIN_DRIFT term=pin.round-gate declared=09d4… computed=3417…`; after the sandbox re-pin the
+`PROXY:` line is byte-identical to base. No other tool changed any byte (diff of `base/*.out` vs `cand/*.out`).
+
+Regressions: none observed. Inherited base reds (proxy-check DRIFT, readme-map/spotcheck DRIFT on
+`lessons/round-93-verifier-spotcheck.md`) are present at the freeze for reasons unrelated to the candidate and
+are unchanged by it.
+
+## `surface-probe --checklists` (fleet-shaped sandboxes: lane clone inside a fleet clone, so the
+main-repo/reports defaults resolve as live; separate sandbox per side, so no cross-contamination)
+
+- BASE `fbase` (gate 09d4d792, pin 09d4d792): exit1 `CHECKLIST: 37/47 pass` `VERDICT: FAIL`
+  (`base/checklists-fleetshape-isolated.out`). Failing ids: 724 726 738 740 743 745 746 749 756 757.
+- CAND `fcand` (gate 341726f3, pin re-pinned): exit1 `CHECKLIST: 38/47 pass` `VERDICT: FAIL`
+  (`cand/checklists-fleetshape-isolated.out`). Failing ids: 726 738 740 743 745 746 749 756 757.
+- Item-level diff of the 47 `CHECKLIST  PASS|FAIL SKILL.md:<n>` lines: exactly one line changed —
+  724 `Round-close artifact audit` FAIL→PASS (exit 1 `DRIFT round=93` → exit 0 `CLEAN round=93`).
+  Items 723 (selftest) and 725 (`--tracked`) PASS on both sides. The nine carried reds are
+  base/host-state reds unrelated to round-gate: 726 proxy `--strict` (same three inherited DRIFTs),
+  738/757 OMP host state, 740 cap-run 11/12 under load 55, 743 source-capture S269/S270 uncaptured,
+  745/746/749 the missing README row for `lessons/round-93-verifier-spotcheck.md`, 756 kimi score
+  derived from the proxy DRIFT.
+
+Sandbox scope check: after the candidate install and `pin.round-gate` re-pin, `git -C $S/lane status --porcelain`
+printed exactly `M SCORECARD.md` and `M scripts/round-gate.mjs` — no other file in the sandbox tree changed.
+
+## Live working-tree divergence (observation at 21:00; not the READY candidate)
+
+- Lane HEAD moved to `54add172` (L1 M94-1 README adoption: `readme-map`/`spotcheck-adopt` clean there).
+- `scripts/round-gate.mjs` in the working tree is uncommitted: sha256 `158062f8…`, 100663 B, mtime 20:59:40;
+  the committed gate at HEAD is `09d4d792` and `SCORECARD.md` still pins `09d4d792`. READY still names
+  `341726f3…`, which is the candidate this battery grades.
+- Quick battery of the working-tree bytes in a clone of HEAD (base = committed `09d4d792`):
+  proxy-check/readme-map/sources-check/counter-pins/spotcheck-adopt/round-gate --tracked all byte-identical
+  to base; `--round 93` exit1 DRIFT → exit0 CLEAN; `--selftest` 61/61 → 75/75 PASS. Same K3 profile, no
+  regression. Receipts in `live-preview/`.
+- Action for the integrator: if the committed M carries bytes other than `341726f3…`, re-run this battery on
+  those bytes and re-pin `pin.round-gate` to the committed sha.

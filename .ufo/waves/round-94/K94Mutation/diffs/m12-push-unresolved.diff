@@ -1,0 +1,11 @@
+--- /fast/scratch/hyaku/kumitate-r94/K94Mutation/pristine/round-gate.mjs	2026-11-06 20:59:11.615435142 -0300
++++ /fast/scratch/hyaku/kumitate-r94/K94Mutation/mutants-v2/m12-push-unresolved.mjs	2026-11-06 20:51:57.094093055 -0300
+@@ -451,7 +451,7 @@
+       } else if (probe('origin', t)) {
+         citations.external.push(t);
+       } else if (isDeclaredPin(t, declaredPinsNow())) {
+-        citations.declared.push(t);
++        citations.unresolved.push(t);
+       } else if (mainProbeableNow() && originProbeableNow()) {
+         citations.unresolved.push(t);
+       } else {

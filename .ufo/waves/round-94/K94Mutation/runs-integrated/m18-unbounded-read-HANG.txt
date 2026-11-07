@@ -1,0 +1,11 @@
+m18-unbounded-read — hang receipt (no verdict)
+
+command: ( cd mutants-integrated && timeout 180 node m18-unbounded-read.mjs --selftest )
+exit: 124 (timeout)
+stdout+stderr: 0 bytes (node stdout is block-buffered to a file; SIGTERM at 180 s lost the buffer)
+
+cause: the mutant reverts `readRegistry(...)` to `readText(...)` (readFileSync) and the shipped
+selftest arm (ix) creates `corpus/SOURCES.md` as a FIFO with no writer; the fixture gate blocks in
+readFileSync, so the suite never reaches a verdict. The same hang blocks the counter's embedded
+`--selftest` step (probe94-c1 children run with a 600 s timeout), so the counter was not run for m18.
+Verdict: KILLED-by-selftest-hang — the shipped arm (ix) is what exposes the regression.

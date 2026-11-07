@@ -1,0 +1,119 @@
+{
+ "source": "/fast/scratch/hyaku/kumitate-r94/K94Mutation/cand-2050.mjs",
+ "source_sha256": "341726f3854ce424c433dfe7d4321301bc9803bc72b0b6a1657e9387f82dae20",
+ "bytes": 95635,
+ "mutants": [
+  {
+   "name": "m01-blanket",
+   "why": "ctl-blanket shape: every unresolvable token declared",
+   "expect": "KILLED-by-selftest",
+   "sha256": "d233c4175e74a5368bb247afdeba8005bf850ef9d53c11a0c1f81528d0d6cfb5",
+   "bytes_delta": -31
+  },
+  {
+   "name": "m02-substring",
+   "why": "ctl-substring shape: token anywhere in SOURCES.md",
+   "expect": "KILLED-by-selftest",
+   "sha256": "c1cf85af29e2554975e6480daaffee39908b6854bcf7b36ebee708a573c6eb44",
+   "bytes_delta": 29
+  },
+  {
+   "name": "m03-anyline",
+   "why": "ctl-anyline shape: URLs on any line, any status",
+   "expect": "KILLED-by-selftest",
+   "sha256": "db0a6ecc7233309cafec4dce199c82107880fb57eafe2be4ef2f803194f9cb74",
+   "bytes_delta": -88
+  },
+  {
+   "name": "m04-contains",
+   "why": "ctl-contains shape: segment contains token, not prefix",
+   "expect": "KILLED-by-selftest",
+   "sha256": "ad813513aa0d95c26d32c7188c52e39c28506b55ef9b0f273d33cbb9a4ffb10c",
+   "bytes_delta": -2
+  },
+  {
+   "name": "m05-norejfilter",
+   "why": "ctl-norejfilter shape: rejected rows declare pins",
+   "expect": "KILLED-by-selftest",
+   "sha256": "c25403d519256ddaefd9fd0d685fdf7ccb8f5a387f6c55cb67c603707c3e4970",
+   "bytes_delta": -55
+  },
+  {
+   "name": "m06-slashonly",
+   "why": "ctl-slashonly shape: a #fragment hides the pin",
+   "expect": "KILLED-by-selftest",
+   "sha256": "8f87f5003d5eddee45aa0b7aec458e8ac6ab2f472f898508de13788b4ac25ea4",
+   "bytes_delta": -2
+  },
+  {
+   "name": "m07-pin-7-40",
+   "why": "regex boundary: a 7-39 hex segment becomes a \"pin\"",
+   "expect": "SURVIVED-expected",
+   "sha256": "71c81ab64df21b7699a8145f1a039f64f8087dcf08c4f374d97f30e2b14fbe85",
+   "bytes_delta": 2
+  },
+  {
+   "name": "m08-row-sdigits",
+   "why": "regex boundary: S1/S12 rows now count as registry rows",
+   "expect": "SURVIVED-expected",
+   "sha256": "526f642b7ec1a5e13cedc2342f95eaaa4bdecbefdf3c4e1898f4d63a7afe32a5",
+   "bytes_delta": -3
+  },
+  {
+   "name": "m09-status-idx7",
+   "why": "status cell read from column 7 (teaches) instead of 8",
+   "expect": "KILLED-by-selftest",
+   "sha256": "fdf57233863adbbd529127368d1900d56304436d141a207d5044299b8e37941e",
+   "bytes_delta": 0
+  },
+  {
+   "name": "m10-rejected-case",
+   "why": "`rejected` matched case-sensitively",
+   "expect": "SURVIVED-expected",
+   "sha256": "8de21f1ee8bb3148a19fd786fbadd25be80013dd48b23442e49d3dc378b4a829",
+   "bytes_delta": -14
+  },
+  {
+   "name": "m11-nolazy",
+   "why": "lazy read removed (re-reads per token)",
+   "expect": "EQUIVALENT-expected",
+   "sha256": "2ccdd3802c7188b49ad36393a3a4e9e5adea9b7b9ea3232f4b1a6c7fc29d699a",
+   "bytes_delta": -109
+  },
+  {
+   "name": "m12-push-unresolved",
+   "why": "declared tokens pushed to unresolved",
+   "expect": "KILLED-by-selftest",
+   "sha256": "0eece2a52c30facdf1098a0f3eff6e5d415dadb724ba7ca7c722237f4d24bb33",
+   "bytes_delta": 2
+  },
+  {
+   "name": "m13-prefix-exact",
+   "why": "prefix rule -> exact-match rule (8-hex short forms die)",
+   "expect": "KILLED-by-selftest",
+   "sha256": "ec67725a40f3c46460043a19a2e3a80c1d3283a4a1dd8d68201a31c72f860d24",
+   "bytes_delta": -8
+  },
+  {
+   "name": "m14-sources-path",
+   "why": "SOURCES.md read from repo root, not corpus/",
+   "expect": "KILLED-by-selftest",
+   "sha256": "567c06ea51de8bef9c1f5f7aebac3fa1152155957279f3bb77f208af59708968",
+   "bytes_delta": -10
+  },
+  {
+   "name": "m15-row-inverted",
+   "why": "registry rows skipped, non-registry lines scanned",
+   "expect": "KILLED-by-selftest",
+   "sha256": "a4630fd7c57b7c28b58072feacc9b05f5e62be7519cebbccfbc49d4cd53951bd",
+   "bytes_delta": -1
+  },
+  {
+   "name": "m16-failclosed-shape",
+   "why": "fail-closed --json citations loses the new `declared` key",
+   "expect": "SURVIVED-expected",
+   "sha256": "959167dc96cdc097c765498e61e99be8a61598870f6b4069a1c32ef38aee09a7",
+   "bytes_delta": -14
+  }
+ ]
+}

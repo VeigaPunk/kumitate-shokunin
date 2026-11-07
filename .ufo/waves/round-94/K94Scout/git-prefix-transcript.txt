@@ -1,0 +1,55 @@
+### host git version
+git version 2.56.0
+### fixture (isolated, verified toplevel): /fast/scratch/hyaku/kumitate-r94/K94Scout/fx.dLlqHD
+### commits:
+dccc257a18394bd9b830b48fe37476a128560dd9 c3
+e5c2d584c0584a38d825964a059242e1bf1c7c3c c2
+59ff0d901c63cb2bca0e323537a10a071c731ebd c1
+
+### (a) unique 7-hex prefix resolves to the one object
+$ git cat-file -e 59ff0d9^{commit}
+exit=0
+$ git rev-parse 59ff0d9^{commit}
+59ff0d901c63cb2bca0e323537a10a071c731ebd
+$ git cat-file -t 59ff0d9
+commit
+$ git rev-parse --short 59ff0d9
+59ff0d9
+
+### (b) find a 4-hex prefix shared by two objects
+objects written: 6000 distinct 4-hex buckets: 5730 ambiguous 4-hex buckets: 255
+chosen ambiguous 4-hex prefix: 00bb -> ['00bb239659e0449dc0da3be78cc4847c2a1e551c', '00bb4c1f155fd82c37751e7807184edb749daea4']
+
+$ git rev-parse --disambiguate=00bb
+00bb239659e0449dc0da3be78cc4847c2a1e551c
+00bb4c1f155fd82c37751e7807184edb749daea4
+$ git cat-file -e 00bb^{commit}   # ambiguous short name
+error: short object ID 00bb is ambiguous
+hint: The candidates are:
+hint:   00bb239 blob
+hint:   00bb4c1 blob
+fatal: Not a valid object name 00bb^{commit}
+exit=128
+error: short object ID 00bb is ambiguous
+hint: The candidates are:
+hint:   00bb239 blob
+hint:   00bb4c1 blob
+fatal: ambiguous argument '00bb^{commit}': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+00bb^{commit}
+rev-parse exit=128
+$ git cat-file -e 00bb
+error: short object ID 00bb is ambiguous
+hint: The candidates are:
+hint:   00bb239 blob
+hint:   00bb4c1 blob
+fatal: Not a valid object name 00bb
+exit=128
+
+### (c) a prefix that matches nothing
+$ git cat-file -e deadbe
+fatal: Not a valid object name deadbe
+exit=128
+$ git rev-parse --disambiguate=deadbe
+exit=0
