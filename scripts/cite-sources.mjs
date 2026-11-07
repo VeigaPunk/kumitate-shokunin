@@ -201,6 +201,36 @@ function selftest() {
     r100cite('r100-fullwidth-not-row', '| S935 | ok |\n| S９３４ | fw |\n', '| `k.md` | cites S935 |\n',
       0, 'CITE_SOURCES: CLEAN cited=1');
 
+    // M2 (round 100, K100CriticA h01-h08/h12/h14, K100Mutation): classes the frozen counter
+    // never draws. Every other JS-\s / Zs / Cf / NUL pad is not a row; neither is an
+    // U+2000 indent or a digit-group U+2009; ids of 9 and 10 digits and a row after
+    // 1000 records are rows; an indented README map row is still read.
+    const m2pads = [['u2000', '\u2000'], ['u2001', '\u2001'], ['u2004', '\u2004'], ['u2005', '\u2005'],
+      ['u2006', '\u2006'], ['u2007', '\u2007'], ['u2008', '\u2008'], ['u200a', '\u200A'], ['nul', '\u0000'],
+      ['zwnj', '\u200C'], ['zwj', '\u200D'], ['nel', '\u0085'], ['ff', '\f']];
+    m2pads.forEach(([tag, ch], i) => {
+      const id = `S94${i}`;
+      r100cite(`m2-pad-${tag}-not-row`, `|${ch}${id}${ch}| x |\n`, `| \`k.md\` | cites ${id} |\n`,
+        1, `CITE_SOURCES: DRIFT ghosts=1 first=${id}`);
+    });
+    r100cite('m2-indent-u2000-not-row', '\u2000| S960 | x |\n', '| `k.md` | cites S960 |\n',
+      1, 'CITE_SOURCES: DRIFT ghosts=1 first=S960');
+    r100cite('m2-digit-thinsp-not-row', '| S9\u200961 | x |\n', '| `k.md` | cites S961 |\n',
+      1, 'CITE_SOURCES: DRIFT ghosts=1 first=S961');
+    r100cite('m2-samerecord-nel-vt-ff-not-row',
+      'a\u0085| S962 | x |\nb\u000B| S963 | x |\nc\f| S964 | x |\n', '| `k.md` | cites S962 |\n',
+      1, 'CITE_SOURCES: DRIFT ghosts=1 first=S962');
+    r100cite('m2-long-ids-rows', '| S123456789 | x |\n| S1234567890 | x |\n',
+      '| `k.md` | cites S123456789 and S1234567890 |\n', 0, 'CITE_SOURCES: CLEAN cited=2');
+    r100cite('m2-row-after-1000-records', `${'prose\n'.repeat(1000)}| S965 | x |\n`,
+      '| `k.md` | cites S965 |\n', 0, 'CITE_SOURCES: CLEAN cited=1');
+    // K100Mutation M32: a row after CR / U+2028 / U+2029 on the same LF record is not a row.
+    r100cite('m2-samerecord-cr-ls-ps-not-row',
+      'a\r| S968 | x |\nb\u2028| S969 | x |\nc\u2029| S970 | x |\n', '| `k.md` | cites S968 S969 S970 |\n',
+      1, 'CITE_SOURCES: DRIFT ghosts=3 first=S968');
+    r100cite('m2-readme-indented-map-row', '| S966 | x |\n', '  | `k.md` | cites S967 |\n',
+      1, 'CITE_SOURCES: DRIFT ghosts=1 first=S967');
+
     const help = awaitChild(['--help']);
     check('usage-64', help.status === 64 && help.stdout.includes('USAGE'), `status=${help.status}`);
   } finally {

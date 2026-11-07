@@ -543,6 +543,45 @@ function selftest() {
       const r = mkR100('fullwidth', '| S001 | alpha |\n| S８４６ | fw |\n', ['S001'], []);
       pass('r100-fullwidth-not-row', cleanLine(r, 1, 0), `exit=${r.status} last=${JSON.stringify(last(r))}`);
     }
+
+    // M2 (round 100, K100CriticA h01-h08/h12, k04, K100Mutation): classes the frozen
+    // counter never draws. Every other JS-\s / Zs / Cf / NUL pad is not a row; neither
+    // is an U+2000 indent, a digit-group U+2009, or a row after NEL/VT/FF on the same LF
+    // record; ids of 9 and 10 digits and a row after 1000 records are rows.
+    const m2pads = [['u2000', '\u2000'], ['u2001', '\u2001'], ['u2004', '\u2004'], ['u2005', '\u2005'],
+      ['u2006', '\u2006'], ['u2007', '\u2007'], ['u2008', '\u2008'], ['u200a', '\u200A'], ['nul', '\u0000'],
+      ['zwnj', '\u200C'], ['zwj', '\u200D'], ['nel', '\u0085'], ['ff', '\f']];
+    m2pads.forEach(([tag, ch], i) => {
+      const id = `S88${i}`;
+      const r = mkR100(`m2-pad-${tag}`, `| S001 | alpha |\n|${ch}${id}${ch}| x |\n`, ['S001'], [id]);
+      pass(`m2-pad-${tag}-not-row`, orphanLine(r, id), `exit=${r.status} last=${JSON.stringify(last(r))}`);
+    });
+    {
+      const r = mkR100('m2-indent-u2000', '| S001 | alpha |\n\u2000| S895 | x |\n', ['S001'], ['S895']);
+      pass('m2-indent-u2000-not-row', orphanLine(r, 'S895'), `exit=${r.status} last=${JSON.stringify(last(r))}`);
+    }
+    {
+      const r = mkR100('m2-digit-thinsp', '| S001 | alpha |\n| S8\u200996 | x |\n', ['S001'], ['S896']);
+      pass('m2-digit-thinsp-not-row', orphanLine(r, 'S896'), `exit=${r.status} last=${JSON.stringify(last(r))}`);
+    }
+    for (const [tag, br, id] of [['nel', '\u0085', 'S897'], ['vt', '\u000B', 'S898'], ['ff', '\f', 'S899']]) {
+      const r = mkR100(`m2-samerecord-${tag}`, `| S001 | alpha |\ntext before${br}| ${id} | x |\n`, ['S001'], [id]);
+      pass(`m2-samerecord-${tag}-not-row`, orphanLine(r, id), `exit=${r.status} last=${JSON.stringify(last(r))}`);
+    }
+    {
+      const r = mkR100('m2-long-ids', '| S001 | alpha |\n| S123456789 | x |\n| S1234567890 | x |\n',
+        ['S001'], ['S123456789', 'S1234567890']);
+      pass('m2-long-ids-rows', cleanLine(r, 1, 2), `exit=${r.status} last=${JSON.stringify(last(r))}`);
+    }
+    // K100Mutation M30: a 1- or 2-digit id is not a row, so an unbound `| S99 |` is not uncaptured.
+    {
+      const r = mkR100('m2-two-digit', '| S001 | alpha |\n| S99 | x |\n| S7 | y |\n', ['S001'], []);
+      pass('m2-two-digit-not-row', cleanLine(r, 1, 0), `exit=${r.status} last=${JSON.stringify(last(r))}`);
+    }
+    {
+      const r = mkR100('m2-after-1000', `| S001 | alpha |\n${'prose\n'.repeat(1000)}| S900 | x |\n`, ['S001'], ['S900']);
+      pass('m2-row-after-1000-records', cleanLine(r, 1, 1), `exit=${r.status} last=${JSON.stringify(last(r))}`);
+    }
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
