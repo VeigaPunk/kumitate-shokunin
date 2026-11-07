@@ -1,0 +1,41 @@
+=== the census's TWO trim classes, measured on fx2 (11 pad classes) ===
+row_pass  (gawk, sources-census.sh:581):  function trim(s) { gsub(/^[ \t]+|[ \t]+$/,"",s); return s }
+usedby_findings (bash, :531):            trim_cell() { while [[ "$value" == [[:space:]]* ]]; ... }
+
+--- gawk trim (E02 id, from the same census run) ---
+^KS005^K
+^KS006^K
+^LS007^L
+^LS008^L
+^MS009^M
+^MS010^M
+M-BM- S011M-BM- 
+M-BM- S012M-BM- 
+M-bM-^@M-^CS013M-bM-^@M-^C
+M-bM-^@M-^CS014M-bM-^@M-^C
+M-bM-^@M-(S015M-bM-^@M-(
+M-bM-^@M-(S016M-bM-^@M-(
+M-oM-;M-?S017M-oM-;M-?
+M-oM-;M-?S018M-oM-;M-?
+
+--- bash trim_cell (E11 id), ambient en_US.UTF-8 ---
+S001
+S003
+S005
+S007
+S009
+M-BM- S011M-BM- 
+S013
+S015
+M-oM-;M-?S017M-oM-;M-?
+
+--- bash trim_cell (E11 id), env -i (C locale, what cap-run gives the child) ---
+S001
+S003
+S005
+S007
+S009
+M-BM- S011M-BM- 
+M-bM-^@M-^CS013M-bM-^@M-^C
+M-bM-^@M-(S015M-bM-^@M-(
+M-oM-;M-?S017M-oM-;M-?

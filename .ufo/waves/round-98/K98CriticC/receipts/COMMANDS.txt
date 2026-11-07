@@ -1,0 +1,32 @@
+# K98CriticC — H98 differential commands (all run from scratch dir;
+# TMPDIR defaulted to /fast/scratch/hyaku/kumitate-r98/K98CriticC)
+#
+# 1. generator -> reference rule
+python3 .ufo/waves/round-98/probe/make-controls98.py scripts/round-gate.mjs <scratch>/controls
+#    (ctl-positive.mjs sha256 d573790132cda0a47ae5ae894190307d31e9e59f6824b998e9f264fdcf00dde5,
+#     identical to controls/OBSERVED.txt)
+#
+# 2. harness extraction (declaredPins + 4 regex constants, verbatim slice):
+node harness/extract.mjs <tool.mjs> <out.mjs>      # extraction rule recorded in the file header
+node harness/run-harness.mjs <tool.mjs> <out.jsonl> <files...>
+#
+# 3. gate equivalence (3 files, full --json gate with a report citing every pin):
+python3 harness/equiv.py <tool.mjs> <work> <out.json> <files...>
+#    tools were run beside copies of scripts/cap-spawn.mjs + scripts/cap-run.mjs
+#
+# 4. census differential over a file list:
+python3 harness/compare.py --tool positive=<scratch>/controls/ctl-positive.mjs \
+  --tool base=/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/round-gate.mjs \
+  --files <list> --work <work> --out <out.json> --jobs 2
+#    per-file: /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file <f> --today 2026-11-07
+#
+# 5. reparse (census TSV ids may contain TABs; split('\t',2), id = value before last ' fields='/' row outside...'):
+python3 harness/reparse.py receipts/mutations-chunkN.json receipts/mutations-chunkN-reparsed.json
+#
+# 6. 300 seeded mutations of the current kumitate registry:
+python3 harness/mutate.py <scratch>/files/rev-current.md <scratch>/mutations 300 20261107
+#
+# 7. candidate bytes (in-progress; no READY): expected values recomputed from the
+#    census row_pass re-implementation already verified 400/400 against the live
+#    census's E12/E01 output (reparse + receipt check):
+python3 harness/reuse.py <candidate round-gate.mjs> candidate-inprogress <all.list> <out.json>

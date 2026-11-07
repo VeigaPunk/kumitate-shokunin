@@ -1,0 +1,16 @@
+# battery-diff: BASE (7038ee4, round-gate edaa115f) vs CANDIDATE ea7? real: e7c1455e8e8afa1267a35de4f4fce86b007104989aafd6783319cef1bb7ed01f (K98ExecTool/round-gate.mjs at capture; READY still absent at final run, candidate sha changed e7c1455e... - if it changes again re-run battery)
+# Raw diff (base.txt vs cand-real.txt): battery label + PIN_DRIFT pin.round-gate line only (see rawdiff.txt) + battery.sh tail-4 truncation hiding A_wave line in cand run (both contain A_WAVE_DRIFT in full line; truncation artifact)
+tool proxy-check: BASE DRIFT(A_wave 1650->1653, C2/C2_total 251->252) exit1 | CAND DRIFT(same A/C2) + PIN_DRIFT(expected, bytes changed) exit1 | after sandbox re-pin PIN_DRIFT gone, DRIFT = A_wave/C2 only => expected (bookkeeping re-declaration, K3 allows after re-declaration)
+tool proxy-check --strict: same => expected
+tool readme-map: CLEAN exit0 both => same
+tool sources-check: CLEAN exit0 both, byte-identical section => same
+tool counter-pins: CLEAN pins=50 exit0 both => same
+tool spotcheck-adopt --check: CLEAN exit0 both => same
+tool round-gate --tracked: CLEAN checked=80 exit0 both => same
+tool round-gate --round 97: CLEAN checks=10 exit0 both => same
+tool sources-census validate: ok exit0 both (W04 x3 identical) => same
+# --json: tracked + 81 filed rounds (82 files): sans durationMs 0/82 diffs; exits identical (EXIT_IDENTICAL); durationMs only tool-identity-diff (timing field)
+# selftest real candidate: 96/96 VERDICT PASS exit0
+# consumers: scripts/proxy-check.mjs pins pin.round-gate (hash read, not parse of output); SCORECARD.md pin.round-gate=edaa115f (must be re-pinned at close - expected); SKILL.md documents round-gate CLI/JSON citations (contract kumitate-round-gate-v1 unchanged, no field change); scripts/*.mjs other than proxy-check do not read round-gate output; .ufo/pins has no round-gate entry. Swap changes what proxy-check reads (hash) - expected; changes nothing else (sources-check is independent reader, counter-pins pins=50 unchanged).
+# harm verdict (K3): no regression beyond expected PIN_DRIFT; A_wave/C2 drift pre-exists at open (battery-before.txt A 1650->1651; sandbox shows 1650->1653 because 2 extra wave files landed since open - bookkeeping, re-declared at close per r94-97)
+EXIT_IDENTICAL

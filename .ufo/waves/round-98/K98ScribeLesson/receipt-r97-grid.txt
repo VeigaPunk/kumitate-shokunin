@@ -1,0 +1,16 @@
+# r97 counter grid: the code points its frozen battery draws
+$ grep -oE '\\\\(u[0-9a-fA-F]{4}|x..|v|f)' .ufo/waves/round-97/probe/probe97-c1.mjs | sort | uniq -c
+      4 \f
+      4 \u00a0
+      4 \v
+
+$ grep -n 'const PADS' .ufo/waves/round-98/probe/probe98-c1.mjs  (frozen grid, Q92 command form)
+116:const PADS = [
+117-  ['none', ''], ['SP', ' '], ['2SP', '  '], ['TAB', '\t'], ['SPTAB', ' \t'], ['TABSP', '\t '],
+118-  ['VT', '\v'], ['FF', '\f'], ['CR', '\r'], ['TABFF', '\t\f'], ['NEL', '\u0085'], ['NBSP', '\u00a0'],
+119-  ['OGHAM', '\u1680'], ['MVS', '\u180e'], ['ENQUAD', '\u2000'], ['ENSP', '\u2002'], ['EMSP', '\u2003'],
+120-  ['FIGSP', '\u2007'], ['THINSP', '\u2009'], ['HAIRSP', '\u200a'], ['ZWSP', '\u200b'], ['ZWNJ', '\u200c'],
+121-  ['ZWJ', '\u200d'], ['LS', '\u2028'], ['PS', '\u2029'], ['NNBSP', '\u202f'], ['MMSP', '\u205f'],
+122-  ['WJ', '\u2060'], ['IDSP', '\u3000'], ['BOM', '\ufeff'], ['SPNBSP', ' \u00a0'], ['NBSPSP', '\u00a0 '],
+123-];
+124-const SP = ' ';

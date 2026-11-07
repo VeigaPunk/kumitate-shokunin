@@ -292,12 +292,12 @@ The K census decision supplies both members and findings; the score is now
 
 <!-- kumitate-proxy-v1
 A=37
-A_wave=1650
+A_wave=1695
 C=47
 C1=19
 C1_total=19
-C2=251
-C2_total=251
+C2=254
+C2_total=254
 S_members=88
 S_sections=88
 R_members=92
@@ -318,14 +318,14 @@ O_bound=35
 coverage_omp=10
 pin.cite-check=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2
 pin.surface-probe=79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35
-pin.round-gate=edaa115fa053798665b2694d05bf8cc8389a9cdfae74930eab33398776bea135
+pin.round-gate=84ebaf9f2632114cfea3b24abe0a61efec7d8447763a7392c5ef6f7f949349c9
 pin.proxy-check=1145df889936bc497baf09375086cbcd92c7377536316ce72b2ffd63dba6ab66
 pin.claims-check=de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14
 pin.kimi-census=7ea6b793028e2918ca920f0a5d225382bf687740d4cbee4545db963e50572439
 -->
 <!-- kumitate-gate-pins-v1
 pin.anchor-truth=43c37865a5b3ea5912c5be0e1243fa222642b6be0ef6a1103ee03a287614b23d
-pin.sources-check=acccb0d792fe79b88f8d2cb10dfe20f72f2eb30bfbebafb3b8c3218eb22cf9ec
+pin.sources-check=1def379fb98555c6a648f0585c0ff61faaf812218d688589e5c831bc16dd780b
 pin.wave-census=76447250f9de1f7e9258d0dfe9544feba18d6c8723db37e77e6ca422235f45f4
 pin.gate-mutants=177f6cbbd70d7503263d00c77357893658a0e393ac722d43034ebd7e429bb717
 pin.omp-census=a080652c7bc3beb638349e2a15bfb069e7a42f5d2dd474c9fd6860d1e2bee208
@@ -472,6 +472,7 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
+| 98 | operability (lowest non-retired; 9 terminal; R98 round-gate id-cell pads `[ \t]`, not `\s`; sourced S277; HELD, prospective) | BASE counter UNMET a=0 b=0 c=0 d=81/81 e=1; FIX-A declared/outside/malformed 82/108/82 vs census 22/28/22; selftest 94 | M `6172bd82` HELD twice, selftest 96; M2 `94195b83` HELD twice, selftest 98; `.ufo/waves/round-98/close/probe-m2-{1,2}.txt` | 9→9 terminal; coverage unchanged; command `node .ufo/waves/round-98/probe/probe98-c1.mjs --tool <REV:scripts/round-gate.mjs> --work <scratch> --freeze 7038ee4c`; counter gaps: eight wrong HELD constructions, recorded not hidden |
 | 97 | operability (lowest non-retired axis; integer 9 — terminal under `f_O`, so the move is the repaired instrument, not a score delta; `sources-check` reads `## Registry` membership with the census `row_pass` grammar — `split('\n')` CR kept, `^ {0,3}##[ \t]`, `[ \t]`-only trim, `^ {0,3}#[ \t]` clears — routed r96 pre-registration items (1)–(2) / K96Connector; sourced on S276 (opened) — **HELD** under the frozen predicate, K1–K4 not fired; caveat: six K97CriticA constructions outside the class grid reach HELD, routed to r98) | BASE disagrees with the census on 738 / 5 220 / 2 999 of 19 459 grammar-battery cases (`.ufo/waves/round-97/controls/ctl-nothing.txt`: `C97_C1: UNMET a=0/1 b=0/1 c=0/1 d=1/1 e=1/1 f=1/1`); selftest 46/46 | `C97_C1: HELD a=1/1 b=1/1 c=1/1 d=1/1 e=1/1 f=1/1` ×2 at M `69fb6943` and ×2 at M2 `f33786f0` (`close/probe1.txt`, `probe2.txt`, `probe-m2-{1,2}.txt`); selftest 71/71; re-mutation 15/15; operability 9 → 9, coverage 10 → 10 | `.ufo/waves/round-97/` (plan, probe, controls, close, close-l1, w1); `corpus/lessons/round-97.md`; `corpus/knowledge/sources-check-registry-section.md` |
 | 96 | operability (lowest non-retired axis; integer 9 — terminal under `f_O`, so the move is the repaired instrument, not a score delta; `round-gate` declares pins only from rows inside the census `## Registry` section (`sources-census.sh` `row_pass` state) and lists every outside row in `citations.outsideRows`, routed r95 pre-registration item (1) / K95CriticB; sourced on S275 (opened) — **HELD** under the frozen predicate, K1–K4 not fired; caveat M96-2: 8 of 14 K96CriticA constructions reach HELD on the counter, 7 killed by the shipped selftest, `hardcode-fixtures` counter-keyed) | fixture A: BASE declares 15 tokens incl. 8 outside rows, no `outsideRows` key (`.ufo/waves/round-96/controls/ctl-nothing.txt`: `C96_C1: UNMET a=0/1 b=0/1 c=0/1 d=0/1 e=0/79 f=1/1`) | at M `09de6791`: `C96_C1: HELD a=1/1 b=1/1 c=1/1 d=1/1 e=79/79 f=1/1 tool_sha256=edaa115f…` twice; selftest 89 → 94; re-mutation 30/31 + b20; S275 mined; Q90 | `.ufo/waves/round-96/close/probe{1,2}.txt`; `close-l1/integration-remut.txt`; `corpus/lessons/round-96.md`; command `node .ufo/waves/round-96/probe/probe96-c1.mjs --tool <(git show 09de6791:scripts/round-gate.mjs) --work <scratch> --freeze 617e80cd8b01efb5748d729dbdcac95734bc461d`; measured commit `09de67917b5b7731aa06ae019c7e9b94359981c9` |
 | 95 | operability (lowest non-retired axis; integer 9 — terminal under `f_O`, so the move is the repaired instrument, not a score delta; `round-gate` trusts a SOURCES registry row only at the census shape `NF==13` and discloses malformed rows in `citations.malformedRows`, routed defect r94 spot-check §5 item 3 / K94Sentinel S94-5; sourced on S273 and S274 (opened) — **HELD** under the frozen predicate, K1–K4 not fired; caveat M95-2: nine counter constructions reach HELD, all nine killed by the shipped selftest) | fixture registry: BASE declares from shifted/escaped/short/long rows `declared=[okA shiftB escC shortD indentF longG plainH]`, no `malformedRows` key (`.ufo/waves/round-95/controls/ctl-nothing.txt`: `C95_C1: UNMET a=0/1 b=0/1 c=0/78 d=1/1`) | `C95_C1: HELD a=1/1 b=1/1 c=78/78 d=1/1 tool_sha256=7aaf0082…` twice at M `ce58e03e` (`close/probe1.txt`, `close/probe2.txt`); selftest 79 → 88 | `.ufo/waves/round-95/plan.md`; `close/battery-M.txt`; `close-l1/integration-remut.txt` (15/15); `corpus/lessons/round-95.md`; `corpus/knowledge/round-gate-registry-shape.md` |
@@ -586,7 +587,7 @@ the frozen definitions name.
 
 ## Planned
 
-**Round 98 — pre-registration** (written by round 97) lives at the end of this file under `## Round 98 pre-registration (written by round 97)`. **Round 97 — declaration and measured disposition** live above it under `## Round 97 — declaration and measured disposition (2026-11-07, attempt 1)`.
+**Round 99 pre-registration** (written by round 98) lives at this file's end; round 98 disposition immediately precedes it.
 
 **Round 97 — pre-registration** (written by round 96) lives at the end of this file under `## Round 97 pre-registration (written by round 96)`. **Round 96 — declaration and measured disposition** live above it under `## Round 96 — declaration and measured disposition (2026-11-07, attempt 1)`.
 
@@ -4714,3 +4715,29 @@ row definition (K97CriticC, 5 probes). (4) Carried: M93-3 counter repair, M93-5 
 R93-D1 redaction, F93 fixtures; census gawk/bash `\r` disagreement (L0 `kumitate | round-96`); sibling transfer
 (9 tools in kumitate/kake/tabi, report only).
 
+
+## Round 98 — declaration and disposition (2026-11-07, attempt 1)
+
+ONE C1 operability claim: R98 `round-gate` recognises registry rows only with ASCII SP/TAB id-cell
+pads (`^ {0,3}\|[ \t]*S\d{3,}[ \t]*\|`), inside/outside alike. Integer 9 is terminal under f_O;
+every coverage row stays 10. Sourced S277 POSIX LC_CTYPE, opened this round. Freeze `7038ee4c`,
+pre-data positive HELD and fourteen negatives UNMET (`controls/OBSERVED.txt`), spec `8a6a4490`.
+M `6172bd82` (READY e7c1455e) HELD twice; M2 `94195b83` (84ebaf9f) HELD twice under the same frozen
+counter (`close/probe-m2-{1,2}.txt`): a=1 b=1 c=1 d=81/81 e=1.
+Selftest 94→96→98; K98Mutation 23 selftest kills + 2 counter-only, M2 arms kill those and the
+expressible CriticA constructions (`close-l1/m2-teeth.txt`); K2 re-mutation in `integration-remut.txt`.
+K98CriticC 400/400 vs BASE 382/400. Harm battery receipt `close/battery-final.txt`.
+Verdict: HELD. No capability row; repaired instrument, not invented score gain. Counter does not certify
+R98 by itself: eight CriticA constructions HELD; exact rule by construction, selftest and differential.
+Framing weak/prospective (0 non-blank pads in 5,442 live rows). Sources-check inside-cell trim/count
+still diverges; not included in R98. SOURCES 214→215; Q92, lesson, knowledge, SKILL and map updated.
+Sources-check census-parity selftest debt repaired (`1def379f…`), PASS/absent-SKIP/bad-census-FAIL receipts.
+Wave w1 12 seats (executor3, scribe2, scout1, connector1, reviewer1, critic3, mutation-tester1), 0 dead.
+
+## Round 99 pre-registration (written by round 98). Candidates, not commitments
+
+(1) sources-check inside-row cell trim/count vs census (FIX-A ID_FORM42/E02182, rows190/349;
+K98Connector); independently freeze row-population definition, including separators/malformed ids.
+(2) Counter pad lengths, id lengths, omitted Zs/Cf/C0/fillers, file-start BOM and nonce header/delegation
+control (K98CriticA, Q92 limit). (3) Carried status case/trim and URL class; M93-3/M93-5/R93-D1/F93;
+census CR L0 question remains open; sibling transfer report-only.

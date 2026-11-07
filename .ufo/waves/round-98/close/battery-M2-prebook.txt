@@ -1,0 +1,41 @@
+# battery at M2-prebook (dir /home/vgpnk/Projects/shokunin/kumitate-shokunin, rev 94195b83d9e61554469e1b13153f262bd2643912)
+$ node scripts/proxy-check.mjs
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=251 computed=254 delta=+3
+PROXY  error  PIN_DRIFT  pin.round-gate: declared=edaa115fa053798665b2694d05bf8cc8389a9cdfae74930eab33398776bea135 computed=84ebaf9f2632114cfea3b24abe0a61efec7d8447763a7392c5ef6f7f949349c9
+PROXY  error  GATE_PIN_DRIFT  pin.sources-check: declared=acccb0d792fe79b88f8d2cb10dfe20f72f2eb30bfbebafb3b8c3218eb22cf9ec computed=1def379fb98555c6a648f0585c0ff61faaf812218d688589e5c831bc16dd780b
+PROXY: DRIFT (A_WAVE_DRIFT term=A_wave declared=1650 computed=1695 delta=+45; C2_DRIFT term=C2 declared=251 computed=254 delta=+3; C2_TOTAL_DRIFT term=C2_total declared=251 computed=254 delta=+3; PIN_DRIFT term=pin.round-gate declared=edaa115fa053798665b2694d05bf8cc8389a9cdfae74930eab33398776bea135 computed=84ebaf9f2632114cfea3b24abe0a61efec7d8447763a7392c5ef6f7f949349c9; GATE_PIN_DRIFT term=pin.sources-check declared=acccb0d792fe79b88f8d2cb10dfe20f72f2eb30bfbebafb3b8c3218eb22cf9ec computed=1def379fb98555c6a648f0585c0ff61faaf812218d688589e5c831bc16dd780b; src-rev=31c465f15669; source=snapshot)
+exit=1
+$ node scripts/proxy-check.mjs --strict
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=251 computed=254 delta=+3
+PROXY  error  PIN_DRIFT  pin.round-gate: declared=edaa115fa053798665b2694d05bf8cc8389a9cdfae74930eab33398776bea135 computed=84ebaf9f2632114cfea3b24abe0a61efec7d8447763a7392c5ef6f7f949349c9
+PROXY  error  GATE_PIN_DRIFT  pin.sources-check: declared=acccb0d792fe79b88f8d2cb10dfe20f72f2eb30bfbebafb3b8c3218eb22cf9ec computed=1def379fb98555c6a648f0585c0ff61faaf812218d688589e5c831bc16dd780b
+PROXY: DRIFT (A_WAVE_DRIFT term=A_wave declared=1650 computed=1695 delta=+45; C2_DRIFT term=C2 declared=251 computed=254 delta=+3; C2_TOTAL_DRIFT term=C2_total declared=251 computed=254 delta=+3; PIN_DRIFT term=pin.round-gate declared=edaa115fa053798665b2694d05bf8cc8389a9cdfae74930eab33398776bea135 computed=84ebaf9f2632114cfea3b24abe0a61efec7d8447763a7392c5ef6f7f949349c9; GATE_PIN_DRIFT term=pin.sources-check declared=acccb0d792fe79b88f8d2cb10dfe20f72f2eb30bfbebafb3b8c3218eb22cf9ec computed=1def379fb98555c6a648f0585c0ff61faaf812218d688589e5c831bc16dd780b; src-rev=31c465f15669; source=snapshot)
+exit=1
+$ node scripts/readme-map.mjs
+README_MAP: CLEAN files=254 rows=254 covered=254
+exit=0
+$ node scripts/sources-check.mjs
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/sources-check-registry-section.md:1  S275 used-by omits corpus/knowledge/sources-check-registry-section.md
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/sources-check-registry-section.md:1  S274 used-by omits corpus/knowledge/sources-check-registry-section.md
+SOURCES  info  LEGACY_NO_HEADER  count=38
+SOURCES_CHECK: CLEAN (rows=215 tiers=A:183,B:22,C:10 status=queued:14,mined:173,rejected:28 entries_with_source=52 legacy=38)
+exit=0
+$ node scripts/counter-pins.mjs
+COUNTER_PINS: CLEAN pins=50
+exit=0
+$ node scripts/spotcheck-adopt.mjs --check
+SPOTCHECK_COVERAGE: CLEAN spotchecks=64 uncovered=0
+MAP: CLEAN
+exit=0
+$ node scripts/round-gate.mjs --tracked --reports-dir /home/vgpnk/Projects/shokunin/.ufo/reports --main-repo /home/vgpnk/Projects/shokunin
+ROUND_GATE: CLEAN (mode=tracked checked=80 errors=0 warnings=0)
+exit=0
+$ node scripts/round-gate.mjs --round 97 --reports-dir /home/vgpnk/Projects/shokunin/.ufo/reports --main-repo /home/vgpnk/Projects/shokunin
+ROUND_GATE: CLEAN (round=97 lane=kumitate checks=10 errors=0 warnings=0)
+exit=0
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file corpus/SOURCES.md
+file	W04	S126 duplicate url docs.temporal.io/encyclopedia/detecting-activity-failures across scopes
+file	W04	S247 duplicate url arxiv.org/abs/2212.06118 across scopes
+file	W04	S271 duplicate url git-scm.com/docs/gitrevisions across scopes
+file	ok	/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
+exit=0

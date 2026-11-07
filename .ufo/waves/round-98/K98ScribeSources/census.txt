@@ -1,0 +1,83 @@
+# S277 census validation receipt
+
+fixture: /fast/scratch/hyaku/kumitate-r98/K98ScribeSources/validate
+scratch is disposable; the lane registry was read, never written.
+
+## fixture build
+  cp -a /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus /fast/scratch/hyaku/kumitate-r98/K98ScribeSources/validate/corpus
+  : > /fast/scratch/hyaku/kumitate-r98/K98ScribeSources/validate/corpus/knowledge/round-gate-row-id-class.md
+  { sed -n "1,231p" copy/corpus/SOURCES.md; cat <seat>/row.md; sed -n "232,\$p" copy/corpus/SOURCES.md; } > new; mv new copy/corpus/SOURCES.md
+  # lane top-level siblings symlinked into the fixture so E11 used-by paths resolve
+  copy-lines=380  S277-at-line=232
+
+## baseline: validate the lane registry unmodified (read-only)
+  bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
+file	W04	S034 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics across scopes
+file	W04	S068 duplicate url github.com/can1357/oh-my-pi/tree/45c35e40c46166dc726ccc52f5d27f40f2449f99 across scopes
+file	W04	S084 duplicate url infection.github.io/guide across scopes
+file	W04	S095 duplicate url raw.githubusercontent.com/containers/bubblewrap/v0.13.1/bwrap.xml across scopes
+file	W04	S123 duplicate url docs.langchain.com/oss/python/langgraph/checkpointers across scopes
+file	W04	S126 duplicate url docs.temporal.io/encyclopedia/detecting-activity-failures across scopes
+file	W04	S247 duplicate url arxiv.org/abs/2212.06118 across scopes
+file	W04	S271 duplicate url git-scm.com/docs/gitrevisions across scopes
+file	ok	/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
+  exit=0
+
+## validate the fixture copy with S277 appended inside ## Registry
+  bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file /fast/scratch/hyaku/kumitate-r98/K98ScribeSources/validate/corpus/SOURCES.md
+file	W04	S034 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics across scopes
+file	W04	S068 duplicate url github.com/can1357/oh-my-pi/tree/45c35e40c46166dc726ccc52f5d27f40f2449f99 across scopes
+file	W04	S084 duplicate url infection.github.io/guide across scopes
+file	W04	S095 duplicate url raw.githubusercontent.com/containers/bubblewrap/v0.13.1/bwrap.xml across scopes
+file	W04	S123 duplicate url docs.langchain.com/oss/python/langgraph/checkpointers across scopes
+file	W04	S126 duplicate url docs.temporal.io/encyclopedia/detecting-activity-failures across scopes
+file	W04	S247 duplicate url arxiv.org/abs/2212.06118 across scopes
+file	W04	S271 duplicate url git-scm.com/docs/gitrevisions across scopes
+file	ok	/fast/scratch/hyaku/kumitate-r98/K98ScribeSources/validate/corpus/SOURCES.md
+  exit=0
+
+## awk field-count gate (must print nothing)
+  awk -F"|" '/^ {0,3}\|[ \t]*S[0-9][0-9][0-9]+[ \t]*\|/ && NF!=13' copy/corpus/SOURCES.md
+  exit=0  (no output above = pass)
+
+## S277 row shape under -F"|"
+  NF=13
+  id=[ S277 ] kind=[ spec ] tier=[ A ] status=[ mined ] opened=[ 2026-11-07 ] recheck=[ on-release ] usedby=[ corpus/knowledge/round-gate-row-id-class.md ]
+  row-shaped lines (census [space+tab] class, 0-3 space indent)=215
+
+## census row counts, before -> after
+  baseline:
+    file	rows	214
+    file	status.mined	172
+    file	status.queued	14
+    file	status.rejected	28
+    file	tier.A	182
+    file	tier.B	22
+    file	tier.C	10
+  fixture with S277:
+    file	rows	215
+    file	status.mined	173
+    file	status.queued	14
+    file	status.rejected	28
+    file	tier.A	183
+    file	tier.B	22
+    file	tier.C	10
+
+## no new finding code
+  validate output contains only pre-existing W04 warnings and the ok line; no E01/E02/E03/E04/E05/E06/E07/E08/E09/E10/E11/E12 for S277:
+    S277 mentions in validate output: 0
+
+## id and url uniqueness checks (lane, read-only)
+  rows matching ^"| S277 ": 0
+  max existing id: S276
+  rows carrying V1_chap07 / basedefs: 0
+  rows carrying S277 anywhere: 0
+
+## recogniser predicates against the draft row (node v24.21.0)
+  R98-blank-class=true  BASE-\s-class=true  fields=13  line=| S277 | POSIX Base Defi
+  node v24.21.0
+
+## full-output code census (both validate blocks in this receipt: baseline + fixture with S277)
+  E-code lines in validate output: 0
+  W04 lines: 16
+  ok lines: 2

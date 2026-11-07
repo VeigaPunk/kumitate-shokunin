@@ -1,0 +1,26 @@
+# Sibling Transfer Survey: SOURCES Row Id-Cell Padding Recognisers
+
+Commands used:
+- grep -rnE '\|[ \t\v\f\r]*S|\|\s*S|\|\[\[:space:\]\]\*S' /home/vgpnk/Projects/shokunin/*-shokunin/scripts/
+- grep -rnE 'S(\\|\\)?[0-9d]\{3,\}' /home/vgpnk/Projects/shokunin/*-shokunin/scripts/
+
+## Tools recognising SOURCES rows with wider whitespace (\s, POSIX space, or Python \s) instead of POSIX blank [ \t]
+| Lane | File:Line | Pattern / Mechanism | Character Class |
+|---|---|---|---|
+| kumitate | scripts/round-gate.mjs:410 | `const SOURCES_ROW_RE = /^ {0,3}\|\s*S\d{3,}\s*\|/;` | ECMAScript `\s` (candidate repairs to `[ \t]*`) |
+| kumitate | scripts/cite-sources.mjs:36 | `line.match(/^ {0,3}\|\s*(S[0-9]{3,})\s*\|/)` | ECMAScript `\s` |
+| kumitate | scripts/source-capture.mjs:157 | `raw.matchAll(/^\s*\|\s*(S[0-9]{3,})\s*\|/gm)` | ECMAScript `\s` |
+| kumitate | scripts/sources-check.mjs:231 | `trim(fields[1])` inside `## Registry` | ECMAScript `\s` via `String.prototype.trim()` |
+| tabi | scripts/check-release-pins.mjs:75 | `const ROW_RE = /^ {0,3}\|\s*S\d{3,}\s*\|/;` | ECMAScript `\s` |
+| tabi | scripts/check-source-reopen-receipt.mjs:108 | `new RegExp('^\\|[\\s]*' + sid + '[\\s]*\\|', 'm')` | ECMAScript `\s` |
+| tabi | scripts/check-sources.mjs:25 | `const rowPattern = /^\|[ \t\v\f\r]*S[0-9]{3,}[ \t\v\f\r]*\|/;` | POSIX `space` (`[ \t\v\f\r]`), line 473 awk `[[:space:]]` |
+| kake | scripts/id_resolver.py:56 | `re.compile(r"^ {0,3}\|\s*([^|]*?)\s*(?:\|(.*))?$")` | Python `\s` (all Unicode whitespace) |
+
+## Tools already using POSIX blank [ \t]
+| Lane | File:Line | Pattern | Character Class |
+|---|---|---|---|
+| tabi | scripts/check-bidi-runtime.mjs:474 | `/^ {0,3}\|[ \t]*S[0-9]{3,}[ \t]*\|/` | POSIX `blank` `[ \t]` |
+| tabi | scripts/check-decision-table.mjs:122 | `/^ {0,3}\|[ \t]*S[0-9]{3,}[ \t]*\|/` | POSIX `blank` `[ \t]` |
+| tabi | scripts/check-frontier-admission.mjs:126 | `/^ {0,3}\|[ \t]*S[0-9]{3,}[ \t]*\|/` | POSIX `blank` `[ \t]` |
+| kumitate | scripts/sources-check.mjs:234 | `/^\|[ \t]*S\d{3,}[ \t]*\|/` (outside registry) | POSIX `blank` `[ \t]` |
+| fleet | scripts/sources-census.sh:619 | `/^\|[ \t]*S[0-9]{3,}[ \t]*\|/` | POSIX `blank` `[ \t]` |

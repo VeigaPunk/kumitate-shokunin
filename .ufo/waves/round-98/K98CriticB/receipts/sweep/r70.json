@@ -1,0 +1,98 @@
+{
+  "contract": "kumitate-round-gate-v1",
+  "mode": "audit",
+  "round": 70,
+  "lane": "kumitate",
+  "repo": "/home/vgpnk/Projects/shokunin/kumitate-shokunin",
+  "reportsDir": "/home/vgpnk/Projects/shokunin/.ufo/reports",
+  "verdict": "DRIFT",
+  "checks": [
+    {
+      "id": "REPORT_THIN",
+      "severity": "error",
+      "ok": true,
+      "detail": "(bytes=10135)"
+    },
+    {
+      "id": "REPORT_HEADINGS",
+      "severity": "error",
+      "ok": true,
+      "detail": "headings=10"
+    },
+    {
+      "id": "REPORT_ROUND_MISMATCH",
+      "severity": "error",
+      "ok": true,
+      "detail": "names round 70"
+    },
+    {
+      "id": "REPORT_SHONEN_MISSING",
+      "severity": "warning",
+      "ok": true,
+      "detail": "SHONEN heading present"
+    },
+    {
+      "id": "COMMIT_CITED_UNRESOLVED",
+      "severity": "error",
+      "ok": true,
+      "detail": "cited=7 unresolved=0"
+    },
+    {
+      "id": "COMMIT_CITED_NOT_ANCESTOR",
+      "severity": "error",
+      "ok": true,
+      "detail": "cited=7 notAncestor=0"
+    },
+    {
+      "id": "SCORECARD_ROW_MISSING",
+      "severity": "error",
+      "ok": false,
+      "detail": "no table row starting \"| 70 |\" in /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md"
+    },
+    {
+      "id": "SCORECARD_PLAN_MISSING",
+      "severity": "warning",
+      "ok": true,
+      "detail": "## Planned names round 98"
+    },
+    {
+      "id": "LOG_ENTRY_MISSING",
+      "severity": "error",
+      "ok": false,
+      "detail": "no \"- YYYY-MM-DD — round 70\" line in /home/vgpnk/Projects/shokunin/kumitate-shokunin/LOG.md"
+    },
+    {
+      "id": "COMMIT_MISSING",
+      "severity": "error",
+      "ok": true,
+      "detail": "message marker in \"round-70 verifier spot-check (integrator, hyaku): non-author admit/reject\""
+    }
+  ],
+  "findings": [
+    {
+      "severity": "error",
+      "kind": "SCORECARD_ROW_MISSING",
+      "detail": "no table row starting \"| 70 |\" in /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md"
+    },
+    {
+      "severity": "error",
+      "kind": "LOG_ENTRY_MISSING",
+      "detail": "no \"- YYYY-MM-DD — round 70\" line in /home/vgpnk/Projects/shokunin/kumitate-shokunin/LOG.md"
+    }
+  ],
+  "errors": 2,
+  "warnings": 0,
+  "citations": {
+    "checked": 7,
+    "external": [],
+    "declared": [],
+    "malformedRows": [],
+    "outsideRows": [],
+    "unresolved": [],
+    "notAncestor": [],
+    "unverifiable": [],
+    "mainProbeable": null,
+    "originProbeable": null
+  },
+  "durationMs": 231
+}

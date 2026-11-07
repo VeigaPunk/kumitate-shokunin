@@ -1,0 +1,110 @@
+--- /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/round-gate.mjs	2026-11-06 23:08:24.181698223 -0300
++++ /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-98/K98ExecTool/round-gate.mjs	2026-11-07 01:03:11.508274118 -0300
+@@ -115,7 +115,8 @@
+  *   removed): a token that resolves nowhere is `declared` (no finding; listed
+  *   in `--json` `citations.declared`) iff it is a prefix of a 40-hex string that
+  *   is a complete path segment (URL split on `/`, `?`, `#`) of an `http(s)://`
+- *   URL on a `corpus/SOURCES.md` registry row (`^ {0,3}\|\s*S\d{3,}\s*\|`) whose
++ *   URL on a `corpus/SOURCES.md` registry row (`^ {0,3}\|[ \t]*S\d{3,}[ \t]*\|`) whose
++ *   id cell is padded with ASCII space/TAB only (census `row_pass`, POSIX `blank`),
+  *   status cell (8th column) is not `rejected`. Round 96 (rule R96, contract
+  *   still `kumitate-round-gate-v1`): a registry row declares pins only inside
+  *   the census `## Registry` section (`declaredPins()` walks with the census
+@@ -406,8 +407,8 @@
+  * (`corpus/SOURCES.md`) is the only place a pin can be declared: a file that is
+  * absent, unreadable or not a registry declares nothing, and the whole step
+  * then behaves as it did before this rule existed. */
+-/** A registry row: `| S<3+ digits> |` at indentation <= 3. */
+-const SOURCES_ROW_RE = /^ {0,3}\|\s*S\d{3,}\s*\|/;
++/** A registry row: `| S<3+ digits> |` at indentation <= 3; the id cell is padded with ASCII space/TAB only (census `row_pass`, POSIX `blank`). */
++const SOURCES_ROW_RE = /^ {0,3}\|[ \t]*S\d{3,}[ \t]*\|/;
+ /** The `http(s)://` URLs on a registry row; a match stops at whitespace or a cell pipe. */
+ const SOURCES_URL_RE = /https?:\/\/[^\s|)`'"<>]+/g;
+ /** A complete URL path segment that is one full 40-hex commit id. */
+@@ -1788,6 +1789,86 @@
+         detail: `exit=${dNoReg.g.status} declared=${JSON.stringify(r.decl)} outside=${JSON.stringify(outOf(dNoReg.j))}`,
+       };
+     });
++    /* Round 98 (R98) — id-cell padding is POSIX `blank` ([ \t]) only ------- */
++    // Frozen rule: a registry row's id cell is padded with ASCII space/TAB only
++    // (census `row_pass`), on both sides, inside and outside the Registry alike.
++    // Arm (xxviii) pins inside rows per pad class; arm (xxix) pins outside rows.
++    // Each control shape in make-controls98.py (spaceonly, asciiws, nbsp, zs,
++    // leadonly, trailonly, anyindent, indent4, digits2, casefold, unicodedigit,
++    // insideonly, outsideonly, BASE `\s`) fails at least one of these arms.
++    const r98Row = (lead, id, trail, pin) => `|${lead}${id}${trail}| x.ts — https://github.com/o/r/blob/${pin}/x.ts | code | A | scope | anchor | teaches | mined | 2026-11-07 | 30d | — |`;
++    const r98Short = (lead, id, trail, pin) => `|${lead}${id}${trail}| x.ts — https://github.com/o/r/blob/${pin}/x.ts | code | A | scope | anchor | teaches | mined | 2026-11-07 | 30d |`;
++    const inPins = ['c0000001', 'c0000002', 'c0000003', 'c0000004', 'c0000005', 'c0000006', 'c0000007', 'c0000008', 'c0000009', 'c0000010', 'c0000011', 'c0000012', 'c0000013', 'c0000014', 'c0000015', 'c0000016', 'c0000017', 'c0000018', 'c0000019', 'c0000020', 'c0000021'].map(pin40);
++    const inRows = [
++      r98Row('\t', 'S101', ' ', inPins[0]), // TAB lead: declares (kills spaceonly)
++      r98Row(' ', 'S102', '\t', inPins[1]), // TAB trail: declares (kills spaceonly)
++      r98Row(' \t', 'S103', '\t ', inPins[2]), // SP+TAB both: declares (kills spaceonly)
++      r98Row('\v', 'S104', ' ', inPins[3]), // VT lead: not a row (asciiws, BASE \s)
++      r98Row(' ', 'S105', '\v', inPins[4]), // VT trail: not a row (leadonly)
++      r98Row('\f', 'S106', ' ', inPins[5]), // FF lead: not a row (asciiws)
++      r98Row(' ', 'S107', '\r', inPins[6]), // CR trail: not a row (leadonly)
++      r98Row('\u00a0', 'S108', ' ', inPins[7]), // NBSP lead: not a row (nbsp, trailonly)
++      r98Row(' ', 'S109', '\u00a0', inPins[8]), // NBSP trail: not a row (nbsp, leadonly)
++      r98Row('\u2003', 'S110', ' ', inPins[9]), // U+2003 lead: not a row (zs)
++      r98Row(' ', 'S111', '\u2003', inPins[10]), // U+2003 trail: not a row (zs)
++      r98Row('\ufeff', 'S112', ' ', inPins[11]), // U+FEFF lead: not a row (BASE \s)
++      r98Row(' ', 'S113', '\ufeff', inPins[12]), // U+FEFF trail: not a row (BASE \s)
++      r98Row('\u200b', 'S114', ' ', inPins[13]), // U+200B lead: not a row (BASE \s)
++      r98Row(' ', 'S115', '\u200b', inPins[14]), // U+200B trail: not a row (BASE \s)
++      r98Short('\t', 'S120', '\t', inPins[15]), // 12-field TAB-padded: malformed
++      '\t' + r98Row(' ', 'S121', ' ', inPins[16]), // TAB indent: not a row (anyindent)
++      '    ' + r98Row(' ', 'S122', ' ', inPins[17]), // 4-space indent: not a row (indent4)
++      r98Row(' ', 'S12', ' ', inPins[18]), // 2-digit id: not a row (digits2)
++      r98Row(' ', 's124', ' ', inPins[19]), // lowercase s: not a row (casefold)
++      r98Row(' ', 'S\u0661\u0662\u0665', ' ', inPins[20]), // Arabic-Indic digits: not a row (unicodedigit)
++    ];
++    const dPadsIn = citedJson(fxCustom('r98-pads-inside', [
++      '# SOURCES — fixture r98 pads inside', '',
++      '## Registry', '', ...R96_HDR,
++      ...inRows,
++      '',
++    ], citeAll(...inPins.map((p) => p.slice(0, 8)))));
++    check('(xxviii) R98 inside: TAB / SP+TAB pads declare; VT FF CR NBSP Zs FEFF 200B pads are not rows (not declared, not malformed); TAB 12-field is malformed; TAB/4-space indents, S12, s124, Arabic-Indic digits are not rows', () => {
++      const r = resolvedOnly(dPadsIn, true);
++      const want = [inPins[0], inPins[1], inPins[2]].map((p) => p.slice(0, 8)).sort();
++      return {
++        ok: r.ok && JSON.stringify([...r.decl].sort()) === JSON.stringify(want)
++          && r.unres.length === inPins.length - 3
++          && JSON.stringify(outOf(dPadsIn.j)) === '[]'
++          && JSON.stringify(malOf(dPadsIn.j)) === '["S120"]',
++        detail: `exit=${dPadsIn.g.status} declared=${JSON.stringify(r.decl)} outside=${JSON.stringify(outOf(dPadsIn.j))} malformed=${JSON.stringify(malOf(dPadsIn.j))} unresolved=${r.unres.length}`,
++      };
++    });
++    const outPins = ['d0000001', 'd0000002', 'd0000003', 'd0000004', 'd0000005', 'd0000006', 'd0000007', 'd0000008', 'd0000009', 'd0000010', 'd0000011', 'd0000012', 'd0000013'].map(pin40);
++    const dPadsOut = citedJson(fxCustom('r98-pads-outside', [
++      r98Row('\v', 'S213', ' ', outPins[12]), // before any heading, VT lead: not a row
++      '# SOURCES — fixture r98 pads outside', '',
++      '## Registry', '', ...R96_HDR,
++      r98Row(' ', 'S001', ' ', PIN_A), // inside control row: declares
++      '## Leads (unopened)', '',
++      r98Row('\t', 'S201', '\t', outPins[0]), // TAB both: outside row (kills spaceonly)
++      r98Row(' \t', 'S202', '\t ', outPins[1]), // SP+TAB both: outside row (kills spaceonly)
++      r98Row('\v', 'S203', ' ', outPins[2]), // VT lead: not listed (asciiws, BASE \s)
++      r98Row(' ', 'S204', '\u00a0', outPins[3]), // NBSP trail: not listed (nbsp, leadonly)
++      r98Row('\u2003', 'S205', ' ', outPins[4]), // U+2003 lead: not listed (zs, trailonly)
++      r98Row(' ', 'S206', '\ufeff', outPins[5]), // U+FEFF trail: not listed (BASE \s)
++      r98Row('\u200b', 'S207', ' ', outPins[6]), // U+200B lead: not listed (BASE \s)
++      '\t' + r98Row(' ', 'S208', ' ', outPins[7]), // TAB indent: not listed (anyindent)
++      '    ' + r98Row(' ', 'S209', ' ', outPins[8]), // 4-space indent: not listed (indent4)
++      r98Row(' ', 'S12', ' ', outPins[9]), // 2-digit id: not listed (digits2)
++      r98Row(' ', 's210', ' ', outPins[10]), // lowercase s: not listed (casefold)
++      r98Row(' ', 'S\u0661\u0662\u0661', ' ', outPins[11]), // Arabic-Indic digits: not listed (unicodedigit)
++      '',
++    ], citeAll(...outPins.map((p) => p.slice(0, 8)))));
++    check('(xxix) R98 outside: TAB / SP+TAB pads are listed outside; VT NBSP Zs FEFF 200B pads, TAB/4-space indents, S12, s210, Arabic-Indic digits are not listed and declare nothing', () => {
++      const r = resolvedOnly(dPadsOut, true);
++      return {
++        ok: r.ok && r.decl.length === 0
++          && JSON.stringify(outOf(dPadsOut.j)) === '["S201","S202"]'
++          && JSON.stringify(malOf(dPadsOut.j)) === '[]',
++        detail: `exit=${dPadsOut.g.status} declared=${JSON.stringify(r.decl)} outside=${JSON.stringify(outOf(dPadsOut.j))} malformed=${JSON.stringify(malOf(dPadsOut.j))}`,
++      };
++    });
+ 
+     /* 25/26 ─ close clean + TREE_DIRTY ------------------------------------- */
+     const closeClean = fxCloseFixture('close-clean');

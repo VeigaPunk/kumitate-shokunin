@@ -1,0 +1,182 @@
+# command: TMPDIR=/fast/scratch/hyaku/kumitate-r98/K98ScribeLesson node .ufo/waves/round-98/K98ScribeLesson/driver-idclass.mjs /fast/scratch/hyaku/kumitate-r98/K98ScribeLesson/probe > receipt-idclass-base.txt
+# fixtures: fx-idclass = 105 inside 13-field rows (32 pad classes × lead/trail/both, 5 indents, 4 id forms) + 32 outside rows; fx-idclass12 = 32 twelve-field rows
+# lane: kumitate-shokunin at 8a6a4490 (scripts/round-gate.mjs = BASE bytes); census: /home/vgpnk/Projects/shokunin/scripts/sources-census.sh
+GATE_SHA256 edaa115fa053798665b2694d05bf8cc8389a9cdfae74930eab33398776bea135
+CENSUS exit=1 W03=102 E12=6 E01=0 E02=82
+GATE exit=1 declared=80 outsideRows=26 malformedRows=0 checks=10
+
+label	kind	id_cell	JS_\s(pad)	census	BASE_declared	BASE_outside	BASE_malformed
+lead:none	inside	|<S9000001>␠|	Y	row	Y	n/a	N
+trail:none	inside	|␠<S9000002>|	Y	row	Y	n/a	N
+both:none	inside	|<S9000003>|	N	row	Y	n/a	N
+lead:SP	inside	|␠<S9000004>␠|	Y	row	Y	n/a	N
+trail:SP	inside	|␠<S9000005>␠|	Y	row	Y	n/a	N
+both:SP	inside	|␠<S9000006>␠|	Y	row	Y	n/a	N
+lead:2SP	inside	|␠␠<S9000007>␠|	Y	row	Y	n/a	N
+trail:2SP	inside	|␠<S9000008>␠␠|	Y	row	Y	n/a	N
+both:2SP	inside	|␠␠<S9000009>␠␠|	Y	row	Y	n/a	N
+lead:TAB	inside	|\t<S9000010>␠|	Y	row	Y	n/a	N
+trail:TAB	inside	|␠<S9000011>\t|	Y	row	Y	n/a	N
+both:TAB	inside	|\t<S9000012>\t|	Y	row	Y	n/a	N
+lead:SPTAB	inside	|␠\t<S9000013>␠|	Y	row	Y	n/a	N
+trail:SPTAB	inside	|␠<S9000014>␠\t|	Y	row	Y	n/a	N
+both:SPTAB	inside	|␠\t<S9000015>␠\t|	Y	row	Y	n/a	N
+lead:TABSP	inside	|\t␠<S9000016>␠|	Y	row	Y	n/a	N
+trail:TABSP	inside	|␠<S9000017>\t␠|	Y	row	Y	n/a	N
+both:TABSP	inside	|\t␠<S9000018>\t␠|	Y	row	Y	n/a	N
+lead:VT	inside	|\u000b<S9000019>␠|	Y	E02+W03	Y	n/a	N
+trail:VT	inside	|␠<S9000020>\u000b|	Y	E02+W03	Y	n/a	N
+both:VT	inside	|\u000b<S9000021>\u000b|	Y	E02+W03	Y	n/a	N
+lead:FF	inside	|\u000c<S9000022>␠|	Y	E02+W03	Y	n/a	N
+trail:FF	inside	|␠<S9000023>\u000c|	Y	E02+W03	Y	n/a	N
+both:FF	inside	|\u000c<S9000024>\u000c|	Y	E02+W03	Y	n/a	N
+lead:CR	inside	|\u000d<S9000025>␠|	Y	E02+W03	Y	n/a	N
+trail:CR	inside	|␠<S9000026>\u000d|	Y	E02+W03	Y	n/a	N
+both:CR	inside	|\u000d<S9000027>\u000d|	Y	E02+W03	Y	n/a	N
+lead:TABFF	inside	|\t\u000c<S9000028>␠|	Y	E02+W03	Y	n/a	N
+trail:TABFF	inside	|␠<S9000029>\t\u000c|	Y	E02+W03	Y	n/a	N
+both:TABFF	inside	|\t\u000c<S9000030>\t\u000c|	Y	E02+W03	Y	n/a	N
+lead:NEL	inside	|\u0085<S9000031>␠|	Y	E02+W03	N	n/a	N
+trail:NEL	inside	|␠<S9000032>\u0085|	Y	E02+W03	N	n/a	N
+both:NEL	inside	|\u0085<S9000033>\u0085|	N	E02+W03	N	n/a	N
+lead:NBSP	inside	|\u00a0<S9000034>␠|	Y	E02+W03	Y	n/a	N
+trail:NBSP	inside	|␠<S9000035>\u00a0|	Y	E02+W03	Y	n/a	N
+both:NBSP	inside	|\u00a0<S9000036>\u00a0|	Y	E02+W03	Y	n/a	N
+lead:OGHAM	inside	|\u1680<S9000037>␠|	Y	E02+W03	Y	n/a	N
+trail:OGHAM	inside	|␠<S9000038>\u1680|	Y	E02+W03	Y	n/a	N
+both:OGHAM	inside	|\u1680<S9000039>\u1680|	Y	E02+W03	Y	n/a	N
+lead:MVS	inside	|\u180e<S9000040>␠|	Y	E02+W03	N	n/a	N
+trail:MVS	inside	|␠<S9000041>\u180e|	Y	E02+W03	N	n/a	N
+both:MVS	inside	|\u180e<S9000042>\u180e|	N	E02+W03	N	n/a	N
+lead:ENQUAD	inside	|\u2000<S9000043>␠|	Y	E02+W03	Y	n/a	N
+trail:ENQUAD	inside	|␠<S9000044>\u2000|	Y	E02+W03	Y	n/a	N
+both:ENQUAD	inside	|\u2000<S9000045>\u2000|	Y	E02+W03	Y	n/a	N
+lead:ENSP	inside	|\u2002<S9000046>␠|	Y	E02+W03	Y	n/a	N
+trail:ENSP	inside	|␠<S9000047>\u2002|	Y	E02+W03	Y	n/a	N
+both:ENSP	inside	|\u2002<S9000048>\u2002|	Y	E02+W03	Y	n/a	N
+lead:EMSP	inside	|\u2003<S9000049>␠|	Y	E02+W03	Y	n/a	N
+trail:EMSP	inside	|␠<S9000050>\u2003|	Y	E02+W03	Y	n/a	N
+both:EMSP	inside	|\u2003<S9000051>\u2003|	Y	E02+W03	Y	n/a	N
+lead:FIGSP	inside	|\u2007<S9000052>␠|	Y	E02+W03	Y	n/a	N
+trail:FIGSP	inside	|␠<S9000053>\u2007|	Y	E02+W03	Y	n/a	N
+both:FIGSP	inside	|\u2007<S9000054>\u2007|	Y	E02+W03	Y	n/a	N
+lead:THINSP	inside	|\u2009<S9000055>␠|	Y	E02+W03	Y	n/a	N
+trail:THINSP	inside	|␠<S9000056>\u2009|	Y	E02+W03	Y	n/a	N
+both:THINSP	inside	|\u2009<S9000057>\u2009|	Y	E02+W03	Y	n/a	N
+lead:HAIRSP	inside	|\u200a<S9000058>␠|	Y	E02+W03	Y	n/a	N
+trail:HAIRSP	inside	|␠<S9000059>\u200a|	Y	E02+W03	Y	n/a	N
+both:HAIRSP	inside	|\u200a<S9000060>\u200a|	Y	E02+W03	Y	n/a	N
+lead:ZWSP	inside	|\u200b<S9000061>␠|	Y	E02+W03	N	n/a	N
+trail:ZWSP	inside	|␠<S9000062>\u200b|	Y	E02+W03	N	n/a	N
+both:ZWSP	inside	|\u200b<S9000063>\u200b|	N	E02+W03	N	n/a	N
+lead:ZWNJ	inside	|\u200c<S9000064>␠|	Y	E02+W03	N	n/a	N
+trail:ZWNJ	inside	|␠<S9000065>\u200c|	Y	E02+W03	N	n/a	N
+both:ZWNJ	inside	|\u200c<S9000066>\u200c|	N	E02+W03	N	n/a	N
+lead:ZWJ	inside	|\u200d<S9000067>␠|	Y	E02+W03	N	n/a	N
+trail:ZWJ	inside	|␠<S9000068>\u200d|	Y	E02+W03	N	n/a	N
+both:ZWJ	inside	|\u200d<S9000069>\u200d|	N	E02+W03	N	n/a	N
+lead:LS	inside	|\u2028<S9000070>␠|	Y	E02+W03	Y	n/a	N
+trail:LS	inside	|␠<S9000071>\u2028|	Y	E02+W03	Y	n/a	N
+both:LS	inside	|\u2028<S9000072>\u2028|	Y	E02+W03	Y	n/a	N
+lead:PS	inside	|\u2029<S9000073>␠|	Y	E02+W03	Y	n/a	N
+trail:PS	inside	|␠<S9000074>\u2029|	Y	E02+W03	Y	n/a	N
+both:PS	inside	|\u2029<S9000075>\u2029|	Y	E02+W03	Y	n/a	N
+lead:NNBSP	inside	|\u202f<S9000076>␠|	Y	E02+W03	Y	n/a	N
+trail:NNBSP	inside	|␠<S9000077>\u202f|	Y	E02+W03	Y	n/a	N
+both:NNBSP	inside	|\u202f<S9000078>\u202f|	Y	E02+W03	Y	n/a	N
+lead:MMSP	inside	|\u205f<S9000079>␠|	Y	E02+W03	Y	n/a	N
+trail:MMSP	inside	|␠<S9000080>\u205f|	Y	E02+W03	Y	n/a	N
+both:MMSP	inside	|\u205f<S9000081>\u205f|	Y	E02+W03	Y	n/a	N
+lead:WJ	inside	|\u2060<S9000082>␠|	Y	E02+W03	N	n/a	N
+trail:WJ	inside	|␠<S9000083>\u2060|	Y	E02+W03	N	n/a	N
+both:WJ	inside	|\u2060<S9000084>\u2060|	N	E02+W03	N	n/a	N
+lead:IDSP	inside	|\u3000<S9000085>␠|	Y	E02+W03	Y	n/a	N
+trail:IDSP	inside	|␠<S9000086>\u3000|	Y	E02+W03	Y	n/a	N
+both:IDSP	inside	|\u3000<S9000087>\u3000|	Y	E02+W03	Y	n/a	N
+lead:BOM	inside	|\ufeff<S9000088>␠|	Y	E02+W03	Y	n/a	N
+trail:BOM	inside	|␠<S9000089>\ufeff|	Y	E02+W03	Y	n/a	N
+both:BOM	inside	|\ufeff<S9000090>\ufeff|	Y	E02+W03	Y	n/a	N
+lead:SPNBSP	inside	|␠\u00a0<S9000091>␠|	Y	E02+W03	Y	n/a	N
+trail:SPNBSP	inside	|␠<S9000092>␠\u00a0|	Y	E02+W03	Y	n/a	N
+both:SPNBSP	inside	|␠\u00a0<S9000093>␠\u00a0|	Y	E02+W03	Y	n/a	N
+lead:NBSPSP	inside	|\u00a0␠<S9000094>␠|	Y	E02+W03	Y	n/a	N
+trail:NBSPSP	inside	|␠<S9000095>\u00a0␠|	Y	E02+W03	Y	n/a	N
+both:NBSPSP	inside	|\u00a0␠<S9000096>\u00a0␠|	Y	E02+W03	Y	n/a	N
+indent:1	inside	␠|␠<S9000097>␠|	Y	row	Y	n/a	N
+indent:3	inside	␠␠␠|␠<S9000098>␠|	Y	row	Y	n/a	N
+indent:4	inside	␠␠␠␠|␠<S9000099>␠|	Y	-	N	n/a	N
+indent:TAB	inside	\t|␠<S9000100>␠|	Y	-	N	n/a	N
+indent:NBSP	inside	\u00a0|␠<S9000101>␠|	Y	-	N	n/a	N
+id:2digit	inside	|␠<S12>␠|	Y	E02+W03	N	n/a	N
+id:lower	inside	|␠<s1234567>␠|	Y	E02+W03	N	n/a	N
+id:trailalpha	inside	|␠<S1234567x>␠|	Y	E02+W03	N	n/a	N
+id:double	inside	|␠<SS1234567>␠|	Y	E02+W03	N	n/a	N
+outside:none	outside	|<S9000106>|	N	E12	n/a	Y	n/a
+outside:SP	outside	|␠<S9000107>␠|	Y	E12	n/a	Y	n/a
+outside:2SP	outside	|␠␠<S9000108>␠␠|	Y	E12	n/a	Y	n/a
+outside:TAB	outside	|\t<S9000109>\t|	Y	E12	n/a	Y	n/a
+outside:SPTAB	outside	|␠\t<S9000110>␠\t|	Y	E12	n/a	Y	n/a
+outside:TABSP	outside	|\t␠<S9000111>\t␠|	Y	E12	n/a	Y	n/a
+outside:VT	outside	|\u000b<S9000112>\u000b|	Y	(silent)	n/a	Y	n/a
+outside:FF	outside	|\u000c<S9000113>\u000c|	Y	(silent)	n/a	Y	n/a
+outside:CR	outside	|\u000d<S9000114>\u000d|	Y	(silent)	n/a	Y	n/a
+outside:TABFF	outside	|\t\u000c<S9000115>\t\u000c|	Y	(silent)	n/a	Y	n/a
+outside:NEL	outside	|\u0085<S9000116>\u0085|	N	(silent)	n/a	N	n/a
+outside:NBSP	outside	|\u00a0<S9000117>\u00a0|	Y	(silent)	n/a	Y	n/a
+outside:OGHAM	outside	|\u1680<S9000118>\u1680|	Y	(silent)	n/a	Y	n/a
+outside:MVS	outside	|\u180e<S9000119>\u180e|	N	(silent)	n/a	N	n/a
+outside:ENQUAD	outside	|\u2000<S9000120>\u2000|	Y	(silent)	n/a	Y	n/a
+outside:ENSP	outside	|\u2002<S9000121>\u2002|	Y	(silent)	n/a	Y	n/a
+outside:EMSP	outside	|\u2003<S9000122>\u2003|	Y	(silent)	n/a	Y	n/a
+outside:FIGSP	outside	|\u2007<S9000123>\u2007|	Y	(silent)	n/a	Y	n/a
+outside:THINSP	outside	|\u2009<S9000124>\u2009|	Y	(silent)	n/a	Y	n/a
+outside:HAIRSP	outside	|\u200a<S9000125>\u200a|	Y	(silent)	n/a	Y	n/a
+outside:ZWSP	outside	|\u200b<S9000126>\u200b|	N	(silent)	n/a	N	n/a
+outside:ZWNJ	outside	|\u200c<S9000127>\u200c|	N	(silent)	n/a	N	n/a
+outside:ZWJ	outside	|\u200d<S9000128>\u200d|	N	(silent)	n/a	N	n/a
+outside:LS	outside	|\u2028<S9000129>\u2028|	Y	(silent)	n/a	Y	n/a
+outside:PS	outside	|\u2029<S9000130>\u2029|	Y	(silent)	n/a	Y	n/a
+outside:NNBSP	outside	|\u202f<S9000131>\u202f|	Y	(silent)	n/a	Y	n/a
+outside:MMSP	outside	|\u205f<S9000132>\u205f|	Y	(silent)	n/a	Y	n/a
+outside:WJ	outside	|\u2060<S9000133>\u2060|	N	(silent)	n/a	N	n/a
+outside:IDSP	outside	|\u3000<S9000134>\u3000|	Y	(silent)	n/a	Y	n/a
+outside:BOM	outside	|\ufeff<S9000135>\ufeff|	Y	(silent)	n/a	Y	n/a
+outside:SPNBSP	outside	|␠\u00a0<S9000136>␠\u00a0|	Y	(silent)	n/a	Y	n/a
+outside:NBSPSP	outside	|\u00a0␠<S9000137>\u00a0␠|	Y	(silent)	n/a	Y	n/a
+
+IDCELL_COVERAGE: pads=32 cases=137 inside=105 outside=32
+
+FIX12 CENSUS exit=1 E01=32 E01_validid=6  GATE exit=1 malformedRows=26 declared=0
+label	pad_JS_ws	census_E01_id(cell)[valid?]	BASE_malformed_id_JS_trim
+w12:none	N	S8000001[valid]	S8000001[Y]
+w12:SP	Y	S8000002[valid]	S8000002[Y]
+w12:2SP	Y	S8000003[valid]	S8000003[Y]
+w12:TAB	Y	S8000004[valid]	S8000004[Y]
+w12:SPTAB	Y	S8000005[valid]	S8000005[Y]
+w12:TABSP	Y	S8000006[valid]	S8000006[Y]
+w12:VT	Y	\u000bS8000007\u000b[E02]	S8000007[Y]
+w12:FF	Y	\u000cS8000008\u000c[E02]	S8000008[Y]
+w12:CR	Y	\u000dS8000009\u000d[E02]	S8000009[Y]
+w12:TABFF	Y	\u000cS8000010\t\u000c[E02]	S8000010[Y]
+w12:NEL	N	\u0085S8000011\u0085[E02]	\u0085S8000011\u0085[N]
+w12:NBSP	Y	\u00a0S8000012\u00a0[E02]	S8000012[Y]
+w12:OGHAM	Y	\u1680S8000013\u1680[E02]	S8000013[Y]
+w12:MVS	N	\u180eS8000014\u180e[E02]	\u180eS8000014\u180e[N]
+w12:ENQUAD	Y	\u2000S8000015\u2000[E02]	S8000015[Y]
+w12:ENSP	Y	\u2002S8000016\u2002[E02]	S8000016[Y]
+w12:EMSP	Y	\u2003S8000017\u2003[E02]	S8000017[Y]
+w12:FIGSP	Y	\u2007S8000018\u2007[E02]	S8000018[Y]
+w12:THINSP	Y	\u2009S8000019\u2009[E02]	S8000019[Y]
+w12:HAIRSP	Y	\u200aS8000020\u200a[E02]	S8000020[Y]
+w12:ZWSP	N	\u200bS8000021\u200b[E02]	\u200bS8000021\u200b[N]
+w12:ZWNJ	N	\u200cS8000022\u200c[E02]	\u200cS8000022\u200c[N]
+w12:ZWJ	N	\u200dS8000023\u200d[E02]	\u200dS8000023\u200d[N]
+w12:LS	Y	\u2028S8000024\u2028[E02]	S8000024[Y]
+w12:PS	Y	\u2029S8000025\u2029[E02]	S8000025[Y]
+w12:NNBSP	Y	\u202fS8000026\u202f[E02]	S8000026[Y]
+w12:MMSP	Y	\u205fS8000027\u205f[E02]	S8000027[Y]
+w12:WJ	N	\u2060S8000028\u2060[E02]	\u2060S8000028\u2060[N]
+w12:IDSP	Y	\u3000S8000029\u3000[E02]	S8000029[Y]
+w12:BOM	Y	\ufeffS8000030\ufeff[E02]	S8000030[Y]
+w12:SPNBSP	Y	\u00a0S8000031␠\u00a0[E02]	S8000031[Y]
+w12:NBSPSP	Y	\u00a0␠S8000032\u00a0[E02]	S8000032[Y]

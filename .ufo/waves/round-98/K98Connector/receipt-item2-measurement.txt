@@ -1,0 +1,57 @@
+# Item 2 Measurement: sources-check vs census inside ## Registry
+
+Command used:
+- Census: /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file /fast/scratch/hyaku/kumitate-r98/K98Connector/FIX-A.md --today 2026-11-07
+- sources-check: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/sources-check.mjs --self /fast/scratch/hyaku/kumitate-r98/K98Connector/sc-fx-a --today 2026-11-07 --json
+
+## Question
+Does sources-check recognise registry rows INSIDE the Registry with the census class (any `^ {0,3}\|` line) or by its own id test?
+
+## Answer & Mechanism
+1. Row Recognition:
+   Inside `## Registry`, sources-check recognises lines using the same indentation class as the census: `normalizeMarkdownIndent` strips 1-3 leading spaces, and any non-header, non-separator line matching `line.startsWith('|')` is processed as a row. Both tools agree 386/386 on which lines are rows and which are inside `## Registry`.
+
+2. Id Validation & Row Counting:
+   sources-check does NOT use the census id test (`trim($2) ~ /^S[0-9]{3,}$/` where `trim` strips only `[ \t]`). Instead, sources-check validates the id using ECMAScript `String.prototype.trim()` on `fields[1]`:
+     `const validId = /^S\d{3,}$/.test(trim(fields[1] ?? ''));`
+   - In ECMAScript, `trim()` strips all White_Space characters (`\s`), including ASCII space, TAB, VT (\v), FF (\f), CR (\r), NEL (U+0085), NBSP (U+00A0), Ogham (U+1680), En Quad (U+2000), Em Space (U+2003), Thin Space (U+2009), Hair Space (U+200A), Line Separator (U+2028), Paragraph Separator (U+2029), Narrow NBSP (U+202F), Medium Mathematical Space (U+205F), Ideographic Space (U+3000), and BOM (U+FEFF).
+   - In the census (`sources-census.sh` line 581):
+     `function trim(s) { gsub(/^[ \t]+|[ \t]+$/,"",s); return s }`
+     trims strictly ASCII spaces and tabs (`[ \t]`).
+
+3. Divergence:
+   - For all 20 non-blank ECMAScript `\s` pad classes (VT, FF, CR, TABFF, NEL, NBSP, OGHAM, ENQUAD, ENSP, EMSP, FIGSP, THINSP, HAIRSP, LS, PS, NNBSP, MMSP, IDSP, SPNBSP, NBSPSP), sources-check strips the padding and considers `validId = true`. It increments `counts.rows += 1` and reports `ROW_MALFORMED` (E01) if width != 13, reporting zero `ID_FORM` errors.
+   - The census preserves the non-blank characters in `id`, causing `id !~ /^S[0-9]{3,}$/` and reporting `E02` (bad id).
+   - Both tools agree on rejecting Cf format characters (MVS U+180E, ZWSP U+200B, ZWNJ U+200C, ZWJ U+200D, WJ U+2060) which ECMAScript `trim()` does NOT strip, as well as syntactic non-ids (2-digit, lowercase `s`, trailing alpha, double `S`, Arabic-Indic digits).
+
+## Measurements on FIX-A (386-row battery)
+- Lines matching `^ {0,3}\|` inside `## Registry`: 349 (includes 1 header line)
+- Census `rows`: 349
+- sources-check `counts.rows`: 190 (mined=164, rejected=26)
+- Difference (census `rows` - sources-check `counts.rows`): 159
+- Census `E02` (bad id): 182
+- sources-check `ID_FORM`: 42
+- Difference (census `E02` - sources-check `ID_FORM`): 140
+
+Rows inside `## Registry` where census `E02` != sources-check `ID_FORM`: exactly 133 rows across 20 pad classes:
+- CR: 2
+- EMSP (U+2003): 7
+- ENQUAD (U+2000): 7
+- ENSP (U+2002): 7
+- FF (\f): 7
+- FIGSP (U+2007): 7
+- HAIRSP (U+200A): 7
+- IDSP (U+3000): 7
+- LS (U+2028): 7
+- MMSP (U+205F): 7
+- NBSP (U+00A0): 7
+- NBSPSP: 7
+- NEL (U+0085): 5
+- NNBSP (U+202F): 7
+- OGHAM (U+1680): 7
+- PS (U+2029): 7
+- SPNBSP: 7
+- TABFF: 7
+- THINSP (U+2009): 7
+- VT (\v): 7
+Total: 133 rows

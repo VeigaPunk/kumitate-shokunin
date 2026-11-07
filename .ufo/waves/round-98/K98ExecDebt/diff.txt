@@ -1,0 +1,30 @@
+--- /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/sources-check.mjs	2026-11-07 00:21:57.869800480 -0300
++++ sources-check.mjs	2026-11-07 00:56:11.601668290 -0300
+@@ -792,12 +792,13 @@
+     }
+     check('r97sec-census-parity: outside ids match census E12 when census present', () => {
+       const { existsSync: fsExists, readFileSync: fsRead } = { existsSync, readFileSync };
++      const derivedRoot = process.env.SHOKUNIN_ROOT ? resolve(process.env.SHOKUNIN_ROOT) : resolve(HERE, '..', '..');
+       const censusCandidates = [
+-        '/home/vgpnk/Projects/shokunin/scripts/sources-census.sh',
++        join(derivedRoot, 'scripts', 'sources-census.sh'),
+         join(HERE, '..', '..', 'scripts', 'sources-census.sh'),
+       ];
+       const censusPath = censusCandidates.find((p) => fsExists(p));
+-      if (!censusPath) return { skip: true, detail: 'census script absent' };
++      if (!censusPath) return { skip: true, detail: `census script absent (tried ${censusCandidates.join(', ')})` };
+       const root = makeDefault('r97-census-parity', {
+         rows: [makeRow({ id: 'S001', status: 'queued', usedBy: '—' })],
+         outsideRows: [makeRow({ id: 'S998', status: 'queued', usedBy: '—' })],
+@@ -810,9 +811,9 @@
+       let parsed; try { parsed = JSON.parse(run.stdout); } catch { return { ok: false, detail: `exit=${run.status}` }; }
+       const outsideIds = (parsed.findings ?? []).filter((f) => f.kind === 'ROW_OUTSIDE_REGISTRY').map((f) => (f.detail.match(/id=(\S+)/) ?? [])[1]);
+       const out = capSpawnSync('bash', [censusPath, 'validate', '--file', sourcePath, '--today', FIXTURE_TODAY], {
+-        env: { SHOKUNIN_ROOT: '/home/vgpnk/Projects/shokunin' }, bind: [tmp], timeout: 10_000,
++        env: { SHOKUNIN_ROOT: derivedRoot }, bind: [tmp], timeout: 10_000,
+       });
+-      if (out.status !== 0 && out.status !== 1) return { skip: true, detail: `census exit=${out.status}` };
++      if (out.status !== 0 && out.status !== 1) return { ok: false, detail: `census exit=${out.status}` };
+       const censusIds = String(out.stdout ?? '').split('\n').filter((l) => l.includes('\tE12\t')).map((l) => (l.split('\t')[2] ?? '').trim().split(' ')[0]);
+       return { ok: JSON.stringify(outsideIds) === JSON.stringify(censusIds), detail: `tool=[${outsideIds}] census=[${censusIds}]` };
+     });

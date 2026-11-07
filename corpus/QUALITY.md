@@ -1581,3 +1581,23 @@ Q39–Q41 were added in round 50 (r49 verifier-spotcheck defects 4–5 and the R
   grid itself stays frozen plan text (a construction keyed on the grid rather than on an identity survives
   by design). Nonce identities also mean a verdict is only reproducible with its seed — the receipt must
   carry `seed=` (this seat's receipts do).
+
+### Q92 — character-class counters name and exercise their opposing-reader classes (round 98)
+
+- **Rule.** For a character-class claim, name the fixture classes in the plan and draw witnesses for the
+  opposing readers' difference plus refusal boundaries: here SP/TAB, VT/FF/CR, Unicode White_Space samples,
+  and named Cf format characters. Nonce identities (Q91) do not replace class coverage.
+- **Grounding.** M98-1: r97's grid drew only VT/FF/NBSP among odd separators; six wrong readers reached HELD
+  (`.ufo/waves/round-97/K97CriticA/constructions.md`, `diverge.txt`).
+- **Command.** `node .ufo/waves/round-98/K98ScribeLesson/idclass-coverage.mjs .ufo/waves/round-98/probe/probe98-c1.mjs .ufo/waves/round-98/plan.md`
+  → `IDCLASS_COVERAGE: CLEAN pads=32 witnesses=32`; absent class/plan witness exits 1; no grid exits 2.
+- **Shown able to fail.** `K98ScribeLesson/receipt-q92-fail.txt` removes five entries and reads
+  `MISSING [EMSP ZWSP LS BOM]`, exit 1; `receipt-q92-pass.txt` reads CLEAN, exit 0.
+- **Limit (observed).** A witness list is itself a finite plan constant: r98 omits pad lengths >2,
+  ids >7 digits, five Zs points and additional Cf/C0/filler points. K98CriticA's eight HELD constructions
+  prove that this lint and counter do not certify R98; shipped selftest arms (xxx)/(xxxi) add the
+  pad/id length, exotic-pad and BOM witnesses (`close-l1/m2-teeth.txt`). Delegation/header-keying remains
+  an instrument gap. Carry these dimensions into a successor counter before freeze; do not amend r98.
+- **Operator proposal linkage.** `considerthese/2026-11-06.md` proposal 4 (opened 2026-11-07)
+  requests a class-diversity note rather than one spelled fixture; M98-1/2 and the measured S277/S276
+  character-class difference supply the grounding. This is the sole proposal mined in round 98.

@@ -1,0 +1,7 @@
+# regenerate the frozen control set from BASE bytes with the frozen generator, compare sha256
+$ python3 .ufo/waves/round-98/probe/make-controls98.py scripts/round-gate.mjs /fast/scratch/hyaku/kumitate-r98/K98ScribeLesson/controls
+controls=15 out=/fast/scratch/hyaku/kumitate-r98/K98ScribeLesson/controls
+
+$ diff <(sha256sum /fast/scratch/hyaku/kumitate-r98/K98ScribeLesson/controls/*.mjs | sed 's|.*/||' | sort) <(sort /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-98/controls/controls-sha256.txt)
+sha256 identical for all 15 controls
+CONTROLS_REPRODUCED: 15/15

@@ -1,0 +1,95 @@
+{
+  "contract": "kumitate-round-gate-v1",
+  "mode": "audit",
+  "round": 53,
+  "lane": "kumitate",
+  "repo": "/home/vgpnk/Projects/shokunin/kumitate-shokunin",
+  "reportsDir": "/home/vgpnk/Projects/shokunin/.ufo/reports",
+  "verdict": "DRIFT",
+  "checks": [
+    {
+      "id": "REPORT_THIN",
+      "severity": "error",
+      "ok": true,
+      "detail": "(bytes=12000)"
+    },
+    {
+      "id": "REPORT_HEADINGS",
+      "severity": "error",
+      "ok": true,
+      "detail": "headings=8"
+    },
+    {
+      "id": "REPORT_ROUND_MISMATCH",
+      "severity": "error",
+      "ok": true,
+      "detail": "names round 53"
+    },
+    {
+      "id": "REPORT_SHONEN_MISSING",
+      "severity": "warning",
+      "ok": true,
+      "detail": "SHONEN heading present"
+    },
+    {
+      "id": "COMMIT_CITED_UNRESOLVED",
+      "severity": "error",
+      "ok": false,
+      "detail": "cited=7 unresolved=1 [b717dc035bf687a3039123f4c70527bd3774f510]"
+    },
+    {
+      "id": "COMMIT_CITED_NOT_ANCESTOR",
+      "severity": "error",
+      "ok": true,
+      "detail": "cited=7 notAncestor=0"
+    },
+    {
+      "id": "SCORECARD_ROW_MISSING",
+      "severity": "error",
+      "ok": true,
+      "detail": "row for round 53"
+    },
+    {
+      "id": "SCORECARD_PLAN_MISSING",
+      "severity": "warning",
+      "ok": true,
+      "detail": "## Planned names round 98"
+    },
+    {
+      "id": "LOG_ENTRY_MISSING",
+      "severity": "error",
+      "ok": true,
+      "detail": "entry for round 53"
+    },
+    {
+      "id": "COMMIT_MISSING",
+      "severity": "error",
+      "ok": true,
+      "detail": "message marker in \"round-53 verifier spot-check (integrator, hyaku): non-author admit/reject\""
+    }
+  ],
+  "findings": [
+    {
+      "severity": "error",
+      "kind": "COMMIT_CITED_UNRESOLVED",
+      "detail": "cited=7 unresolved=1 [b717dc035bf687a3039123f4c70527bd3774f510]"
+    }
+  ],
+  "errors": 1,
+  "warnings": 0,
+  "citations": {
+    "checked": 7,
+    "external": [],
+    "declared": [],
+    "malformedRows": [],
+    "outsideRows": [],
+    "unresolved": [
+      "b717dc035bf687a3039123f4c70527bd3774f510"
+    ],
+    "notAncestor": [],
+    "unverifiable": [],
+    "mainProbeable": true,
+    "originProbeable": true
+  },
+  "durationMs": 281
+}

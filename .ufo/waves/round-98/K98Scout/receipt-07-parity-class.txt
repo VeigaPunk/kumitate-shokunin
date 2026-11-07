@@ -1,0 +1,27 @@
+=== sources-check.mjs:943-945 parity snippet: the [[:space:]] class, measured ===
+child env = cap-run --clearenv --setenv PATH only (cap-run.mjs:189) => C locale
+
+pad          grep(C)      awk(C)       awk(UTF-8)  
+SP           1            1            1           
+TAB          1            1            1           
+VT           1            1            1           
+FF           1            1            1           
+CR           1            1            1           
+NBSP         0            0            0           
+U+2003       0            0            1           
+U+2028       0            0            1           
+U+FEFF       0            0            0           
+
+=> POSIX [[:space:]] under C locale = SP HT LF VT FF CR (POSIX space, no NBSP/Zs).
+=> Under en_US.UTF-8, GNU awk/grep ALSO accept U+2003 and U+2028 (locale-dependent).
+
+=== row-count comparison, apples to apples (fx7: 9 Registry rows, one per pad) ===
+census rows (Registry)              : file	rows	9
+sources-check JS counts.rows         : 9
+parity snippet rows (C locale, whole file): 5
+parity snippet rows (UTF-8, whole file)  : 7
+
+=== real kumitate registry (all agree) ===
+census rows          : file	rows	214
+parity snippet (C)   : 214 0 0
+parity snippet (UTF8): 214 0 0

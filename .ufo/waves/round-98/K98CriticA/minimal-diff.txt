@@ -1,0 +1,10 @@
+k98-padcap3	census rc=0 DECL=["S001","S002"] OUT=[] MALF=[] | tool exit=1 declared=["aaaa"] outside=[] malformed=[] | DIFF <- tool diverges from census on this input
+k98-shy	census rc=1 DECL=["S001"] OUT=[] MALF=[] | tool exit=0 declared=["aaaa","bbbb"] outside=[] malformed=[] | DIFF <- tool diverges from census on this input
+k98-c0	census rc=1 DECL=["S001"] OUT=[] MALF=[] | tool exit=0 declared=["aaaa","bbbb"] outside=[] malformed=[] | DIFF <- tool diverges from census on this input
+k98-hangulfill	census rc=1 DECL=["S001"] OUT=[] MALF=[] | tool exit=0 declared=["aaaa","bbbb"] outside=[] malformed=[] | DIFF <- tool diverges from census on this input
+k98-idcap7	census rc=0 DECL=["S001","S12345678"] OUT=[] MALF=[] | tool exit=1 declared=["aaaa"] outside=[] malformed=[] | DIFF <- tool diverges from census on this input
+k98-lrmstrip	census rc=1 DECL=["S001"] OUT=[] MALF=[] | tool exit=0 declared=["aaaa","bbbb"] outside=[] malformed=[] | DIFF <- tool diverges from census on this input
+k98-rejskip	census rc=1 DECL=["S001"] OUT=["S003"] MALF=[] | tool exit=1 declared=["aaaa"] outside=[] malformed=[] | DIFF <- tool diverges from census on this input
+k98-bomstrip	census rc=1 DECL=[] OUT=["S001","S002"] MALF=[] | tool exit=0 declared=["aaaa","bbbb"] outside=[] malformed=[] | DIFF <- tool diverges from census on this input
+k98-replay	census rc=1 DECL=["S001"] OUT=[] MALF=[] | tool exit=1 declared=["aaaa"] outside=[] malformed=[] | SAME
+k98-replay-nocensus	census rc=1 DECL=["S001"] OUT=[] MALF=[] | tool exit=1 declared=[] outside=[] malformed=[] | DIFF <- tool diverges from census on this input

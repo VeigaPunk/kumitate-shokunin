@@ -1,0 +1,11 @@
+--- cand-pre/round-gate.mjs	2026-11-07 01:02:52.409284978 -0300
++++ mut-cand/m-outsideonly/round-gate.mjs	2026-11-07 01:02:52.702772618 -0300
+@@ -431,7 +431,7 @@
+   for (const line of sourcesText.split('\n')) {
+     if (/^ {0,3}##[ \t]/.test(line)) { inReg = line.replace(/^ {0,3}##/, '').replace(/^[ \t]+|[ \t]+$/g, '') === 'Registry'; continue; }
+     if (/^ {0,3}#[ \t]/.test(line)) { inReg = false; continue; }
+-    if (!SOURCES_ROW_RE.test(line)) continue;
++    if (!(inReg ? /^ {0,3}\|\s*S\d{3,}\s*\|/ : /^ {0,3}\|[ \t]*S\d{3,}[ \t]*\|/).test(line)) continue;
+     const fields = line.split('|');
+     if (!inReg) { outside.push(fields[1].trim()); continue; }
+     if (fields.length !== 13) { malformed.push(fields[1].trim()); continue; }

@@ -1,0 +1,11 @@
+--- cand-pre/round-gate.mjs	2026-11-07 01:02:52.409284978 -0300
++++ mut-cand/m-f1trim-malformed/round-gate.mjs	2026-11-07 01:02:52.765703381 -0300
+@@ -434,7 +434,7 @@
+     if (!SOURCES_ROW_RE.test(line)) continue;
+     const fields = line.split('|');
+     if (!inReg) { outside.push(fields[1].trim()); continue; }
+-    if (fields.length !== 13) { malformed.push(fields[1].trim()); continue; }
++    if (fields.length !== 13) { malformed.push(fields[1]); continue; }
+     const status = (fields[8] ?? '').trim();
+     if (status.toLowerCase() === 'rejected') continue;
+     for (const m of line.matchAll(SOURCES_URL_RE)) {

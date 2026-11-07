@@ -1,0 +1,11 @@
+--- cand-pre/round-gate.mjs	2026-11-07 01:02:52.409284978 -0300
++++ mut-cand/m-asciiws/round-gate.mjs	2026-11-07 01:02:52.663005042 -0300
+@@ -408,7 +408,7 @@
+  * absent, unreadable or not a registry declares nothing, and the whole step
+  * then behaves as it did before this rule existed. */
+ /** A registry row: `| S<3+ digits> |` at indentation <= 3; the id cell is padded with ASCII space/TAB only (census `row_pass`, POSIX `blank`). */
+-const SOURCES_ROW_RE = /^ {0,3}\|[ \t]*S\d{3,}[ \t]*\|/;
++const SOURCES_ROW_RE = /^ {0,3}\|[ \t\v\f\r]*S\d{3,}[ \t\v\f\r]*\|/;
+ /** The `http(s)://` URLs on a registry row; a match stops at whitespace or a cell pipe. */
+ const SOURCES_URL_RE = /https?:\/\/[^\s|)`'"<>]+/g;
+ /** A complete URL path segment that is one full 40-hex commit id. */

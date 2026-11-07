@@ -1,0 +1,26 @@
+# cross-reference lines cited by S277 (read-only, lane/fleet)
+## kumitate-shokunin/scripts/round-gate.mjs (lane, line 410)
+410: const SOURCES_ROW_RE = /^ {0,3}\|\s*S\d{3,}\s*\|/;
+## fleet scripts/sources-census.sh — trim() used for the id cell
+586:       if (y==0) return INVALID_EPOCH
+587:       t=mktime(sprintf("%04d %02d %02d 00 00 00",y,m,d),1)
+588:       if (strftime("%Y-%m-%d",t,1)!=s) return INVALID_EPOCH
+589:       return t
+590:     }
+615:       if (line !~ /^ {0,3}\|/) next
+616:       sub(/^ {0,3}/,"",line)
+617:       $0=line
+618:       if (!in_registry) {
+619:         if (mode=="validate" && $0 ~ /^\|[ \t]*S[0-9]{3,}[ \t]*\|/) {
+620:           id=trim($2)
+621:           printf "%s\tE12\t%s row outside Registry section\n",lane,id
+622:         }
+634:       if (mode=="validate") {
+635:         if (NF!=13) {
+636:           printf "%s\tE01\t%s fields=%d\n",lane,id,NF-2
+637:           if (id !~ /^S[0-9]{3,}$/) printf "%s\tE02\t%s\n",lane,id
+638:           next
+639:         }
+640:         if (id !~ /^S[0-9]{3,}$/) printf "%s\tE02\t%s\n",lane,id
+641:         else if (id in seen) printf "%s\tE03\t%s duplicate id\n",lane,id
+581:     function trim(s) { gsub(/^[ \t]+|[ \t]+$/,"",s); return s }

@@ -1,0 +1,41 @@
+# battery at base (dir /fast/scratch/hyaku/kumitate-r98/K98ExecHarm/lane, rev 7038ee4c487d8c8d3116d98ec831b8e754337239)
+$ node scripts/proxy-check.mjs
+PROXY  error  A_WAVE_DRIFT  A_wave: declared=1650 computed=1653 delta=+3
+PROXY  error  C2_DRIFT  C2: declared=251 computed=252 delta=+1
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=251 computed=252 delta=+1
+PROXY: DRIFT (A_WAVE_DRIFT term=A_wave declared=1650 computed=1653 delta=+3; C2_DRIFT term=C2 declared=251 computed=252 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=251 computed=252 delta=+1; src-rev=31c465f15669; source=snapshot)
+exit=1
+$ node scripts/proxy-check.mjs --strict
+PROXY  error  A_WAVE_DRIFT  A_wave: declared=1650 computed=1653 delta=+3
+PROXY  error  C2_DRIFT  C2: declared=251 computed=252 delta=+1
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=251 computed=252 delta=+1
+PROXY: DRIFT (A_WAVE_DRIFT term=A_wave declared=1650 computed=1653 delta=+3; C2_DRIFT term=C2 declared=251 computed=252 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=251 computed=252 delta=+1; src-rev=31c465f15669; source=snapshot)
+exit=1
+$ node scripts/readme-map.mjs
+README_MAP: CLEAN files=252 rows=252 covered=252
+exit=0
+$ node scripts/sources-check.mjs
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/sources-check-registry-section.md:1  S275 used-by omits corpus/knowledge/sources-check-registry-section.md
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/sources-check-registry-section.md:1  S274 used-by omits corpus/knowledge/sources-check-registry-section.md
+SOURCES  info  LEGACY_NO_HEADER  count=38
+SOURCES_CHECK: CLEAN (rows=214 tiers=A:182,B:22,C:10 status=queued:14,mined:172,rejected:28 entries_with_source=51 legacy=38)
+exit=0
+$ node scripts/counter-pins.mjs
+COUNTER_PINS: CLEAN pins=50
+exit=0
+$ node scripts/spotcheck-adopt.mjs --check
+SPOTCHECK_COVERAGE: CLEAN spotchecks=64 uncovered=0
+MAP: CLEAN
+exit=0
+$ node scripts/round-gate.mjs --tracked --reports-dir /home/vgpnk/Projects/shokunin/.ufo/reports --main-repo /home/vgpnk/Projects/shokunin
+ROUND_GATE: CLEAN (mode=tracked checked=80 errors=0 warnings=0)
+exit=0
+$ node scripts/round-gate.mjs --round 97 --reports-dir /home/vgpnk/Projects/shokunin/.ufo/reports --main-repo /home/vgpnk/Projects/shokunin
+ROUND_GATE: CLEAN (round=97 lane=kumitate checks=10 errors=0 warnings=0)
+exit=0
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file corpus/SOURCES.md
+file	W04	S126 duplicate url docs.temporal.io/encyclopedia/detecting-activity-failures across scopes
+file	W04	S247 duplicate url arxiv.org/abs/2212.06118 across scopes
+file	W04	S271 duplicate url git-scm.com/docs/gitrevisions across scopes
+file	ok	/fast/scratch/hyaku/kumitate-r98/K98ExecHarm/lane/corpus/SOURCES.md
+exit=0

@@ -1,0 +1,11 @@
+--- cand-pre/round-gate.mjs	2026-11-07 01:02:52.409284978 -0300
++++ mut-cand/m-inreg-flip/round-gate.mjs	2026-11-07 01:02:52.764012959 -0300
+@@ -433,7 +433,7 @@
+     if (/^ {0,3}#[ \t]/.test(line)) { inReg = false; continue; }
+     if (!SOURCES_ROW_RE.test(line)) continue;
+     const fields = line.split('|');
+-    if (!inReg) { outside.push(fields[1].trim()); continue; }
++    if (inReg) { outside.push(fields[1].trim()); continue; }
+     if (fields.length !== 13) { malformed.push(fields[1].trim()); continue; }
+     const status = (fields[8] ?? '').trim();
+     if (status.toLowerCase() === 'rejected') continue;

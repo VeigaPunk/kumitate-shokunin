@@ -3160,3 +3160,22 @@ Declared (`.ufo/waves/round-96/plan.md`, frozen at `617e80cd`): one claim, C1 op
 Declared (`.ufo/waves/round-97/plan.md`, frozen at `38eb197c`): one claim, C1 operability — `scripts/sources-check.mjs` computes section membership from `sourceText.split('\n')` (CR kept) with the census `row_pass` grammar (`^ {0,3}##[ \t]`, `[ \t]`-only trim, exact `Registry`, `^ {0,3}#[ \t]` clears, starts outside); rows and per-row checks unchanged; sourced on S276 (ECMA-262 2025, opened). Motivating evidence: r96 pre-registration items (1)–(2) and K96Connector findings 2–3 — BASE disagrees with the census on 738 of 19 459 LF battery cases and 5 220 whole-CRLF cases (`controls/ctl-nothing.txt`); K97CriticB found the class live in six sibling lanes (13 whole-CRLF blobs, 2026-11-01..04; kagi `4bbc021b9fa2`: census 52 E12 / 0 rows, BASE CLEAN 52 rows). End-to-end: wave w1 11 seats (0 dead) → READY `ccbf1619` → M `69fb6943` (`C97_C1: HELD` ×2) → M2 `f33786f0` (3 arms for K97Mutation counter-only kills; `HELD` ×2 at `acccb0d7`; re-mutation 15/15 with reference 71/71). Mistakes M97-1 (fixed-identity counters; fix = nonce counter, Q91, `x-replay` HELD own seed / UNMET fresh) and M97-2 (L1 re-mutation helper read post-integration bytes; run discarded, fixed). Counter finding routed: six readers outside the class grid reach HELD (K97CriticA).
 
 - 2026-11-07 — round 97 (gate-required one-line record; the full entry is the section above): C1 operability — `scripts/sources-check.mjs` section reader = census `row_pass` (`acccb0d7…`, selftest 71/71); frozen `probe97-c1.mjs` `HELD a=1/1 b=1/1 c=1/1 d=1/1 e=1/1 f=1/1` twice at M `69fb6943` and twice at M2 `f33786f0`, K1–K4 not fired; S276; Q91; lesson `corpus/lessons/round-97.md`.
+
+## Round 98 — round-gate id-cell pads match census blank (2026-11-07, attempt 1)
+
+Declared one C1 operability claim (lowest non-retired, 9 terminal), sourced on S277 POSIX LC_CTYPE:
+R98 `SOURCES_ROW_RE` uses `[ \t]` pads, not `\s`, inside/outside alike. Motivating evidence:
+K97Connector 13/13 vs census 5/13 pad classes; BASE FIX-A declares 82 vs census 22, outside 108 vs 28,
+malformed 82 vs 22. Pre-freeze spotcheck adoption `42f08b17`; freeze `7038ee4c` (plan, counter, 15 controls:
+positive HELD, fourteen negatives UNMET); wave `8a6a4490`, 12 seats, WAVE-DONE, none dead.
+M `6172bd82` is K98ExecTool READY `e7c1455e…` (selftest 96/96, counter HELD twice). M2 `94195b83`
+adds arms (xxx)/(xxxi) for pad/id lengths, exotic pads, file-start BOM (98/98); frozen counter HELD twice
+(`close/probe-m2-{1,2}.txt`), K2 re-mutation and nine-shape teeth in `close-l1/`.
+K98CriticC differential 400/400 vs BASE 382/400; K98Reviewer exact-rule review; K98ExecHarm 82 JSON
+surfaces identical after durationMs removal. CriticB framing weak/prospective (0 live non-blank pads),
+CriticA eight wrong readers HELD — recorded reject, not certification. Debt: sources-check selftest
+path/env derived, bad census fails, absent alone skips (K98ExecDebt `1def379f…`).
+Lesson `corpus/lessons/round-98.md` mines M98-1/2 class-grid limits and M98-3 invalid L1 import setup;
+S277, knowledge `round-gate-row-id-class.md`, Q92, SKILL decisions and README map updated.
+
+- 2026-11-07 — round 98: C1 operability R98 HELD at M/M2; axis 9→9 terminal; every coverage row unchanged; one v1 wave 12 seats; S277; QUALITY Q92; lesson `corpus/lessons/round-98.md`.
