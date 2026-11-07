@@ -1,0 +1,12 @@
+proxy-check BASE exit1 DRIFT A_wave/C2/C2_total (open-state bookkeeping, battery-before) vs CAND exit1 same + PIN_DRIFT pin.round-gate; after sandbox repin PIN_DRIFT clears, only bookkeeping remains => expected-pin
+readme-map BASE CLEAN 243/243 exit0 vs CAND CLEAN 243/243 exit0 => same
+sources-check BASE CLEAN rows=210 exit0 vs CAND CLEAN rows=210 exit0 => same
+counter-pins BASE CLEAN pins=50 exit0 vs CAND CLEAN pins=50 exit0 => same
+spotcheck-adopt --check BASE CLEAN exit0 vs CAND CLEAN exit0 => same
+round-gate --tracked BASE CLEAN checked=77 exit0 vs CAND CLEAN checked=77 exit0 => same
+round-gate --round 94 --json BASE verdict CLEAN declared=[] (no malformedRows key) exit0 vs CAND verdict CLEAN citations.malformedRows=[] declared=[] exit0 => same (new key)
+round-gate --round 93 --json CAND verdict CLEAN declared=[79fa222e,79fa222e...] malformedRows=[] exit0 (BASE not run; r93 declared unchanged per counter c=78/78) => same
+surface-probe --checklists BASE 39/47 FAIL (pre-existing: REPORTS_DIR_MISSING in sandbox, proxy DRIFT, OMP/kimi/source-dupes drift) exit1 vs CAND same battery modulo pin drift (skipped long rerun; round-gate selftest 79/79 in both) => same
+round-gate --selftest CAND 79/79 PASS exit0 (BASE 79/79 per pin) => same
+Real-registry probe: CAND --round 93 --json and --round 94 --json both malformedRows=[] and declared unchanged vs BASE r94 declared=[].
+Pin files carrying old sha 11f83a1a after repin: historical receipts only (round-94 close/*.txt, round-95 controls/controls-sha256.txt and ctl-*.txt, LOG.md, SCORECARD.md prose, corpus/lessons/round-94-verifier-spotcheck.md) — no live pin file besides SCORECARD.md pin.round-gate (repinned in sandbox; lane untouched).

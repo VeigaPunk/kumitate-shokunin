@@ -1,0 +1,82 @@
+kumitate round-gate --selftest (hermetic, node v24.21.0)
+PASS  [ 1/79]  clean audit fixture → exit 0, CLEAN, checks=10, no findings — exit=0 ROUND_GATE: CLEAN (round=5 lane=kumitate checks=10 errors=0 warnings=0)
+PASS  [ 2/79]  default --round = latest closed round for the lane (5, not 2) — exit=0 ROUND_GATE: CLEAN (round=5 lane=kumitate checks=10 errors=0 warnings=0)
+PASS  [ 3/79]  REPORT_MISSING → exit 1, DRIFT, exactly [REPORT_MISSING], checks=5 — exit=1 kinds=[REPORT_MISSING] ROUND_GATE: DRIFT (round=7 lane=kumitate checks=5 errors=1 warnings=0)
+PASS  [ 4/79]  REPORT_THIN → exit 1, exactly [REPORT_THIN], detail `(bytes=<n>)` — exit=1 detail=(bytes=25)
+PASS  [ 5/79]  text mode prints `ROUND_GATE  error  REPORT_THIN  (bytes=<n>)` (two-space columns) — line=ROUND_GATE  error  REPORT_THIN  (bytes=25)
+PASS  [ 6/79]  REPORT_HEADINGS → exactly [REPORT_HEADINGS, REPORT_SHONEN_MISSING] (headingless fixture) — exit=1 kinds=[REPORT_HEADINGS,REPORT_SHONEN_MISSING] headings=0
+PASS  [ 7/79]  REPORT_ROUND_MISMATCH → exactly [REPORT_ROUND_MISMATCH] — exit=1 kinds=[REPORT_ROUND_MISMATCH]
+PASS  [ 8/79]  prefix collision: `round-1` does not satisfy N=10 → REPORT_ROUND_MISMATCH — exit=1 kinds=[REPORT_ROUND_MISMATCH]
+PASS  [ 9/79]  mirror collision: `round-10` does not satisfy N=1 → REPORT_ROUND_MISMATCH — exit=1 kinds=[REPORT_ROUND_MISMATCH]
+PASS  [10/79]  SCORECARD_ROW_MISSING → exactly [SCORECARD_ROW_MISSING] — exit=1 kinds=[SCORECARD_ROW_MISSING]
+PASS  [11/79]  SCORECARD_ROW_MISSING fires when `<N>` appears in prose ending `|` but no table row exists — exit=1 kinds=[SCORECARD_ROW_MISSING]
+PASS  [12/79]  SCORECARD_PLAN_MISSING (no ## Planned) → warning only, exit 0 CLEAN — exit=0 warning ROUND_GATE: CLEAN (round=5 lane=kumitate checks=10 errors=0 warnings=1)
+PASS  [13/79]  SCORECARD_PLAN_MISSING when ## Planned names only a past round → warning only — exit=0 detail=## Planned names no round later than 5
+PASS  [14/79]  ## Planned naming round 11 satisfies a round-5 audit (no false positive) — exit=0 kinds=[]
+PASS  [15/79]  ## Planned body naming `round-6` satisfies the plan check (separator optional) — exit=0 kinds=[]
+PASS  [16/79]  --strict promotes SCORECARD_PLAN_MISSING to exit 1, DRIFT, errors=0 warnings=1 — exit=1 ROUND_GATE: DRIFT (round=5 lane=kumitate checks=10 errors=0 warnings=1)
+PASS  [17/79]  LOG_ENTRY_MISSING → exactly [LOG_ENTRY_MISSING] — exit=1 kinds=[LOG_ENTRY_MISSING]
+PASS  [18/79]  COMMIT_MISSING (no marker) → exactly [COMMIT_MISSING] — exit=1 kinds=[COMMIT_MISSING]
+PASS  [19/79]  COMMIT_MISSING (marker names the wrong N) → exactly [COMMIT_MISSING] — exit=1 kinds=[COMMIT_MISSING]
+PASS  [20/79]  body-only marker satisfies COMMIT_MISSING scan (`--format=%B`) → no findings — exit=0 kinds=[]
+PASS  [21/79]  REPORT_SHONEN_MISSING → warning only, exit 0 CLEAN, warnings=1 — exit=0 ROUND_GATE: CLEAN (round=5 lane=kumitate checks=10 errors=0 warnings=1)
+PASS  [22/79]  --strict promotes REPORT_SHONEN_MISSING to exit 1, DRIFT — exit=1 ROUND_GATE: DRIFT (round=5 lane=kumitate checks=10 errors=0 warnings=1)
+PASS  [23/79]  `### shonen` (lowercase, level 3) satisfies the SHONEN check → no findings — exit=0 kinds=[]
+PASS  [24/79]  COMMIT_CITED_UNRESOLVED → exactly [COMMIT_CITED_UNRESOLVED] — exit=1 cited=1 unresolved=1 [deadbeef1234]
+PASS  [25/79]  COMMIT_CITED_NOT_ANCESTOR → exactly [COMMIT_CITED_NOT_ANCESTOR] (side-branch commit) — exit=1 cited=1 notAncestor=1 [e34eaac8a077538dc1bc2b2121a26e28a2df45d8]
+PASS  [26/79]  a token resolving in --origin is external (no finding) and lands in --json citations.external — exit=0 external=["af333554d8ea64bf89e5b74d923b855b40982618"]
+PASS  [27/79]  (i) an 8-hex prefix of a 40-hex URL segment on a mined registry row → declared, no finding — exit=0 kinds=[] declared=["a1b2c3d4"]
+PASS  [28/79]  (ii) a cited full 40-hex pin that is a complete URL segment → declared, no finding — exit=0 kinds=[] declared=["a1b2c3d4a1b2c3d4a1b2c3d4a1b2c3d4a1b2c3d4"]
+PASS  [29/79]  (iii) pin followed by `#fragment` (`/commit/<pin>#diff`) → declared, no finding — exit=0 kinds=[] declared=["b1c2d3e4b1"]
+PASS  [30/79]  (iv) pin present only as a non-URL digest inside a registry row → COMMIT_CITED_UNRESOLVED — exit=1 kinds=["COMMIT_CITED_UNRESOLVED"] unresolved=["c1d2e3f4c1d2"]
+PASS  [31/79]  (v) pin in a URL on a prose line outside the registry → unresolved — exit=1 kinds=["COMMIT_CITED_UNRESOLVED"] unresolved=["d1e2f3a4d"]
+PASS  [32/79]  (vi) pin in a URL on a `rejected` registry row → unresolved — exit=1 kinds=["COMMIT_CITED_UNRESOLVED"] unresolved=["e1f2a3b4"]
+PASS  [33/79]  (vii) token taken from the middle of a declared pin → unresolved (prefix, not contains) — exit=1 kinds=["COMMIT_CITED_UNRESOLVED"] unresolved=["b2c3d4a1"]
+PASS  [34/79]  (viii) no corpus/SOURCES.md → no declared pins, unresolved, never INTERNAL_ERROR — exit=1 kinds=["COMMIT_CITED_UNRESOLVED"] unresolved=["a1b2c3d4"]
+PASS  [35/79]  --json citations.declared is always present and empty when nothing is declared — exit=0 declared=[]
+PASS  [36/79]  text mode: COMMIT_CITED_UNRESOLVED detail carries `declared=<n>` beside the unresolved list — exit=1 COMMIT_CITED_UNRESOLVED cited=2 unresolved=1 [deadbeef1234] declared=1
+PASS  [37/79]  (ix) corpus/SOURCES.md is a FIFO with no writer → no hang, nothing declared, unresolved — exit=1 kinds=["COMMIT_CITED_UNRESOLVED"] unresolved=["a1b2c3d4"]
+PASS  [38/79]  (x) corpus/SOURCES.md is a symlink to a declaring registry → not followed, unresolved — exit=1 kinds=["COMMIT_CITED_UNRESOLVED"] declared=[]
+PASS  [39/79]  (xi) a declaring registry of 8388609 bytes (cap + 1) → nothing declared, unresolved — exit=1 kinds=["COMMIT_CITED_UNRESOLVED"] declared=[]
+PASS  [40/79]  text mode: a green round with a declared pin prints one `info COMMIT_CITED_DECLARED` line, no finding — exit=0 lines=["ROUND_GATE  info  COMMIT_CITED_DECLARED  declared=1 [a1b2c3d4]","ROUND_GATE: CLEAN (round=5 lane=kumitate checks=10 errors=0 warnings=0)"]
+PASS  [41/79]  (xii) an 8-hex URL path segment is not a pin (pins are exactly 40 hex) → unresolved — exit=1 kinds=["COMMIT_CITED_UNRESOLVED"] declared=[]
+PASS  [42/79]  (xiii) a `| S1 |` row is not a registry row (ids are S + 3 or more digits) → unresolved — exit=1 kinds=["COMMIT_CITED_UNRESOLVED"] declared=[]
+PASS  [43/79]  (xiv) status `Rejected` (any case) is a rejected row → unresolved — exit=1 kinds=["COMMIT_CITED_UNRESOLVED"] declared=[]
+PASS  [44/79]  --close on a clean, pushed fixture → exit 0, CLEAN, checks=13 — exit=0 ROUND_GATE: CLEAN (round=5 lane=kumitate checks=13 errors=0 warnings=0)
+PASS  [45/79]  TREE_DIRTY → exactly [TREE_DIRTY], detail names entries=6 and the first 5 only — exit=1 entries=6 first5=["?? scratch-1.txt" "?? scratch-2.txt" "?? scratch-3.txt" "?? scratch-4.txt" "?? scratch-5.txt"]
+PASS  [46/79]  UNPUSHED → exactly [UNPUSHED], detail `ahead=1` — exit=1 ahead=1
+PASS  [47/79]  REPORT_UNTRACKED (ls-files) → exactly [REPORT_UNTRACKED] — exit=1 ls-files: .ufo/reports/round-5/kumitate.md is not tracked in /fast/scratch/hyaku/kumitate-r95/K95Mutation/tmp/kumitate-round-gate-selftest-EQ3hjg/42-report-untracked/main
+PASS  [48/79]  REPORT_UNTRACKED (tracked but unpushed) → exactly [REPORT_UNTRACKED] via `@{u}..HEAD` — exit=1 unpushed: .ufo/reports/round-5/kumitate.md
+PASS  [49/79]  fail-closed: --reports-dir missing → exit 2 (REPORTS_DIR_MISSING) — exit=2 ROUND_GATE: FAIL-CLOSED (REPORTS_DIR_MISSING) --reports-dir /fast/scratch/hyaku/kumitate-r95/K95Mutation/tmp/kumitate-round-gate-selftest-EQ3hjg/01-clean-audit/no-such-reports is absent
+PASS  [50/79]  fail-closed: --repo is a plain dir (not a work tree) → exit 2 (NOT_A_GIT_WORKTREE) — exit=2 ROUND_GATE: FAIL-CLOSED (NOT_A_GIT_WORKTREE) --repo /fast/scratch/hyaku/kumitate-r95/K95Mutation/tmp/kumitate-round-gate-selftest-EQ3hjg/01-clean-audit/reports is not a git work tree
+PASS  [51/79]  fail-closed: --repo does not exist → exit 2 — exit=2
+PASS  [52/79]  fail-closed: no closed round derivable (no --round, no <lane>.md) → exit 2 (NO_CLOSED_ROUND) — exit=2 ROUND_GATE: FAIL-CLOSED (NO_CLOSED_ROUND) no round-<N>/kumitate.md under /fast/scratch/hyaku/kumitate-r95/K95Mutation/tmp/kumitate-round-gate-selftest-EQ3hjg/44-no-closed-round
+PASS  [53/79]  fail-closed: --close with no upstream on --repo → exit 2 (UPSTREAM_MISSING) — exit=2 ROUND_GATE: FAIL-CLOSED (UPSTREAM_MISSING) --repo /fast/scratch/hyaku/kumitate-r95/K95Mutation/tmp/kumitate-round-gate-selftest-EQ3hjg/45-close-no-upstream/repo: exit 128 fatal: no upstream configured for branch 'main'
+PASS  [54/79]  fail-closed: --close with a non-git --main-repo → exit 2 (MAIN_REPO_NOT_GIT) — exit=2 ROUND_GATE: FAIL-CLOSED (MAIN_REPO_NOT_GIT) --main-repo /fast/scratch/hyaku/kumitate-r95/K95Mutation/tmp/kumitate-round-gate-selftest-EQ3hjg/46-non-git-main is not a git work tree
+PASS  [55/79]  usage: unknown flag → exit 64 with usage on stderr — exit=64 round-gate: unknown argument: --bogus
+PASS  [56/79]  usage: non-numeric --round → exit 64 — exit=64
+PASS  [57/79]  usage: --round without a value → exit 64 — exit=64
+PASS  [58/79]  usage: invalid --lane → exit 64 — exit=64
+PASS  [59/79]  usage: empty --repo value → exit 64 — exit=64
+PASS  [60/79]  --json shape: frozen keys, contract id, checks=10, findings=[] — exit=0 keys=checks,citations,contract,durationMs,errors,findings,lane,mode,repo,reportsDir,round,verdict,warnings checks=10
+PASS  [61/79]  --json drift: verdict DRIFT, findings carry severity/kind/detail — exit=1 findings=["REPORT_MISSING"]
+PASS  [62/79]  --json fail-closed: one schema object with verdict FAIL-CLOSED and the token as the finding kind — exit=2 verdict=FAIL-CLOSED kind=REPORTS_DIR_MISSING
+PASS  [63/79]  --json fail-closed: citations carries an empty `declared` array (round-94 key on every path; K94Mutation m16) — exit=2 citations={"checked":0,"external":[],"declared":[],"malformedRows":[],"unresolved":[],"notAncestor":[],"unverifiable":[],"mainProbeable":null,"originProbeable":null}
+PASS  [64/79]  env override: KUMITATE_REPORTS_DIR/MAIN_REPO/LANE are honored (lane=other via env) — exit=0 ROUND_GATE: CLEAN (round=5 lane=other checks=10 errors=0 warnings=0)
+PASS  [65/79]  precedence: CLI --reports-dir/--lane beat a polluted env (flag > env) — exit=0 ROUND_GATE: CLEAN (round=5 lane=kumitate checks=10 errors=0 warnings=0)
+PASS  [66/79]  bare run (no --origin): resolves to the first existing candidate ~/Projects/ufo-fsd-alpha — exit=0 external=["7bcb106eb2f2247a4f2db13482c3d7eb1f841ba0"]
+PASS  [67/79]  bare run (no --origin): falls back to the legacy ~/Projects/origin-work/ufo-fsd-alpha when the new path is absent — exit=0 external=["7bcb106eb2f2247a4f2db13482c3d7eb1f841ba0"]
+PASS  [68/79]  bare run (no --origin): both candidates absent keeps the derived canonical default (unverifiable, no finding) — exit=0 originProbeable=false unverifiable=["deadbeef1234"]
+PASS  [69/79]  hermeticity: --selftest passes under a polluted env and bogus dir flags — exit=0 tail=ROUND_GATE_SELFTEST: 79/79 pass | VERDICT: PASS
+PASS  [70/79]  hermeticity: a planted GIT_DIR/GIT_WORK_TREE/GIT_INDEX_FILE canary never reaches a fixture git writer — at-entry=0 left=0 init=0 canary-entries=0
+PASS  [71/79]  --tracked: 3 filed reports, highest excluded, rest tracked → exit 0, CLEAN, checked=2 — exit=0 ROUND_GATE: CLEAN (mode=tracked checked=2 errors=0 warnings=0)
+PASS  [72/79]  --tracked: oldest filed report untracked → exit 1, DRIFT, exactly [REPORT_UNTRACKED] — exit=1 ROUND_GATE: DRIFT (mode=tracked checked=2 errors=1 warnings=0) ls-files: .ufo/reports/round-3/kumitate.md is not tracked in /fast/scratch/hyaku/kumitate-r95/K95Mutation/tmp/kumitate-round-gate-selftest-EQ3hjg/58-tracked-oldest-untracked/main
+PASS  [73/79]  --tracked: only one filed report (the in-flight round) → exit 2 (NO_FILED_REPORTS) — exit=2 ROUND_GATE: FAIL-CLOSED (NO_FILED_REPORTS) filed=1 round-<N>/kumitate.md under /fast/scratch/hyaku/kumitate-r95/K95Mutation/tmp/kumitate-round-gate-selftest-EQ3hjg/59-tracked-single-report/main/.ufo/reports (the highest round is excluded as in-flight, so >=2 are needed)
+PASS  [74/79]  usage: --tracked with --close → exit 64 (mutually exclusive modes) — exit=64 round-gate: --tracked and --close are mutually exclusive modes
+PASS  [75/79]  fail-closed: --tracked with no usable --main-repo → exit 2 (MAIN_REPO_NOT_GIT) — exit=2 ROUND_GATE: FAIL-CLOSED (MAIN_REPO_NOT_GIT) --main-repo /fast/scratch/hyaku/kumitate-r95/K95Mutation/tmp/kumitate-round-gate-selftest-EQ3hjg/57-tracked-clean/not-a-repo is not a git work tree
+PASS  [76/79]  --tracked: reports under a dir outside --main-repo → one REPORT_UNTRACKED per report (`outside …`) — exit=1 kinds=[REPORT_UNTRACKED REPORT_UNTRACKED]
+PASS  [77/79]  --tracked --json: mode=tracked, checked=2, excludedRound=5, findings=[] — exit=0 mode=tracked checked=2 excludedRound=5
+PASS  [78/79]  --tracked runs no other audit check: a bogus --repo does not change the verdict — exit=0 ROUND_GATE: CLEAN (mode=tracked checked=2 errors=0 warnings=0)
+PASS  [79/79]  every declared finding kind fires in at least one fixture — 14 kinds observed
+ROUND_GATE_SELFTEST: 79/79 pass
+VERDICT: PASS

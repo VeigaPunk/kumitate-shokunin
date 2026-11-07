@@ -1,0 +1,22 @@
+== LF ==
+S001 NF=13 split8="mined" BASE_declares=PIN.A
+S002 NF=14 split8="teaches" BASE_declares=PIN.B
+S003 NF=14 split8="b" BASE_declares=PIN.C
+S004 NF=12 split8="mined" BASE_declares=PIN.D
+S005 NF=13 split8="rejected" BASE_declares=none
+S006 NF=13 split8="queued" BASE_declares=PIN.F
+S007 NF=14 split8="mined" BASE_declares=PIN.G
+S008 NF=13 split8="mined" BASE_declares=PIN.H
+== CRLF ==
+S001 NF=13 split8="mined" BASE_declares=PIN.A
+S002 NF=14 split8="teaches" BASE_declares=PIN.B
+S003 NF=14 split8="b" BASE_declares=PIN.C
+S004 NF=12 split8="mined" BASE_declares=PIN.D
+S005 NF=13 split8="rejected" BASE_declares=none
+S006 NF=13 split8="queued" BASE_declares=PIN.F
+S007 NF=14 split8="mined" BASE_declares=PIN.G
+S008 NF=13 split8="mined" BASE_declares=PIN.H
+census LF ids: ["S002","S003","S004","S007"]
+census CRLF ids: ["S002","S003","S004","S007"]
+CRLF row NF = 13 split8 = "mined"
+EXPECTED candidate declared rows: S001(A) S006(F) S008(H); malformed [S002,S003,S004,S007]

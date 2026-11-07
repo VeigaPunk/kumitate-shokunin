@@ -1,0 +1,10 @@
+import { writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+const sha = (b) => createHash('sha256').update(b).digest('hex');
+const SEEDS = ['A','B','C','D','E','F','G','H','I','J'];
+const tok = SEEDS.map((s) => sha(`kumitate-r95-${s}`).slice(0, 8));
+tok.push(sha('kumitate-r95-none').slice(0, 8));
+const line = tok.map((t) => `\`${t}\``).join(' ');
+const text = `# kumitate round-1 fixture\n\n## Work\n\nCited: ${line}\n\n## SHONEN\n\n- [~] x\n\n${'Fixture padding for the report weight floor. '.repeat(40)}\n`;
+writeFileSync(process.argv[2], text);
+console.log(`report bytes=${Buffer.byteLength(text)} tokens=${tok.length}`);

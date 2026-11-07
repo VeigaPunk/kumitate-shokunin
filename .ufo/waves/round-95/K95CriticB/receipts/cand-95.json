@@ -1,0 +1,77 @@
+{
+  "contract": "kumitate-round-gate-v1",
+  "mode": "audit",
+  "round": 95,
+  "lane": "kumitate",
+  "repo": "/home/vgpnk/Projects/shokunin/kumitate-shokunin",
+  "reportsDir": "/home/vgpnk/Projects/shokunin/.ufo/reports",
+  "verdict": "DRIFT",
+  "checks": [
+    {
+      "id": "REPORT_MISSING",
+      "severity": "error",
+      "ok": false,
+      "detail": "/home/vgpnk/Projects/shokunin/.ufo/reports/round-95/kumitate.md"
+    },
+    {
+      "id": "SCORECARD_ROW_MISSING",
+      "severity": "error",
+      "ok": false,
+      "detail": "no table row starting \"| 95 |\" in /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md"
+    },
+    {
+      "id": "SCORECARD_PLAN_MISSING",
+      "severity": "warning",
+      "ok": false,
+      "detail": "## Planned names no round later than 95"
+    },
+    {
+      "id": "LOG_ENTRY_MISSING",
+      "severity": "error",
+      "ok": false,
+      "detail": "no \"- YYYY-MM-DD — round 95\" line in /home/vgpnk/Projects/shokunin/kumitate-shokunin/LOG.md"
+    },
+    {
+      "id": "COMMIT_MISSING",
+      "severity": "error",
+      "ok": true,
+      "detail": "message marker in \"round-95: w1 spec + validated dispatch (10 seats, v1 policy; attack 4/10)\""
+    }
+  ],
+  "findings": [
+    {
+      "severity": "error",
+      "kind": "REPORT_MISSING",
+      "detail": "/home/vgpnk/Projects/shokunin/.ufo/reports/round-95/kumitate.md"
+    },
+    {
+      "severity": "error",
+      "kind": "SCORECARD_ROW_MISSING",
+      "detail": "no table row starting \"| 95 |\" in /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md"
+    },
+    {
+      "severity": "warning",
+      "kind": "SCORECARD_PLAN_MISSING",
+      "detail": "## Planned names no round later than 95"
+    },
+    {
+      "severity": "error",
+      "kind": "LOG_ENTRY_MISSING",
+      "detail": "no \"- YYYY-MM-DD — round 95\" line in /home/vgpnk/Projects/shokunin/kumitate-shokunin/LOG.md"
+    }
+  ],
+  "errors": 3,
+  "warnings": 1,
+  "citations": {
+    "checked": 0,
+    "external": [],
+    "declared": [],
+    "malformedRows": [],
+    "unresolved": [],
+    "notAncestor": [],
+    "unverifiable": [],
+    "mainProbeable": null,
+    "originProbeable": null
+  },
+  "durationMs": 22
+}

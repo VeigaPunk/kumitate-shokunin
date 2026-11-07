@@ -1,0 +1,54 @@
+# census evidence — K95ScribeSources, round 95
+# generated 2026-11-07T00:40:05Z; mirror /fast/scratch/hyaku/kumitate-r95/K95ScribeSources/root: corpus copied from the lane, every
+# other top-level lane entry symlinked read-only so used-by paths resolve (E11).
+
+## 0. baseline: untouched lane registry through the same validator
+file	W04	S034 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics across scopes
+file	W04	S068 duplicate url github.com/can1357/oh-my-pi/tree/45c35e40c46166dc726ccc52f5d27f40f2449f99 across scopes
+file	W04	S084 duplicate url infection.github.io/guide across scopes
+file	W04	S095 duplicate url raw.githubusercontent.com/containers/bubblewrap/v0.13.1/bwrap.xml across scopes
+file	W04	S123 duplicate url docs.langchain.com/oss/python/langgraph/checkpointers across scopes
+file	W04	S126 duplicate url docs.temporal.io/encyclopedia/detecting-activity-failures across scopes
+file	W04	S247 duplicate url arxiv.org/abs/2212.06118 across scopes
+file	W04	S271 duplicate url git-scm.com/docs/gitrevisions across scopes
+file	ok	/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
+exit=0
+
+## 1. rows-only field counts (must be NF=13 each)
+/fast/scratch/hyaku/kumitate-r95/K95ScribeSources/rows-only.txt line 1: NF=13
+/fast/scratch/hyaku/kumitate-r95/K95ScribeSources/rows-only.txt line 2: NF=13
+
+## 2. validate on the mirror BEFORE the used-by entry exists (E11 on S273/S274 only; W04 lines hidden)
+file	E11	S273 missing used-by corpus/knowledge/round-gate-registry-shape.md
+file	E11	S274 missing used-by corpus/knowledge/round-gate-registry-shape.md
+validate_exit=1
+
+## 3. placeholder corpus/knowledge/round-gate-registry-shape.md created in the mirror only, then validate
+file	W04	S034 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics across scopes
+file	W04	S068 duplicate url github.com/can1357/oh-my-pi/tree/45c35e40c46166dc726ccc52f5d27f40f2449f99 across scopes
+file	W04	S084 duplicate url infection.github.io/guide across scopes
+file	W04	S095 duplicate url raw.githubusercontent.com/containers/bubblewrap/v0.13.1/bwrap.xml across scopes
+file	W04	S123 duplicate url docs.langchain.com/oss/python/langgraph/checkpointers across scopes
+file	W04	S126 duplicate url docs.temporal.io/encyclopedia/detecting-activity-failures across scopes
+file	W04	S247 duplicate url arxiv.org/abs/2212.06118 across scopes
+file	W04	S271 duplicate url git-scm.com/docs/gitrevisions across scopes
+file	ok	/fast/scratch/hyaku/kumitate-r95/K95ScribeSources/root/corpus/SOURCES.md
+exit=0
+
+## 4. frozen malformed-row predicate on the copy (no output = no malformed row)
+awk_exit=0
+
+## 5. predicate control: a synthetic 12-field registry row MUST be printed
+| S999 | x | spec | A | s | a | t | mined | 2026-11-07 | on-release | corpus/x.md 
+awk_exit=0
+
+## 6. rows in the copy vs the lane
+lane_rows=210 copy_rows=212
+
+## 7. id space: duplicates and max id in the copy (must be empty / S274)
+dups_exit=0
+max_id and duplicate ids, computed with grep -o "^| S[0-9]\+":
+|S272
+|S273
+|S274
+total_rows=212

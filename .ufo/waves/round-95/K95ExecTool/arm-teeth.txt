@@ -1,0 +1,7 @@
+Arm teeth — each forgery shape applied to a scratch copy of the candidate (K95ExecTool round-gate.mjs, sha256 c5a2f8...), run via its --selftest (86 arms). All six killed.
+escapeonly (refuse only literal \| rows): FAIL arms (xv) unescaped-shift, (xvi) escaped (passes alone but (xv) kills), (xvii) short, (xviii) long, (xix) mixed, (xx) order → 80/86
+gt13 (refuse only NF>13): FAIL (xvii) short, (xix) mixed, (xx) order → 82/86
+lenient12 (accept NF 12 or 13): FAIL (xvii) short, (xix) mixed, (xx) order → 82/86
+anyrej (disclose but read malformed; skip any row with a rejected cell): FAIL (xvi) escaped, (xvii) short, (xviii) long, (xix) mixed, (xx) order → 80/86
+nodisclose (reference rule, empty malformedRows): FAIL (xv)(xvi)(xvii)(xviii)(xix)(xx) → 79/86
+dropall (one malformed row silences the whole registry): FAIL (xix) mixed → 84/86

@@ -1,0 +1,15 @@
+C95X census NF!=13 ids=[S002 S005 S006 S008 S008 S000]
+C95X BASE             exit=1 declared=[A,C,D,E,F,G] unresolved=[B] malformedRows=null
+C95X ctl-positive     exit=1 declared=[A,C,D,F,G] unresolved=[B,E] malformedRows=["S002","S005","S006","S008","S008","S000"]
+C95X ctl-positive     FAIL-CLOSED exit=2 verdict=FAIL-CLOSED citationsKeys=["checked","external","declared","malformedRows","unresolved","notAncestor","unverifiable","mainProbeable","originProbeable"] malformedRows=[]
+C95X ctl-nothing      exit=1 declared=[A,C,D,E,F,G] unresolved=[B] malformedRows=null
+C95X atk-urlonly      exit=1 declared=[A,C,D,F,G] unresolved=[B,E] malformedRows=["S005"]
+C95X atk-sorted       exit=1 declared=[A,C,D,F,G] unresolved=[B,E] malformedRows=["S000","S002","S005","S006","S008","S008"]
+C95X atk-dedupe       exit=1 declared=[A,C,D,F,G] unresolved=[B,E] malformedRows=["S002","S005","S006","S008","S000"]
+C95X atk-crlf         exit=1 declared=[A,C,F,G] unresolved=[B,D,E] malformedRows=["S002","S004","S005","S006","S008","S008","S000"]
+C95X atk-vocab        exit=1 declared=[A,D,F,G] unresolved=[B,C,E] malformedRows=["S002","S003","S005","S006","S008","S008","S000"]
+C95X atk-nofailclosed exit=1 declared=[A,C,D,F,G] unresolved=[B,E] malformedRows=["S002","S005","S006","S008","S008","S000"]
+C95X atk-nofailclosed FAIL-CLOSED exit=2 verdict=FAIL-CLOSED citationsKeys=["checked","external","declared","unresolved","notAncestor","unverifiable","mainProbeable","originProbeable"] malformedRows=null
+C95X atk-hardcode     exit=1 declared=[A,C,D,F,G] unresolved=[B,E] malformedRows=["S002"]
+C95X atk-dupskip      exit=1 declared=[A,C,D,G] unresolved=[B,E,F] malformedRows=["S002","S005","S000"]
+C95X atk-noindent     exit=1 declared=[A,C,D,F,G] unresolved=[B,E] malformedRows=["S002","S006","S008","S008","S000"]

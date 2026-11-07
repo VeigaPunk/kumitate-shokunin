@@ -1,0 +1,197 @@
+{
+  "target": "ctl",
+  "target_sha256": "5c472696a93929d96d3a5a3ade6937e815d8743c0e024a1c0c50620951a99310",
+  "results": [
+    {
+      "name": "escapeonly",
+      "intent": "control ctl-escapeonly: refuse only rows containing a literal escaped pipe",
+      "sha256": "5d1335c65fe2ee7dd530369ad473e62a1217168c7abc8c4bf28a2a0b608d8f2d",
+      "selftest_exit": 0,
+      "selftest_verdict": "PASS",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 79/79 pass",
+      "selftest_fails": [],
+      "counter_exit": 1,
+      "counter_verdict": "C95_C1: UNMET a=0/1 b=1/1 c=78/78 d=1/1 tool_sha256=5d1335c65fe2ee7dd530369ad473e62a1217168c7abc8c4bf28a2a0b608d8f2d",
+      "counter_fx": "C95 FX sources exit=1 declared=[okA shiftB shortD indentF longG plainH] unresolved=[escC rejE proseI codeJ none] malformedRows=[\"S003\"] census=[S002 S003 S004 S007] ok=false"
+    },
+    {
+      "name": "gt13",
+      "intent": "control ctl-gt13: refuse only rows with MORE than 13 fields (short row declares)",
+      "sha256": "743370c24b58f562710a6d22f1ec976f2aac1b12db89e1c28f70e99be19b3d6c",
+      "selftest_exit": 0,
+      "selftest_verdict": "PASS",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 79/79 pass",
+      "selftest_fails": [],
+      "counter_exit": 1,
+      "counter_verdict": "C95_C1: UNMET a=0/1 b=1/1 c=78/78 d=1/1 tool_sha256=743370c24b58f562710a6d22f1ec976f2aac1b12db89e1c28f70e99be19b3d6c",
+      "counter_fx": "C95 FX sources exit=1 declared=[okA shortD indentF plainH] unresolved=[shiftB escC rejE longG proseI codeJ none] malformedRows=[\"S002\",\"S003\",\"S007\"] census=[S002 S003 S004 S007] ok=false"
+    },
+    {
+      "name": "lenient12",
+      "intent": "control ctl-lenient12: accept 12 or 13 fields",
+      "sha256": "7f8e5067d213cdc5216333a7d3e23f746c9d6e8ec0b8f276f493694d5544d206",
+      "selftest_exit": 0,
+      "selftest_verdict": "PASS",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 79/79 pass",
+      "selftest_fails": [],
+      "counter_exit": 1,
+      "counter_verdict": "C95_C1: UNMET a=0/1 b=1/1 c=78/78 d=1/1 tool_sha256=7f8e5067d213cdc5216333a7d3e23f746c9d6e8ec0b8f276f493694d5544d206",
+      "counter_fx": "C95 FX sources exit=1 declared=[okA shortD indentF plainH] unresolved=[shiftB escC rejE longG proseI codeJ none] malformedRows=[\"S002\",\"S003\",\"S007\"] census=[S002 S003 S004 S007] ok=false"
+    },
+    {
+      "name": "anyrej",
+      "intent": "control ctl-anyrej: disclose but still read malformed rows; skip any row with a rejected cell",
+      "sha256": "bd5a9457e20b47d55a8808dff8298477a77ebca20078d026391537edb9a23067",
+      "selftest_exit": 0,
+      "selftest_verdict": "PASS",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 79/79 pass",
+      "selftest_fails": [],
+      "counter_exit": 1,
+      "counter_verdict": "C95_C1: UNMET a=0/1 b=1/1 c=78/78 d=1/1 tool_sha256=bd5a9457e20b47d55a8808dff8298477a77ebca20078d026391537edb9a23067",
+      "counter_fx": "C95 FX sources exit=1 declared=[okA escC shortD indentF longG plainH] unresolved=[shiftB rejE proseI codeJ none] malformedRows=[\"S002\",\"S003\",\"S004\",\"S007\"] census=[S002 S003 S004 S007] ok=false"
+    },
+    {
+      "name": "nodisclose",
+      "intent": "control ctl-nodisclose: reference rule with an empty malformedRows",
+      "sha256": "4827a7fe562cf69ad0fa8daeabfb6e8fbda04410b61bf2962430b4466f7026f8",
+      "selftest_exit": 0,
+      "selftest_verdict": "PASS",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 79/79 pass",
+      "selftest_fails": [],
+      "counter_exit": 1,
+      "counter_verdict": "C95_C1: UNMET a=0/1 b=1/1 c=78/78 d=1/1 tool_sha256=4827a7fe562cf69ad0fa8daeabfb6e8fbda04410b61bf2962430b4466f7026f8",
+      "counter_fx": "C95 FX sources exit=1 declared=[okA indentF plainH] unresolved=[shiftB escC shortD rejE longG proseI codeJ none] malformedRows=[] census=[S002 S003 S004 S007] ok=false"
+    },
+    {
+      "name": "dropall",
+      "intent": "control ctl-dropall: one malformed row silences the whole registry",
+      "sha256": "b2ff72eb104a6fa857970a5e06ff1d0ef4f2dd88170b28547fc4ae20a97090d7",
+      "selftest_exit": 0,
+      "selftest_verdict": "PASS",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 79/79 pass",
+      "selftest_fails": [],
+      "counter_exit": 1,
+      "counter_verdict": "C95_C1: UNMET a=0/1 b=1/1 c=78/78 d=1/1 tool_sha256=b2ff72eb104a6fa857970a5e06ff1d0ef4f2dd88170b28547fc4ae20a97090d7",
+      "counter_fx": "C95 FX sources exit=1 declared=[] unresolved=[okA shiftB escC shortD rejE indentF longG plainH proseI codeJ none] malformedRows=[\"S002\",\"S003\",\"S004\",\"S007\"] census=[S002 S003 S004 S007] ok=false"
+    },
+    {
+      "name": "short12",
+      "intent": "boundary: exact count 12 instead of 13",
+      "sha256": "004e291b1aba78c897b7b5123d24b82f1855d1a29bdb07af1bfc2484fd871a93",
+      "selftest_exit": 1,
+      "selftest_verdict": "FAIL",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 73/79 pass",
+      "selftest_fails": [
+        "(i) an 8-hex prefix of a 40-hex URL segment on a mined registry row \u2192 declared, no finding \u2014 exit=1 kinds=[\"COMMIT_CITED_UNRESOLVED\"] declared=[]",
+        "(ii) a cited full 40-hex pin that is a complete URL segment \u2192 declared, no finding \u2014 exit=1 kinds=[\"COMMIT_CITED_UNRESOLVED\"] declared=[]",
+        "(iii) pin followed by `#fragment` (`/commit/<pin>#diff`) \u2192 declared, no finding \u2014 exit=1 kinds=[\"COMMIT_CITED_UNRESOLVED\"] declared=[]",
+        "text mode: COMMIT_CITED_UNRESOLVED detail carries `declared=<n>` beside the unresolved list \u2014 exit=1 COMMIT_CITED_UNRESOLVED cited=2 unresolved=2 [a1b2c3d4 deadbeef1234]",
+        "text mode: a green round with a declared pin prints one `info COMMIT_CITED_DECLARED` line, no finding \u2014 exit=1 lines=[\"ROUND_GATE  error  COMMIT_CITED_UNRESOLVED  cited=1 unresolved=1 [a1b2c3d4]\",\"ROUND_GATE: DRIFT (round=5 lane=kumitate checks=10 errors=1 warnings=0)\"]",
+        "hermeticity: --selftest passes under a polluted env and bogus dir flags \u2014 exit=1 tail=ROUND_GATE_SELFTEST: 74/79 pass | VERDICT: FAIL"
+      ],
+      "counter_exit": 1,
+      "counter_verdict": "C95_C1: UNMET a=0/1 b=1/1 c=70/78 d=0/1 tool_sha256=004e291b1aba78c897b7b5123d24b82f1855d1a29bdb07af1bfc2484fd871a93",
+      "counter_fx": "C95 FX sources exit=1 declared=[shortD] unresolved=[okA shiftB escC rejE indentF longG plainH proseI codeJ none] malformedRows=[\"S001\",\"S002\",\"S003\",\"S005\",\"S006\",\"S007\",\"S008\"] census=[S002 S003 S004 S007] ok=false"
+    },
+    {
+      "name": "lt13",
+      "intent": "boundary: `!== 13` -> `< 13` (long rows declare)",
+      "sha256": "34aead20ac956d9357d3882672be7e0471b8ed5330fa846d967fd35e7cd5a1b8",
+      "selftest_exit": 0,
+      "selftest_verdict": "PASS",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 79/79 pass",
+      "selftest_fails": [],
+      "counter_exit": 1,
+      "counter_verdict": "C95_C1: UNMET a=0/1 b=1/1 c=78/78 d=1/1 tool_sha256=34aead20ac956d9357d3882672be7e0471b8ed5330fa846d967fd35e7cd5a1b8",
+      "counter_fx": "C95 FX sources exit=1 declared=[okA shiftB escC indentF longG plainH] unresolved=[shortD rejE proseI codeJ none] malformedRows=[\"S004\"] census=[S002 S003 S004 S007] ok=false"
+    },
+    {
+      "name": "id2",
+      "intent": "boundary: malformed id read from field 2 (text between first two pipes)",
+      "sha256": "5769c0af002a98f948ac09992217ba63cd91b4e5cdf143745af3c71a5f1a8edf",
+      "selftest_exit": 0,
+      "selftest_verdict": "PASS",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 79/79 pass",
+      "selftest_fails": [],
+      "counter_exit": 1,
+      "counter_verdict": "C95_C1: UNMET a=0/1 b=1/1 c=78/78 d=1/1 tool_sha256=5769c0af002a98f948ac09992217ba63cd91b4e5cdf143745af3c71a5f1a8edf",
+      "counter_fx": "C95 FX sources exit=1 declared=[okA indentF plainH] unresolved=[shiftB escC shortD rejE longG proseI codeJ none] malformedRows=[\"y.ts \u2014 https://github.com/o/r/blob/f5ea54529448c0583d019c84ac6c1799217b504f/x.ts\",\"z.ts \u2014 https://github.com/o/r/blob/61aa0b2edb38c4344c2884c8f6583129ef49579c/x.ts\",\"w.ts \u2014 https://github.com/o/r/blob/72ca08e731eb2fcb9d6d211a2ad75c6eb1e2ed12/x.ts\",\"t.ts \u2014 https://github.com/o/r/blob/95def4cbfe4c918233bce5608a289c9469cb514f/x.ts\"] census=[S002 S003 S004 S007] ok=false"
+    },
+    {
+      "name": "untrimmed",
+      "intent": "boundary: push without trim (ids keep surrounding spaces)",
+      "sha256": "d730df1b0b4f2e39a33e23cc52787673abf4a65656bdc8a955be75a033e03f2f",
+      "selftest_exit": 0,
+      "selftest_verdict": "PASS",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 79/79 pass",
+      "selftest_fails": [],
+      "counter_exit": 1,
+      "counter_verdict": "C95_C1: UNMET a=0/1 b=1/1 c=78/78 d=1/1 tool_sha256=d730df1b0b4f2e39a33e23cc52787673abf4a65656bdc8a955be75a033e03f2f",
+      "counter_fx": "C95 FX sources exit=1 declared=[okA indentF plainH] unresolved=[shiftB escC shortD rejE longG proseI codeJ none] malformedRows=[\" S002 \",\" S003 \",\" S004 \",\" S007 \"] census=[S002 S003 S004 S007] ok=false"
+    },
+    {
+      "name": "unshift",
+      "intent": "boundary: unshift instead of push (reverse file order)",
+      "sha256": "879ce86228eefc16593ac63e7f31ac7fbe7b81aa0e09a618d02876dddaf5e34d",
+      "selftest_exit": 0,
+      "selftest_verdict": "PASS",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 79/79 pass",
+      "selftest_fails": [],
+      "counter_exit": 1,
+      "counter_verdict": "C95_C1: UNMET a=0/1 b=1/1 c=78/78 d=1/1 tool_sha256=879ce86228eefc16593ac63e7f31ac7fbe7b81aa0e09a618d02876dddaf5e34d",
+      "counter_fx": "C95 FX sources exit=1 declared=[okA indentF plainH] unresolved=[shiftB escC shortD rejE longG proseI codeJ none] malformedRows=[\"S007\",\"S004\",\"S003\",\"S002\"] census=[S002 S003 S004 S007] ok=false"
+    },
+    {
+      "name": "nofailclosed",
+      "intent": "boundary: malformedRows key dropped from the SECOND (fail-closed) citations object",
+      "sha256": "ccf2e0f7ba00c9f8392ba90cc67c073d7cb17bfa5bee4a07fbbe66ac120caa73",
+      "selftest_exit": 0,
+      "selftest_verdict": "PASS",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 79/79 pass",
+      "selftest_fails": [],
+      "counter_exit": 0,
+      "counter_verdict": "C95_C1: HELD a=1/1 b=1/1 c=78/78 d=1/1 tool_sha256=ccf2e0f7ba00c9f8392ba90cc67c073d7cb17bfa5bee4a07fbbe66ac120caa73",
+      "counter_fx": "C95 FX sources exit=1 declared=[okA indentF plainH] unresolved=[shiftB escC shortD rejE longG proseI codeJ none] malformedRows=[\"S002\",\"S003\",\"S004\",\"S007\"] census=[S002 S003 S004 S007] ok=true"
+    },
+    {
+      "name": "status9",
+      "intent": "boundary: status index 8 -> 9",
+      "sha256": "7808f9bda6291bd0a42f8292447832279f5fe52f76cde7461cd1fadc4529c265",
+      "selftest_exit": 1,
+      "selftest_verdict": "FAIL",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 76/79 pass",
+      "selftest_fails": [
+        "(vi) pin in a URL on a `rejected` registry row \u2192 unresolved \u2014 exit=0 kinds=[] unresolved=[]",
+        "(xiv) status `Rejected` (any case) is a rejected row \u2192 unresolved \u2014 exit=0 kinds=[] declared=[\"e1f2a3b4\"]",
+        "hermeticity: --selftest passes under a polluted env and bogus dir flags \u2014 exit=1 tail=ROUND_GATE_SELFTEST: 77/79 pass | VERDICT: FAIL"
+      ],
+      "counter_exit": 1,
+      "counter_verdict": "C95_C1: UNMET a=0/1 b=1/1 c=78/78 d=0/1 tool_sha256=7808f9bda6291bd0a42f8292447832279f5fe52f76cde7461cd1fadc4529c265",
+      "counter_fx": "C95 FX sources exit=1 declared=[okA rejE indentF plainH] unresolved=[shiftB escC shortD longG proseI codeJ none] malformedRows=[\"S002\",\"S003\",\"S004\",\"S007\"] census=[S002 S003 S004 S007] ok=false"
+    },
+    {
+      "name": "checkafterstatus",
+      "intent": "boundary: field-count check moved AFTER the status read",
+      "sha256": "d7611a6be5c58834c78d8c378c1b5b2cacde009eb889f5ba3c5a49e7759b2c4d",
+      "selftest_exit": 0,
+      "selftest_verdict": "PASS",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 79/79 pass",
+      "selftest_fails": [],
+      "counter_exit": 0,
+      "counter_verdict": "C95_C1: HELD a=1/1 b=1/1 c=78/78 d=1/1 tool_sha256=d7611a6be5c58834c78d8c378c1b5b2cacde009eb889f5ba3c5a49e7759b2c4d",
+      "counter_fx": "C95 FX sources exit=1 declared=[okA indentF plainH] unresolved=[shiftB escC shortD rejE longG proseI codeJ none] malformedRows=[\"S002\",\"S003\",\"S004\",\"S007\"] census=[S002 S003 S004 S007] ok=true"
+    },
+    {
+      "name": "checkafterreject",
+      "intent": "boundary: count check moved after the status DECISION (rejected rows skipped before disclosure)",
+      "sha256": "5012536a7c88de8cc27d398873978da472aaa51be8b92fe81be26b37415a90b3",
+      "selftest_exit": 0,
+      "selftest_verdict": "PASS",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 79/79 pass",
+      "selftest_fails": [],
+      "counter_exit": 0,
+      "counter_verdict": "C95_C1: HELD a=1/1 b=1/1 c=78/78 d=1/1 tool_sha256=5012536a7c88de8cc27d398873978da472aaa51be8b92fe81be26b37415a90b3",
+      "counter_fx": "C95 FX sources exit=1 declared=[okA indentF plainH] unresolved=[shiftB escC shortD rejE longG proseI codeJ none] malformedRows=[\"S002\",\"S003\",\"S004\",\"S007\"] census=[S002 S003 S004 S007] ok=true"
+    }
+  ]
+}

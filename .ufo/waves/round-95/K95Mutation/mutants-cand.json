@@ -1,0 +1,263 @@
+{
+  "target": "cand",
+  "target_sha256": "c5a2f8ace8ef3208683b610736961f921a632492eee75b026541e7cbb847e0ab",
+  "results": [
+    {
+      "name": "escapeonly",
+      "intent": "control ctl-escapeonly: refuse only rows containing a literal escaped pipe",
+      "sha256": "085b95235df78a1e4394dc3e6e3394d3c6e64cdc1f828c4c19c8aa4af3ddf0c2",
+      "selftest_exit": 1,
+      "selftest_verdict": "FAIL",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 80/86 pass",
+      "selftest_fails": [
+        "(xv) unescaped `|` shifting a truly `rejected` status \u2192 unresolved, id in malformedRows \u2014 exit=0 declared=[\"b1c2d3e4\"] malformed=[]",
+        "(xvii) 12-field short row \u2192 unresolved, id in malformedRows (kills lenient12/gt13-only) \u2014 exit=0 declared=[\"d1e2f3a4\"] malformed=[]",
+        "(xviii) 14-field long row \u2192 unresolved, id in malformedRows \u2014 exit=0 declared=[\"e1f2a3b4\"] malformed=[]",
+        "(xix) a well-formed row next to a malformed one still declares, only the malformed token is unresolved (kills dropall) \u2014 exit=0 declared=[\"a1b2c3d4\",\"d1e2f3a4\"] unresolved=[] malformed=[]",
+        "(xx) malformedRows exact order/content in file order (kills nodisclose) \u2014 exit=0 malformed=[\"S021\"]",
+        "hermeticity: --selftest passes under a polluted env and bogus dir flags \u2014 exit=1 tail=ROUND_GATE_SELFTEST: 81/86 pass | VERDICT: FAIL"
+      ],
+      "counter_exit": 1,
+      "counter_verdict": "C95_C1: UNMET a=0/1 b=1/1 c=78/78 d=0/1 tool_sha256=085b95235df78a1e4394dc3e6e3394d3c6e64cdc1f828c4c19c8aa4af3ddf0c2",
+      "counter_fx": "C95 FX sources exit=1 declared=[okA shiftB shortD indentF longG plainH] unresolved=[escC rejE proseI codeJ none] malformedRows=[\"S003\"] census=[S002 S003 S004 S007] ok=false"
+    },
+    {
+      "name": "gt13",
+      "intent": "control ctl-gt13: refuse only rows with MORE than 13 fields (short row declares)",
+      "sha256": "1ffef1ea3f350f24b244b4ba9a5b03b6609c5d966eede3b2e05e942d8f83b3b6",
+      "selftest_exit": 1,
+      "selftest_verdict": "FAIL",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 82/86 pass",
+      "selftest_fails": [
+        "(xvii) 12-field short row \u2192 unresolved, id in malformedRows (kills lenient12/gt13-only) \u2014 exit=0 declared=[\"d1e2f3a4\"] malformed=[]",
+        "(xix) a well-formed row next to a malformed one still declares, only the malformed token is unresolved (kills dropall) \u2014 exit=0 declared=[\"a1b2c3d4\",\"d1e2f3a4\"] unresolved=[] malformed=[]",
+        "(xx) malformedRows exact order/content in file order (kills nodisclose) \u2014 exit=1 malformed=[\"S020\",\"S021\"]",
+        "hermeticity: --selftest passes under a polluted env and bogus dir flags \u2014 exit=1 tail=ROUND_GATE_SELFTEST: 83/86 pass | VERDICT: FAIL"
+      ],
+      "counter_exit": 1,
+      "counter_verdict": "C95_C1: UNMET a=0/1 b=1/1 c=78/78 d=0/1 tool_sha256=1ffef1ea3f350f24b244b4ba9a5b03b6609c5d966eede3b2e05e942d8f83b3b6",
+      "counter_fx": "C95 FX sources exit=1 declared=[okA shortD indentF plainH] unresolved=[shiftB escC rejE longG proseI codeJ none] malformedRows=[\"S002\",\"S003\",\"S007\"] census=[S002 S003 S004 S007] ok=false"
+    },
+    {
+      "name": "lenient12",
+      "intent": "control ctl-lenient12: accept 12 or 13 fields",
+      "sha256": "ad8a545793ff68114aef84a5254a6022ef5ad382405980c62ee760edee6cc92b",
+      "selftest_exit": 1,
+      "selftest_verdict": "FAIL",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 82/86 pass",
+      "selftest_fails": [
+        "(xvii) 12-field short row \u2192 unresolved, id in malformedRows (kills lenient12/gt13-only) \u2014 exit=0 declared=[\"d1e2f3a4\"] malformed=[]",
+        "(xix) a well-formed row next to a malformed one still declares, only the malformed token is unresolved (kills dropall) \u2014 exit=0 declared=[\"a1b2c3d4\",\"d1e2f3a4\"] unresolved=[] malformed=[]",
+        "(xx) malformedRows exact order/content in file order (kills nodisclose) \u2014 exit=1 malformed=[\"S020\",\"S021\"]",
+        "hermeticity: --selftest passes under a polluted env and bogus dir flags \u2014 exit=1 tail=ROUND_GATE_SELFTEST: 83/86 pass | VERDICT: FAIL"
+      ],
+      "counter_exit": 1,
+      "counter_verdict": "C95_C1: UNMET a=0/1 b=1/1 c=78/78 d=0/1 tool_sha256=ad8a545793ff68114aef84a5254a6022ef5ad382405980c62ee760edee6cc92b",
+      "counter_fx": "C95 FX sources exit=1 declared=[okA shortD indentF plainH] unresolved=[shiftB escC rejE longG proseI codeJ none] malformedRows=[\"S002\",\"S003\",\"S007\"] census=[S002 S003 S004 S007] ok=false"
+    },
+    {
+      "name": "anyrej",
+      "intent": "control ctl-anyrej: disclose but still read malformed rows; skip any row with a rejected cell",
+      "sha256": "b591160391a9964e0206e9c6c21418c32060af1624f39218fa278fadbb148c2e",
+      "selftest_exit": 1,
+      "selftest_verdict": "FAIL",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 80/86 pass",
+      "selftest_fails": [
+        "(xvi) escaped `\\|` row (naive split yields 14 fields) \u2192 unresolved, id in malformedRows \u2014 exit=0 declared=[\"c1d2e3f4\"] malformed=[\"S011\"]",
+        "(xvii) 12-field short row \u2192 unresolved, id in malformedRows (kills lenient12/gt13-only) \u2014 exit=0 declared=[\"d1e2f3a4\"] malformed=[\"S012\"]",
+        "(xviii) 14-field long row \u2192 unresolved, id in malformedRows \u2014 exit=0 declared=[\"e1f2a3b4\"] malformed=[\"S013\"]",
+        "(xix) a well-formed row next to a malformed one still declares, only the malformed token is unresolved (kills dropall) \u2014 exit=0 declared=[\"a1b2c3d4\",\"d1e2f3a4\"] unresolved=[] malformed=[\"S015\"]",
+        "(xx) malformedRows exact order/content in file order (kills nodisclose) \u2014 exit=0 malformed=[\"S020\",\"S021\",\"S022\"]",
+        "hermeticity: --selftest passes under a polluted env and bogus dir flags \u2014 exit=1 tail=ROUND_GATE_SELFTEST: 81/86 pass | VERDICT: FAIL"
+      ],
+      "counter_exit": 1,
+      "counter_verdict": "C95_C1: UNMET a=0/1 b=1/1 c=78/78 d=0/1 tool_sha256=b591160391a9964e0206e9c6c21418c32060af1624f39218fa278fadbb148c2e",
+      "counter_fx": "C95 FX sources exit=1 declared=[okA escC shortD indentF longG plainH] unresolved=[shiftB rejE proseI codeJ none] malformedRows=[\"S002\",\"S003\",\"S004\",\"S007\"] census=[S002 S003 S004 S007] ok=false"
+    },
+    {
+      "name": "nodisclose",
+      "intent": "control ctl-nodisclose: reference rule with an empty malformedRows",
+      "sha256": "ae33246bf83b9465b45a128a1f4f7ec0ffa2f963035297ff46cabb5f1dd6edcc",
+      "selftest_exit": 1,
+      "selftest_verdict": "FAIL",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 79/86 pass",
+      "selftest_fails": [
+        "(xv) unescaped `|` shifting a truly `rejected` status \u2192 unresolved, id in malformedRows \u2014 exit=1 declared=[] malformed=[]",
+        "(xvi) escaped `\\|` row (naive split yields 14 fields) \u2192 unresolved, id in malformedRows \u2014 exit=1 declared=[] malformed=[]",
+        "(xvii) 12-field short row \u2192 unresolved, id in malformedRows (kills lenient12/gt13-only) \u2014 exit=1 declared=[] malformed=[]",
+        "(xviii) 14-field long row \u2192 unresolved, id in malformedRows \u2014 exit=1 declared=[] malformed=[]",
+        "(xix) a well-formed row next to a malformed one still declares, only the malformed token is unresolved (kills dropall) \u2014 exit=1 declared=[\"a1b2c3d4\"] unresolved=[\"d1e2f3a4\"] malformed=[]",
+        "(xx) malformedRows exact order/content in file order (kills nodisclose) \u2014 exit=1 malformed=[]",
+        "hermeticity: --selftest passes under a polluted env and bogus dir flags \u2014 exit=1 tail=ROUND_GATE_SELFTEST: 80/86 pass | VERDICT: FAIL"
+      ],
+      "counter_exit": 1,
+      "counter_verdict": "C95_C1: UNMET a=0/1 b=1/1 c=78/78 d=0/1 tool_sha256=ae33246bf83b9465b45a128a1f4f7ec0ffa2f963035297ff46cabb5f1dd6edcc",
+      "counter_fx": "C95 FX sources exit=1 declared=[okA indentF plainH] unresolved=[shiftB escC shortD rejE longG proseI codeJ none] malformedRows=[] census=[S002 S003 S004 S007] ok=false"
+    },
+    {
+      "name": "dropall",
+      "intent": "control ctl-dropall: one malformed row silences the whole registry",
+      "sha256": "c452a17f3b1b16ece29642b96136e52b6a4782ffa8a4f1b63b3afdfd57bf441d",
+      "selftest_exit": 1,
+      "selftest_verdict": "FAIL",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 84/86 pass",
+      "selftest_fails": [
+        "(xix) a well-formed row next to a malformed one still declares, only the malformed token is unresolved (kills dropall) \u2014 exit=1 declared=[] unresolved=[\"a1b2c3d4\",\"d1e2f3a4\"] malformed=[\"S015\"]",
+        "hermeticity: --selftest passes under a polluted env and bogus dir flags \u2014 exit=1 tail=ROUND_GATE_SELFTEST: 85/86 pass | VERDICT: FAIL"
+      ],
+      "counter_exit": 1,
+      "counter_verdict": "C95_C1: UNMET a=0/1 b=1/1 c=78/78 d=0/1 tool_sha256=c452a17f3b1b16ece29642b96136e52b6a4782ffa8a4f1b63b3afdfd57bf441d",
+      "counter_fx": "C95 FX sources exit=1 declared=[] unresolved=[okA shiftB escC shortD rejE indentF longG plainH proseI codeJ none] malformedRows=[\"S002\",\"S003\",\"S004\",\"S007\"] census=[S002 S003 S004 S007] ok=false"
+    },
+    {
+      "name": "short12",
+      "intent": "boundary: exact count 12 instead of 13",
+      "sha256": "271a8982da8b5b3c931fbeec016247ddb6767e512e80876c98794fac33d7df83",
+      "selftest_exit": 1,
+      "selftest_verdict": "FAIL",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 77/86 pass",
+      "selftest_fails": [
+        "(i) an 8-hex prefix of a 40-hex URL segment on a mined registry row \u2192 declared, no finding \u2014 exit=1 kinds=[\"COMMIT_CITED_UNRESOLVED\"] declared=[]",
+        "(ii) a cited full 40-hex pin that is a complete URL segment \u2192 declared, no finding \u2014 exit=1 kinds=[\"COMMIT_CITED_UNRESOLVED\"] declared=[]",
+        "(iii) pin followed by `#fragment` (`/commit/<pin>#diff`) \u2192 declared, no finding \u2014 exit=1 kinds=[\"COMMIT_CITED_UNRESOLVED\"] declared=[]",
+        "text mode: COMMIT_CITED_UNRESOLVED detail carries `declared=<n>` beside the unresolved list \u2014 exit=1 COMMIT_CITED_UNRESOLVED cited=2 unresolved=2 [a1b2c3d4 deadbeef1234]",
+        "text mode: a green round with a declared pin prints one `info COMMIT_CITED_DECLARED` line, no finding \u2014 exit=1 lines=[\"ROUND_GATE  error  COMMIT_CITED_UNRESOLVED  cited=1 unresolved=1 [a1b2c3d4]\",\"ROUND_GATE  info  COMMIT_CITED_DECLARED  declared=0 malformed=1 []\",\"ROUND_GATE: DRIFT (round=5 lane=kumitate checks=10 errors=1 warnings=0)\"]",
+        "(xvii) 12-field short row \u2192 unresolved, id in malformedRows (kills lenient12/gt13-only) \u2014 exit=0 declared=[\"d1e2f3a4\"] malformed=[]",
+        "(xix) a well-formed row next to a malformed one still declares, only the malformed token is unresolved (kills dropall) \u2014 exit=1 declared=[\"d1e2f3a4\"] unresolved=[\"a1b2c3d4\"] malformed=[\"S014\"]",
+        "(xx) malformedRows exact order/content in file order (kills nodisclose) \u2014 exit=1 malformed=[\"S020\",\"S021\"]",
+        "hermeticity: --selftest passes under a polluted env and bogus dir flags \u2014 exit=1 tail=ROUND_GATE_SELFTEST: 78/86 pass | VERDICT: FAIL"
+      ],
+      "counter_exit": 1,
+      "counter_verdict": "C95_C1: UNMET a=0/1 b=1/1 c=70/78 d=0/1 tool_sha256=271a8982da8b5b3c931fbeec016247ddb6767e512e80876c98794fac33d7df83",
+      "counter_fx": "C95 FX sources exit=1 declared=[shortD] unresolved=[okA shiftB escC rejE indentF longG plainH proseI codeJ none] malformedRows=[\"S001\",\"S002\",\"S003\",\"S005\",\"S006\",\"S007\",\"S008\"] census=[S002 S003 S004 S007] ok=false"
+    },
+    {
+      "name": "lt13",
+      "intent": "boundary: `!== 13` -> `< 13` (long rows declare)",
+      "sha256": "c6a76637ded3b4964ea3b5de3f29ded740ac9c513344f378210d53e83c070385",
+      "selftest_exit": 1,
+      "selftest_verdict": "FAIL",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 81/86 pass",
+      "selftest_fails": [
+        "(xv) unescaped `|` shifting a truly `rejected` status \u2192 unresolved, id in malformedRows \u2014 exit=0 declared=[\"b1c2d3e4\"] malformed=[]",
+        "(xvi) escaped `\\|` row (naive split yields 14 fields) \u2192 unresolved, id in malformedRows \u2014 exit=0 declared=[\"c1d2e3f4\"] malformed=[]",
+        "(xviii) 14-field long row \u2192 unresolved, id in malformedRows \u2014 exit=0 declared=[\"e1f2a3b4\"] malformed=[]",
+        "(xx) malformedRows exact order/content in file order (kills nodisclose) \u2014 exit=0 malformed=[\"S022\"]",
+        "hermeticity: --selftest passes under a polluted env and bogus dir flags \u2014 exit=1 tail=ROUND_GATE_SELFTEST: 82/86 pass | VERDICT: FAIL"
+      ],
+      "counter_exit": 1,
+      "counter_verdict": "C95_C1: UNMET a=0/1 b=1/1 c=78/78 d=0/1 tool_sha256=c6a76637ded3b4964ea3b5de3f29ded740ac9c513344f378210d53e83c070385",
+      "counter_fx": "C95 FX sources exit=1 declared=[okA shiftB escC indentF longG plainH] unresolved=[shortD rejE proseI codeJ none] malformedRows=[\"S004\"] census=[S002 S003 S004 S007] ok=false"
+    },
+    {
+      "name": "id2",
+      "intent": "boundary: malformed id read from field 2 (text between first two pipes)",
+      "sha256": "268c2fb003172363e3570479c9519c9feca7aae21f577b7dbb478fecfffaed2b",
+      "selftest_exit": 1,
+      "selftest_verdict": "FAIL",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 79/86 pass",
+      "selftest_fails": [
+        "(xv) unescaped `|` shifting a truly `rejected` status \u2192 unresolved, id in malformedRows \u2014 exit=1 declared=[] malformed=[\"x.ts \u2014 https://github.com/o/r/blob/b1c2d3e4b1c2d3e4b1c2d3e4b1c2d3e4b1c2d3e4/x.ts\"]",
+        "(xvi) escaped `\\|` row (naive split yields 14 fields) \u2192 unresolved, id in malformedRows \u2014 exit=1 declared=[] malformed=[\"x.ts \\\\\"]",
+        "(xvii) 12-field short row \u2192 unresolved, id in malformedRows (kills lenient12/gt13-only) \u2014 exit=1 declared=[] malformed=[\"x.ts \u2014 https://github.com/o/r/blob/d1e2f3a4d1e2f3a4d1e2f3a4d1e2f3a4d1e2f3a4/x.ts\"]",
+        "(xviii) 14-field long row \u2192 unresolved, id in malformedRows \u2014 exit=1 declared=[] malformed=[\"x.ts \u2014 https://github.com/o/r/blob/e1f2a3b4e1f2a3b4e1f2a3b4e1f2a3b4e1f2a3b4/x.ts\"]",
+        "(xix) a well-formed row next to a malformed one still declares, only the malformed token is unresolved (kills dropall) \u2014 exit=1 declared=[\"a1b2c3d4\"] unresolved=[\"d1e2f3a4\"] malformed=[\"x.ts \u2014 https://github.com/o/r/blob/d1e2f3a4d1e2f3a4d1e2f3a4d1e2f3a4d1e2f3a4/x.ts\"]",
+        "(xx) malformedRows exact order/content in file order (kills nodisclose) \u2014 exit=1 malformed=[\"x.ts \u2014 https://github.com/o/r/blob/e1f2a3b4e1f2a3b4e1f2a3b4e1f2a3b4e1f2a3b4/x.ts\",\"x.ts \\\\\",\"x.ts \u2014 https://github.com/o/r/blob/d1e2f3a4d1e2f3a4d1e2f3a4d1e2f3a4d1e2f3a4/x.ts\"]",
+        "hermeticity: --selftest passes under a polluted env and bogus dir flags \u2014 exit=1 tail=ROUND_GATE_SELFTEST: 80/86 pass | VERDICT: FAIL"
+      ],
+      "counter_exit": 1,
+      "counter_verdict": "C95_C1: UNMET a=0/1 b=1/1 c=78/78 d=0/1 tool_sha256=268c2fb003172363e3570479c9519c9feca7aae21f577b7dbb478fecfffaed2b",
+      "counter_fx": "C95 FX sources exit=1 declared=[okA indentF plainH] unresolved=[shiftB escC shortD rejE longG proseI codeJ none] malformedRows=[\"y.ts \u2014 https://github.com/o/r/blob/f5ea54529448c0583d019c84ac6c1799217b504f/x.ts\",\"z.ts \u2014 https://github.com/o/r/blob/61aa0b2edb38c4344c2884c8f6583129ef49579c/x.ts\",\"w.ts \u2014 https://github.com/o/r/blob/72ca08e731eb2fcb9d6d211a2ad75c6eb1e2ed12/x.ts\",\"t.ts \u2014 https://github.com/o/r/blob/95def4cbfe4c918233bce5608a289c9469cb514f/x.ts\"] census=[S002 S003 S004 S007] ok=false"
+    },
+    {
+      "name": "untrimmed",
+      "intent": "boundary: push without trim (ids keep surrounding spaces)",
+      "sha256": "14ff41d3919cc8e89a248950309c1ca648e32e770451167d2ef8fe6f2274ae62",
+      "selftest_exit": 1,
+      "selftest_verdict": "FAIL",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 79/86 pass",
+      "selftest_fails": [
+        "(xv) unescaped `|` shifting a truly `rejected` status \u2192 unresolved, id in malformedRows \u2014 exit=1 declared=[] malformed=[\" S010 \"]",
+        "(xvi) escaped `\\|` row (naive split yields 14 fields) \u2192 unresolved, id in malformedRows \u2014 exit=1 declared=[] malformed=[\" S011 \"]",
+        "(xvii) 12-field short row \u2192 unresolved, id in malformedRows (kills lenient12/gt13-only) \u2014 exit=1 declared=[] malformed=[\" S012 \"]",
+        "(xviii) 14-field long row \u2192 unresolved, id in malformedRows \u2014 exit=1 declared=[] malformed=[\" S013 \"]",
+        "(xix) a well-formed row next to a malformed one still declares, only the malformed token is unresolved (kills dropall) \u2014 exit=1 declared=[\"a1b2c3d4\"] unresolved=[\"d1e2f3a4\"] malformed=[\" S015 \"]",
+        "(xx) malformedRows exact order/content in file order (kills nodisclose) \u2014 exit=1 malformed=[\" S020 \",\" S021 \",\" S022 \"]",
+        "hermeticity: --selftest passes under a polluted env and bogus dir flags \u2014 exit=1 tail=ROUND_GATE_SELFTEST: 80/86 pass | VERDICT: FAIL"
+      ],
+      "counter_exit": 1,
+      "counter_verdict": "C95_C1: UNMET a=0/1 b=1/1 c=78/78 d=0/1 tool_sha256=14ff41d3919cc8e89a248950309c1ca648e32e770451167d2ef8fe6f2274ae62",
+      "counter_fx": "C95 FX sources exit=1 declared=[okA indentF plainH] unresolved=[shiftB escC shortD rejE longG proseI codeJ none] malformedRows=[\" S002 \",\" S003 \",\" S004 \",\" S007 \"] census=[S002 S003 S004 S007] ok=false"
+    },
+    {
+      "name": "unshift",
+      "intent": "boundary: unshift instead of push (reverse file order)",
+      "sha256": "62a573bc2672a751bd35653dfbc468448e48f066b2a02e0994faf4b9b45e62d0",
+      "selftest_exit": 1,
+      "selftest_verdict": "FAIL",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 84/86 pass",
+      "selftest_fails": [
+        "(xx) malformedRows exact order/content in file order (kills nodisclose) \u2014 exit=1 malformed=[\"S022\",\"S021\",\"S020\"]",
+        "hermeticity: --selftest passes under a polluted env and bogus dir flags \u2014 exit=1 tail=ROUND_GATE_SELFTEST: 85/86 pass | VERDICT: FAIL"
+      ],
+      "counter_exit": 1,
+      "counter_verdict": "C95_C1: UNMET a=0/1 b=1/1 c=78/78 d=0/1 tool_sha256=62a573bc2672a751bd35653dfbc468448e48f066b2a02e0994faf4b9b45e62d0",
+      "counter_fx": "C95 FX sources exit=1 declared=[okA indentF plainH] unresolved=[shiftB escC shortD rejE longG proseI codeJ none] malformedRows=[\"S007\",\"S004\",\"S003\",\"S002\"] census=[S002 S003 S004 S007] ok=false"
+    },
+    {
+      "name": "nofailclosed",
+      "intent": "boundary: malformedRows key dropped from the SECOND (fail-closed) citations object",
+      "sha256": "2a39d4893bea6d9e693bf12a6950244d9fa8d7096a7b6ffcc80bbebc1fdf345e",
+      "selftest_exit": 1,
+      "selftest_verdict": "FAIL",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 84/86 pass",
+      "selftest_fails": [
+        "--json fail-closed: citations carries `malformedRows: []` on every path \u2014 exit=2 citations={\"checked\":0,\"external\":[],\"declared\":[],\"unresolved\":[],\"notAncestor\":[],\"unverifiable\":[],\"mainProbeable\":null,\"originProbeable\":null}",
+        "hermeticity: --selftest passes under a polluted env and bogus dir flags \u2014 exit=1 tail=ROUND_GATE_SELFTEST: 85/86 pass | VERDICT: FAIL"
+      ],
+      "counter_exit": 1,
+      "counter_verdict": "C95_C1: UNMET a=1/1 b=1/1 c=78/78 d=0/1 tool_sha256=2a39d4893bea6d9e693bf12a6950244d9fa8d7096a7b6ffcc80bbebc1fdf345e",
+      "counter_fx": "C95 FX sources exit=1 declared=[okA indentF plainH] unresolved=[shiftB escC shortD rejE longG proseI codeJ none] malformedRows=[\"S002\",\"S003\",\"S004\",\"S007\"] census=[S002 S003 S004 S007] ok=true"
+    },
+    {
+      "name": "status9",
+      "intent": "boundary: status index 8 -> 9",
+      "sha256": "e56f8e3fda925e8cfe348c21896680da46a41477ab749f039f22576400d196f4",
+      "selftest_exit": 1,
+      "selftest_verdict": "FAIL",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 83/86 pass",
+      "selftest_fails": [
+        "(vi) pin in a URL on a `rejected` registry row \u2192 unresolved \u2014 exit=0 kinds=[] unresolved=[]",
+        "(xiv) status `Rejected` (any case) is a rejected row \u2192 unresolved \u2014 exit=0 kinds=[] declared=[\"e1f2a3b4\"]",
+        "hermeticity: --selftest passes under a polluted env and bogus dir flags \u2014 exit=1 tail=ROUND_GATE_SELFTEST: 84/86 pass | VERDICT: FAIL"
+      ],
+      "counter_exit": 1,
+      "counter_verdict": "C95_C1: UNMET a=0/1 b=1/1 c=78/78 d=0/1 tool_sha256=e56f8e3fda925e8cfe348c21896680da46a41477ab749f039f22576400d196f4",
+      "counter_fx": "C95 FX sources exit=1 declared=[okA rejE indentF plainH] unresolved=[shiftB escC shortD longG proseI codeJ none] malformedRows=[\"S002\",\"S003\",\"S004\",\"S007\"] census=[S002 S003 S004 S007] ok=false"
+    },
+    {
+      "name": "checkafterstatus",
+      "intent": "boundary: field-count check moved AFTER the status read",
+      "sha256": "cf9e271eb9e864291d80fc7e33398981c13b88cb1531688c97268a57196c4d01",
+      "selftest_exit": 0,
+      "selftest_verdict": "PASS",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 86/86 pass",
+      "selftest_fails": [],
+      "counter_exit": 0,
+      "counter_verdict": "C95_C1: HELD a=1/1 b=1/1 c=78/78 d=1/1 tool_sha256=cf9e271eb9e864291d80fc7e33398981c13b88cb1531688c97268a57196c4d01",
+      "counter_fx": "C95 FX sources exit=1 declared=[okA indentF plainH] unresolved=[shiftB escC shortD rejE longG proseI codeJ none] malformedRows=[\"S002\",\"S003\",\"S004\",\"S007\"] census=[S002 S003 S004 S007] ok=true"
+    },
+    {
+      "name": "checkafterreject",
+      "intent": "boundary: count check moved after the status DECISION (rejected rows skipped before disclosure)",
+      "sha256": "c5243d433f9ec3bb1c68789c91b0d4b07a0acf14865e68914f55d73eefef8425",
+      "selftest_exit": 0,
+      "selftest_verdict": "PASS",
+      "selftest_summary": "ROUND_GATE_SELFTEST: 86/86 pass",
+      "selftest_fails": [],
+      "counter_exit": 0,
+      "counter_verdict": "C95_C1: HELD a=1/1 b=1/1 c=78/78 d=1/1 tool_sha256=c5243d433f9ec3bb1c68789c91b0d4b07a0acf14865e68914f55d73eefef8425",
+      "counter_fx": "C95 FX sources exit=1 declared=[okA indentF plainH] unresolved=[shiftB escC shortD rejE longG proseI codeJ none] malformedRows=[\"S002\",\"S003\",\"S004\",\"S007\"] census=[S002 S003 S004 S007] ok=true"
+    }
+  ]
+}

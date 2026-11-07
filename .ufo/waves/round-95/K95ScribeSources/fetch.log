@@ -1,0 +1,25 @@
+# Fetch receipt — 2026-11-07T00:37Z (host UTC; local date -I still 2026-11-06)
+
+Working dir: /fast/scratch/hyaku/kumitate-r95/K95ScribeSources
+
+Commands and their verbatim output:
+
+$ curl -sS -o gfm-tables.html -w 'URL=%{url_effective} STATUS=%{http_code} SIZE=%{size_download}\n' 'https://github.github.com/gfm/'
+URL=https://github.github.com/gfm/ STATUS=200 SIZE=508310
+
+$ curl -sS -o posix-awk.html -w 'URL=%{url_effective} STATUS=%{http_code} SIZE=%{size_download}\n' 'https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html'
+URL=https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html STATUS=200 SIZE=144111
+
+$ ls -l
+-rw-r--r-- 1 vgpnk vgpnk 508310 Nov  6 21:36 gfm-tables.html
+-rw-r--r-- 1 vgpnk vgpnk 144111 Nov  6 21:36 posix-awk.html
+
+$ sha256sum gfm-tables.html posix-awk.html
+b153d814fdfc8624bb6da7449162c1cd707a637f7d1c1b636eb44b9cf63fa220  gfm-tables.html
+6df7d0776af4b28dbc3ec667a02a18e51ccd5066ea45a22166214e7e3832f898  posix-awk.html
+
+Both bodies were copied unchanged into sources/ in this seat dir; sources/ digests were
+recomputed there and are in ../sha256.txt (same values).
+
+The 2018 fallback https://pubs.opengroup.org/onlinepubs/9699919799/utilities/awk.html
+was not requested: the Issue 8 URL answered 200 with the awk utility page.

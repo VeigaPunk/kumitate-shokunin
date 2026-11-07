@@ -4617,6 +4617,12 @@ spec + validated dispatch `65c3374d`; M = `ce58e03ebb5a9c4ca65793099390c565b2c1b
 axis harmed. Selftest 79 → 88; SOURCES 210 → 212 (S273, S274); QUALITY Q89; knowledge `round-gate-registry-shape.md`.
 No capability row (an instrument repair).
 
+**Round 95 M2 addendum (after WAVE-DONE).** K95Mutation: 13/15 READY-byte mutants killed by the selftest, one
+equivalent (`checkafterstatus`), one survivor (`checkafterreject`). M2 `a59fbedcc4b82dc2695fd3916c99abaccfe839bb` adds arm
+(xxii) (selftest 89/89; survivor fails, `close-l1/survivor-remut.txt`); frozen counter at M2 `C95_C1: HELD a=1/1 b=1/1
+c=78/78 d=1/1 tool_sha256=aba737dc…` twice (`close/probe-m2-1.txt`, `close/probe-m2-2.txt`) = `pin.round-gate`. Wave w1:
+10 seats, 0 dead.
+
 ## Round 96 pre-registration (written by round 95). Candidates, not commitments
 
 (1) Section membership (K95CriticB): the gate's row regex ignores `## Registry`; a row-shaped line elsewhere is census E12

@@ -66,6 +66,13 @@ other count declares nothing and its id is appended, in file order, to the alway
 - Framing (K95CriticB, verdict *sound*): the class has 0 real occurrences in 21 lanes and 74 registry revisions
   (K95Scout); the value is prospective fail-closed agreement with the census, not a live defect. Reported as such.
 
+## M2 addendum (after WAVE-DONE)
+
+K95Mutation (`.ufo/waves/round-95/K95Mutation/mutants.md`): 15 mutants on the READY bytes, 13 killed by the selftest,
+`checkafterstatus` equivalent, `checkafterreject` survived (a malformed row whose index-8 cell reads `rejected` was
+skipped before it could be listed). M2 `a59fbedc` adds arm (xxii); the survivor now fails it
+(`close-l1/survivor-remut.txt`); selftest 89/89; frozen counter at M2 HELD twice (`close/probe-m2-{1,2}.txt`).
+
 ## Routed to round 96
 
 1. Section membership (K95CriticB): a row-shaped line outside `## Registry` is census E12 but the gate's regex still
