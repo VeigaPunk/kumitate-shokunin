@@ -292,12 +292,12 @@ The K census decision supplies both members and findings; the score is now
 
 <!-- kumitate-proxy-v1
 A=37
-A_wave=1532
+A_wave=1595
 C=47
 C1=19
 C1_total=19
-C2=245
-C2_total=245
+C2=248
+C2_total=248
 S_members=88
 S_sections=88
 R_members=92
@@ -4656,6 +4656,12 @@ with the counter (and again, after the wave, by shipped arms (xxvi)/(xxvii) — 
 axis harmed (battery receipts). Selftest 89 → 94; SOURCES 212 → 213 (S275); QUALITY Q90; knowledge
 `round-gate-registry-section.md`; SKILL round-gate row (`outsideRows` decision). No capability row (an instrument
 repair). Wave w1: 11 seats, 0 dead (`w1-results.json`).
+
+**Round 96 proxy bookkeeping (close).** The `kumitate-proxy-v1` stanza re-declares `A_wave` 1532 → 1595 (wave seat
+scripts and `close/battery.sh`), `C2`/`C2_total` 245 → 248 (r95 spot-check + `round-gate-registry-section.md` +
+`lessons/round-96.md` rows); `pin.round-gate` aba737dc… → edaa115f… at M. Battery at M (`close/battery-M.txt`):
+`PROXY: DRIFT` on those bookkeeping terms only (pin already matched), every other tool CLEAN / exit 0 and census `ok`.
+Battery at the final lane commit: `close/battery-final.txt`.
 
 ## Round 97 pre-registration (written by round 96). Candidates, not commitments
 
