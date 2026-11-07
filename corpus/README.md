@@ -276,6 +276,7 @@ fixture suite, `--strict` to fail on warnings.
 | `lessons/round-93.md` | Round-93 `seat-route` v2: Q86 counter (type-strict, synthetic F set, held-out post-freeze H, runtime clause), 15 pre-data controls, counter findings (runtime clause evadable, H author-writable), mistakes M93-1/M93-2 | LOG.md round 93; `.ufo/waves/round-93/` |
 | `lessons/round-93-verifier-spotcheck.md` | Non-author round-93 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 | `knowledge/round-gate-declared-pins.md` | Round-gate declared upstream pins: lane → main → origin → `corpus/SOURCES.md` registry pin, the frozen rule, the bounded registry read, the info disclosure line, the seven rounds that stay red, and the self-attestation limit | S271, S033, S267–S269; `.ufo/waves/round-94/` (plan, probe, controls, open, close) |
+| `lessons/round-94.md` | Round-94 `round-gate` declared pins: frozen counter probe94-c1 and 8 pre-data controls, integration hardening (bounded read, info line), mistakes M94-1 (spot-check adopted after the freeze) and M94-2 (r93 filed with its own gate red), Q88 | LOG.md round 94; `.ufo/waves/round-94/` |
 
 ## Known gaps
 

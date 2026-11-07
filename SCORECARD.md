@@ -472,6 +472,7 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
+| 94 | operability (lowest non-retired axis; integer 9 — terminal under `f_O`, so the move is the repaired instrument, not a score delta; `round-gate` resolves SOURCES-declared upstream commit pins, routed defect r93 spot-check §5 item 2; sourced on S271 (opened) and S033 (re-opened) — **HELD** under the frozen predicate, K1–K4 not fired; caveat: five rule clauses latent in the counter, K94CriticA) | `node scripts/round-gate.mjs --round 93` → `COMMIT_CITED_UNRESOLVED cited=11 unresolved=2 [79fa222e 79fa222e8390…]` exit 1 (`.ufo/waves/round-94/open/round-gate-r93-before.txt`); do-nothing control `C94_C1: UNMET a=0/1 b=7/7 c=77/77 d=1/2 e=1/1`; blanket `UNMET b=0/7 c=70/77 d=0/2 e=0/1`; five rule-precision forgeries `UNMET d=1/2`; positive control `HELD` (`.ufo/waves/round-94/controls/`, committed at freeze `73317eca`) | `node .ufo/waves/round-94/probe/probe94-c1.mjs --tool <git show M:scripts/round-gate.mjs> --work <scratch> --freeze 73317eca18c3927fc3c92fe492cd882dc4cda953` → `C94_C1: HELD a=1/1 b=7/7 c=77/77 d=2/2 e=1/1 tool_sha256=158062f8…` twice at M `d21decd2` (`close/probe1.txt`, `close/probe2.txt`); live `--round 93` → `info COMMIT_CITED_DECLARED declared=2` + `ROUND_GATE: CLEAN`; selftest 61 → 75 | `.ufo/waves/round-94/close/kill-and-harm.txt`, `close-l1/integration-mutants.txt` (4/4 killed), `K94ExecTool/arm-teeth.txt` (7/7 rule shapes killed), `w1/K94CriticA.md`; lesson `corpus/lessons/round-94.md` |
 | 93 | operability (lowest non-retired axis; integer 9 — terminal under `f_O`, so the move is the capability row, not a score delta; capability upgrade `seat-route` v1 → v2, contract `kumitate-seat-route-v2`; sourced on S267/S268/S269/S270 — **HELD** under the frozen predicate and kill rule; caveat M93-3, runtime clause is a single-invocation literal trace) | do-nothing control `C93_C1: UNMET agree=0/221`; shipped v1 `cd7ee03d…` 0/221; twelve one-field ablations 0..220/221; positive control (oracle) `HELD agree=221/221` (`.ufo/waves/round-93/controls/table.txt`, committed at freeze `b6204949`) | `python3 .ufo/waves/round-93/probe/probe93-c1.py --tool scripts/seat-route.mjs --sample-a .ufo/waves/round-92/probe/sampleA.tsv --fixtures .ufo/waves/round-93/probe/fixtures --after 2026-11-06T21:40:00.000Z --waves .ufo/waves/round-92/w1-results.json,.ufo/waves/round-93/w1-results.json` → `C93_C1: HELD agree=176/176 A=61/61 F=16/16 H=74/74 W=25/25 thin_fields=0` + `RUNTIME: CLEAN findings=0` twice, `tool_sha256=7273ad2b…` (`close/probe1.txt`, `close/probe2.txt`); selftest 63/63; kill clauses (a)–(f) not fired (`close/kill-checks.txt`) | `.ufo/waves/round-93/{plan.md,probe,controls,close,close-l1}`; `corpus/knowledge/seat-route-retry-fields.md`; `corpus/lessons/round-93.md`; measured at M `2f8475cdeca3aab569234537cd75d9f332aac6bc` |
 | 92 | operability (lowest non-retired axis; integer 9 — terminal under `f_O`, so the move is the capability row, not a score delta; capability acquisition `seat-route`, contract `kumitate-seat-route-v1`; sourced on S266/S267/S268 — **HELD** under the frozen predicate and kill rule; discernment caveat M92-3) | do-nothing control `C92_C1: UNMET agree=0/133`; existing `inline-dispatch-evidence` 0/133; seven one-field ablations 54..132/133; positive control (oracle) `HELD agree=133/133` (`.ufo/waves/round-92/controls/table.txt`, committed at freeze `596f6753`) | `python3 .ufo/waves/round-92/probe/probe92-c1.py --tool scripts/seat-route.mjs --index .ufo/waves/round-92/probe/index92.tsv --sample-a .ufo/waves/round-92/probe/sampleA.tsv --waves .ufo/waves/round-91/w1-results.json,.ufo/waves/round-92/w1-results.json` → `C92_C1: HELD agree=145/145 A=61/61 C=60/60 W=24/24 last_wave_located=12` twice, `tool_sha256=cd7ee03d…` (`close/probe1.txt`, `close/probe2.txt`); selftest 37/37; three definition-wrong constructions also HELD 145/145 (`close-l1/construct-*.txt`) | `.ufo/waves/round-92/{plan.md,probe,controls,close,close-l1}`; `corpus/knowledge/seat-route-from-session-transcripts.md`; `corpus/lessons/round-92.md`; measured on the round-92 lane commit that carries `scripts/seat-route.mjs` (hash in LOG round 92) |
 | 91 | operability (lowest non-retired axis; integer held 9 — terminal under `f_O`; capability acquisition `receipt-bind` v5, bounded external reads; sourced on S263/S264/S265 — **UNMET**, rejected-honest-stop by frozen kill clause (d); no capability row) | `node .ufo/waves/round-91/probe/probe91-c1.mjs --lane . --work <scratch> --alt /fast/scratch/hyaku --rev 0bff4babeec90dd57ea36efeaa94b66db9af381d --tool <v4 at rev>` → do-nothing `C91_C1: UNMET held=52/56` exit 1 (`.ufo/waves/round-91/controls/ctl-base-v4-at-rev.txt`; fails `ext-zero`, `ext-null`, `ext-fifo`, `ext-overcap`); positive control `HELD 56/56`, refuse-all 8/56 (`controls/table.txt`) | at M the integrated v5 reads `C91_C1: HELD held=56/56` twice (`.ufo/waves/round-91/close/probe1.txt`, `close/probe2.txt`), selftest 76 → 84; but three seat constructions also read 56/56 and are wrong inside a declared class (`.ufo/waves/round-91/K91CriticA/scores.md`; L1 re-run `close-l1/l1-rerun-criticA-repros.txt`), so C1 is UNMET; Q84, Q85 admitted; the class sampler separates them (`close-l1/class-sampler.txt`). Lesson `corpus/lessons/round-91.md`; plan `2b1b8bf3` |
@@ -581,6 +582,8 @@ the frozen definitions name.
 
 
 ## Planned
+
+**Round 95 — pre-registration** (written by round 94) lives at the end of this file under `## Round 95 pre-registration (written by round 94)`. **Round 94 — declaration and measured disposition** live above it under `## Round 94 — declaration and measured disposition (2026-11-06, attempt 1)`.
 
 **Round 94 — pre-registration** (written by round 93) lives at the end of this file under `## Round 94 pre-registration (written by round 93)`. **Round 93 — declaration and measured disposition** live above it under `## Round 93 — declaration and measured disposition (2026-11-06, attempts 1–2)`.
 
@@ -4547,3 +4550,33 @@ orchestrator spawned after the freeze). (2) K93CriticA fixtures F93CapturedTwice
 F93ResolvedEmpty and K93Mutation's lone-string `supersededBy` fixture. (3) K93Sentinel R93-D1: redact or bound
 `resolved`/`chain`/`upstream`/`superseded_by` values in human mode. (4) M93-5: `round-gate --close` requires
 `close/probe*.txt` when the plan freezes a predicate. (5) SOURCES row for `retry-fallback-chains.ts` (M93-2).
+
+## Round 94 — declaration and measured disposition (2026-11-06, attempt 1)
+
+One claim: **C1 operability** (lowest non-retired axis; integer 9, terminal under `f_O`): `scripts/round-gate.mjs`
+declares SOURCES-registered upstream commit pins (r93 spot-check §5 item 2), sourced on S271 (opened) and S033
+(re-opened). Taken from the round-94 pre-registration: item (5) (S272, M93-2). Not taken: items (1)–(4) (routed
+again below). Frozen at `73317eca18c3927fc3c92fe492cd882dc4cda953` (20:40:25-03:00; plan, counter probe94-c1,
+control generator, 8 controls, open receipts); wave spec + validated dispatch `791b1fdd`; M = `d21decd2`.
+
+| item | measured |
+|---|---|
+| before | `node scripts/round-gate.mjs --round 93` → `COMMIT_CITED_UNRESOLVED cited=11 unresolved=2 [79fa222e 79fa222e8390…]`, `DRIFT`, exit 1 (`open/round-gate-r93-before.txt`) |
+| do-nothing control | `C94_C1: UNMET a=0/1 b=7/7 c=77/77 d=1/2 e=1/1` (`controls/ctl-nothing.txt`) |
+| other pre-data controls | blanket `UNMET b=0/7 c=70/77 d=0/2 e=0/1`; substring, anyline, contains, norejfilter, slashonly `UNMET d=1/2`; positive `HELD` (`controls/`) |
+| predicate at M | `C94_C1: HELD a=1/1 b=7/7 c=77/77 d=2/2 e=1/1 tool_sha256=158062f8…` twice (`close/probe1.txt`, `close/probe2.txt`) = the bytes at M and `pin.round-gate` |
+| kill rules | K1 no (HELD); K2 the shipped selftest kills all seven rule shapes (`K94ExecTool/arm-teeth.txt`) and the four integration mutants (`close-l1/integration-mutants.txt`); K3 harm battery at M CLEAN except the proxy bookkeeping terms re-declared below (`close/kill-and-harm.txt`); K4 plan/probe/controls/open unchanged since the freeze (same receipt) |
+| caveat | K94CriticA: 7 of 12 wrong-but-plausible gates also reach HELD (five latent rule clauses, (a) membership not equality, (c) blind to unexercised checks); the shipped bytes rest on K94Reviewer's hand review and the selftest arms, not on the counter alone |
+
+**Verdict (lane's reading): C1 HELD.** Axes: operability 9 unchanged (terminal), every coverage row 10 unchanged;
+no axis harmed. Selftest 61 → 75; SOURCES 208 → 210 (S271, S272); QUALITY Q88; knowledge
+`round-gate-declared-pins.md`. No capability row (an instrument repair, not a new repertoire item).
+
+## Round 95 pre-registration (written by round 94). Candidates, not commitments
+
+(1) M94-1 structural fix: a pre-freeze command that exits 1 while a verifier spot-check is uncovered, so a freeze
+cannot be written red (the fifth M8 recurrence). (2) probe94 counter coverage (K94CriticA): 7-hex token, `queued`
+declaring row, `?plain=1` URL, indented row, `mined` row whose text says "rejected", (a) as set equality, one
+unrelated-check-false-at-BASE fixture. (3) K94Sentinel: an unescaped `|` in a cell shifts the status column —
+refuse rows whose field count is not 13 in the gate's registry parse. (4) Carried: M93-3 counter repair, M93-5
+`--close` probe-receipt requirement, R93-D1 seat-route human-mode redaction, F93 fixtures.

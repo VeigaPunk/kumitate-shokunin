@@ -1,0 +1,34 @@
+## K4: git diff --stat 73317eca d21decd2c0cf2f320938efd4570196ec19e683b1 -- plan/probe/controls/open
+(empty above = unchanged)
+## freeze time
+73317eca18c3927fc3c92fe492cd882dc4cda953 2026-11-06T20:40:25-03:00
+## M time
+d21decd2c0cf2f320938efd4570196ec19e683b1 2026-11-06T21:07:19-03:00
+## K3 battery at M (live lane)
+### node scripts/proxy-check.mjs
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=239 computed=241 delta=+2
+PROXY: DRIFT (A_WAVE_DRIFT term=A_wave declared=1471 computed=1501 delta=+30; C2_DRIFT term=C2 declared=239 computed=241 delta=+2; C2_TOTAL_DRIFT term=C2_total declared=239 computed=241 delta=+2; src-rev=31c465f15669; source=snapshot)
+exit=1
+### node scripts/readme-map.mjs
+README_MAP: CLEAN files=241 rows=241 covered=241
+exit=0
+### node scripts/sources-check.mjs
+SOURCES  info  LEGACY_NO_HEADER  count=38
+SOURCES_CHECK: CLEAN (rows=210 tiers=A:178,B:22,C:10 status=queued:14,mined:168,rejected:28 entries_with_source=48 legacy=38)
+exit=0
+### node scripts/counter-pins.mjs
+COUNTER_PINS: CLEAN pins=50
+exit=0
+### node scripts/spotcheck-adopt.mjs --check
+SPOTCHECK_COVERAGE: CLEAN spotchecks=60 uncovered=0
+MAP: CLEAN
+exit=0
+### node scripts/round-gate.mjs --tracked
+ROUND_GATE: CLEAN (mode=tracked checked=76 errors=0 warnings=0)
+exit=0
+### node scripts/cite-sources.mjs
+CITE_SOURCES: CLEAN cited=263
+exit=0
+### sources-census validate
+kumitate	W04	S271 duplicate url git-scm.com/docs/gitrevisions across scopes
+kumitate	ok	/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
