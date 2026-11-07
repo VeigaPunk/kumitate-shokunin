@@ -1,0 +1,12 @@
+$ read-order-check --log .ufo/waves/round-98/open/read-order.log --freeze 7038ee4c
+READ_ORDER: DRIFT NO_LOG .ufo/waves/round-98/open/read-order.log
+exit=1
+$ doctored: PROTOCOL.md moved after claim (sed of the r99 log)
+READ_ORDER: DRIFT CANONICAL_AFTER_CLAIM line=12 kimi-shokunin/skills/shokunin/protocol/PROTOCOL.md
+exit=1
+$ doctored: skill://swarm line removed
+READ_ORDER: DRIFT MISSING_BINDING skill://swarm
+exit=1
+$ r99 log vs adoption commit f9cd1bff (03:17:58; later reads must fail AFTER_FREEZE)
+READ_ORDER: DRIFT AFTER_FREEZE line=27 kumitate-shokunin/SKILL.md
+exit=1
