@@ -286,6 +286,7 @@ fixture suite, `--strict` to fail on warnings.
 | `lessons/round-96-verifier-spotcheck.md` | Non-author round-96 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 | `knowledge/sources-check-registry-section.md` | The lane `sources-check` reads `## Registry` membership with the census `row_pass` grammar (R97): the base reader's four JS-class departures (CR split, literal-space heading regex, `\s` trim, bare-`#` clear), why the census and not ECMA-262/CommonMark, the grammar-derived nonce battery + 17 controls, limits (closed class grid; fleet CRLF class live in six sibling lanes) | S276, S275, S274; `.ufo/waves/round-97/` (plan, probe, controls, close-l1) |
 | `lessons/round-97.md` | Round-97 `sources-check` registry section reader = census: nonce grammar-battery counter probe97-c1 and 17 pre-data controls, M2 selftest arms for counter-only mutants, mistakes M97-1 (fixed-identity counters) and M97-2 (L1 re-mutation helper read post-integration bytes), Q91 | LOG.md round 97; `.ufo/waves/round-97/` |
+| `lessons/round-97-verifier-spotcheck.md` | Non-author round-97 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 
 ## Known gaps
 
