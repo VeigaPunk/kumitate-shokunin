@@ -1869,6 +1869,61 @@ function selfTest() {
         detail: `exit=${dPadsOut.g.status} declared=${JSON.stringify(r.decl)} outside=${JSON.stringify(outOf(dPadsOut.j))} malformed=${JSON.stringify(malOf(dPadsOut.j))}`,
       };
     });
+    // Round 98 integration (M2): the wave found shapes that violate R98 yet pass
+    // (xxviii)/(xxix) or the frozen counter — K98Mutation `[ \t]+` lead/trail (no
+    // zero-pad id cell drawn), K98CriticA `[ \t]{0,3}` (pad length), `S\d{3,7}`
+    // (id length), extra Cf/C0/filler pads, and a BOM-stripping reader. Arm (xxx)
+    // pins them inside and outside; arm (xxxi) pins a file-start BOM heading.
+    const xPins = ['e0000001', 'e0000002', 'e0000003', 'e0000004', 'e0000005', 'e0000006', 'e0000007', 'e0000008', 'e0000009', 'e0000010', 'e0000011', 'e0000012', 'e0000013', 'e0000014', 'e0000015', 'e0000016'].map(pin40);
+    const dPadsX = citedJson(fxCustom('r98-pads-extra', [
+      '# SOURCES — fixture r98 pad length, id length, exotic pads', '',
+      '## Registry', '', ...R96_HDR,
+      r98Row('', 'S301', '', xPins[0]), // zero pad both: declares (kills `[ \t]+`)
+      r98Row('', 'S302', ' ', xPins[1]), // zero lead pad: declares
+      r98Row(' ', 'S303', '', xPins[2]), // zero trail pad: declares
+      r98Row('    ', 'S304', ' ', xPins[3]), // 4-space lead pad: declares (kills `{0,3}` pads)
+      r98Row(' ', 'S305', '\t\t\t\t', xPins[4]), // 4-TAB trail pad: declares
+      r98Row('        ', 'S306', '        ', xPins[5]), // 8-space pads both: declares
+      r98Row(' ', 'S30712345', ' ', xPins[6]), // 8-digit id: declares (kills `\d{3,7}`)
+      r98Row(' ', 'S308000000001', ' ', xPins[7]), // 12-digit id: declares
+      r98Row('\u00ad', 'S309', ' ', xPins[8]), // U+00AD soft hyphen lead: not a row
+      r98Row(' ', 'S310', '\u200e', xPins[9]), // U+200E LRM trail: not a row
+      r98Row('\u0008', 'S311', ' ', xPins[10]), // U+0008 lead: not a row
+      r98Row(' ', 'S312', '\u3164', xPins[11]), // U+3164 Hangul filler trail: not a row
+      '', '## Leads (unopened)', '',
+      r98Row('', 'S401', '', xPins[12]), // zero pad outside: listed
+      r98Row('    ', 'S402', '\t\t\t\t', xPins[13]), // long pads outside: listed
+      r98Row(' ', 'S40312345', ' ', xPins[14]), // 8-digit id outside: listed
+      r98Row('\u00ad', 'S404', ' ', xPins[15]), // soft hyphen outside: not listed
+      '',
+    ], citeAll(...xPins.map((p) => p.slice(0, 8)))));
+    check('(xxx) R98 pad length and id length are unbounded, only SP/TAB pad: zero, 4-space, 4-TAB, 8-space pads and 8/12-digit ids declare (inside) or list (outside); U+00AD, U+200E, U+0008, U+3164 pads are not rows', () => {
+      const r = resolvedOnly(dPadsX, true);
+      const want = xPins.slice(0, 8).map((p) => p.slice(0, 8)).sort();
+      return {
+        ok: r.ok && JSON.stringify([...r.decl].sort()) === JSON.stringify(want)
+          && r.unres.length === xPins.length - 8
+          && JSON.stringify(outOf(dPadsX.j)) === '["S401","S402","S40312345"]'
+          && JSON.stringify(malOf(dPadsX.j)) === '[]',
+        detail: `exit=${dPadsX.g.status} declared=${JSON.stringify(r.decl)} outside=${JSON.stringify(outOf(dPadsX.j))} malformed=${JSON.stringify(malOf(dPadsX.j))} unresolved=${r.unres.length}`,
+      };
+    });
+    const bomPins = ['f0000001', 'f0000002'].map(pin40);
+    const dBom = citedJson(fxCustom('r98-file-bom', [
+      '\ufeff## Registry', '', ...R96_HDR,
+      r98Row(' ', 'S501', ' ', bomPins[0]), // the census reads no heading: outside, E12
+      r98Row(' ', 'S502', ' ', bomPins[1]),
+      '',
+    ], citeAll(...bomPins.map((p) => p.slice(0, 8)))));
+    check('(xxxi) a file-start U+FEFF before `## Registry` is not stripped: the census reads no heading, so both rows are outside and nothing is declared', () => {
+      const r = resolvedOnly(dBom, true);
+      return {
+        ok: r.ok && r.decl.length === 0 && r.unres.length === 2
+          && JSON.stringify(outOf(dBom.j)) === '["S501","S502"]'
+          && JSON.stringify(malOf(dBom.j)) === '[]',
+        detail: `exit=${dBom.g.status} declared=${JSON.stringify(r.decl)} outside=${JSON.stringify(outOf(dBom.j))} malformed=${JSON.stringify(malOf(dBom.j))}`,
+      };
+    });
 
     /* 25/26 ─ close clean + TREE_DIRTY ------------------------------------- */
     const closeClean = fxCloseFixture('close-clean');
