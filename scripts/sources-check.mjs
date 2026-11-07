@@ -762,6 +762,11 @@ function selfTest() {
       ['r97sec-cr-only-line', '## Registry\r\r', 0, ['S001', 'S002']],
       ['r97sec-pre-heading-row', '## Registry', 1, ['S000'], { preRow: true }],
       ['r97sec-empty-after-registry', '## Registry', 0, ['S001', 'S002'], { emptyAfter: true }],
+      // Round-97 integration (K97Mutation counter-only kills m18/m19/m25): a 4-space `##`/`#` line inside the
+      // Registry is code, not a heading, so the row stays inside; trailing spaces/tabs are trimmed.
+      ['r97sec-4space-h2-inside', '## Registry', 1, [], { clearing: '    ## Leads' }],
+      ['r97sec-4space-h1-inside', '## Registry', 1, [], { clearing: '    # Title' }],
+      ['r97sec-trail-space-tab', '## Registry \t', 1, []],
     ];
     for (const [label, heading, expectedRows, expectedOutside, extra = {}] of r97Cases) {
       check(`${label}: section grammar pinned`, () => {
