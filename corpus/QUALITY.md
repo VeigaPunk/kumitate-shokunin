@@ -1512,3 +1512,37 @@ Q39–Q41 were added in round 50 (r49 verifier-spotcheck defects 4–5 and the R
 - **Command.** `bash .ufo/waves/round-95/K95ScribeLesson/wordcount-cmd.txt corpus/lessons/round-<N>.md` → `WORDCOUNT: CLEAN pairs=<n>` exit 0 / one `MISMATCH stated=N actual=M` line per bad pair, exit 1 / `WORDCOUNT: EMPTY pairs=0` or `MALFORMED …`, exit 2.
 - **Shown able to fail.** `.ufo/waves/round-95/K95ScribeLesson/receipts/wc-round-94.txt` (`MISMATCH stated=17 actual=18`, `MISMATCH stated=9 actual=10`, rc=1) against `…/wc-round-74.txt` (`WORDCOUNT: CLEAN pairs=2`, rc=0) and `…/wc-round-93.txt` (`pairs=1`, rc=0); round 95's own run is `.ufo/waves/round-95/close-l1/q89-round-95.txt`.
 - **Limit.** One quote form only (`N words): "…"`); a quote with an internal `"` followed by another quoted phrase in the same paragraph can be cut at the later quote. Older lessons that fail it (rounds 39, 49, 73 per `…/receipts/wc-round-{39,49,73}.txt`) are not rewritten (append-only); Q89 binds lessons filed from round 95 on. A lint, not a registered lane gate.
+
+### Q90 — a lesson's new source rows carry their registry URL (round 96)
+
+- **Rule.** Every `S` id on a round lesson's new-row declaration is looked up in `corpus/SOURCES.md`; the
+  row's URL (scheme+host+path, fragment and trailing punctuation dropped) must appear in the lesson text. The
+  declaration shapes the corpus uses are read: the canonical `### Rows touched` → `New:` line (rounds 94+),
+  the `New rows,` table (rounds 46–47) and the `**Source rows opened this round**` bullet list (rounds 34–36).
+  The lesson is filed only when the command prints `LESSON_URLS: CLEAN new=<n>` and exits 0; a lesson with no
+  new row prints `LESSON_URLS: NONE` and also exits 0. One `MISSING_URL <id> <url>` line per new row whose
+  registry URL is absent, exit 1.
+- **Grounding.** Round 95's `## Gate` recorded S273/S274 with date, location and quote but no URL (round-95
+  spot-check §5 item 1; lesson M96-1). Round 94 (S272) and round 47 (5 of 16) carry the same class, so it is
+  a class, not a slip: `.ufo/waves/round-96/K96ScribeLesson/receipts/lesson-urls-round-{94,47}.txt`. CORPUS rule 1 asks the lesson to carry the
+  URL; without it the row is re-openable only by grepping the registry.
+- **Who checks.** The L1 before filing its lesson; the closure re-runs it over the filed lesson. Round 96's own run: `.ufo/waves/round-96/close-l1/q90-round-96.txt`.
+- **Command.** `bash .ufo/waves/round-96/K96ScribeLesson/lesson-urls-cmd.txt corpus/lessons/round-<N>.md [corpus/SOURCES.md]`
+  → `LESSON_URLS: CLEAN new=<n>` (or `LESSON_URLS: NONE`) exit 0 / one `MISSING_URL <id> <url>` per bad row,
+  exit 1.
+- **Fails when.** A declared new row's registry URL (fragment stripped, trailing `;,. )` and `/` dropped) is
+  not a substring of the lesson text; the test is fragment-insensitive and trailing-slash-insensitive.
+- **Shown able to fail.** `.ufo/waves/round-96/K96ScribeLesson/receipts/lesson-urls-round-95.txt` (`MISSING_URL S273 https://github.github.com/gfm`,
+  `MISSING_URL S274 https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html`, rc=1) and
+  `…/lesson-urls-round-94.txt` (S272, rc=1) against `…/lesson-urls-round-34.txt` (`CLEAN new=20`, rc=0),
+  `…/round-35.txt` (`new=8`), `…/round-36.txt` (`new=4`) and `…/round-46.txt` (`new=2`), all rc=0. The positive
+  twin `…/lesson-urls-positive-twin.txt` adds the S273 URL to a copy of round 95 and the command then reports
+  only S274 — the check follows the bytes it reads, not the filename.
+- **Limit.** URL presence is not quote fidelity (Q89 owns the quote word count) and not row truth (only a
+  closure re-opening the page guards that). A row whose registry `source` cell carries no `http(s)` URL
+  (own-work / command rows: S004, S008, S009, S021, S029, S080, S081, S083, S087–S090) is skipped, not passed.
+  The check reads the registry as it stands at run time, so a later row-URL normalisation can fail an older
+  lesson; like Q89 it binds lessons filed from round 96 on and older failures are not rewritten. The pre-r94
+  declaration shapes are read best-effort (round 45's range bullets `S062–S074` are not expanded, so it reads
+  `NONE`); a URL can appear in the lesson for a different reason (another row citing the same URL) and still
+  satisfy the substring test. A lint, not a registered lane gate.

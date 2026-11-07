@@ -281,6 +281,8 @@ fixture suite, `--strict` to fail on warnings.
 | `knowledge/round-gate-registry-shape.md` | Registry rows the round gate may trust: census shape `NF==13` before any cell is read, `citations.malformedRows` disclosure, why not GFM-aware parsing, fail-closed direction, limits | S273, S274, S271, S033, S267–S269; `.ufo/waves/round-95/` (plan, probe, controls, close-l1) |
 | `lessons/round-95.md` | Round-95 `round-gate` registry-row shape: frozen counter probe95-c1 and 8 pre-data controls, integration (r94 text line kept, malformed info line, clause arm), mistakes M95-1 (quote word counts) and M95-2 (counter clause coverage), Q89 | LOG.md round 95; `.ufo/waves/round-95/` |
 | `lessons/round-95-verifier-spotcheck.md` | Non-author round-95 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
+| `knowledge/round-gate-registry-section.md` | Rows that may declare a pin are the rows inside the census `## Registry` section: section state mirrored from `sources-census.sh` `row_pass`, `citations.outsideRows` disclosure, why the census and not CommonMark, clause battery + 20 controls, the census's two section readers, limits | S275, S273, S274; `.ufo/waves/round-96/` (plan, probe, controls, close-l1) |
+| `lessons/round-96.md` | Round-96 `round-gate` registry section membership: frozen counter probe96-c1 with a clause battery and 20 pre-data controls (pre-freeze catch disclosed), integration arms (xxvi)/(xxvii), mistakes M96-1 (lesson rows without URLs) and M96-2 (counter clause coverage, third recurrence), Q90 | LOG.md round 96; `.ufo/waves/round-96/` |
 
 ## Known gaps
 
