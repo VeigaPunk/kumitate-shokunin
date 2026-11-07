@@ -279,6 +279,7 @@ fixture suite, `--strict` to fail on warnings.
 | `lessons/round-94.md` | Round-94 `round-gate` declared pins: frozen counter probe94-c1 and 8 pre-data controls, integration hardening (bounded read, info line), mistakes M94-1 (spot-check adopted after the freeze) and M94-2 (r93 filed with its own gate red), Q88 | LOG.md round 94; `.ufo/waves/round-94/` |
 | `lessons/round-94-verifier-spotcheck.md` | Non-author round-94 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 | `knowledge/round-gate-registry-shape.md` | Registry rows the round gate may trust: census shape `NF==13` before any cell is read, `citations.malformedRows` disclosure, why not GFM-aware parsing, fail-closed direction, limits | S273, S274, S271, S033, S267–S269; `.ufo/waves/round-95/` (plan, probe, controls, close-l1) |
+| `lessons/round-95.md` | Round-95 `round-gate` registry-row shape: frozen counter probe95-c1 and 8 pre-data controls, integration (r94 text line kept, malformed info line, clause arm), mistakes M95-1 (quote word counts) and M95-2 (counter clause coverage), Q89 | LOG.md round 95; `.ufo/waves/round-95/` |
 
 ## Known gaps
 
