@@ -74,7 +74,10 @@
  *                                   satisfy N=10 and `round-10` cannot satisfy N=1).
  *   warning REPORT_SHONEN_MISSING   no `^#{1,6}\s*SHONEN` heading (case-insensitive).
  *   error   COMMIT_CITED_UNRESOLVED a cited commit token resolves in no probeable
- *                                   source (lane → main → origin).
+ *                                   source (lane → main → origin → declared).
+ *                                   The lane's own SOURCES.md registry can
+ *                                   *declare* an upstream pin (round 94): such a
+ *                                   token is not a finding.
  *   error   COMMIT_CITED_NOT_ANCESTOR  a cited token resolves in `--repo` but is
  *                                   not an ancestor of its HEAD
  *                                   (`git merge-base --is-ancestor`).
@@ -105,13 +108,29 @@
  *   governed by PROTOCOL.md (shokunin main repo, :200-213) and the integrator.
  *   Cited-commit extraction: backticked spans, split on `..`/`...` (ranges like
  *   `31f09cd..d65aa24`), each part matching `^[0-9a-f]{7,40}$`. Resolution order
- *   lane → main → origin; resolving in main/origin is an external citation and
- *   never a finding (reported only in `--json` `citations.external`). Only
- *   read-only object probes (`git cat-file -e <tok>^{commit}`, `git merge-base
- *   --is-ancestor`) touch `--origin`, lazily, and only for tokens the lane and
- *   main repos did not resolve; the origin tree is never written. If main or
- *   origin is not a git work tree the resolution space is incomplete and such
- *   tokens are not findings (`--json` `citations.unverifiable`).
+ *   lane → main → origin → declared; resolving in main/origin is an external
+ *   citation and never a finding (reported only in `--json` `citations.external`).
+ *   SOURCES-declared upstream pins (round 94, contract still
+ *   `kumitate-round-gate-v1` — the rule only narrows an error, no field is
+ *   removed): a token that resolves nowhere is `declared` (no finding; listed
+ *   in `--json` `citations.declared`) iff it is a prefix of a 40-hex string that
+ *   is a complete path segment (URL split on `/`, `?`, `#`) of an `http(s)://`
+ *   URL on a `corpus/SOURCES.md` registry row (`^ {0,3}\|\s*S\d{3,}\s*\|`) whose
+ *   status cell (8th column) is not `rejected`. No SOURCES.md -> no declared
+ *   pins. The registry is read lazily, once per run, and only when some token
+ *   reached the declared step; in text mode the COMMIT_CITED_UNRESOLVED detail
+ *   may carry `declared=<n>`, and any declared token is disclosed by one
+ *   non-finding line `ROUND_GATE  info  COMMIT_CITED_DECLARED  declared=<n>
+ *   [<tokens>]` printed before the verdict line. The read is bounded: opened
+ *   O_RDONLY|O_NOFOLLOW|O_NONBLOCK and judged by fstat on the descriptor; only
+ *   a regular file of at most 8 MiB is read — a FIFO, device, directory,
+ *   symlink, oversized or unreadable SOURCES.md declares nothing.
+ *   Only read-only object probes (`git cat-file -e <tok>^{commit}`,
+ *   `git merge-base --is-ancestor`) touch `--origin`, lazily, and only for
+ *   tokens the lane and main repos did not resolve; the origin tree is never
+ *   written. If main or origin is not a git work tree the resolution space is
+ *   incomplete and such tokens are not findings (`--json`
+ *   `citations.unverifiable`).
  *   Fail-closed tokens (exit 2): REPORTS_DIR_MISSING, NOT_A_GIT_WORKTREE,
  *   NO_CLOSED_ROUND, NO_FILED_REPORTS, UPSTREAM_MISSING, MAIN_REPO_NOT_GIT,
  *   INTERNAL_ERROR. NO_FILED_REPORTS is `--tracked` with fewer than two
@@ -141,8 +160,8 @@
 import { spawnSync } from 'node:child_process';
 import { capSpawnSync } from './cap-spawn.mjs';
 import {
-  existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, statSync,
-  writeFileSync,
+  closeSync, constants as fsConstants, existsSync, fstatSync, mkdirSync, mkdtempSync, openSync, readFileSync,
+  readSync, readdirSync, realpathSync, rmSync, statSync, symlinkSync, writeFileSync,
 } from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
@@ -213,6 +232,35 @@ function statKind(p) {
 
 function readText(p) {
   try { return readFileSync(p, 'utf8'); } catch { return null; }
+}
+
+/**
+ * Round-94 integration (K94Sentinel): the registry read is bounded and never blocks. The base
+ * `readText` would hang on a FIFO and abort V8 on a `/dev/zero` symlink. The registry is opened
+ * `O_RDONLY|O_NOFOLLOW|O_NONBLOCK` and judged by `fstat` on the opened descriptor: only a regular
+ * file of at most SOURCES_MAX_BYTES is read; a FIFO, device, directory, symlink, oversized or
+ * unreadable path declares nothing (the "no SOURCES.md" reading).
+ */
+const SOURCES_MAX_BYTES = 8 * 1024 * 1024;
+function readRegistry(p) {
+  let fd = -1;
+  try {
+    fd = openSync(p, fsConstants.O_RDONLY | fsConstants.O_NOFOLLOW | fsConstants.O_NONBLOCK);
+    const st = fstatSync(fd);
+    if (!st.isFile() || st.size > SOURCES_MAX_BYTES) return null;
+    const buf = Buffer.alloc(st.size);
+    let off = 0;
+    while (off < st.size) {
+      const n = readSync(fd, buf, off, st.size - off, off);
+      if (n <= 0) break;
+      off += n;
+    }
+    return buf.subarray(0, off).toString('utf8');
+  } catch {
+    return null;
+  } finally {
+    if (fd >= 0) try { closeSync(fd); } catch { /* already closed */ }
+  }
 }
 
 function firstLine(s) {
@@ -335,11 +383,49 @@ function citationTokens(reportText) {
   return [...out];
 }
 
+/* SOURCES-declared upstream pins (round 94). The lane's own registry
+ * (`corpus/SOURCES.md`) is the only place a pin can be declared: a file that is
+ * absent, unreadable or not a registry declares nothing, and the whole step
+ * then behaves as it did before this rule existed. */
+/** A registry row: `| S<3+ digits> |` at indentation <= 3. */
+const SOURCES_ROW_RE = /^ {0,3}\|\s*S\d{3,}\s*\|/;
+/** The `http(s)://` URLs on a registry row; a match stops at whitespace or a cell pipe. */
+const SOURCES_URL_RE = /https?:\/\/[^\s|)`'"<>]+/g;
+/** A complete URL path segment that is one full 40-hex commit id. */
+const SOURCES_PIN_RE = /^[0-9a-f]{40}$/;
+/** URL split points for the path-segment rule: `/`, `?`, `#`. */
+const SOURCES_SEGMENT_RE = /[/?#]/;
+
+/**
+ * The 40-hex pins a SOURCES.md registry declares, from its text. Rows whose
+ * status cell (8th column, 1-based) reads `rejected` declare nothing; a
+ * non-URL digest in a cell declares nothing (it is not a path segment).
+ */
+function declaredPins(sourcesText) {
+  const pins = new Set();
+  if (typeof sourcesText !== 'string') return pins;
+  for (const line of sourcesText.split('\n')) {
+    if (!SOURCES_ROW_RE.test(line)) continue;
+    const status = (line.split('|')[8] ?? '').trim();
+    if (status.toLowerCase() === 'rejected') continue;
+    for (const m of line.matchAll(SOURCES_URL_RE)) {
+      for (const seg of m[0].split(SOURCES_SEGMENT_RE)) if (SOURCES_PIN_RE.test(seg)) pins.add(seg);
+    }
+  }
+  return pins;
+}
+
+/** A token is declared iff it is a prefix of one of the declared pins. */
+function isDeclaredPin(tok, pins) {
+  for (const p of pins) if (p.startsWith(tok)) return true;
+  return false;
+}
+
 function runChecks({ repo, reportsDir, round, lane, close, mainRepo, origin }) {
   const items = [];
   const add = (id, severity, ok, detail) => { items.push({ id, severity, ok, detail }); };
   const citations = {
-    checked: 0, external: [], unresolved: [], notAncestor: [], unverifiable: [],
+    checked: 0, external: [], declared: [], unresolved: [], notAncestor: [], unverifiable: [],
     mainProbeable: null, originProbeable: null,
   };
   let mainProbeable = null;
@@ -370,6 +456,14 @@ function runChecks({ repo, reportsDir, round, lane, close, mainRepo, origin }) {
     const laneCache = new Map();
     const mainCache = new Map();
     const originCache = new Map();
+    /* Read at most once per run, and only when a token reaches the declared
+       step: a report with no cited token, or one whose tokens all resolve in a
+       probeable repo, never touches corpus/SOURCES.md. */
+    let sourcesPins = null;
+    const declaredPinsNow = () => {
+      if (sourcesPins === null) sourcesPins = declaredPins(readRegistry(join(repo, 'corpus', 'SOURCES.md')));
+      return sourcesPins;
+    };
     const isCommit = (dir, t) => git(dir, ['cat-file', '-e', `${t}^{commit}`]).status === 0;
     const probe = (which, t) => {
       const cache = which === 'lane' ? laneCache : which === 'main' ? mainCache : originCache;
@@ -390,6 +484,8 @@ function runChecks({ repo, reportsDir, round, lane, close, mainRepo, origin }) {
         citations.external.push(t);
       } else if (probe('origin', t)) {
         citations.external.push(t);
+      } else if (isDeclaredPin(t, declaredPinsNow())) {
+        citations.declared.push(t);
       } else if (mainProbeableNow() && originProbeableNow()) {
         citations.unresolved.push(t);
       } else {
@@ -402,7 +498,9 @@ function runChecks({ repo, reportsDir, round, lane, close, mainRepo, origin }) {
       ? 'no cited commit tokens'
       : `cited=${tokens.length} ${what}=${list.length}${list.length ? ` [${list.join(' ')}]` : ''}`
         + (citations.unverifiable.length ? ` unverifiable=${citations.unverifiable.length}` : ''));
-    add('COMMIT_CITED_UNRESOLVED', 'error', citations.unresolved.length === 0, citedDetail('unresolved', citations.unresolved));
+    add('COMMIT_CITED_UNRESOLVED', 'error', citations.unresolved.length === 0,
+      citedDetail('unresolved', citations.unresolved)
+      + (citations.declared.length ? ` declared=${citations.declared.length}` : ''));
     add('COMMIT_CITED_NOT_ANCESTOR', 'error', citations.notAncestor.length === 0, citedDetail('notAncestor', citations.notAncestor));
   }
 
@@ -619,7 +717,7 @@ function failClosed(opts, mode, token, detail, checks, started) {
     errors: 1,
     warnings: 0,
     citations: {
-      checked: 0, external: [], unresolved: [], notAncestor: [], unverifiable: [],
+      checked: 0, external: [], declared: [], unresolved: [], notAncestor: [], unverifiable: [],
       mainProbeable: null, originProbeable: null,
     },
     durationMs: Math.max(0, Date.now() - started),
@@ -686,6 +784,12 @@ function main() {
       process.stdout.write(`${JSON.stringify(body, null, 2)}\n`);
     } else {
       const lines = findings.map((f) => `ROUND_GATE  ${f.severity}  ${f.kind}  ${f.detail}`);
+      // Round-94 integration (K94CriticB 1c): a declared pin is never a finding, so a green round
+      // would hide it in text mode; one info line discloses it (JSON: `citations.declared`).
+      if (citations.declared.length) {
+        lines.push(`ROUND_GATE  info  COMMIT_CITED_DECLARED  declared=${citations.declared.length}`
+          + ` [${citations.declared.join(' ')}]`);
+      }
       lines.push(`ROUND_GATE: ${verdict} (round=${round} lane=${opts.lane} checks=${items.length}`
         + ` errors=${errors} warnings=${warnings})`);
       process.stdout.write(`${lines.join('\n')}\n`);
@@ -1158,6 +1262,218 @@ function selfTest() {
       return {
         ok: r24.status === 0 && k.ok && j.citations.external.includes(originSha),
         detail: `exit=${r24.status} external=${JSON.stringify(j.citations.external)}`,
+      };
+    });
+
+    /* 24b-24l ─ SOURCES-declared upstream pins (round 94) ------------------ */
+    // Frozen rule: a token that resolves nowhere is `declared` iff it is a
+    // prefix of a 40-hex string that is a complete path segment (URL split on
+    // `/`, `?`, `#`) of an http(s) URL on a corpus/SOURCES.md registry row
+    // whose status cell (8th column) is not `rejected`. Each arm below is one
+    // forgery shape's teeth: blanket, substring, any-line, contains,
+    // no-reject-filter, slash-only, declared-check-removed.
+    const pin40 = (head) => head.repeat(5); // 8 hex × 5 = one 40-hex pin
+    const PIN_A = pin40('a1b2c3d4');
+    const PIN_B = pin40('b1c2d3e4');
+    const PIN_C = pin40('c1d2e3f4');
+    const PIN_D = pin40('d1e2f3a4');
+    const PIN_E = pin40('e1f2a3b4');
+    const fxRow = (id, src, status) => `| ${id} | ${src} | code | A | scope | anchor | teaches | ${status} | 2026-11-06 | 30d | — |`;
+    const fxSources = (...rows) => [
+      '# SOURCES — fixture', '',
+      `Prose mention, not a registry row: https://github.com/o/r/blob/${PIN_D}/x.ts`, '',
+      '## Registry', '',
+      '| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |',
+      '|---|---|---|---|---|---|---|---|---|---|---|',
+      ...rows, '',
+    ].join('\n');
+    const citeAll = (...toks) => toks.map((t) => `\`${t}\``).join(' ');
+    const fxCited = (name, { rows = [], cite, sources = true }) => {
+      const f = fxCloseFixture(name, {
+        reportText: fxBigReport(5, `\nCited commits: ${cite}.\n`),
+        laneUpstream: false, mainUpstream: false,
+      });
+      mkdirSync(join(f.laneRepo, 'corpus'), { recursive: true });
+      if (sources) writeFileSync(join(f.laneRepo, 'corpus', 'SOURCES.md'), fxSources(...rows));
+      else writeFileSync(join(f.laneRepo, 'corpus', 'README.md'), 'no registry here\n');
+      return f;
+    };
+    const citedJson = (f) => {
+      const g = runGate(auditArgs(f, ['--json']));
+      let j = null;
+      try { j = JSON.parse(g.stdout); } catch { j = null; }
+      return { g, j };
+    };
+    const kindsOf = (j) => (j && Array.isArray(j.findings) ? j.findings.map((f) => f.kind) : null);
+    const declOf = (j) => (j && j.citations && Array.isArray(j.citations.declared) ? j.citations.declared : null);
+    const unresOf = (j) => (j && j.citations && Array.isArray(j.citations.unresolved) ? j.citations.unresolved : null);
+    const resolvedOnly = (r, wantUnres) => {
+      const kinds = kindsOf(r.j); const decl = declOf(r.j); const unres = unresOf(r.j);
+      const want = wantUnres ? ['COMMIT_CITED_UNRESOLVED'] : [];
+      return {
+        ok: r.g.status === (wantUnres ? 1 : 0) && JSON.stringify(kinds) === JSON.stringify(want)
+          && decl !== null && unres !== null,
+        kinds, decl, unres,
+      };
+    };
+
+    const dUrl = citedJson(fxCited('declared-url-segment', {
+      rows: [fxRow('S001', `x.ts — https://github.com/o/r/blob/${PIN_A}/x.ts`, 'mined')],
+      cite: citeAll(PIN_A.slice(0, 8)),
+    }));
+    check('(i) an 8-hex prefix of a 40-hex URL segment on a mined registry row → declared, no finding', () => {
+      const r = resolvedOnly(dUrl, false);
+      return {
+        ok: r.ok && r.decl.length === 1 && r.decl[0] === PIN_A.slice(0, 8) && r.unres.length === 0,
+        detail: `exit=${dUrl.g.status} kinds=${JSON.stringify(r.kinds)} declared=${JSON.stringify(r.decl)}`,
+      };
+    });
+    const dFull = citedJson(fxCited('declared-full-pin', {
+      rows: [fxRow('S001', `x.ts — https://github.com/o/r/blob/${PIN_A}/x.ts`, 'mined')],
+      cite: citeAll(PIN_A),
+    }));
+    check('(ii) a cited full 40-hex pin that is a complete URL segment → declared, no finding', () => {
+      const r = resolvedOnly(dFull, false);
+      return {
+        ok: r.ok && r.decl.length === 1 && r.decl[0] === PIN_A && r.unres.length === 0,
+        detail: `exit=${dFull.g.status} kinds=${JSON.stringify(r.kinds)} declared=${JSON.stringify(r.decl)}`,
+      };
+    });
+    const dFrag = citedJson(fxCited('declared-commit-fragment', {
+      rows: [fxRow('S002', `commit — https://github.com/o/r/commit/${PIN_B}#diff-1`, 'mined')],
+      cite: citeAll(PIN_B.slice(0, 10)),
+    }));
+    check('(iii) pin followed by `#fragment` (`/commit/<pin>#diff`) → declared, no finding', () => {
+      const r = resolvedOnly(dFrag, false);
+      return {
+        ok: r.ok && r.decl.length === 1 && r.decl[0] === PIN_B.slice(0, 10) && r.unres.length === 0,
+        detail: `exit=${dFrag.g.status} kinds=${JSON.stringify(r.kinds)} declared=${JSON.stringify(r.decl)}`,
+      };
+    });
+    const dDigest = citedJson(fxCited('declared-digest-only', {
+      rows: [fxRow('S003', `capture sha256 ${PIN_C}${PIN_C.slice(0, 24)}`, 'mined')],
+      cite: citeAll(PIN_C.slice(0, 12)),
+    }));
+    check('(iv) pin present only as a non-URL digest inside a registry row → COMMIT_CITED_UNRESOLVED', () => {
+      const r = resolvedOnly(dDigest, true);
+      return {
+        ok: r.ok && r.decl.length === 0 && r.unres.length === 1 && r.unres[0] === PIN_C.slice(0, 12),
+        detail: `exit=${dDigest.g.status} kinds=${JSON.stringify(r.kinds)} unresolved=${JSON.stringify(r.unres)}`,
+      };
+    });
+    const dProse = citedJson(fxCited('declared-prose-url', {
+      rows: [],
+      cite: citeAll(PIN_D.slice(0, 9)),
+    }));
+    check('(v) pin in a URL on a prose line outside the registry → unresolved', () => {
+      const r = resolvedOnly(dProse, true);
+      return {
+        ok: r.ok && r.decl.length === 0 && r.unres.length === 1 && r.unres[0] === PIN_D.slice(0, 9),
+        detail: `exit=${dProse.g.status} kinds=${JSON.stringify(r.kinds)} unresolved=${JSON.stringify(r.unres)}`,
+      };
+    });
+    const dRej = citedJson(fxCited('declared-rejected-row', {
+      rows: [fxRow('S004', `rejected — https://github.com/o/r/blob/${PIN_E}/y.ts`, 'rejected')],
+      cite: citeAll(PIN_E.slice(0, 8)),
+    }));
+    check('(vi) pin in a URL on a `rejected` registry row → unresolved', () => {
+      const r = resolvedOnly(dRej, true);
+      return {
+        ok: r.ok && r.decl.length === 0 && r.unres.length === 1 && r.unres[0] === PIN_E.slice(0, 8),
+        detail: `exit=${dRej.g.status} kinds=${JSON.stringify(r.kinds)} unresolved=${JSON.stringify(r.unres)}`,
+      };
+    });
+    const dMid = citedJson(fxCited('declared-mid-pin', {
+      rows: [fxRow('S001', `x.ts — https://github.com/o/r/blob/${PIN_A}/x.ts`, 'mined')],
+      cite: citeAll(PIN_A.slice(10, 18)),
+    }));
+    check('(vii) token taken from the middle of a declared pin → unresolved (prefix, not contains)', () => {
+      const r = resolvedOnly(dMid, true);
+      return {
+        ok: r.ok && r.decl.length === 0 && r.unres.length === 1 && r.unres[0] === PIN_A.slice(10, 18),
+        detail: `exit=${dMid.g.status} kinds=${JSON.stringify(r.kinds)} unresolved=${JSON.stringify(r.unres)}`,
+      };
+    });
+    const dNone = citedJson(fxCited('declared-no-sources', {
+      sources: false,
+      cite: citeAll(PIN_A.slice(0, 8)),
+    }));
+    check('(viii) no corpus/SOURCES.md → no declared pins, unresolved, never INTERNAL_ERROR', () => {
+      const r = resolvedOnly(dNone, true);
+      const kinds = r.kinds ?? [];
+      return {
+        ok: r.ok && r.decl.length === 0 && r.unres.length === 1 && r.unres[0] === PIN_A.slice(0, 8)
+          && !kinds.includes('INTERNAL_ERROR'),
+        detail: `exit=${dNone.g.status} kinds=${JSON.stringify(r.kinds)} unresolved=${JSON.stringify(r.unres)}`,
+      };
+    });
+    const dShape = citedJson(clean);
+    check('--json citations.declared is always present and empty when nothing is declared', () => {
+      const decl = declOf(dShape.j);
+      return {
+        ok: dShape.g.status === 0 && decl !== null && decl.length === 0 && unresOf(dShape.j) !== null,
+        detail: `exit=${dShape.g.status} declared=${JSON.stringify(decl)}`,
+      };
+    });
+    const dTextBase = fxCited('declared-text-detail', {
+      rows: [fxRow('S001', `x.ts — https://github.com/o/r/blob/${PIN_A}/x.ts`, 'mined')],
+      cite: citeAll(PIN_A.slice(0, 8), 'deadbeef1234'),
+    });
+    const tText = runGate(auditArgs(dTextBase));
+    check('text mode: COMMIT_CITED_UNRESOLVED detail carries `declared=<n>` beside the unresolved list', () => {
+      const f = parseFindings(tText.stdout)[0] ?? {};
+      return {
+        ok: tText.status === 1 && parseFindings(tText.stdout).length === 1
+          && f.kind === 'COMMIT_CITED_UNRESOLVED'
+          && f.detail === 'cited=2 unresolved=1 [deadbeef1234] declared=1',
+        detail: `exit=${tText.status} ${f.kind ?? ''} ${f.detail ?? ''}`,
+      };
+    });
+    /* 24m-24p ─ round-94 integration: bounded registry read + text disclosure */
+    const declaringRow = fxRow('S001', `x.ts — https://github.com/o/r/blob/${PIN_A}/x.ts`, 'mined');
+    const fifoFx = fxCited('declared-fifo', { sources: false, cite: citeAll(PIN_A.slice(0, 8)) });
+    const mk = spawnSync('mkfifo', [join(fifoFx.laneRepo, 'corpus', 'SOURCES.md')], { encoding: 'utf8' });
+    const dFifo = mk.status === 0 ? citedJson(fifoFx) : null;
+    check('(ix) corpus/SOURCES.md is a FIFO with no writer → no hang, nothing declared, unresolved', () => {
+      if (!dFifo) return { ok: false, detail: `mkfifo failed: ${mk.status} ${firstLine(mk.stderr)}` };
+      const r = resolvedOnly(dFifo, true);
+      return {
+        ok: r.ok && r.decl.length === 0 && r.unres.length === 1,
+        detail: `exit=${dFifo.g.status} kinds=${JSON.stringify(r.kinds)} unresolved=${JSON.stringify(r.unres)}`,
+      };
+    });
+    const linkFx = fxCited('declared-symlink', { sources: false, cite: citeAll(PIN_A.slice(0, 8)) });
+    writeFileSync(join(linkFx.laneRepo, 'corpus', 'registry-elsewhere.md'), fxSources(declaringRow));
+    symlinkSync('registry-elsewhere.md', join(linkFx.laneRepo, 'corpus', 'SOURCES.md'));
+    const dLink = citedJson(linkFx);
+    check('(x) corpus/SOURCES.md is a symlink to a declaring registry → not followed, unresolved', () => {
+      const r = resolvedOnly(dLink, true);
+      return {
+        ok: r.ok && r.decl.length === 0 && r.unres.length === 1,
+        detail: `exit=${dLink.g.status} kinds=${JSON.stringify(r.kinds)} declared=${JSON.stringify(r.decl)}`,
+      };
+    });
+    const bigFx = fxCited('declared-oversized', { sources: false, cite: citeAll(PIN_A.slice(0, 8)) });
+    const bigText = fxSources(declaringRow);
+    writeFileSync(join(bigFx.laneRepo, 'corpus', 'SOURCES.md'),
+      bigText + ' '.repeat(SOURCES_MAX_BYTES + 1 - Buffer.byteLength(bigText, 'utf8')));
+    const dBig = citedJson(bigFx);
+    check(`(xi) a declaring registry of ${SOURCES_MAX_BYTES + 1} bytes (cap + 1) → nothing declared, unresolved`, () => {
+      const r = resolvedOnly(dBig, true);
+      return {
+        ok: r.ok && r.decl.length === 0 && r.unres.length === 1,
+        detail: `exit=${dBig.g.status} kinds=${JSON.stringify(r.kinds)} declared=${JSON.stringify(r.decl)}`,
+      };
+    });
+    const infoFx = fxCited('declared-text-info', { rows: [declaringRow], cite: citeAll(PIN_A.slice(0, 8)) });
+    const tInfo = runGate(auditArgs(infoFx));
+    check('text mode: a green round with a declared pin prints one `info COMMIT_CITED_DECLARED` line, no finding', () => {
+      const out = String(tInfo.stdout ?? '').trim().split('\n');
+      const want = `ROUND_GATE  info  COMMIT_CITED_DECLARED  declared=1 [${PIN_A.slice(0, 8)}]`;
+      return {
+        ok: tInfo.status === 0 && parseFindings(tInfo.stdout).length === 0 && out.length === 2 && out[0] === want
+          && /^ROUND_GATE: CLEAN /u.test(out[1]),
+        detail: `exit=${tInfo.status} lines=${JSON.stringify(out)}`,
       };
     });
 

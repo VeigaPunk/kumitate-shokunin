@@ -1,4 +1,4 @@
-source: S267 (corpus/SOURCES.md, oh-my-pi packages/coding-agent/src/session/session-entries.ts, https://github.com/can1357/oh-my-pi/blob/79fa222e8390aed3494f4bc6746814e6c74c21cf/packages/coding-agent/src/session/session-entries.ts); S268 (packages/ai/src/types.ts, AssistantRetryRecovery, retryRecovery, upstreamProvider, https://github.com/can1357/oh-my-pi/blob/79fa222e8390aed3494f4bc6746814e6c74c21cf/packages/ai/src/types.ts); S269 (packages/coding-agent/src/session/turn-recovery.ts, the writer of retryRecovery and of the fallback-flagged and unflagged model_change hops, https://github.com/can1357/oh-my-pi/blob/79fa222e8390aed3494f4bc6746814e6c74c21cf/packages/coding-agent/src/session/turn-recovery.ts); S270 (corpus/SOURCES.md, own-work host census of routing and retry fields over a pinned 1500-transcript sample: presence and shape of retryRecovery, supersededBy, upstreamProvider, session_init resolvedModel and retryFallback, model_change flags; receipt .ufo/waves/round-93/K93ScribeSources/census.txt)
+source: S267 (corpus/SOURCES.md, oh-my-pi packages/coding-agent/src/session/session-entries.ts, https://github.com/can1357/oh-my-pi/blob/79fa222e8390aed3494f4bc6746814e6c74c21cf/packages/coding-agent/src/session/session-entries.ts); S268 (packages/ai/src/types.ts, AssistantRetryRecovery, retryRecovery, upstreamProvider, https://github.com/can1357/oh-my-pi/blob/79fa222e8390aed3494f4bc6746814e6c74c21cf/packages/ai/src/types.ts); S269 (packages/coding-agent/src/session/turn-recovery.ts, the writer of retryRecovery and of the fallback-flagged and unflagged model_change hops, https://github.com/can1357/oh-my-pi/blob/79fa222e8390aed3494f4bc6746814e6c74c21cf/packages/coding-agent/src/session/turn-recovery.ts); S270 (corpus/SOURCES.md, own-work host census of routing and retry fields over a pinned 1500-transcript sample: presence and shape of retryRecovery, supersededBy, upstreamProvider, session_init resolvedModel and retryFallback, model_change flags; receipt .ufo/waves/round-93/K93ScribeSources/census.txt); S272 (packages/coding-agent/src/session/retry-fallback-chains.ts, the RetryFallbackRole home: primary plus chain, empty chain disables fallbacks; added round 94, closes M93-2)
 verified-at: b6204949e3bb17df9d6cf0cc3f59ea0c4b362061 (round-93 freeze: plan.md, oracle93.py, probe93-c1.py, fixtures, controls, open/ captures); upstream pin 79fa222e8390aed3494f4bc6746814e6c74c21cf; capture sha256 session-entries.ts 4035dad36878c19d14aa4cdfd0e6de3c3ccbcb86cf3c280228e3c70b1128f29e, types.ts 22ea739a7175ddd97b2f17a54fa9f876d17b972dc15e3a190848a5a358d5b95c, turn-recovery.ts 1059a80e5dc47cf9c23789974aa1ddd78207795d9a0537c95c3f2e2211a4eddf; auxiliary capture (not yet a SOURCES row) packages/coding-agent/src/session/retry-fallback-chains.ts sha256 b5db529983630ee7e60621478868675dbbe93f149e3cf42eb1aee093a21774fc, kept at .ufo/waves/round-93/K93ScribeLesson/rbchains.ts; drafted 2026-11-06, the instrument sha256 is pinned when seat-route v2 ships at the round-93 close commit
 recheck: `curl -fsSL https://raw.githubusercontent.com/can1357/oh-my-pi/79fa222e8390aed3494f4bc6746814e6c74c21cf/<path> | sha256sum` for the three S-row paths (expect 4035dad3…, 22ea739a…, 1059a80e…) and for the auxiliary path (expect b5db5299…), then `python3 .ufo/waves/round-93/probe/oracle93.py --file <transcript>` against `node scripts/seat-route.mjs --file <transcript> --json` (records equal, type-strict); the frozen counter is `python3 .ufo/waves/round-93/probe/probe93-c1.py --tool scripts/seat-route.mjs --sample-a .ufo/waves/round-92/probe/sampleA.tsv --fixtures .ufo/waves/round-93/probe/fixtures --after 2026-11-06T21:40:00.000Z --waves .ufo/waves/round-92/w1-results.json,.ufo/waves/round-93/w1-results.json --out <receipt>` (expect `C93_C1: HELD` and `RUNTIME: CLEAN`)
 
@@ -47,8 +47,8 @@ this entry is the retry layer only.
   whose `chain` is a list, the list's string items in order (non-strings dropped; an empty list stays `[]`);
   else null. `retryFallback` is a `RetryFallbackRole` (S267:299–300), imported from
   `./retry-fallback-chains` (S267:14), whose `chain` holds the fallback selectors walked after the role's
-  primary and whose empty list explicitly disables fallbacks (auxiliary capture
-  `retry-fallback-chains.ts:185–190`; the type's home is not yet a SOURCES row — see Routed).
+  primary and whose empty list explicitly disables fallbacks (S272:185–190, "Fallback selectors walked after
+  the primary; empty explicitly disables fallbacks."; row added round 94, closing M93-2).
 - **`flag_hops`** (int): `model_change` rows whose `resolvedModelIsFallback` is JSON `true` — the marker is
   boolean, not `1` (S267:155). A fallback hop writes it: `appendModelChange(candidateSelector,
   EPHEMERAL_MODEL_CHANGE_ROLE, true)` (S269:2261; the Fireworks-fast degrade at 2550).
@@ -99,10 +99,8 @@ for the boolean-`1` flag, parse errors, the 24-character redaction boundary, or 
 
 ## Routed
 
-- Add a SOURCES row for `packages/coding-agent/src/session/retry-fallback-chains.ts` (the `RetryFallbackRole`
-  home, sha256 `b5db5299…`) if the chain's semantics are to be cited as a sourced claim; until then this
-  entry cites S267 for the field's presence and names the auxiliary capture for the type (lesson round 93,
-  M93-2).
+- Closed round 94: `retry-fallback-chains.ts` is now SOURCES row S272 (sha256 `b5db5299…`, equal to the round-93
+  auxiliary capture), and the `chain` paragraph cites it (M93-2).
 - [INFERENCE] `supersededBy` names the superseding turn's `provider`/`model` as persisted; on an aggregator
   that reroutes silently, that pair can name the requested selector rather than the upstream producer — the
   same gateway blind spot the v1 entry records for `answered`, and the reason `upstreamProvider` is a separate

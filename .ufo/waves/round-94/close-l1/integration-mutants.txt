@@ -1,0 +1,29 @@
+# L1 integration (round 94): counter on the pre-M integrated bytes, then four single-point mutants of the
+# integration-only code, each run with `node <mutant> --selftest` (mutants built in
+# /fast/scratch/hyaku/kumitate-r94/L1/mut by literal replacement asserted to apply once; stdout filtered to FAIL + summary)
+# node .ufo/waves/round-94/probe/probe94-c1.mjs --tool scripts/round-gate.mjs --work /fast/scratch/hyaku/kumitate-r94/L1/pre-m --freeze 73317eca18c3927fc3c92fe492cd882dc4cda953 | tail -4
+C94 FX nosources exit=1 verdict=DRIFT unresolved=8/8 ok=true
+C94 SELFTEST exit=0 ROUND_GATE_SELFTEST: 75/75 pass ok=true
+C94 fails=none
+C94_C1: HELD a=1/1 b=7/7 c=77/77 d=2/2 e=1/1 tool_sha256=158062f8ac7bf51235d78aa90cb12bd38807ea093712e99ffe047490cb36ed33
+# mutants: m-readtext = declaredPins(readText(...)) instead of readRegistry; m-nofollow-off = O_NOFOLLOW dropped;
+#          m-cap-off = size cap dropped; m-info-off = the text-mode info line disabled
+== m-nofollow-off
+FAIL  [38/75]  (x) corpus/SOURCES.md is a symlink to a declaring registry → not followed, unresolved — exit=0 kinds=[] declared=["a1b2c3d4"]
+FAIL  [65/75]  hermeticity: --selftest passes under a polluted env and bogus dir flags — exit=1 tail=ROUND_GATE_SELFTEST: 74/75 pass | VERDICT: FAIL
+ROUND_GATE_SELFTEST: 73/75 pass
+== m-cap-off
+FAIL  [39/75]  (xi) a declaring registry of 8388609 bytes (cap + 1) → nothing declared, unresolved — exit=0 kinds=[] declared=["a1b2c3d4"]
+FAIL  [65/75]  hermeticity: --selftest passes under a polluted env and bogus dir flags — exit=1 tail=ROUND_GATE_SELFTEST: 74/75 pass | VERDICT: FAIL
+ROUND_GATE_SELFTEST: 73/75 pass
+== m-info-off
+FAIL  [40/75]  text mode: a green round with a declared pin prints one `info COMMIT_CITED_DECLARED` line, no finding — exit=0 lines=["ROUND_GATE: CLEAN (round
+FAIL  [65/75]  hermeticity: --selftest passes under a polluted env and bogus dir flags — exit=1 tail=ROUND_GATE_SELFTEST: 74/75 pass | VERDICT: FAIL
+ROUND_GATE_SELFTEST: 73/75 pass
+== m-readtext
+FAIL  [37/75]  (ix) corpus/SOURCES.md is a FIFO with no writer → no hang, nothing declared, unresolved — exit=null kinds=null unresolved=null
+FAIL  [38/75]  (x) corpus/SOURCES.md is a symlink to a declaring registry → not followed, unresolved — exit=0 kinds=[] declared=["a1b2c3d4"]
+FAIL  [39/75]  (xi) a declaring registry of 8388609 bytes (cap + 1) → nothing declared, unresolved — exit=0 kinds=[] declared=["a1b2c3d4"]
+FAIL  [65/75]  hermeticity: --selftest passes under a polluted env and bogus dir flags — exit=null tail=
+ROUND_GATE_SELFTEST: 71/75 pass
+# KILLED 4/4 by targeted arms (the hermeticity arm fails for every mutant by construction: it re-runs the mutant's own suite)
