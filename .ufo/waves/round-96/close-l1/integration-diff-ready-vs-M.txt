@@ -1,0 +1,54 @@
+--- .ufo/waves/round-96/K96ExecTool/round-gate.mjs	2026-11-06 22:39:15.924390085 -0300
++++ scripts/round-gate.mjs	2026-11-06 23:08:24.181698223 -0300
+@@ -1743,6 +1743,51 @@
+       };
+     });
+ 
++    // Round-96 integration (K96CriticA): eight wrong gates reached HELD on the frozen counter
++    // (`K96CriticA/constructions.md`). Arm (xxvi) pins the clauses they bent; arm (xxvii) is a
++    // registry with rows and no `## Registry` section at all; both use ids and pins the frozen
++    // counter's fixture does not, so a gate keyed on that fixture fails them.
++    const p96 = ['b0000001', 'b0000002', 'b0000003', 'b0000004', 'b0000005', 'b0000006', 'b0000007'].map(pin40);
++    const dBatt2 = citedJson(fxCustom('registry-section-battery-2', [
++      '# SOURCES — fixture r96 battery 2', '',
++      '## Registry', '', ...R96_HDR,
++      r96Row('S301', p96[0]), // inside: declares
++      '\t## Leads (tab-indented: not a heading)',
++      r96Row('S302', p96[1]), // inside (kills a `[ \t]{0,3}` indent class)
++      '##\u000bLeads (VT after ##: not a heading)',
++      r96Row('S303', p96[2]), // inside (kills `\s` after `##`)
++      '```text', r96Row('S304', p96[3]), '```', // a fenced row inside the Registry still declares (census reads it)
++      '## Registry\t', '',
++      r96Row('S305', p96[4]), // inside: a trailing tab is stripped (kills a space-only trim)
++      '## Foo ## Registry', '',
++      '   ' + r96Row('S306', p96[5]), // outside: text after the FIRST `##`; a 3-space outside row is listed
++      '## Registry', '',
++      r96Row('S307', p96[6]), // inside: declares
++      '',
++    ], citeAll(...[0, 1, 2, 3, 4, 6].map((i) => p96[i].slice(0, 8)))));
++    check('(xxvi) R96 battery 2: tab-indented and VT `##` lines are not headings; a fenced row declares; `## Registry<TAB>` is inside; `## Foo ## Registry` is outside; a 3-space outside row is listed', () => {
++      const r = resolvedOnly(dBatt2, false);
++      const want = [0, 1, 2, 3, 4, 6].map((i) => p96[i].slice(0, 8)).sort();
++      return {
++        ok: r.ok && JSON.stringify([...r.decl].sort()) === JSON.stringify(want)
++          && JSON.stringify(outOf(dBatt2.j)) === '["S306"]' && JSON.stringify(malOf(dBatt2.j)) === '[]',
++        detail: `exit=${dBatt2.g.status} kinds=${JSON.stringify(r.kinds)} declared=${JSON.stringify(r.decl)} outside=${JSON.stringify(outOf(dBatt2.j))} malformed=${JSON.stringify(malOf(dBatt2.j))}`,
++      };
++    });
++    const p97 = ['b0000011', 'b0000012'].map(pin40);
++    const dNoReg = citedJson(fxCustom('registry-section-absent', [
++      '# SOURCES — fixture r96, rows but no registry heading (lower case on purpose: the word with a capital R appears nowhere in this file)', '',
++      '## Leads (unopened)', '', ...R96_HDR,
++      r96Row('S401', p97[0]), r96Row('S402', p97[1]), '',
++    ], citeAll(p97[0].slice(0, 8))));
++    check('(xxvii) rows with no `## Registry` section anywhere declare nothing and are all listed outside', () => {
++      const r = resolvedOnly(dNoReg, true);
++      return {
++        ok: r.ok && r.decl.length === 0 && JSON.stringify(outOf(dNoReg.j)) === '["S401","S402"]'
++          && JSON.stringify(malOf(dNoReg.j)) === '[]',
++        detail: `exit=${dNoReg.g.status} declared=${JSON.stringify(r.decl)} outside=${JSON.stringify(outOf(dNoReg.j))}`,
++      };
++    });
+ 
+     /* 25/26 ─ close clean + TREE_DIRTY ------------------------------------- */
+     const closeClean = fxCloseFixture('close-clean');
