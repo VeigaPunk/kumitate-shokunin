@@ -292,12 +292,12 @@ The K census decision supplies both members and findings; the score is now
 
 <!-- kumitate-proxy-v1
 A=37
-A_wave=1503
+A_wave=1532
 C=47
 C1=19
 C1_total=19
-C2=242
-C2_total=242
+C2=245
+C2_total=245
 S_members=88
 S_sections=88
 R_members=92
