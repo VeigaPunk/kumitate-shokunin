@@ -292,6 +292,7 @@ fixture suite, `--strict` to fail on warnings.
 | `lessons/round-98-verifier-spotcheck.md` | Non-author round-98 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 | `knowledge/sources-check-cell-trim-class.md` | Registry cells trimmed with the census blank class `[ \t]` (R99), not JS `trim()` nor Unicode White_Space; 44-class table, cross-reader/locale matrix, per-kind effects, census-internal used-by split | S276, S277, S278, S279; `.ufo/waves/round-99/` |
 | `lessons/round-99.md` | R99 sources-check cell trim, M2 survivor arms, read-order log + Q93, used-by trade (24/44 vs 37/44 UTF-8), counter gaps, routed `\s` readers | LOG.md round 99; `.ufo/waves/round-99/` |
+| `lessons/round-99-verifier-spotcheck.md` | Non-author round-99 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 
 ## Known gaps
 
