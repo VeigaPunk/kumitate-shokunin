@@ -1,0 +1,11 @@
+--- a/scripts/cite-sources.mjs
++++ b/scripts/cite-sources.mjs
+@@ -33,7 +33,7 @@
+ function registryIds(text) {
+   const ids = new Set();
+   for (const line of text.split('\n')) {
+-    const m = line.match(/^ {0,3}\|\s*(S[0-9]{3,})\s*\|/);
++    const m = line.match(/^ {0,3}\|[ \t]*(S[0-9]{3,})[ \t]*\|/);
+     if (m) ids.add(m[1]);
+   }
+   return ids;

@@ -1,0 +1,13 @@
+construction: k08-empty-id-count
+fixture: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-99/K99CriticA/minfixtures/k08-empty-id-count/corpus/SOURCES.md
+fixture-escaped: '# SOURCES — where min learns\n\n## Registry\n\n| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |\n|---|---|---|---|---|---|---|---|---|---|---|\n|  | https://example.org/a | docs | B | sc | § a | teaches a | queued | 2025-01-02 | on-release | — |\n\n## Paths\n\nnone\n\n## Search log\n\nnone\n\n## Leads (unopened)\n\n- none\n'
+tool: node minrun/k08-empty-id-count/scripts/sources-check.mjs --self <fixture> --today 2026-11-07 --json
+tool-exit: 1
+tool-counts: {"rows": 1, "tiers": {"A": 0, "B": 0, "C": 0}, "status": {"queued": 0, "mined": 0, "rejected": 0}, "entriesWithSource": 0, "legacy": 0}
+tool-findings:
+  ID_FORM line=7 detail='id=(empty)'
+census: bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file <fixture> --today 2026-11-07
+census-exit: 1
+census-output:
+  'file\tE02\t'
+census-mode rows: 1; census E02 lines: 1; counter (e) expected counts.rows = 0

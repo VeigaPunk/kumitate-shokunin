@@ -1,0 +1,1536 @@
+{
+ "seed": "88cfbc703ba9d731",
+ "fixtures": 932,
+ "excluded": [
+  {
+   "fixture": "J-emptyid-0",
+   "reason": "empty id cell: sources-check skips enum/date checks, census continues; documented non-trim divergence (r99 plan C1 disclosed limit 3)",
+   "census_codes": [
+    [
+     "E02",
+     ""
+    ]
+   ],
+   "tools": {
+    "cand-READY-50b94567": {
+     "ID_FORM": 1
+    },
+    "BASE-f9cd1bff": {
+     "ID_FORM": 1
+    }
+   }
+  },
+  {
+   "fixture": "J-emptyid-1",
+   "reason": "empty id cell: sources-check skips enum/date checks, census continues; documented non-trim divergence (r99 plan C1 disclosed limit 3)",
+   "census_codes": [
+    [
+     "E02",
+     ""
+    ]
+   ],
+   "tools": {
+    "cand-READY-50b94567": {
+     "ID_FORM": 1
+    },
+    "BASE-f9cd1bff": {
+     "ID_FORM": 1
+    }
+   }
+  },
+  {
+   "fixture": "J-emptyid-2",
+   "reason": "empty id cell: sources-check skips enum/date checks, census continues; documented non-trim divergence (r99 plan C1 disclosed limit 3)",
+   "census_codes": [
+    [
+     "E02",
+     ""
+    ]
+   ],
+   "tools": {
+    "cand-READY-50b94567": {
+     "ID_FORM": 1
+    },
+    "BASE-f9cd1bff": {
+     "ID_FORM": 1
+    }
+   }
+  },
+  {
+   "fixture": "J-emptyid-3",
+   "reason": "empty id cell: sources-check skips enum/date checks, census continues; documented non-trim divergence (r99 plan C1 disclosed limit 3)",
+   "census_codes": [
+    [
+     "E02",
+     ""
+    ]
+   ],
+   "tools": {
+    "cand-READY-50b94567": {
+     "ID_FORM": 1
+    },
+    "BASE-f9cd1bff": {
+     "ID_FORM": 1
+    }
+   }
+  },
+  {
+   "fixture": "J-symbolic-0",
+   "reason": "symbolic recheck cadence: census accepts any ^[A-Za-z][A-Za-z0-9 _-]*$, sources-check only on-release; documented non-trim divergence",
+   "census_codes": [],
+   "tools": {
+    "cand-READY-50b94567": {
+     "RECHECK_INVALID": 1
+    },
+    "BASE-f9cd1bff": {
+     "RECHECK_INVALID": 1
+    }
+   }
+  },
+  {
+   "fixture": "J-symbolic-1",
+   "reason": "symbolic recheck cadence: census accepts any ^[A-Za-z][A-Za-z0-9 _-]*$, sources-check only on-release; documented non-trim divergence",
+   "census_codes": [],
+   "tools": {
+    "cand-READY-50b94567": {
+     "RECHECK_INVALID": 1
+    },
+    "BASE-f9cd1bff": {
+     "RECHECK_INVALID": 1
+    }
+   }
+  },
+  {
+   "fixture": "J-symbolic-2",
+   "reason": "symbolic recheck cadence: census accepts any ^[A-Za-z][A-Za-z0-9 _-]*$, sources-check only on-release; documented non-trim divergence",
+   "census_codes": [],
+   "tools": {
+    "cand-READY-50b94567": {
+     "RECHECK_INVALID": 1
+    },
+    "BASE-f9cd1bff": {
+     "RECHECK_INVALID": 1
+    }
+   }
+  },
+  {
+   "fixture": "J-year0-0",
+   "reason": "year 0000: census epoch rejects y==0, JS Date accepts it; documented non-trim divergence",
+   "census_codes": [
+    [
+     "E08",
+     "S741"
+    ]
+   ],
+   "tools": {
+    "cand-READY-50b94567": {},
+    "BASE-f9cd1bff": {}
+   }
+  },
+  {
+   "fixture": "J-year0-1",
+   "reason": "year 0000: census epoch rejects y==0, JS Date accepts it; documented non-trim divergence",
+   "census_codes": [
+    [
+     "E08",
+     "S726960"
+    ]
+   ],
+   "tools": {
+    "cand-READY-50b94567": {},
+    "BASE-f9cd1bff": {}
+   }
+  },
+  {
+   "fixture": "J-year0-2",
+   "reason": "year 0000: census epoch rejects y==0, JS Date accepts it; documented non-trim divergence",
+   "census_codes": [
+    [
+     "E08",
+     "S5541"
+    ]
+   ],
+   "tools": {
+    "cand-READY-50b94567": {},
+    "BASE-f9cd1bff": {}
+   }
+  },
+  {
+   "fixture": "J-id-spelling-upper",
+   "reason": "id/separator spelling: sources-check skips id.toLowerCase()==id, census is case-sensitive",
+   "census_codes": [
+    [
+     "E02",
+     "ID"
+    ]
+   ],
+   "tools": {
+    "cand-READY-50b94567": {},
+    "BASE-f9cd1bff": {}
+   }
+  },
+  {
+   "fixture": "J-separator-spelling-0",
+   "reason": "id/separator spelling: sources-check skips an id cell of /^:?-{3,}:?$, the census separator_row needs cell 2 == \"id\" or every cell a dash run",
+   "census_codes": [
+    [
+     "E02",
+     "---"
+    ]
+   ],
+   "tools": {
+    "cand-READY-50b94567": {},
+    "BASE-f9cd1bff": {}
+   }
+  },
+  {
+   "fixture": "J-separator-spelling-1",
+   "reason": "id/separator spelling: sources-check skips an id cell of /^:?-{3,}:?$, the census separator_row needs cell 2 == \"id\" or every cell a dash run",
+   "census_codes": [
+    [
+     "E02",
+     ":---:"
+    ]
+   ],
+   "tools": {
+    "cand-READY-50b94567": {},
+    "BASE-f9cd1bff": {}
+   }
+  },
+  {
+   "fixture": "J-dup-triple",
+   "reason": "duplicate multiplicity: sources-check emits one ID_DUPLICATE per repeated id, census one E03 per extra occurrence; pre-existing, not trim",
+   "census_codes": [
+    [
+     "E03",
+     "S220"
+    ],
+    [
+     "E03",
+     "S220"
+    ]
+   ],
+   "tools": {
+    "cand-READY-50b94567": {
+     "ID_DUPLICATE": 1
+    },
+    "BASE-f9cd1bff": {
+     "ID_DUPLICATE": 1
+    }
+   }
+  },
+  {
+   "fixture": "J-nul-0",
+   "reason": "NUL: census bash command substitution drops null bytes (sources-census.sh:717 warning); encoding artifact",
+   "census_codes": [
+    [
+     "E05",
+     "S5170"
+    ]
+   ],
+   "tools": {
+    "cand-READY-50b94567": {
+     "KIND_ENUM": 1
+    },
+    "BASE-f9cd1bff": {
+     "KIND_ENUM": 1
+    }
+   }
+  },
+  {
+   "fixture": "J-nul-1",
+   "reason": "NUL: census bash command substitution drops null bytes (sources-census.sh:717 warning); encoding artifact",
+   "census_codes": [
+    [
+     "E05",
+     "S75461"
+    ]
+   ],
+   "tools": {
+    "cand-READY-50b94567": {
+     "KIND_ENUM": 1
+    },
+    "BASE-f9cd1bff": {
+     "KIND_ENUM": 1
+    }
+   }
+  }
+ ],
+ "tools": [
+  "cand-READY-50b94567",
+  "BASE-f9cd1bff"
+ ],
+ "coverage": {
+  "anchor": {
+   "classes": 16,
+   "names": [
+    "BOM",
+    "C0_01",
+    "C0_1F",
+    "C1_80",
+    "C1_9F",
+    "CR",
+    "EMSP",
+    "MVS",
+    "NBSP",
+    "NEL",
+    "SHY",
+    "SP",
+    "SPNBSP",
+    "TAB",
+    "VT",
+    "ZWSP"
+   ]
+  },
+  "id": {
+   "classes": 105,
+   "names": [
+    "ALM",
+    "BOM",
+    "BOMSP",
+    "C0_01",
+    "C0_02",
+    "C0_03",
+    "C0_04",
+    "C0_05",
+    "C0_06",
+    "C0_07",
+    "C0_08",
+    "C0_0E",
+    "C0_0F",
+    "C0_10",
+    "C0_11",
+    "C0_12",
+    "C0_13",
+    "C0_14",
+    "C0_15",
+    "C0_16",
+    "C0_17",
+    "C0_18",
+    "C0_19",
+    "C0_1A",
+    "C0_1B",
+    "C0_1C",
+    "C0_1D",
+    "C0_1E",
+    "C0_1F",
+    "C1_7F",
+    "C1_80",
+    "C1_81",
+    "C1_82",
+    "C1_83",
+    "C1_84",
+    "C1_86",
+    "C1_87",
+    "C1_88",
+    "C1_89",
+    "C1_8A",
+    "C1_8B",
+    "C1_8C",
+    "C1_8D",
+    "C1_8E",
+    "C1_8F",
+    "C1_90",
+    "C1_91",
+    "C1_92",
+    "C1_93",
+    "C1_94",
+    "C1_95",
+    "C1_96",
+    "C1_97",
+    "C1_98",
+    "C1_99",
+    "C1_9A",
+    "C1_9B",
+    "C1_9C",
+    "C1_9D",
+    "C1_9E",
+    "C1_9F",
+    "CF2061",
+    "CF2062",
+    "CF2063",
+    "CF2064",
+    "CR",
+    "CRFF",
+    "EMQUAD",
+    "EMSP",
+    "ENQUAD",
+    "ENSP",
+    "FF",
+    "FIGSP",
+    "HAIRSP",
+    "HAIRSP2",
+    "IDSP",
+    "LRM",
+    "LS",
+    "MMSP",
+    "MVS",
+    "NBSP",
+    "NBSPSP",
+    "NBSPTAB",
+    "NEL",
+    "NELSP",
+    "NNBSP",
+    "OGHAM",
+    "PS",
+    "PUNCSP",
+    "RLM",
+    "SHY",
+    "SIXPEREM",
+    "SP",
+    "SPNBSP",
+    "TAB",
+    "TABVT",
+    "THICKSP",
+    "THINSP",
+    "VT",
+    "VTFF",
+    "WJ",
+    "ZWJ",
+    "ZWNJ",
+    "ZWSP",
+    "ZWSPNBSP"
+   ]
+  },
+  "kind": {
+   "classes": 105,
+   "names": [
+    "ALM",
+    "BOM",
+    "BOMSP",
+    "C0_01",
+    "C0_02",
+    "C0_03",
+    "C0_04",
+    "C0_05",
+    "C0_06",
+    "C0_07",
+    "C0_08",
+    "C0_0E",
+    "C0_0F",
+    "C0_10",
+    "C0_11",
+    "C0_12",
+    "C0_13",
+    "C0_14",
+    "C0_15",
+    "C0_16",
+    "C0_17",
+    "C0_18",
+    "C0_19",
+    "C0_1A",
+    "C0_1B",
+    "C0_1C",
+    "C0_1D",
+    "C0_1E",
+    "C0_1F",
+    "C1_7F",
+    "C1_80",
+    "C1_81",
+    "C1_82",
+    "C1_83",
+    "C1_84",
+    "C1_86",
+    "C1_87",
+    "C1_88",
+    "C1_89",
+    "C1_8A",
+    "C1_8B",
+    "C1_8C",
+    "C1_8D",
+    "C1_8E",
+    "C1_8F",
+    "C1_90",
+    "C1_91",
+    "C1_92",
+    "C1_93",
+    "C1_94",
+    "C1_95",
+    "C1_96",
+    "C1_97",
+    "C1_98",
+    "C1_99",
+    "C1_9A",
+    "C1_9B",
+    "C1_9C",
+    "C1_9D",
+    "C1_9E",
+    "C1_9F",
+    "CF2061",
+    "CF2062",
+    "CF2063",
+    "CF2064",
+    "CR",
+    "CRFF",
+    "EMQUAD",
+    "EMSP",
+    "ENQUAD",
+    "ENSP",
+    "FF",
+    "FIGSP",
+    "HAIRSP",
+    "HAIRSP2",
+    "IDSP",
+    "LRM",
+    "LS",
+    "MMSP",
+    "MVS",
+    "NBSP",
+    "NBSPSP",
+    "NBSPTAB",
+    "NEL",
+    "NELSP",
+    "NNBSP",
+    "OGHAM",
+    "PS",
+    "PUNCSP",
+    "RLM",
+    "SHY",
+    "SIXPEREM",
+    "SP",
+    "SPNBSP",
+    "TAB",
+    "TABVT",
+    "THICKSP",
+    "THINSP",
+    "VT",
+    "VTFF",
+    "WJ",
+    "ZWJ",
+    "ZWNJ",
+    "ZWSP",
+    "ZWSPNBSP"
+   ]
+  },
+  "opened": {
+   "classes": 105,
+   "names": [
+    "ALM",
+    "BOM",
+    "BOMSP",
+    "C0_01",
+    "C0_02",
+    "C0_03",
+    "C0_04",
+    "C0_05",
+    "C0_06",
+    "C0_07",
+    "C0_08",
+    "C0_0E",
+    "C0_0F",
+    "C0_10",
+    "C0_11",
+    "C0_12",
+    "C0_13",
+    "C0_14",
+    "C0_15",
+    "C0_16",
+    "C0_17",
+    "C0_18",
+    "C0_19",
+    "C0_1A",
+    "C0_1B",
+    "C0_1C",
+    "C0_1D",
+    "C0_1E",
+    "C0_1F",
+    "C1_7F",
+    "C1_80",
+    "C1_81",
+    "C1_82",
+    "C1_83",
+    "C1_84",
+    "C1_86",
+    "C1_87",
+    "C1_88",
+    "C1_89",
+    "C1_8A",
+    "C1_8B",
+    "C1_8C",
+    "C1_8D",
+    "C1_8E",
+    "C1_8F",
+    "C1_90",
+    "C1_91",
+    "C1_92",
+    "C1_93",
+    "C1_94",
+    "C1_95",
+    "C1_96",
+    "C1_97",
+    "C1_98",
+    "C1_99",
+    "C1_9A",
+    "C1_9B",
+    "C1_9C",
+    "C1_9D",
+    "C1_9E",
+    "C1_9F",
+    "CF2061",
+    "CF2062",
+    "CF2063",
+    "CF2064",
+    "CR",
+    "CRFF",
+    "EMQUAD",
+    "EMSP",
+    "ENQUAD",
+    "ENSP",
+    "FF",
+    "FIGSP",
+    "HAIRSP",
+    "HAIRSP2",
+    "IDSP",
+    "LRM",
+    "LS",
+    "MMSP",
+    "MVS",
+    "NBSP",
+    "NBSPSP",
+    "NBSPTAB",
+    "NEL",
+    "NELSP",
+    "NNBSP",
+    "OGHAM",
+    "PS",
+    "PUNCSP",
+    "RLM",
+    "SHY",
+    "SIXPEREM",
+    "SP",
+    "SPNBSP",
+    "TAB",
+    "TABVT",
+    "THICKSP",
+    "THINSP",
+    "VT",
+    "VTFF",
+    "WJ",
+    "ZWJ",
+    "ZWNJ",
+    "ZWSP",
+    "ZWSPNBSP"
+   ]
+  },
+  "recheck": {
+   "classes": 105,
+   "names": [
+    "ALM",
+    "BOM",
+    "BOMSP",
+    "C0_01",
+    "C0_02",
+    "C0_03",
+    "C0_04",
+    "C0_05",
+    "C0_06",
+    "C0_07",
+    "C0_08",
+    "C0_0E",
+    "C0_0F",
+    "C0_10",
+    "C0_11",
+    "C0_12",
+    "C0_13",
+    "C0_14",
+    "C0_15",
+    "C0_16",
+    "C0_17",
+    "C0_18",
+    "C0_19",
+    "C0_1A",
+    "C0_1B",
+    "C0_1C",
+    "C0_1D",
+    "C0_1E",
+    "C0_1F",
+    "C1_7F",
+    "C1_80",
+    "C1_81",
+    "C1_82",
+    "C1_83",
+    "C1_84",
+    "C1_86",
+    "C1_87",
+    "C1_88",
+    "C1_89",
+    "C1_8A",
+    "C1_8B",
+    "C1_8C",
+    "C1_8D",
+    "C1_8E",
+    "C1_8F",
+    "C1_90",
+    "C1_91",
+    "C1_92",
+    "C1_93",
+    "C1_94",
+    "C1_95",
+    "C1_96",
+    "C1_97",
+    "C1_98",
+    "C1_99",
+    "C1_9A",
+    "C1_9B",
+    "C1_9C",
+    "C1_9D",
+    "C1_9E",
+    "C1_9F",
+    "CF2061",
+    "CF2062",
+    "CF2063",
+    "CF2064",
+    "CR",
+    "CRFF",
+    "EMQUAD",
+    "EMSP",
+    "ENQUAD",
+    "ENSP",
+    "FF",
+    "FIGSP",
+    "HAIRSP",
+    "HAIRSP2",
+    "IDSP",
+    "LRM",
+    "LS",
+    "MMSP",
+    "MVS",
+    "NBSP",
+    "NBSPSP",
+    "NBSPTAB",
+    "NEL",
+    "NELSP",
+    "NNBSP",
+    "OGHAM",
+    "PS",
+    "PUNCSP",
+    "RLM",
+    "SHY",
+    "SIXPEREM",
+    "SP",
+    "SPNBSP",
+    "TAB",
+    "TABVT",
+    "THICKSP",
+    "THINSP",
+    "VT",
+    "VTFF",
+    "WJ",
+    "ZWJ",
+    "ZWNJ",
+    "ZWSP",
+    "ZWSPNBSP"
+   ]
+  },
+  "scope": {
+   "classes": 16,
+   "names": [
+    "BOM",
+    "C0_01",
+    "C0_1F",
+    "C1_80",
+    "C1_9F",
+    "CR",
+    "EMSP",
+    "MVS",
+    "NBSP",
+    "NEL",
+    "SHY",
+    "SP",
+    "SPNBSP",
+    "TAB",
+    "VT",
+    "ZWSP"
+   ]
+  },
+  "source": {
+   "classes": 16,
+   "names": [
+    "BOM",
+    "C0_01",
+    "C0_1F",
+    "C1_80",
+    "C1_9F",
+    "CR",
+    "EMSP",
+    "MVS",
+    "NBSP",
+    "NEL",
+    "SHY",
+    "SP",
+    "SPNBSP",
+    "TAB",
+    "VT",
+    "ZWSP"
+   ]
+  },
+  "status": {
+   "classes": 105,
+   "names": [
+    "ALM",
+    "BOM",
+    "BOMSP",
+    "C0_01",
+    "C0_02",
+    "C0_03",
+    "C0_04",
+    "C0_05",
+    "C0_06",
+    "C0_07",
+    "C0_08",
+    "C0_0E",
+    "C0_0F",
+    "C0_10",
+    "C0_11",
+    "C0_12",
+    "C0_13",
+    "C0_14",
+    "C0_15",
+    "C0_16",
+    "C0_17",
+    "C0_18",
+    "C0_19",
+    "C0_1A",
+    "C0_1B",
+    "C0_1C",
+    "C0_1D",
+    "C0_1E",
+    "C0_1F",
+    "C1_7F",
+    "C1_80",
+    "C1_81",
+    "C1_82",
+    "C1_83",
+    "C1_84",
+    "C1_86",
+    "C1_87",
+    "C1_88",
+    "C1_89",
+    "C1_8A",
+    "C1_8B",
+    "C1_8C",
+    "C1_8D",
+    "C1_8E",
+    "C1_8F",
+    "C1_90",
+    "C1_91",
+    "C1_92",
+    "C1_93",
+    "C1_94",
+    "C1_95",
+    "C1_96",
+    "C1_97",
+    "C1_98",
+    "C1_99",
+    "C1_9A",
+    "C1_9B",
+    "C1_9C",
+    "C1_9D",
+    "C1_9E",
+    "C1_9F",
+    "CF2061",
+    "CF2062",
+    "CF2063",
+    "CF2064",
+    "CR",
+    "CRFF",
+    "EMQUAD",
+    "EMSP",
+    "ENQUAD",
+    "ENSP",
+    "FF",
+    "FIGSP",
+    "HAIRSP",
+    "HAIRSP2",
+    "IDSP",
+    "LRM",
+    "LS",
+    "MMSP",
+    "MVS",
+    "NBSP",
+    "NBSPSP",
+    "NBSPTAB",
+    "NEL",
+    "NELSP",
+    "NNBSP",
+    "OGHAM",
+    "PS",
+    "PUNCSP",
+    "RLM",
+    "SHY",
+    "SIXPEREM",
+    "SP",
+    "SPNBSP",
+    "TAB",
+    "TABVT",
+    "THICKSP",
+    "THINSP",
+    "VT",
+    "VTFF",
+    "WJ",
+    "ZWJ",
+    "ZWNJ",
+    "ZWSP",
+    "ZWSPNBSP"
+   ]
+  },
+  "teaches": {
+   "classes": 16,
+   "names": [
+    "BOM",
+    "C0_01",
+    "C0_1F",
+    "C1_80",
+    "C1_9F",
+    "CR",
+    "EMSP",
+    "MVS",
+    "NBSP",
+    "NEL",
+    "SHY",
+    "SP",
+    "SPNBSP",
+    "TAB",
+    "VT",
+    "ZWSP"
+   ]
+  },
+  "tier": {
+   "classes": 105,
+   "names": [
+    "ALM",
+    "BOM",
+    "BOMSP",
+    "C0_01",
+    "C0_02",
+    "C0_03",
+    "C0_04",
+    "C0_05",
+    "C0_06",
+    "C0_07",
+    "C0_08",
+    "C0_0E",
+    "C0_0F",
+    "C0_10",
+    "C0_11",
+    "C0_12",
+    "C0_13",
+    "C0_14",
+    "C0_15",
+    "C0_16",
+    "C0_17",
+    "C0_18",
+    "C0_19",
+    "C0_1A",
+    "C0_1B",
+    "C0_1C",
+    "C0_1D",
+    "C0_1E",
+    "C0_1F",
+    "C1_7F",
+    "C1_80",
+    "C1_81",
+    "C1_82",
+    "C1_83",
+    "C1_84",
+    "C1_86",
+    "C1_87",
+    "C1_88",
+    "C1_89",
+    "C1_8A",
+    "C1_8B",
+    "C1_8C",
+    "C1_8D",
+    "C1_8E",
+    "C1_8F",
+    "C1_90",
+    "C1_91",
+    "C1_92",
+    "C1_93",
+    "C1_94",
+    "C1_95",
+    "C1_96",
+    "C1_97",
+    "C1_98",
+    "C1_99",
+    "C1_9A",
+    "C1_9B",
+    "C1_9C",
+    "C1_9D",
+    "C1_9E",
+    "C1_9F",
+    "CF2061",
+    "CF2062",
+    "CF2063",
+    "CF2064",
+    "CR",
+    "CRFF",
+    "EMQUAD",
+    "EMSP",
+    "ENQUAD",
+    "ENSP",
+    "FF",
+    "FIGSP",
+    "HAIRSP",
+    "HAIRSP2",
+    "IDSP",
+    "LRM",
+    "LS",
+    "MMSP",
+    "MVS",
+    "NBSP",
+    "NBSPSP",
+    "NBSPTAB",
+    "NEL",
+    "NELSP",
+    "NNBSP",
+    "OGHAM",
+    "PS",
+    "PUNCSP",
+    "RLM",
+    "SHY",
+    "SIXPEREM",
+    "SP",
+    "SPNBSP",
+    "TAB",
+    "TABVT",
+    "THICKSP",
+    "THINSP",
+    "VT",
+    "VTFF",
+    "WJ",
+    "ZWJ",
+    "ZWNJ",
+    "ZWSP",
+    "ZWSPNBSP"
+   ]
+  },
+  "usedby": {
+   "classes": 16,
+   "names": [
+    "BOM",
+    "C0_01",
+    "C0_1F",
+    "C1_80",
+    "C1_9F",
+    "CR",
+    "EMSP",
+    "MVS",
+    "NBSP",
+    "NEL",
+    "SHY",
+    "SP",
+    "SPNBSP",
+    "TAB",
+    "VT",
+    "ZWSP"
+   ]
+  }
+ },
+ "distinct_pad_classes": 105,
+ "pad_class_count_seen": 105,
+ "census_code_rows": {
+  "E01": 13,
+  "E02": 182,
+  "E03": 4,
+  "E05": 124,
+  "E06": 114,
+  "E07": 115,
+  "E08": 124,
+  "E09": 122,
+  "E12": 9
+ },
+ "tool_kind_rows": {
+  "cand-READY-50b94567": {
+   "ID_FORM": 182,
+   "ID_DUPLICATE": 4,
+   "ROW_MALFORMED": 7,
+   "KIND_ENUM": 124,
+   "TIER_ENUM": 114,
+   "STATUS_ENUM": 115,
+   "OPENED_INVALID": 124,
+   "RECHECK_INVALID": 122,
+   "ROW_OUTSIDE_REGISTRY": 9
+  },
+  "BASE-f9cd1bff": {
+   "ID_FORM": 182,
+   "ID_DUPLICATE": 4,
+   "ROW_MALFORMED": 7,
+   "KIND_ENUM": 124,
+   "TIER_ENUM": 114,
+   "STATUS_ENUM": 115,
+   "OPENED_INVALID": 124,
+   "RECHECK_INVALID": 122,
+   "ROW_OUTSIDE_REGISTRY": 9
+  }
+ },
+ "base_control": {
+  "fixtures_possible_divergence": 270,
+  "disagreements": 231,
+  "unexplained_disagreements": [],
+  "agreements_on_nonpossible": 633,
+  "sample_disagreements": [
+   {
+    "fixture": "A-id-VT",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-FF",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-CR",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-NBSP",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-OGHAM",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-ENQUAD",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-EMQUAD",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-ENSP",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-EMSP",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-THICKSP",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-SIXPEREM",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-FIGSP",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-PUNCSP",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-THINSP",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-HAIRSP",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-HAIRSP2",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-LS",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-PS",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-NNBSP",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-MMSP",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-IDSP",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-BOM",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-SPNBSP",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-NBSPSP",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-NBSPTAB",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-TABVT",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-VTFF",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-CRFF",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-BOMSP",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-id-ZWSPNBSP",
+    "possible": true,
+    "failed": [
+     "id_form"
+    ]
+   },
+   {
+    "fixture": "A-kind-VT",
+    "possible": true,
+    "failed": [
+     "kind_enum"
+    ]
+   },
+   {
+    "fixture": "A-kind-FF",
+    "possible": true,
+    "failed": [
+     "kind_enum"
+    ]
+   },
+   {
+    "fixture": "A-kind-CR",
+    "possible": true,
+    "failed": [
+     "kind_enum"
+    ]
+   },
+   {
+    "fixture": "A-kind-NBSP",
+    "possible": true,
+    "failed": [
+     "kind_enum"
+    ]
+   },
+   {
+    "fixture": "A-kind-OGHAM",
+    "possible": true,
+    "failed": [
+     "kind_enum"
+    ]
+   },
+   {
+    "fixture": "A-kind-ENQUAD",
+    "possible": true,
+    "failed": [
+     "kind_enum"
+    ]
+   },
+   {
+    "fixture": "A-kind-EMQUAD",
+    "possible": true,
+    "failed": [
+     "kind_enum"
+    ]
+   },
+   {
+    "fixture": "A-kind-ENSP",
+    "possible": true,
+    "failed": [
+     "kind_enum"
+    ]
+   },
+   {
+    "fixture": "A-kind-EMSP",
+    "possible": true,
+    "failed": [
+     "kind_enum"
+    ]
+   },
+   {
+    "fixture": "A-kind-THICKSP",
+    "possible": true,
+    "failed": [
+     "kind_enum"
+    ]
+   }
+  ]
+ },
+ "base_disagreement_classes": {
+  "id:BOM": 3,
+  "id:BOMSP": 1,
+  "id:CR": 8,
+  "id:CRFF": 1,
+  "id:EMQUAD": 1,
+  "id:EMSP": 9,
+  "id:ENQUAD": 1,
+  "id:ENSP": 1,
+  "id:FF": 1,
+  "id:FIGSP": 1,
+  "id:HAIRSP": 1,
+  "id:HAIRSP2": 1,
+  "id:IDSP": 1,
+  "id:LS": 3,
+  "id:MMSP": 1,
+  "id:NBSP": 22,
+  "id:NBSPSP": 1,
+  "id:NBSPTAB": 1,
+  "id:NNBSP": 1,
+  "id:OGHAM": 1,
+  "id:PS": 3,
+  "id:PUNCSP": 1,
+  "id:SIXPEREM": 1,
+  "id:SP": 1,
+  "id:SPNBSP": 3,
+  "id:TABVT": 1,
+  "id:THICKSP": 1,
+  "id:THINSP": 1,
+  "id:VT": 4,
+  "id:VTFF": 1,
+  "id:ZWSP": 1,
+  "id:ZWSPNBSP": 1,
+  "kind:BOM": 1,
+  "kind:BOMSP": 1,
+  "kind:CR": 1,
+  "kind:CRFF": 1,
+  "kind:EMQUAD": 1,
+  "kind:EMSP": 3,
+  "kind:ENQUAD": 1,
+  "kind:ENSP": 1,
+  "kind:FF": 1,
+  "kind:FIGSP": 1,
+  "kind:HAIRSP": 1,
+  "kind:HAIRSP2": 1,
+  "kind:IDSP": 1,
+  "kind:LS": 1,
+  "kind:MMSP": 1,
+  "kind:NBSP": 3,
+  "kind:NBSPSP": 1,
+  "kind:NBSPTAB": 1,
+  "kind:NNBSP": 1,
+  "kind:OGHAM": 1,
+  "kind:PS": 1,
+  "kind:PUNCSP": 1,
+  "kind:SIXPEREM": 1,
+  "kind:SPNBSP": 1,
+  "kind:TABVT": 1,
+  "kind:THICKSP": 1,
+  "kind:THINSP": 1,
+  "kind:VT": 3,
+  "kind:VTFF": 1,
+  "opened:BOM": 1,
+  "opened:BOMSP": 1,
+  "opened:CR": 1,
+  "opened:CRFF": 1,
+  "opened:EMQUAD": 1,
+  "opened:EMSP": 1,
+  "opened:ENQUAD": 1,
+  "opened:ENSP": 1,
+  "opened:FF": 1,
+  "opened:FIGSP": 1,
+  "opened:HAIRSP": 1,
+  "opened:HAIRSP2": 1,
+  "opened:IDSP": 1,
+  "opened:LS": 1,
+  "opened:MMSP": 1,
+  "opened:NBSP": 3,
+  "opened:NBSPSP": 1,
+  "opened:NBSPTAB": 1,
+  "opened:NNBSP": 1,
+  "opened:OGHAM": 1,
+  "opened:PS": 1,
+  "opened:PUNCSP": 1,
+  "opened:SIXPEREM": 1,
+  "opened:SPNBSP": 1,
+  "opened:TABVT": 1,
+  "opened:THICKSP": 1,
+  "opened:THINSP": 1,
+  "opened:VT": 2,
+  "opened:VTFF": 1,
+  "recheck:BOM": 1,
+  "recheck:BOMSP": 1,
+  "recheck:CR": 1,
+  "recheck:CRFF": 1,
+  "recheck:EMQUAD": 1,
+  "recheck:EMSP": 2,
+  "recheck:ENQUAD": 1,
+  "recheck:ENSP": 1,
+  "recheck:FF": 1,
+  "recheck:FIGSP": 1,
+  "recheck:HAIRSP": 1,
+  "recheck:HAIRSP2": 1,
+  "recheck:IDSP": 1,
+  "recheck:LS": 1,
+  "recheck:MMSP": 1,
+  "recheck:NBSP": 1,
+  "recheck:NBSPSP": 1,
+  "recheck:NBSPTAB": 1,
+  "recheck:NNBSP": 1,
+  "recheck:OGHAM": 1,
+  "recheck:PS": 1,
+  "recheck:PUNCSP": 1,
+  "recheck:SIXPEREM": 1,
+  "recheck:SPNBSP": 1,
+  "recheck:TABVT": 1,
+  "recheck:THICKSP": 1,
+  "recheck:THINSP": 1,
+  "recheck:VT": 1,
+  "recheck:VTFF": 1,
+  "status:BOM": 1,
+  "status:BOMSP": 1,
+  "status:CR": 2,
+  "status:CRFF": 1,
+  "status:EMQUAD": 1,
+  "status:EMSP": 2,
+  "status:ENQUAD": 1,
+  "status:ENSP": 1,
+  "status:FF": 1,
+  "status:FIGSP": 1,
+  "status:HAIRSP": 1,
+  "status:HAIRSP2": 1,
+  "status:IDSP": 1,
+  "status:LS": 1,
+  "status:MMSP": 1,
+  "status:NBSP": 1,
+  "status:NBSPSP": 1,
+  "status:NBSPTAB": 1,
+  "status:NNBSP": 1,
+  "status:OGHAM": 1,
+  "status:PS": 1,
+  "status:PUNCSP": 1,
+  "status:SIXPEREM": 1,
+  "status:SPNBSP": 1,
+  "status:TABVT": 1,
+  "status:THICKSP": 1,
+  "status:THINSP": 1,
+  "status:VT": 1,
+  "status:VTFF": 1,
+  "tier:BOM": 1,
+  "tier:BOMSP": 1,
+  "tier:CR": 1,
+  "tier:CRFF": 1,
+  "tier:EMQUAD": 1,
+  "tier:EMSP": 1,
+  "tier:ENQUAD": 1,
+  "tier:ENSP": 1,
+  "tier:FF": 1,
+  "tier:FIGSP": 1,
+  "tier:HAIRSP": 1,
+  "tier:HAIRSP2": 1,
+  "tier:IDSP": 1,
+  "tier:LS": 1,
+  "tier:MMSP": 1,
+  "tier:NBSP": 2,
+  "tier:NBSPSP": 1,
+  "tier:NBSPTAB": 1,
+  "tier:NNBSP": 1,
+  "tier:OGHAM": 1,
+  "tier:PS": 1,
+  "tier:PUNCSP": 1,
+  "tier:SIXPEREM": 1,
+  "tier:SPNBSP": 1,
+  "tier:TABVT": 1,
+  "tier:THICKSP": 1,
+  "tier:THINSP": 1,
+  "tier:VT": 1,
+  "tier:VTFF": 1
+ },
+ "census_model_bad": [],
+ "census_model_bad_count": 0
+}

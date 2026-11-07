@@ -1,0 +1,664 @@
+{
+ "text-empty-nbsp": {
+  "base": {
+   "verdict": "DRIFT",
+   "counts": {
+    "rows": 5,
+    "tiers": {
+     "A": 5,
+     "B": 0,
+     "C": 0
+    },
+    "status": {
+     "queued": 5,
+     "mined": 0,
+     "rejected": 0
+    },
+    "entriesWithSource": 0,
+    "legacy": 0
+   },
+   "findings": [
+    [
+     "SECTION_MISSING",
+     null,
+     "missing ## Leads (unopened)"
+    ],
+    [
+     "ROW_FIELD_EMPTY",
+     7,
+     "id=S001 field=scope"
+    ],
+    [
+     "ROW_FIELD_EMPTY",
+     8,
+     "id=S002 field=teaches"
+    ],
+    [
+     "ROW_FIELD_EMPTY",
+     9,
+     "id=S003 field=anchor"
+    ],
+    [
+     "ROW_FIELD_EMPTY",
+     10,
+     "id=S004 field=source"
+    ],
+    [
+     "ROW_FIELD_EMPTY",
+     11,
+     "id=S005 field=used-by"
+    ]
+   ]
+  },
+  "r99": {
+   "verdict": "DRIFT",
+   "counts": {
+    "rows": 5,
+    "tiers": {
+     "A": 5,
+     "B": 0,
+     "C": 0
+    },
+    "status": {
+     "queued": 5,
+     "mined": 0,
+     "rejected": 0
+    },
+    "entriesWithSource": 0,
+    "legacy": 0
+   },
+   "findings": [
+    [
+     "SECTION_MISSING",
+     null,
+     "missing ## Leads (unopened)"
+    ]
+   ]
+  },
+  "census_validate_exit": 1,
+  "census_validate": [
+   "file\tW04\tS002 duplicate url example.test/one across scopes",
+   "file\tE04\tS003 duplicate url example.test/one within scope fixture scope",
+   "file\tE04\tS005 duplicate url example.test/one within scope fixture scope"
+  ],
+  "census_rows_lines": [
+   "file\trows\t5",
+   "file\ttier.A\t5",
+   "file\tstatus.queued\t5",
+   "FLEET\trows\t5",
+   "FLEET\ttier.A\t5",
+   "FLEET\ttier.B\t0",
+   "FLEET\ttier.C\t0",
+   "FLEET\ttier.invalid\t0",
+   "FLEET\tstatus.queued\t5",
+   "FLEET\tstatus.mined\t0",
+   "FLEET\tstatus.rejected\t0",
+   "FLEET\tstatus.invalid\t0",
+   "FLEET\tmissing\t0"
+  ]
+ },
+ "enum-empty-nbsp": {
+  "base": {
+   "verdict": "DRIFT",
+   "counts": {
+    "rows": 5,
+    "tiers": {
+     "A": 4,
+     "B": 0,
+     "C": 0
+    },
+    "status": {
+     "queued": 4,
+     "mined": 0,
+     "rejected": 0
+    },
+    "entriesWithSource": 0,
+    "legacy": 0
+   },
+   "findings": [
+    [
+     "SECTION_MISSING",
+     null,
+     "missing ## Leads (unopened)"
+    ],
+    [
+     "ROW_FIELD_EMPTY",
+     7,
+     "id=S011 field=kind"
+    ],
+    [
+     "KIND_ENUM",
+     7,
+     "id=S011 kind="
+    ],
+    [
+     "ROW_FIELD_EMPTY",
+     8,
+     "id=S012 field=tier"
+    ],
+    [
+     "TIER_ENUM",
+     8,
+     "id=S012 tier="
+    ],
+    [
+     "ROW_FIELD_EMPTY",
+     9,
+     "id=S013 field=status"
+    ],
+    [
+     "STATUS_ENUM",
+     9,
+     "id=S013 status="
+    ],
+    [
+     "ROW_FIELD_EMPTY",
+     10,
+     "id=S014 field=opened"
+    ],
+    [
+     "OPENED_INVALID",
+     10,
+     "id=S014 opened="
+    ],
+    [
+     "ROW_FIELD_EMPTY",
+     11,
+     "id=S015 field=recheck"
+    ],
+    [
+     "RECHECK_INVALID",
+     11,
+     "id=S015 recheck="
+    ]
+   ]
+  },
+  "r99": {
+   "verdict": "DRIFT",
+   "counts": {
+    "rows": 5,
+    "tiers": {
+     "A": 4,
+     "B": 0,
+     "C": 0
+    },
+    "status": {
+     "queued": 4,
+     "mined": 0,
+     "rejected": 0
+    },
+    "entriesWithSource": 0,
+    "legacy": 0
+   },
+   "findings": [
+    [
+     "SECTION_MISSING",
+     null,
+     "missing ## Leads (unopened)"
+    ],
+    [
+     "KIND_ENUM",
+     7,
+     "id=S011 kind=\u00a0"
+    ],
+    [
+     "TIER_ENUM",
+     8,
+     "id=S012 tier=\u00a0"
+    ],
+    [
+     "STATUS_ENUM",
+     9,
+     "id=S013 status=\u00a0"
+    ],
+    [
+     "OPENED_INVALID",
+     10,
+     "id=S014 opened=\u00a0"
+    ],
+    [
+     "RECHECK_INVALID",
+     11,
+     "id=S015 recheck=\u00a0"
+    ]
+   ]
+  },
+  "census_validate_exit": 1,
+  "census_validate": [
+   "file\tE05\tS011 kind=\u00a0",
+   "file\tE04\tS012 duplicate url example.test/one within scope fixture scope",
+   "file\tE06\tS012 tier=\u00a0",
+   "file\tE04\tS013 duplicate url example.test/one within scope fixture scope",
+   "file\tE07\tS013 status=\u00a0",
+   "file\tE04\tS014 duplicate url example.test/one within scope fixture scope",
+   "file\tE08\tS014 opened=\u00a0",
+   "file\tE04\tS015 duplicate url example.test/one within scope fixture scope",
+   "file\tE09\tS015 recheck=\u00a0"
+  ],
+  "census_rows_lines": [
+   "file\trows\t5",
+   "file\ttier.A\t4",
+   "file\ttier.invalid\t1",
+   "file\tstatus.invalid\t1",
+   "file\tstatus.queued\t4",
+   "FLEET\trows\t5",
+   "FLEET\ttier.A\t4",
+   "FLEET\ttier.B\t0",
+   "FLEET\ttier.C\t0",
+   "FLEET\ttier.invalid\t1",
+   "FLEET\tstatus.queued\t4",
+   "FLEET\tstatus.mined\t0",
+   "FLEET\tstatus.rejected\t0",
+   "FLEET\tstatus.invalid\t1",
+   "FLEET\tmissing\t0"
+  ]
+ },
+ "id-pad-nbsp": {
+  "base": {
+   "verdict": "DRIFT",
+   "counts": {
+    "rows": 1,
+    "tiers": {
+     "A": 1,
+     "B": 0,
+     "C": 0
+    },
+    "status": {
+     "queued": 1,
+     "mined": 0,
+     "rejected": 0
+    },
+    "entriesWithSource": 0,
+    "legacy": 0
+   },
+   "findings": [
+    [
+     "SECTION_MISSING",
+     null,
+     "missing ## Leads (unopened)"
+    ]
+   ]
+  },
+  "r99": {
+   "verdict": "DRIFT",
+   "counts": {
+    "rows": 0,
+    "tiers": {
+     "A": 0,
+     "B": 0,
+     "C": 0
+    },
+    "status": {
+     "queued": 0,
+     "mined": 0,
+     "rejected": 0
+    },
+    "entriesWithSource": 0,
+    "legacy": 0
+   },
+   "findings": [
+    [
+     "SECTION_MISSING",
+     null,
+     "missing ## Leads (unopened)"
+    ],
+    [
+     "ID_FORM",
+     7,
+     "id=\u00a0S021\u00a0"
+    ]
+   ]
+  },
+  "census_validate_exit": 1,
+  "census_validate": [
+   "file\tE02\t\u00a0S021\u00a0"
+  ],
+  "census_rows_lines": [
+   "file\trows\t1",
+   "file\ttier.A\t1",
+   "file\tstatus.queued\t1",
+   "FLEET\trows\t1",
+   "FLEET\ttier.A\t1",
+   "FLEET\ttier.B\t0",
+   "FLEET\ttier.C\t0",
+   "FLEET\ttier.invalid\t0",
+   "FLEET\tstatus.queued\t1",
+   "FLEET\tstatus.mined\t0",
+   "FLEET\tstatus.rejected\t0",
+   "FLEET\tstatus.invalid\t0",
+   "FLEET\tmissing\t0"
+  ]
+ },
+ "id-pad-vt": {
+  "base": {
+   "verdict": "DRIFT",
+   "counts": {
+    "rows": 1,
+    "tiers": {
+     "A": 1,
+     "B": 0,
+     "C": 0
+    },
+    "status": {
+     "queued": 1,
+     "mined": 0,
+     "rejected": 0
+    },
+    "entriesWithSource": 0,
+    "legacy": 0
+   },
+   "findings": [
+    [
+     "SECTION_MISSING",
+     null,
+     "missing ## Leads (unopened)"
+    ]
+   ]
+  },
+  "r99": {
+   "verdict": "DRIFT",
+   "counts": {
+    "rows": 0,
+    "tiers": {
+     "A": 0,
+     "B": 0,
+     "C": 0
+    },
+    "status": {
+     "queued": 0,
+     "mined": 0,
+     "rejected": 0
+    },
+    "entriesWithSource": 0,
+    "legacy": 0
+   },
+   "findings": [
+    [
+     "SECTION_MISSING",
+     null,
+     "missing ## Leads (unopened)"
+    ],
+    [
+     "ID_FORM",
+     7,
+     "id=S022\u000b"
+    ]
+   ]
+  },
+  "census_validate_exit": 1,
+  "census_validate": [
+   "file\tE02\tS022\u000b"
+  ],
+  "census_rows_lines": [
+   "file\trows\t1",
+   "file\ttier.A\t1",
+   "file\tstatus.queued\t1",
+   "FLEET\trows\t1",
+   "FLEET\ttier.A\t1",
+   "FLEET\ttier.B\t0",
+   "FLEET\ttier.C\t0",
+   "FLEET\ttier.invalid\t0",
+   "FLEET\tstatus.queued\t1",
+   "FLEET\tstatus.mined\t0",
+   "FLEET\tstatus.rejected\t0",
+   "FLEET\tstatus.invalid\t0",
+   "FLEET\tmissing\t0"
+  ]
+ },
+ "usedby-pad": {
+  "base": {
+   "verdict": "DRIFT",
+   "counts": {
+    "rows": 3,
+    "tiers": {
+     "A": 3,
+     "B": 0,
+     "C": 0
+    },
+    "status": {
+     "queued": 0,
+     "mined": 3,
+     "rejected": 0
+    },
+    "entriesWithSource": 1,
+    "legacy": 0
+   },
+   "findings": [
+    [
+     "SECTION_MISSING",
+     null,
+     "missing ## Leads (unopened)"
+    ]
+   ]
+  },
+  "r99": {
+   "verdict": "DRIFT",
+   "counts": {
+    "rows": 3,
+    "tiers": {
+     "A": 3,
+     "B": 0,
+     "C": 0
+    },
+    "status": {
+     "queued": 0,
+     "mined": 3,
+     "rejected": 0
+    },
+    "entriesWithSource": 1,
+    "legacy": 0
+   },
+   "findings": [
+    [
+     "SECTION_MISSING",
+     null,
+     "missing ## Leads (unopened)"
+    ],
+    [
+     "USED_BY_MISSING",
+     7,
+     "id=S031 missing used-by corpus/knowledge/alpha.md\u00a0"
+    ],
+    [
+     "USED_BY_MISSING",
+     8,
+     "id=S032 missing used-by corpus/knowledge/alpha.md\u000b"
+    ],
+    [
+     "USED_BY_MISSING",
+     9,
+     "id=S033 missing used-by corpus/knowledge/alpha.md\u2003"
+    ],
+    [
+     "USED_BY_ASYMMETRY",
+     1,
+     "S031 used-by omits corpus/knowledge/alpha.md"
+    ]
+   ]
+  },
+  "census_validate_exit": 1,
+  "census_validate": [
+   "file\tE04\tS032 duplicate url example.test/one within scope fixture scope",
+   "file\tE04\tS033 duplicate url example.test/one within scope fixture scope",
+   "file\tE11\tS031 missing used-by corpus/knowledge/alpha.md\u00a0"
+  ],
+  "census_rows_lines": [
+   "file\trows\t3",
+   "file\ttier.A\t3",
+   "file\tstatus.mined\t3",
+   "FLEET\trows\t3",
+   "FLEET\ttier.A\t3",
+   "FLEET\ttier.B\t0",
+   "FLEET\ttier.C\t0",
+   "FLEET\ttier.invalid\t0",
+   "FLEET\tstatus.queued\t0",
+   "FLEET\tstatus.mined\t3",
+   "FLEET\tstatus.rejected\t0",
+   "FLEET\tstatus.invalid\t0",
+   "FLEET\tmissing\t0"
+  ]
+ },
+ "outside-id": {
+  "base": {
+   "verdict": "DRIFT",
+   "counts": {
+    "rows": 1,
+    "tiers": {
+     "A": 1,
+     "B": 0,
+     "C": 0
+    },
+    "status": {
+     "queued": 1,
+     "mined": 0,
+     "rejected": 0
+    },
+    "entriesWithSource": 0,
+    "legacy": 0
+   },
+   "findings": [
+    [
+     "ROW_OUTSIDE_REGISTRY",
+     12,
+     "id=S043 row outside Registry section"
+    ],
+    [
+     "ROW_OUTSIDE_REGISTRY",
+     13,
+     "id=S044 row outside Registry section"
+    ]
+   ]
+  },
+  "r99": {
+   "verdict": "DRIFT",
+   "counts": {
+    "rows": 1,
+    "tiers": {
+     "A": 1,
+     "B": 0,
+     "C": 0
+    },
+    "status": {
+     "queued": 1,
+     "mined": 0,
+     "rejected": 0
+    },
+    "entriesWithSource": 0,
+    "legacy": 0
+   },
+   "findings": [
+    [
+     "ROW_OUTSIDE_REGISTRY",
+     12,
+     "id=S043 row outside Registry section"
+    ],
+    [
+     "ROW_OUTSIDE_REGISTRY",
+     13,
+     "id=S044 row outside Registry section"
+    ]
+   ]
+  },
+  "census_validate_exit": 1,
+  "census_validate": [
+   "file\tE12\tS043 row outside Registry section",
+   "file\tE12\tS044 row outside Registry section"
+  ],
+  "census_rows_lines": [
+   "file\trows\t1",
+   "file\ttier.A\t1",
+   "file\tstatus.queued\t1",
+   "FLEET\trows\t1",
+   "FLEET\ttier.A\t1",
+   "FLEET\ttier.B\t0",
+   "FLEET\ttier.C\t0",
+   "FLEET\ttier.invalid\t0",
+   "FLEET\tstatus.queued\t1",
+   "FLEET\tstatus.mined\t0",
+   "FLEET\tstatus.rejected\t0",
+   "FLEET\tstatus.invalid\t0",
+   "FLEET\tmissing\t0"
+  ]
+ },
+ "twelve-12": {
+  "base": {
+   "verdict": "DRIFT",
+   "counts": {
+    "rows": 1,
+    "tiers": {
+     "A": 1,
+     "B": 0,
+     "C": 0
+    },
+    "status": {
+     "queued": 0,
+     "mined": 0,
+     "rejected": 0
+    },
+    "entriesWithSource": 0,
+    "legacy": 0
+   },
+   "findings": [
+    [
+     "SECTION_MISSING",
+     null,
+     "missing ## Leads (unopened)"
+    ],
+    [
+     "ROW_MALFORMED",
+     7,
+     "id=S051 split-fields=12; expected 13"
+    ]
+   ]
+  },
+  "r99": {
+   "verdict": "DRIFT",
+   "counts": {
+    "rows": 1,
+    "tiers": {
+     "A": 1,
+     "B": 0,
+     "C": 0
+    },
+    "status": {
+     "queued": 0,
+     "mined": 0,
+     "rejected": 0
+    },
+    "entriesWithSource": 0,
+    "legacy": 0
+   },
+   "findings": [
+    [
+     "SECTION_MISSING",
+     null,
+     "missing ## Leads (unopened)"
+    ],
+    [
+     "ROW_MALFORMED",
+     7,
+     "id=S051 split-fields=12; expected 13"
+    ]
+   ]
+  },
+  "census_validate_exit": 1,
+  "census_validate": [
+   "file\tE01\tS051 fields=10"
+  ],
+  "census_rows_lines": [
+   "file\trows\t1",
+   "file\ttier.A\t1",
+   "file\tstatus.invalid\t1",
+   "FLEET\trows\t1",
+   "FLEET\ttier.A\t1",
+   "FLEET\ttier.B\t0",
+   "FLEET\ttier.C\t0",
+   "FLEET\ttier.invalid\t0",
+   "FLEET\tstatus.queued\t0",
+   "FLEET\tstatus.mined\t0",
+   "FLEET\tstatus.rejected\t0",
+   "FLEET\tstatus.invalid\t1",
+   "FLEET\tmissing\t0"
+  ]
+ }
+}

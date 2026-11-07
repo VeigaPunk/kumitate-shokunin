@@ -3179,3 +3179,23 @@ Lesson `corpus/lessons/round-98.md` mines M98-1/2 class-grid limits and M98-3 in
 S277, knowledge `round-gate-row-id-class.md`, Q92, SKILL decisions and README map updated.
 
 - 2026-11-07 — round 98: C1 operability R98 HELD at M/M2; axis 9→9 terminal; every coverage row unchanged; one v1 wave 12 seats; S277; QUALITY Q92; lesson `corpus/lessons/round-98.md`.
+
+## Round 99 — sources-check Registry cells trimmed with the census blank class (2026-11-07, attempt 1)
+
+Declared one C1 operability claim (lowest non-retired, 9 terminal), sourced on S278 Unicode PropList 17.0.0 (opened
+this round) with S276/S277: R99 `sources-check` `trim` strips only ASCII SP/TAB, every caller, matching the census
+`row_pass` trim. Motivating evidence: r98 K98Connector (FIX-A ID_FORM 42 vs census E02 182) and this round's do-nothing
+control (BASE ID_FORM 48 vs E02 88, enums 16 vs 43, `counts.rows` 353 vs census-valid 313; `.ufo/waves/round-99/controls/ctl-nothing.txt`).
+Pre-freeze spot-check adoption `f9cd1bff`; freeze `f480124b` (plan, counter, 17 controls all matching, read-order log
++ checker); spec/dispatch `206e13dd`, 12 seats, WAVE-DONE, none dead. M `b914f5c5` = K99ExecTool READY `50b94567…`
+(selftest 90/90, counter HELD twice, REMUT 15/15); M2 `ff8f686e` adds seven arms for the wave's survivors (97/97,
+counter HELD twice, `M2_TEETH` 9/9, REMUT 15/15). K99CriticC H99 943/943 vs BASE 704/943; K99Reviewer 20/20 cases;
+K99ExecHarm battery identical except the designed `pin.sources-check` drift, 78/78 SOURCES revisions identical JSON.
+Rejected: "HELD certifies R99" (K99CriticA, eleven wrong constructions HELD) and "census parity everywhere" (used-by
+path parts: census `trim_cell` `[[:space:]]` is locale-dependent; M2 agrees 24/44 vs BASE 37/44 under UTF-8, 39/44 vs
+22/44 under C — disclosed trade on an out-of-scope helper, 0 live rows, L0 question filed). Lesson
+`corpus/lessons/round-99.md` mines M99-1 (prose read-order → `.ufo/waves/round-99/open/read-order.log` + checker, Q93), M99-2 (BASE
+selftest pinned no trim class) and M99-3 (plan "47 pad classes" vs 44 in the counter). S278/S279, knowledge
+`sources-check-cell-trim-class.md`, Q93, SKILL row and README map updated.
+
+- 2026-11-07 — round 99: C1 operability R99 HELD at M/M2; axis 9→9 terminal; every coverage row unchanged; one v1 wave 12 seats; S278/S279; QUALITY Q93; lesson `corpus/lessons/round-99.md`.

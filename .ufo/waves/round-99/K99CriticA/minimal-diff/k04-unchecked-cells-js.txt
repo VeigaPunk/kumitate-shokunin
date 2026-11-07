@@ -1,0 +1,16 @@
+construction: k04-unchecked-cells-js
+fixture: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-99/K99CriticA/minfixtures/k04-unchecked-cells-js/corpus/SOURCES.md
+fixture-escaped: '# SOURCES — where min learns\n\n## Registry\n\n| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |\n|---|---|---|---|---|---|---|---|---|---|---|\n| S001 | https://example.org/dup | docs | B | sc | § a | teaches a | mined | 2025-01-02 | on-release | — |\n| S002 | https://example.org/dup | docs | B | \xa0sc\xa0 | § a | teaches a | mined | 2025-01-02 | on-release | — |\n\n## Paths\n\nnone\n\n## Search log\n\nnone\n\n## Leads (unopened)\n\n- none\n'
+tool: node minrun/k04-unchecked-cells-js/scripts/sources-check.mjs --self <fixture> --today 2026-11-07 --json
+tool-exit: 1
+tool-counts: {"rows": 2, "tiers": {"A": 0, "B": 2, "C": 0}, "status": {"queued": 0, "mined": 2, "rejected": 0}, "entriesWithSource": 0, "legacy": 0}
+tool-findings:
+  MINED_UNUSED line=7 detail='id=S001 mined with no used-by path'
+  MINED_UNUSED line=8 detail='id=S002 mined with no used-by path'
+census: bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file <fixture> --today 2026-11-07
+census-exit: 0
+census-output:
+  'file\tW03\tS001 mined but unused'
+  'file\tW04\tS002 duplicate url example.org/dup across scopes'
+  'file\tW03\tS002 mined but unused'
+  'file\tok\t/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-99/K99CriticA/minfixtures/k04-unchecked-cells-js/corpus/SOURCES.md'

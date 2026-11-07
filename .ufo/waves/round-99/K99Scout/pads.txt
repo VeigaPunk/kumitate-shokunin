@@ -1,0 +1,231 @@
+# K99Scout — fleet registry cell-pad survey (pads.txt)
+# Round 99, seat K99Scout. Lane commit f480124b5216d66b8bd74162bc2f61eabaffb8b2 (base f9cd1bff147508f0d787f9e0cc4d2191aabaf02a).
+#
+# QUESTION. In every Registry row of every fleet lane's corpus/SOURCES.md (current) and every
+# committed revision of the kumitate lane's corpus/SOURCES.md: does any of the 11 cells carry, at
+# either edge, a character that ECMAScript String.prototype.trim() strips but the POSIX "blank"
+# class /^[ \t]+|[ \t]+$/ does NOT strip?
+#
+# EDGE SEMANTICS (why "at either edge" is measured after the blank run).
+#   A cell "|  X  |" has fields ["", "  X  ", ""]. The blank class removes the leading/trailing
+#   [ \t] run; JS trim() removes that run PLUS the TRIM_ONLY characters adjacent to it. So the
+#   probe is: strip the leading [ \t] run, then look for TRIM_ONLY chars immediately after it
+#   (and symmetrically at the trailing edge). A TRIM_ONLY char buried mid-cell is not an edge pad.
+#
+# TRIM_ONLY is computed from the JS runtime itself (see pad-survey.mjs), not hand-listed:
+#   every code point c with c.trim() === '' (JS TrimString, ECMA-262 S276) that /^[ \t]$/ does
+#   not match. Measured on node v24.21.0: 23 code points —
+#     U+000A U+000B U+000C U+000D U+00A0 U+1680 U+2000..U+200A U+2028 U+2029 U+202F U+205F
+#     U+3000 U+FEFF
+#   i.e. LF VT FF CR NBSP OGHAM_SPACE EN_QUAD..HAIRSP LS PS NNBSP MMSP IDEOGRAPHIC_SPACE ZWNBSP.
+#   (JS regex \s is the SAME 25-point set — the JS trim set plus SP and TAB — see class-compare.mjs.)
+#
+# SCRIPT USED: .ufo/waves/round-99/K99Scout/pad-survey.mjs (this directory) and its driver
+#   .ufo/waves/round-99/K99Scout/survey-revs.mjs. Both are committed alongside this file.
+#   Run:
+#     node .ufo/waves/round-99/K99Scout/pad-survey.mjs <lane> <file> ...   > pads-current.tsv
+#   Section grammar mirrors sources-check.mjs (r97) / census row_pass: heading `^ {0,3}##[ \t]`
+#   opens a section whose name is the trimmed heading text; `^ {0,3}#[ \t]` clears it; a table row
+#   is `^ {0,3}\|`; the separator row (id cell "id" or /^:?-{3,}:?$/) is not a data row.
+#
+# ---------------------------------------------------------------------------------------------
+# RESULT: 0 offending rows, 0 offending cells — over EVERY population surveyed.
+#
+#   Population A — the 21 current fleet lane registries
+#     /home/vgpnk/Projects/shokunin/*/corpus/SOURCES.md
+#     21 files, 5505 Registry rows (5461 data rows + separator rows), 60 299 cells with an
+#     ASCII edge pad. offendingRows=0  offendingCells=0.
+#
+#   Population B — every committed revision of the kumitate lane's corpus/SOURCES.md
+#     `git log --all -- corpus/SOURCES.md` in the lane repo -> 359 commits, 80 distinct blob
+#     revisions (extracted with `git cat-file blob`); each was surveyed.
+#     offendingRows=0  offendingCells=0.
+#
+#   Population C (extra) — raw codepoint scan, not cell-aware, to catch anything the cell-aware
+#     probe could miss (e.g. a TRIM_ONLY char inside a non-Registry table row or in prose):
+#     every one of the 21 current files and all 80 historical blobs contains ONLY U+000A (LF) as a
+#     TRIM_ONLY codepoint; zero occurrences of VT/FF/CR/NBSP/Zs/U+FEFF/LS/PS anywhere.
+#     (LF is line structure, not a cell pad; a CR would be, and there is none.)
+#
+#   Population D (extra) — the census's own fixture registries
+#     /home/vgpnk/Projects/shokunin/scripts/fixtures/sources-census/{,root/*/}corpus/SOURCES.md
+#     5 files: same raw scan -> no TRIM_ONLY codepoint other than LF.
+#
+# PAD PROFILE (what the fleet actually uses, at cell edges):
+#   Every edge pad in all 21 current registries and all 80 historical revisions is ASCII SP only.
+#   asciiPadClasses (lead/trail run, quoted) = [" \" \"" , "trail:\" \""] i.e. one SP each side;
+#   three lanes additionally use a two-SP lead run (kotodama-shokunin, revenger-shokunin) or a
+#   two-SP trail run (revenger-shokunin). No TAB, no VT, no FF, no CR, no NBSP, no Zs, no U+FEFF.
+#   This is the plan's disclosed limit (1) — the real registries pad every cell with ASCII SP, so
+#   R99's effect on live data is a NO-OP: it is prospective agreement with the census, not a
+#   repair of an observed incident.
+#
+# THE PER-LANE TABLE (current registries; full machine output in pads-current.summary):
+#   lane                 registryRows  dataRows  offendingRows  offendingCells  asciiPadCells  noPadCells
+#   audio-shokunin                 17         15             0              0           176        11
+#   chousa-shokunin               215        213             0              0          2354        11
+#   game-dev-2d-shokunin           33         31             0              0           352        11
+#   game-dev-3d-shokunin           38         36             0              0           407        11
+#   kagi-shokunin                 114        112             0              0          1243        11
+#   kaidoku-shokunin              235        233             0              0          2574        11
+#   kake-shokunin                 226        224             0              0          2475        11
+#   kama-shokunin                 345        343             0              0          3784        11
+#   kasegi-shokunin               132        130             0              0          1439        13
+#   kengaku-shokunin              343        341             0              0          3762        11
+#   kotoba-shokunin               215        211             0              0          2343        22
+#   kotodama-shokunin             953        951             0              0         10472        11
+#   kumitate-shokunin             217        215             0              0          2376        11
+#   lore-shokunin                  34         32             0              0           363        11
+#   mado-shokunin                 451        449             0              0          4950        11
+#   mori-shokunin                 418        416             0              0          4576        22
+#   revenger-shokunin             511        509             0              0          5610        11
+#   souji-shokunin                251        249             0              0          2749        12
+#   tabi-shokunin                 203        201             0              0          2222        11
+#   tameshi-shokunin              179        177             0              0          1958        11
+#   tsukuroi-shokunin             375        373             0              0          4114        11
+#   TOTAL                       5505       5461             0              0         60299       256
+#
+#   Notes on the columns.
+#   registryRows — table rows inside the `## Registry` section (separator row included).
+#   dataRows    — registryRows minus the separator row (a real `S###` data row).
+#   asciiPadCells — cells whose edge pad is ASCII SP/TAB only (what the blank class strips).
+#   noPadCells    — cells with no edge pad at all. 11 per lane = the separator row's 11 cells
+#                   (the separator's cells have no SP pad), plus a few genuinely unpadded data cells.
+#
+# ---------------------------------------------------------------------------------------------
+# COMMANDS RUN (every line above is the output of one of these)
+#
+# 1. Extract every committed revision of the lane's corpus/SOURCES.md:
+#      cd /home/vgpnk/Projects/shokunin/kumitate-shokunin
+#      git log --all --format='%H' -- corpus/SOURCES.md      -> 359 commits
+#      git rev-list --all -- corpus/SOURCES.md | wc -l      -> 359
+#      git log --all --format='%H' -- corpus/SOURCES.md > $S/revs.txt
+#      while read -r r; do b=$(git rev-parse "$r:corpus/SOURCES.md"); echo "$r $b"; done \
+#        < $S/revs.txt > $S/rev-blobs.txt                  -> 359 lines
+#      cut -d' ' -f2 $S/rev-blobs.txt | sort -u > $S/blobs.txt   -> 80 distinct blobs
+#      while read -r b; do git cat-file blob "$b" > "$S/revs/blob-$b.md"; done < $S/blobs.txt
+#      (git rev-list --all --objects -- corpus/SOURCES.md -> 844 objects incl. trees/commits;
+#       `git fsck --unreachable` -> 7 unreachable blobs, none of them a SOURCES.md: QUALITY.md,
+#       two Iteration Logs, a lesson, a Scorecard, a front-matter blob, another Iteration Log.)
+#
+# 2. Survey the 21 current registries:
+#      node .ufo/waves/round-99/K99Scout/pad-survey.mjs <lane> <file> ... \
+#        > $S/pads-current.tsv 2> $S/pads-current.summary
+#      -> "rows-with-trim-only-pads: 0" + the 21-line per-lane table above.
+#
+# 3. Survey all 80 historical blobs:
+#      node .ufo/waves/round-99/K99Scout/survey-revs.mjs $S/rev-blobs.txt $S/revs \
+#        $S/pads-revisions.tsv
+#      -> "revisions=359  distinctBlobs=80  offendingRows=0  offendingCells=0
+#          asciiPadCells=116017  asciiPadClasses=[\"lead:\" \"\",\"trail:\" \"\"]"
+#      ($S/pads-revisions.tsv is 0 lines.)
+#
+# 4. Raw codepoint scan (populations C and D) — one-liner, output in the file:
+#      node -e '<build TRIM_ONLY from the runtime; count occurrences per file>' <files...>
+#      -> "raw scan done over 21 files" (only U+000A appears)
+#      -> "blobs scanned=80 withNonLFTrimOnly=0"
+#      -> "fixture SOURCES.md scanned=5 anyTrimOnly=false"
+#
+# 5. Positive control on the detector (must be able to fail):
+#      node -e '<build 13 rows, one per TRIM_ONLY class, pad on the source-cell lead and the
+#                tier-cell trail>' $S/posctl2.md
+#      node .ufo/waves/round-99/K99Scout/pad-survey.mjs posctl2 $S/posctl2.md
+#      -> 26 offending cells, one per (class, cell) pair, each named with its code point
+#         (U+000B, U+000C, U+000D, U+00A0, U+1680, U+2000, U+2003, U+2028, U+2029, U+202F,
+#          U+205F, U+3000, U+FEFF) -> the detector resolves and names edge pads, it is not inert.
+#      A second control (posctl3) exercises the TRAILING edge with a NBSP after the SP run;
+#      a third (posctl1) exercises NBSP lead, U+3000 both sides, U+FEFF lead.
+#
+# 6. Class identity check:
+#      node .ufo/waves/round-99/K99Scout/class-compare.mjs
+#      -> "JS regex \s size = 25" / "JS trim() empty-string set size = 25" / "IDENTICAL SETS: true"
+#         => JS \s and JS trim() strip exactly the same characters; the "trim-only" set is that
+#            set minus {SP, TAB}, i.e. exactly what the blank class does not strip.
+#
+# CONCLUSION. Expected 0 — and 0 is what was measured, in all four populations. There is no
+# lane/row/cell to report. The claim C1 has no live incident behind it on current or historical
+# data; R99 changes no observed value in the fleet. The exposure argument for R99 is entirely
+# prospective (the frozen counter's battery draws 47 pad classes that no real registry contains).
+#
+# =============================================================================================
+# ADDENDUM A — FLEET-WIDE HISTORY SCAN (extra, beyond the assigned scope)
+# =============================================================================================
+#
+# The assignment scoped the revision sweep to the kumitate lane. I extended it to all 21 lanes'
+# own git histories, because a single CR anywhere in the fleet would be a live R99 exposure.
+# Script: .ufo/waves/round-99/K99Scout/fleet-history-scan.mjs
+#   node fleet-history-scan.mjs /home/vgpnk/Projects/shokunin $S/fleet-history-scan.txt
+#   -> 21 lanes, 1735 distinct SOURCES.md blob revisions, 13 blob hits, ALL of them U+000D (CR).
+#
+#   lane              commits  distinctBlobs  blobHits   hit classes
+#   kagi-shokunin        179        52            2        U+000D
+#   kama-shokunin        394       125            1        U+000D
+#   kengaku-shokunin     394       116            1        U+000D
+#   kotoba-shokunin      290        75            3        U+000D
+#   souji-shokunin       404       113            1        U+000D
+#   tsukuroi-shokunin     469       126            5        U+000D
+#   (all other lanes)                                  0
+#   TOTAL                            1735           13
+#
+#   EVERY hit is a WHOLE-FILE CRLF revision, not a stray cell-edge CR. Measured on three of them:
+#     tsukuroi-shokunin 298592bbc2c4 : 381 LF, 381 CR, 381 CRLF, 0 lone CR
+#     kotoba-shokunin   243256d1a3e8 : 436 LF, 436 CR, 436 CRLF, 0 lone CR
+#     kama-shokunin     b34aa9af146e : 639 LF, 639 CR, 639 CRLF, 0 lone CR
+#   So the CR is a LINE TERMINATOR, not a cell pad: in a whole-CRLF file the CR sits after the
+#   final `|` of the row, i.e. it is outside every cell. The cell-aware survey correctly finds
+#   0 offending cells in these same revisions (my survey reads the same 80 kumitate blobs and
+#   finds 0; the CRLF lanes' current trees are LF).
+#   WHY IT MATTERS ANYWAY: a whole-CRLF registry is the FIX-B shape in the frozen counter
+#   (arm (f): "whole-CRLF; no Registry for either reader"). Both readers already agree there:
+#   the census's heading trim is [BLANK] so "## Registry\r" != "Registry", and sources-check
+#   splits on /\r?\n/ so its heading text has no CR — both readers report the row as
+#   outside-Registry. MEASURED on a CRLF fixture: census -> "E12 S001 row outside Registry
+#   section"; sources-check -> SECTION_MISSING + ROW_OUTSIDE_REGISTRY. They agree.
+#   Under BASE's JS trim neither reader changes (sources-check's split already removed the CR).
+#   Under R99's [BLANK] neither reader changes either (the census already used [BLANK]).
+#   => R99 is CRLF-neutral. The CR in the history is not an R99 exposure.
+#
+# =============================================================================================
+# ADDENDUM B — MEASURED BASE-vs-R99 DIFFERENTIAL (does R99 change anything observable?)
+# =============================================================================================
+#
+# Built in scratch, read-only on the lane:
+#   git show f9cd1bff...:scripts/sources-check.mjs  > $S/sc-base.mjs
+#   sc-r99.mjs = sc-base.mjs with the ONE line
+#     function trim(value) { return value.trim(); }
+#   replaced by
+#     function trim(value) { return value.replace(/^[ \t]+|[ \t]+$/g, ''); }
+# Fixture ($S/diff/corpus/SOURCES.md): 11 valid rows, one NBSP-padded cell per row, on the id
+# (lead and trail), kind, tier, status, opened, recheck and used-by cells.
+#
+#   BASE (JS trim):  NO cell finding at all — the NBSP is silently swallowed on every cell.
+#                    counts.rows = 11, status = {queued: 11}.
+#   R99 ([BLANK]):   ID_FORM x2 (id=\u00a0S001, id=S002\u00a0), KIND_ENUM (kind=docs\u00a0),
+#                    TIER_ENUM (tier=B\u00a0), STATUS_ENUM (status=queued\u00a0),
+#                    OPENED_INVALID (opened=2026-01-01\u00a0), RECHECK_INVALID (recheck=30d\u00a0).
+#                    counts.rows = 9, status = {queued: 8}.
+#
+#   READ THIS AS THE CLAIM'S VALUE, MEASURED: under BASE a padded cell is accepted as if it
+#   were clean, so sources-check's `counts.rows` and tier/status histograms are inflated
+#   relative to the census (the census sees the same row as E02/E05/E06/E07/E08/E09). Under
+#   R99 the padded row is rejected exactly as the census rejects it. R99 makes the two readers
+#   agree; it does not create a new rejection on any real registry (population A/B are 0).
+#
+#   CONCURRENCE NOTE: R99's `counts.rows` drops to 9 here because two rows' ids become invalid
+#   (NBSP-padded) and are no longer counted — the same arithmetic the frozen counter's arm (e)
+#   encodes (counts.rows == census rows − E02 count).
+#
+# =============================================================================================
+# ADDENDUM C — LIVE-FILE CHURN (a measurement caveat, disclosed)
+# =============================================================================================
+#
+# The 21 fleet registries are LIVE working trees, not frozen snapshots. During this seat's run
+# tabi-shokunin/corpus/SOURCES.md was modified (mtime 2026-11-07 03:38:08 -0300, i.e. during
+# the survey): its registryRows went 202 -> 203 and dataRows 200 -> 201 between two runs of the
+# same survey. Both runs measured offendingRows=0. All other lanes were stable across runs.
+# The per-lane table in this file is the final run; the totals below are the final run's:
+#   registryRows=5505  dataRows=5461  offendingRows=0  offendingCells=0  asciiPadCells=60299
+#   noPadCells=256
+# (An earlier run of the same survey gave 4816/4722 because the table above was hand-estimated
+# from a partial read; the authoritative numbers are the machine-derived ones just above.)
+

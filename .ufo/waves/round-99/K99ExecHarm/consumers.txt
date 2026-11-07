@@ -1,0 +1,62 @@
+consumers.txt — K99ExecHarm, round 99 C1 (R99 trim swap)
+Scope per assignment: `grep -rn sources-check` over lane scripts/ + SKILL.md, plus the K3 harness itself.
+Grep hits for `sources-check`/`SOURCES_CHECK` in scripts/: ONLY proxy-check.mjs, harm-matrix-gates.json, sources-check.mjs (self). No other script names the tool.
+
+== consumers of sources-check OUTPUT ==
+
+1. scripts/harm-matrix-gates.json + scripts/harm-matrix.mjs (gate ids `sources-check`, `sources-check-selftest`)
+   - argv `node scripts/sources-check.mjs`; verdict regex `^SOURCES_CHECK: (\w+)`, clean=[CLEAN] (gates.json:9);
+     selftest argv `--selftest`, verdict `^SOURCES_SELFTEST: \d+/\d+ (\w+)`, clean=[pass] (gates.json:19).
+   - Reads: the verdict WORD only (CLEAN/DRIFT/FAIL-CLOSED; pass). Does NOT read counts.rows, tiers/status histograms,
+     or finding kinds/details. harm-matrix.mjs:18-20,110-118 (regex capture group 1 = verdict word).
+   - R99 can change what it reads ONLY if the verdict flips on the live registry. Battery base run: CLEAN rows=215
+     (base.txt:19); history differential over all 78 committed SOURCES.md revisions quantifies this (history.txt).
+
+2. SKILL.md (human/agent checklist, not a program)
+   - :614 gate-registry row `node scripts/sources-check.mjs [--strict]` → `SOURCES_CHECK: CLEAN|DRIFT`;
+     :730-731 checklist `node scripts/sources-check.mjs` → exit 0 + `SOURCES_CHECK: CLEAN`, and
+     `--selftest` → exit 0 + `VERDICT: PASS`.
+   - Reads: verdict word + exit code. The `rows=N tiers=… status=…` detail inside CLEAN(...) is informational;
+     no checklist item pins the numbers.
+   - R99: same condition as (1) — verdict/exit unchanged on real registries (evidence: battery + history.txt).
+     Selftest PASS is the candidate's own obligation (kill rule K2), not a consumer-side risk.
+
+3. .ufo/waves/round-99/close/battery.sh (K3 harness; outside scripts/+SKILL.md, listed for completeness)
+   - Captures full stdout+stderr per command, prints tail -4 + exit code (battery.sh:5-8).
+   - Reads: everything shown + exit codes. This is the instrument battery-diff.txt measures; the only
+     legitimate change is the proxy pin lines for sources-check (see 4).
+
+== NON-consumers that touch the same surface ==
+
+4. scripts/proxy-check.mjs — does NOT read sources-check output. It pins the FILE BYTES:
+   GATE_PINS `'pin.sources-check': 'scripts/sources-check.mjs'` (proxy-check.mjs:551) → sha256 vs SCORECARD
+   `kumitate-gate-pins-v1` block (`SCORECARD.md:328 pin.sources-check=1def379f…` = base bytes
+   `git show f9cd1bff:scripts/sources-check.mjs`). Candidate bytes → GATE_PIN_DRIFT until the L1 re-pins
+   (SCORECARD.md:395-399 names sources-check as a re-pin target). EXPECTED battery diff, not a consumer
+   regression. Proxy selftest references `pin.sources-check` only as a STANZA_KEY_UNKNOWN negative fixture
+   (proxy-check.mjs:2631-2645) — unaffected by R99.
+
+5. scripts/round-gate.mjs — does NOT invoke or parse sources-check. It reads corpus/SOURCES.md directly with
+   its own grammar (`declaredPins` round-gate.mjs:427-431, `readRegistry` :493) for citation pins. R99 does not
+   touch round-gate; battery round-gate runs (base.txt:28-33) confirm CLEAN/CLEAN at base.
+
+6. scripts/source-capture.mjs / scripts/source-dupes.mjs — read corpus/SOURCES.md rows with their OWN parsers
+   (source-capture.mjs:150-169 loadSourceIds; source-dupes duplicate-URL ratchet). Not sources-check output.
+
+7. scripts/counter-pins.mjs, cite-check.mjs, claims-check.mjs, spotcheck-adopt.mjs, readme-map.mjs,
+   wave-census.mjs, anchor-truth.mjs, gate-mutants.mjs, kimi-census.mjs, omp-census.mjs, bind-oracle.mjs,
+   cap-run.mjs, cap-spawn.mjs, counter-rerun.mjs, receipt-*.mjs, dispatch-evidence.mjs,
+   make-dispatch-actual.mjs, inline-dispatch-evidence.mjs, seat-route.mjs, routed-ledger.mjs,
+   control-replay.mjs, counter-receipt.mjs, plan-before-ready.sh, jj-seat-demo.sh, omp-binary-probe.sh
+   — zero `sources-check`/`SOURCES_CHECK` references (grep over scripts/). Unaffected.
+
+8. Fleet /home/vgpnk/Projects/shokunin/scripts/sources-census.sh — reads corpus/SOURCES.md directly
+   (row_pass gsub [ \t]); it is the independent COMPARATOR for the counter, never a consumer of
+   sources-check output.
+
+== counts.rows / tiers / status / finding-kind readers ==
+NONE in the lane. No script or doc under scripts/+SKILL.md parses the `--json` object, the
+`SOURCES_CHECK: CLEAN (rows=N tiers=… status=…)` detail, or the DRIFT kind list. The only
+programmatic readers of sources-check output are harm-matrix.mjs (verdict word) and battery.sh
+(tail + exit). R99 therefore cannot change any consumer's reading except through a verdict flip,
+which the battery and the 78-revision history differential measure directly.

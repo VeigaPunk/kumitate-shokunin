@@ -1,0 +1,15 @@
+$ python3 .ufo/waves/round-99/probe/read-order-check.py --log .ufo/waves/round-99/open/read-order.log --freeze f480124b
+READ_ORDER: CLEAN entries=27 canonical=8 claim=2026-11-07T03:17:58-03:00 freeze=2026-11-07T03:32:35-03:00
+exit=0
+
+$ doctored A: MISSION.md line moved after the claim line (scratch copy)
+READ_ORDER: DRIFT CANONICAL_AFTER_CLAIM line=25 kimi-shokunin/skills/shokunin/protocol/MISSION.md
+exit=1
+
+$ doctored B: the claim line timestamp moved before the canonical block
+READ_ORDER: DRIFT CANONICAL_AFTER_CLAIM line=11 kimi-shokunin/skills/shokunin/SKILL.md
+exit=1
+
+$ positive check: freeze resolved, entry/canonical counts reported
+READ_ORDER: CLEAN entries=27 canonical=8 claim=2026-11-07T03:17:58-03:00 freeze=2026-11-07T03:32:35-03:00
+exit=0

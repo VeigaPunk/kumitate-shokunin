@@ -1,0 +1,12 @@
+construction: k04-unchecked-cells-js (source-cell observable arm)
+fixture-escaped: '# SOURCES — where min learns\n\n## Registry\n\n| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |\n|---|---|---|---|---|---|---|---|---|---|---|\n| S001 | \xa0 | docs | B | sc | § a | teaches a | queued | 2025-01-02 | on-release | — |\n\n## Paths\n\nnone\n\n## Search log\n\nnone\n\n## Leads (unopened)\n\n- none\n'
+tool-exit: 1
+tool-counts: {"rows": 1, "tiers": {"A": 0, "B": 1, "C": 0}, "status": {"queued": 1, "mined": 0, "rejected": 0}, "entriesWithSource": 0, "legacy": 0}
+tool-findings:
+  ROW_FIELD_EMPTY line=7 detail='id=S001 field=source'
+census-exit: 0
+census-output:
+  'file\tok\t/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-99/K99CriticA/minfixtures/k04b-rowfield-source/corpus/SOURCES.md'
+differential: blank trim (R99) keeps the NBSP source cell non-empty -> no ROW_FIELD_EMPTY;
+this construction JS-trims it to empty and adds ROW_FIELD_EMPTY. The census has no counterpart check,
+and the counter compares neither this cell nor ROW_FIELD_EMPTY, so the construction stays HELD.

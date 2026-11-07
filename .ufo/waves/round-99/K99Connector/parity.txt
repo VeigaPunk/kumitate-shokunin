@@ -1,0 +1,26 @@
+# Parity Measurement: Candidate sources-check vs Census vs BASE sources-check vs round-gate
+Seed: a824e719fb611d0a
+Work directory: /fast/scratch/hyaku/kumitate-r99/K99Connector/probe
+
+## FIX-A (LF, 401 table rows in corpus/SOURCES.md)
+
+| Metric / Finding Class | Candidate (R99) | Census (row_pass) | BASE (pre-R99) | round-gate declared | Agreement (Cand vs Census) | Notes |
+|---|---|---|---|---|---|---|
+| Total Registry rows | 314 (valid) | 401 total / 314 valid | 354 (valid) | 304 decl + 14 mal = 314 | 314/314 (100%) | Census 401 rows minus 87 E02 = 314 valid rows; BASE drifted +40 due to JS trim |
+| ID_FORM (E02) | 87 | 87 | 47 | N/A (filtered by regex) | 87/87 (100%) | BASE missed 40 findings because JS trim stripped non-blank padding |
+| ID_DUPLICATE (E03) | 12 | 12 | 20 | N/A (uses Set) | 12/12 (100%) | BASE had 8 spurious duplicates because non-blank padded duplicate copies were counted |
+| ROW_MALFORMED (E01 on valid id) | 9 | 9 (24 total E01 - 15 with E02) | 14 | 9 malformed | 9/9 (100%) | Census emits E01 on all NF!=13 rows; 15 had E02; exactly 9 had valid id |
+| KIND_ENUM (E05) | 43 | 43 | 16 | N/A | 43/43 (100%) | BASE missed 27 findings where non-blank padding on kind was stripped by JS trim |
+| TIER_ENUM (E06) | 43 | 43 | 16 | N/A | 43/43 (100%) | BASE missed 27 findings where non-blank padding on tier was stripped by JS trim |
+| STATUS_ENUM (E07) | 43 | 43 | 16 | N/A | 43/43 (100%) | BASE missed 27 findings where non-blank padding on status was stripped by JS trim |
+| OPENED_INVALID (E08) | 43 | 43 | 16 | N/A | 43/43 (100%) | BASE missed 27 findings where non-blank padding on opened was stripped by JS trim |
+| RECHECK_INVALID (E09) | 43 | 43 | 16 | N/A | 43/43 (100%) | BASE missed 27 findings where non-blank padding on recheck was stripped by JS trim |
+| ROW_OUTSIDE_REGISTRY (E12) | 0 | 0 | 0 | 0 outside | 0/0 (100%) | All 401 rows inside Registry on FIX-A |
+
+## FIX-B (CRLF, 401 table rows in corpus/SOURCES.md)
+
+| Metric / Finding Class | Candidate (R99) | Census (row_pass) | BASE (pre-R99) | round-gate declared | Agreement | Notes |
+|---|---|---|---|---|---|---|
+| ROW_OUTSIDE_REGISTRY (E12) | 314 | 314 | 314 | 314 outside | 314/314 (100%) | CRLF prevents ## Registry match; all 314 valid id rows flagged as outside |
+| SECTION_MISSING | 4 | N/A | 4 | N/A | 4/4 (100%) | Heading line fails CRLF matching in sources-check |
+| counts.rows | 0 | 0 | 0 | 0 declared | 0/0 (100%) | No rows counted inside Registry |

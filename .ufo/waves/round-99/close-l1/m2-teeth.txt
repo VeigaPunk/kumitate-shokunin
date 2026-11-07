@@ -1,0 +1,11 @@
+reference exit=0 SOURCES_SELFTEST: 97/97 pass
+m15-nocaret (unanchored trim): KILLED exit=1 SOURCES_SELFTEST: 96/97 pass failing=[r99trim-inner-runs]
+m23-idform-empty (non-blank pad-only id reported empty): KILLED exit=1 SOURCES_SELFTEST: 86/97 pass failing=[r99trim-id-nbsp, r99trim-id-vt, r99trim-id-ff, r99trim-id-cr, r99trim-id-emsp, r99trim-id-bom, r99trim-duplicate, r99trim-counts, r99trim-census-parity, r99trim-id-pad-only, r99trim-bom-file]
+k01 blank+NUL: KILLED exit=1 SOURCES_SELFTEST: 96/97 pass failing=[r99trim-exotic-pads]
+k02 blank+U+0080: KILLED exit=1 SOURCES_SELFTEST: 96/97 pass failing=[r99trim-exotic-pads]
+k03 blank cap {1,17}: KILLED exit=1 SOURCES_SELFTEST: 96/97 pass failing=[r99trim-long-blank]
+k04 JS trim on text cells: KILLED exit=1 SOURCES_SELFTEST: 96/97 pass failing=[r99trim-text-cells]
+k08 empty-id rows counted: KILLED exit=1 SOURCES_SELFTEST: 96/97 pass failing=[r99trim-empty-id]
+k09 BOM sniff (JS trim when file starts with U+FEFF): KILLED exit=1 SOURCES_SELFTEST: 96/97 pass failing=[r99trim-bom-file]
+BASE JS trim: KILLED exit=1 SOURCES_SELFTEST: 80/97 pass failing=[r99trim-id-nbsp, r99trim-id-vt, r99trim-id-ff, r99trim-id-cr, r99trim-id-emsp, r99trim-id-bom, r99trim-kind-cell, r99trim-tier-cell, r99trim-status-cell, r99trim-opened-cell, r99trim-recheck-cell, r99trim-duplicate, r99trim-counts, r99trim-]
+M2_TEETH: killed=9/9 reference=PASS

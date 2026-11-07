@@ -1,0 +1,54 @@
+# Sibling Transfer Survey: SOURCES Table Row and Cell Readers Across Fleet
+
+Commands used for discovery:
+- `grep -rnE '\|[ \t\v\f\r]*S|\|\s*S|\|\[\[:space:\]\]\*S' /home/vgpnk/Projects/shokunin/*-shokunin/scripts/`
+- `grep -rnE 'split\(["\']\|["\']\)\.map' /home/vgpnk/Projects/shokunin/*-shokunin/scripts/`
+- `grep -rnE '\.strip\(\)' /home/vgpnk/Projects/shokunin/*-shokunin/scripts/`
+
+## Sibling Script Inventory
+
+| Lane | File:Line | Code / Pattern | Character Class | Role & Impact |
+|---|---|---|---|---|
+| kumitate | scripts/sources-check.mjs:134 | `function trim(value) { return value.trim(); }` | ECMAScript String.prototype.trim() | Pre-R99 base; trims all White_Space/LineTerminators; R99 replaces with POSIX blank [ \t] |
+| kumitate | scripts/sources-check.mjs:234 | `/^\|[ \t]*S\d{3,}[ \t]*\//` | POSIX blank [ \t] | Outside-registry row recognizer (matches census) |
+| kumitate | scripts/round-gate.mjs:411 | `const SOURCES_ROW_RE = /^ {0,3}\|[ \t]*S\d{3,}[ \t]*\//;` | POSIX blank [ \t] | R98 row recognizer; strictly matches POSIX blank |
+| kumitate | scripts/round-gate.mjs:436 | `outside.push(fields[1].trim());` | ECMAScript String.prototype.trim() | Trims id field for outside collection |
+| kumitate | scripts/round-gate.mjs:437 | `malformed.push(fields[1].trim());` | ECMAScript String.prototype.trim() | Trims id field for malformed collection |
+| kumitate | scripts/round-gate.mjs:438 | `const status = (fields[8] ?? '').trim();` | ECMAScript String.prototype.trim() | Trims status cell for rejection check |
+| kumitate | scripts/cite-sources.mjs:36 | `line.match(/^ {0,3}\|\s*(S[0-9]{3,})\s*\|/)` | ECMAScript \s | Accepts non-blank Unicode whitespace pads on id |
+| kumitate | scripts/source-capture.mjs:157 | `raw.matchAll(/^\s*\|\s*(S[0-9]{3,})\s*\|/gm)` | ECMAScript \s | Accepts non-blank Unicode whitespace pads on id |
+| kumitate | scripts/source-dupes.mjs:158 | `line0.replace(/^ {0,3}/, '').replace(/^##[ \t]+/, '').trim();` | ECMAScript String.prototype.trim() | Trims section header line |
+| kumitate | scripts/source-dupes.mjs:165 | `cells = line0.replace(/^ {0,3}/, '').split('|').map((c) => c.trim());` | ECMAScript String.prototype.trim() | Trims table cells with ECMAScript trim() |
+| tabi | scripts/check-sources.mjs:25 | `const rowPattern = /^\|[ \t\v\f\r]*S[0-9]{3,}[ \t\v\f\r]*\//;` | ASCII whitespace [ \t\v\f\r] | POSIX space minus LF; rejects non-ASCII whitespace |
+| tabi | scripts/check-sources.mjs:264 | `line.split('|').map(cell => cell.trim())` | ECMAScript String.prototype.trim() | Trims all table cells |
+| tabi | scripts/check-sources.mjs:329 | `usedBy.split(/[,;]/).map(path => path.trim())` | ECMAScript String.prototype.trim() | Trims used-by path list |
+| tabi | scripts/check-sources.mjs:473 | `/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\//` | POSIX [[:space:]] | Awk parity validation check |
+| tabi | scripts/check-bidi-runtime.mjs:474 | `/^ {0,3}\|[ \t]*S[0-9]{3,}[ \t]*\//` | POSIX blank [ \t] | Row regex matches census |
+| tabi | scripts/check-bidi-runtime.mjs:477 | `cells.slice(1, 12).map((x) => x.trim())` | ECMAScript String.prototype.trim() | Trims table cells |
+| tabi | scripts/check-bidi-runtime.mjs:526 | `(cells[0] || '').replace(/`/g, '').trim()` | ECMAScript String.prototype.trim() | Trims id cell |
+| tabi | scripts/check-bidi-runtime.mjs:740 | `r.usedBy.split(/[,;]/).map((x) => x.trim())` | ECMAScript String.prototype.trim() | Trims used-by paths |
+| tabi | scripts/check-decision-table.mjs:122 | `/^ {0,3}\|[ \t]*S[0-9]{3,}[ \t]*\//` | POSIX blank [ \t] | Row regex matches census |
+| tabi | scripts/check-decision-table.mjs:125 | `cells.slice(1, 12).map((x) => x.trim())` | ECMAScript String.prototype.trim() | Trims table cells |
+| tabi | scripts/check-decision-table.mjs:278 | `reg.usedBy.split(/[,;]/).map((p) => p.trim())` | ECMAScript String.prototype.trim() | Trims used-by paths |
+| tabi | scripts/check-frontier-admission.mjs:126 | `/^ {0,3}\|[ \t]*S[0-9]{3,}[ \t]*\//` | POSIX blank [ \t] | Row regex matches census |
+| tabi | scripts/check-frontier-admission.mjs:129 | `cells.slice(1, 12).map((x) => x.trim())` | ECMAScript String.prototype.trim() | Trims table cells |
+| tabi | scripts/check-frontier-admission.mjs:251 | `row.usedBy.split(/[,;]/).map((p) => p.trim())` | ECMAScript String.prototype.trim() | Trims used-by paths |
+| tabi | scripts/check-release-pins.mjs:75 | `const ROW_RE = /^ {0,3}\|\s*S\d{3,}\s*\//;` | ECMAScript \s | Matches rows with ECMAScript \s |
+| tabi | scripts/check-release-pins.mjs:119 | `line.split('|').map((c) => c.trim())` | ECMAScript String.prototype.trim() | Trims table cells |
+| tabi | scripts/check-source-reopen-receipt.mjs:108 | `new RegExp('^\\|[\\s]*' + sid + '[\\s]*\\|', 'm')` | ECMAScript \s | Matches row id with ECMAScript \s |
+| tabi | scripts/check-source-reopen-receipt.mjs:113 | `line.split('|').map((c) => c.trim())` | ECMAScript String.prototype.trim() | Trims table cells |
+| kake | scripts/id_resolver.py:56 | `re.compile(r"^ {0,3}\|\s*([^|]*?)\s*(?:\|(.*))?$")` | Python \s | Matches rows with Python \s (Unicode White_Space) |
+| kake | scripts/id_resolver.py:238 | `sid = m.group(1).strip()` | Python str.strip() | Trims id cell with Python strip() (all Unicode whitespace) |
+| fleet | scripts/sources-census.sh:531 | `trim_cell() { while [[ "$value" == [[:space:]]* ]]; ...` | POSIX [[:space:]] | Used by usedby_findings(); locale-dependent |
+| fleet | scripts/sources-census.sh:581 | `function trim(s) { gsub(/^[ \t]+|[ \t]+$/,"",s); return s }` | POSIX blank [ \t] | Used by row_pass(); canonical POSIX blank |
+| fleet | scripts/sources-census.sh:619 | `/^\|[ \t]*S[0-9]{3,}[ \t]*\//` | POSIX blank [ \t] | Outside-registry row recognizer |
+
+## Cross-Lane Synthesis
+1. **Row Recognizer Parity vs Cell Trimming Asymmetry:**
+   - Following R98, multiple scripts (`round-gate.mjs:411`, `tabi/check-bidi-runtime.mjs:474`, `tabi/check-decision-table.mjs:122`, `tabi/check-frontier-admission.mjs:126`, and `sources-census.sh:619`) successfully adopted POSIX `blank` `[ \t]` for row recognition (`/^ {0,3}\|[ \t]*S\d{3,}[ \t]*\//`).
+   - However, almost ALL of those same tools immediately parse internal cells using `.split('|').map(c => c.trim())` (ECMAScript `String.prototype.trim()`).
+2. **Remaining Non-Blank Row Readers in Kumitate:**
+   - In `kumitate-shokunin`, `cite-sources.mjs:36` (`/^ {0,3}\|\s*(S[0-9]{3,})\s*\|/`) and `source-capture.mjs:157` (`/^\s*\|\s*(S[0-9]{3,})\s*\|/gm`) still use ECMAScript `\s`.
+   - As a consequence, a row padded with NBSP (`| \u00a0S100 |`) is rejected by `round-gate.mjs` and `sources-check.mjs` (R99), but is still recognised as a valid cited row by `cite-sources.mjs` and demands a byte-capture in `source-capture.mjs`.
+3. **Fleet Census Inconsistency:**
+   - `scripts/sources-census.sh` internally contradicts itself between `row_pass` (`[ \t]`) and `usedby_findings` (`[[:space:]]`), causing locale-dependent E11 findings.

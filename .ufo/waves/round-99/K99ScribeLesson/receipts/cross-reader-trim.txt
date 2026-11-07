@@ -1,0 +1,51 @@
+# cross-reader trim matrix, 2026-11-07T03:36:17-03:00, bash 5.3.20(1)-release, gawk GNU Awk 5.4.1, API 4.1, PMA Avon 8-g1, (GNU MPFR 4.2.2, GNU MP 6.3.0), node v24.21.0
+# generated locales: C.utf8 en_US.utf8 
+# fixture: pad class + marker 'X'; a reader STRIPS iff it returns exactly 'X'.
+# pads.tsv carries hex bytes so the tab-valued classes survive as fields.
+# pad classes read: 44
+pad         codes        node       trim_cell/C gawk_trim/C    trim_cell/C.UTF-8 gawk_trim/C.UTF-8 trim_cell/en_US.UTF-8 gawk_trim/en_US.UTF-8
+SP          20           STRIP     STRIP           STRIP           STRIP           STRIP           STRIP           STRIP           
+TAB         09           STRIP     STRIP           STRIP           STRIP           STRIP           STRIP           STRIP           
+SPTAB       2009         STRIP     STRIP           STRIP           STRIP           STRIP           STRIP           STRIP           
+TABSP       0920         STRIP     STRIP           STRIP           STRIP           STRIP           STRIP           STRIP           
+VT          0b           STRIP     STRIP           KEEP            STRIP           KEEP            STRIP           KEEP            
+FF          0c           STRIP     STRIP           KEEP            STRIP           KEEP            STRIP           KEEP            
+CR          0d           STRIP     STRIP           KEEP            STRIP           KEEP            STRIP           KEEP            
+TABFF       090c         STRIP     STRIP           KEEP            STRIP           KEEP            STRIP           KEEP            
+NEL         c285         KEEP      KEEP            KEEP            KEEP            KEEP            KEEP            KEEP            
+NBSP        c2a0         STRIP     KEEP            KEEP            KEEP            KEEP            KEEP            KEEP            
+OGHAM       e19a80       STRIP     KEEP            KEEP            STRIP           KEEP            STRIP           KEEP            
+MVS         e1a08e       KEEP      KEEP            KEEP            KEEP            KEEP            KEEP            KEEP            
+ENQUAD      e28080       STRIP     KEEP            KEEP            STRIP           KEEP            STRIP           KEEP            
+EMQUAD      e28081       STRIP     KEEP            KEEP            STRIP           KEEP            STRIP           KEEP            
+ENSP        e28082       STRIP     KEEP            KEEP            STRIP           KEEP            STRIP           KEEP            
+EMSP        e28083       STRIP     KEEP            KEEP            STRIP           KEEP            STRIP           KEEP            
+THREEPEREM  e28084       STRIP     KEEP            KEEP            STRIP           KEEP            STRIP           KEEP            
+FOURPEREM   e28085       STRIP     KEEP            KEEP            STRIP           KEEP            STRIP           KEEP            
+SIXPEREM    e28086       STRIP     KEEP            KEEP            STRIP           KEEP            STRIP           KEEP            
+FIGSP       e28087       STRIP     KEEP            KEEP            KEEP            KEEP            KEEP            KEEP            
+PUNCSP      e28088       STRIP     KEEP            KEEP            STRIP           KEEP            STRIP           KEEP            
+THINSP      e28089       STRIP     KEEP            KEEP            STRIP           KEEP            STRIP           KEEP            
+HAIRSP      e2808a       STRIP     KEEP            KEEP            STRIP           KEEP            STRIP           KEEP            
+ZWSP        e2808b       KEEP      KEEP            KEEP            KEEP            KEEP            KEEP            KEEP            
+ZWNJ        e2808c       KEEP      KEEP            KEEP            KEEP            KEEP            KEEP            KEEP            
+ZWJ         e2808d       KEEP      KEEP            KEEP            KEEP            KEEP            KEEP            KEEP            
+LRM         e2808e       KEEP      KEEP            KEEP            KEEP            KEEP            KEEP            KEEP            
+LS          e280a8       STRIP     KEEP            KEEP            STRIP           KEEP            STRIP           KEEP            
+PS          e280a9       STRIP     KEEP            KEEP            STRIP           KEEP            STRIP           KEEP            
+NNBSP       e280af       STRIP     KEEP            KEEP            KEEP            KEEP            KEEP            KEEP            
+MMSP        e2819f       STRIP     KEEP            KEEP            STRIP           KEEP            STRIP           KEEP            
+WJ          e281a0       KEEP      KEEP            KEEP            KEEP            KEEP            KEEP            KEEP            
+IDSP        e38080       STRIP     KEEP            KEEP            STRIP           KEEP            STRIP           KEEP            
+BOM         efbbbf       STRIP     KEEP            KEEP            KEEP            KEEP            KEEP            KEEP            
+SHY         c2ad         KEEP      KEEP            KEEP            KEEP            KEEP            KEEP            KEEP            
+HFILL       e385a4       KEEP      KEEP            KEEP            KEEP            KEEP            KEEP            KEEP            
+HCFILL      e1859f       KEEP      KEEP            KEEP            KEEP            KEEP            KEEP            KEEP            
+SOH         01           KEEP      KEEP            KEEP            KEEP            KEEP            KEEP            KEEP            
+FS          1c           KEEP      KEEP            KEEP            KEEP            KEEP            KEEP            KEEP            
+US          1f           KEEP      KEEP            KEEP            KEEP            KEEP            KEEP            KEEP            
+SPNBSP      20c2a0       STRIP     KEEP            KEEP            KEEP            KEEP            KEEP            KEEP            
+NBSPSP      c2a020       STRIP     KEEP            KEEP            KEEP            KEEP            KEEP            KEEP            
+NBSPTAB     c2a009       STRIP     KEEP            KEEP            KEEP            KEEP            KEEP            KEEP            
+TABVT       090b         STRIP     STRIP           KEEP            STRIP           KEEP            STRIP           KEEP            
+# note: locale strings are honoured only when generated; see the list above.

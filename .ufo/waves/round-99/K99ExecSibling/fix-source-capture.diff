@@ -1,0 +1,11 @@
+--- a/scripts/source-capture.mjs
++++ b/scripts/source-capture.mjs
+@@ -154,7 +154,7 @@
+     return { ok: false, reason: `sources doc unreadable: ${e.code || 'EIO'}` };
+   }
+   const ids = new Set();
+-  for (const m of raw.matchAll(/^\s*\|\s*(S[0-9]{3,})\s*\|/gm)) {
++  for (const m of raw.matchAll(/^ {0,3}\|[ \t]*(S[0-9]{3,})[ \t]*\|/gm)) {
+     if (ids.has(m[1])) {
+       return { ok: false, reason: `sources doc has duplicate row id ${m[1]}` };
+     }

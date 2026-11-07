@@ -1,0 +1,476 @@
+{
+ "usedby-whole-nbsp": {
+  "base": {
+   "verdict": "DRIFT",
+   "counts": {
+    "rows": 1,
+    "tiers": {
+     "A": 1,
+     "B": 0,
+     "C": 0
+    },
+    "status": {
+     "queued": 0,
+     "mined": 1,
+     "rejected": 0
+    },
+    "entriesWithSource": 1,
+    "legacy": 0
+   },
+   "findings": [
+    [
+     "ROW_FIELD_EMPTY",
+     7,
+     "id=S031 field=used-by"
+    ],
+    [
+     "MINED_UNUSED",
+     7,
+     "id=S031 mined with no used-by path"
+    ],
+    [
+     "USED_BY_ASYMMETRY",
+     1,
+     "S031 used-by omits corpus/knowledge/alpha.md"
+    ]
+   ]
+  },
+  "r99": {
+   "verdict": "DRIFT",
+   "counts": {
+    "rows": 1,
+    "tiers": {
+     "A": 1,
+     "B": 0,
+     "C": 0
+    },
+    "status": {
+     "queued": 0,
+     "mined": 1,
+     "rejected": 0
+    },
+    "entriesWithSource": 1,
+    "legacy": 0
+   },
+   "findings": [
+    [
+     "USED_BY_MISSING",
+     7,
+     "id=S031 missing used-by \u00a0"
+    ],
+    [
+     "USED_BY_ASYMMETRY",
+     1,
+     "S031 used-by omits corpus/knowledge/alpha.md"
+    ]
+   ]
+  },
+  "census_c.utf8": [
+   1,
+   [
+    "file\tE11\tS031 missing used-by \u00a0"
+   ]
+  ],
+  "census_c": [
+   1,
+   [
+    "file\tE11\tS031 missing used-by \u00a0"
+   ]
+  ]
+ },
+ "usedby-pads": {
+  "base": {
+   "verdict": "CLEAN",
+   "counts": {
+    "rows": 3,
+    "tiers": {
+     "A": 3,
+     "B": 0,
+     "C": 0
+    },
+    "status": {
+     "queued": 0,
+     "mined": 3,
+     "rejected": 0
+    },
+    "entriesWithSource": 1,
+    "legacy": 0
+   },
+   "findings": []
+  },
+  "r99": {
+   "verdict": "DRIFT",
+   "counts": {
+    "rows": 3,
+    "tiers": {
+     "A": 3,
+     "B": 0,
+     "C": 0
+    },
+    "status": {
+     "queued": 0,
+     "mined": 3,
+     "rejected": 0
+    },
+    "entriesWithSource": 1,
+    "legacy": 0
+   },
+   "findings": [
+    [
+     "USED_BY_MISSING",
+     7,
+     "id=S031 missing used-by corpus/knowledge/alpha.md\u00a0"
+    ],
+    [
+     "USED_BY_MISSING",
+     8,
+     "id=S032 missing used-by corpus/knowledge/alpha.md\u000b"
+    ],
+    [
+     "USED_BY_MISSING",
+     9,
+     "id=S033 missing used-by corpus/knowledge/alpha.md\u2003"
+    ],
+    [
+     "USED_BY_ASYMMETRY",
+     1,
+     "S031 used-by omits corpus/knowledge/alpha.md"
+    ]
+   ]
+  },
+  "census_c.utf8": [
+   1,
+   [
+    "file\tE04\tS032 duplicate url example.test/one within scope sc",
+    "file\tE04\tS033 duplicate url example.test/one within scope sc",
+    "file\tE11\tS031 missing used-by corpus/knowledge/alpha.md\u00a0"
+   ]
+  ],
+  "census_c": [
+   1,
+   [
+    "file\tE04\tS032 duplicate url example.test/one within scope sc",
+    "file\tE04\tS033 duplicate url example.test/one within scope sc",
+    "file\tE11\tS031 missing used-by corpus/knowledge/alpha.md\u00a0",
+    "file\tE11\tS033 missing used-by corpus/knowledge/alpha.md\u2003"
+   ]
+  ]
+ },
+ "tier-hist": {
+  "base": {
+   "verdict": "DRIFT",
+   "counts": {
+    "rows": 2,
+    "tiers": {
+     "A": 1,
+     "B": 1,
+     "C": 0
+    },
+    "status": {
+     "queued": 1,
+     "mined": 1,
+     "rejected": 0
+    },
+    "entriesWithSource": 1,
+    "legacy": 0
+   },
+   "findings": [
+    [
+     "ENTRY_SOURCE_UNKNOWN",
+     1,
+     "source header cites unregistered S031"
+    ]
+   ]
+  },
+  "r99": {
+   "verdict": "DRIFT",
+   "counts": {
+    "rows": 2,
+    "tiers": {
+     "A": 0,
+     "B": 0,
+     "C": 0
+    },
+    "status": {
+     "queued": 0,
+     "mined": 0,
+     "rejected": 0
+    },
+    "entriesWithSource": 1,
+    "legacy": 0
+   },
+   "findings": [
+    [
+     "TIER_ENUM",
+     7,
+     "id=S041 tier=\u00a0A\u00a0"
+    ],
+    [
+     "STATUS_ENUM",
+     7,
+     "id=S041 status=\u00a0queued\u00a0"
+    ],
+    [
+     "TIER_ENUM",
+     8,
+     "id=S042 tier=\u2003B\u2003"
+    ],
+    [
+     "STATUS_ENUM",
+     8,
+     "id=S042 status=\u000bmined\u000b"
+    ],
+    [
+     "ENTRY_SOURCE_UNKNOWN",
+     1,
+     "source header cites unregistered S031"
+    ]
+   ]
+  },
+  "census_census": [
+   0,
+   [
+    "file\trows\t2",
+    "file\ttier.invalid\t2",
+    "file\tstatus.invalid\t2",
+    "FLEET\trows\t2",
+    "FLEET\ttier.A\t0",
+    "FLEET\ttier.B\t0",
+    "FLEET\ttier.C\t0",
+    "FLEET\ttier.invalid\t2",
+    "FLEET\tstatus.queued\t0",
+    "FLEET\tstatus.mined\t0",
+    "FLEET\tstatus.rejected\t0",
+    "FLEET\tstatus.invalid\t2",
+    "FLEET\tmissing\t0"
+   ]
+  ],
+  "census_validate": [
+   1,
+   [
+    "file\tE06\tS041 tier=\u00a0A\u00a0",
+    "file\tE07\tS041 status=\u00a0queued\u00a0",
+    "file\tE04\tS042 duplicate url example.test/one within scope sc",
+    "file\tE06\tS042 tier=\u2003B\u2003",
+    "file\tE07\tS042 status=\u000bmined\u000b"
+   ]
+  ]
+ },
+ "residual-sep": {
+  "base": {
+   "verdict": "DRIFT",
+   "counts": {
+    "rows": 2,
+    "tiers": {
+     "A": 1,
+     "B": 0,
+     "C": 0
+    },
+    "status": {
+     "queued": 1,
+     "mined": 0,
+     "rejected": 0
+    },
+    "entriesWithSource": 0,
+    "legacy": 0
+   },
+   "findings": [
+    [
+     "KIND_ENUM",
+     8,
+     "id=S052 kind=---"
+    ],
+    [
+     "TIER_ENUM",
+     8,
+     "id=S052 tier=---"
+    ],
+    [
+     "STATUS_ENUM",
+     8,
+     "id=S052 status=---"
+    ],
+    [
+     "OPENED_INVALID",
+     8,
+     "id=S052 opened=---"
+    ],
+    [
+     "RECHECK_INVALID",
+     8,
+     "id=S052 recheck=---"
+    ]
+   ]
+  },
+  "r99": {
+   "verdict": "DRIFT",
+   "counts": {
+    "rows": 2,
+    "tiers": {
+     "A": 1,
+     "B": 0,
+     "C": 0
+    },
+    "status": {
+     "queued": 1,
+     "mined": 0,
+     "rejected": 0
+    },
+    "entriesWithSource": 0,
+    "legacy": 0
+   },
+   "findings": [
+    [
+     "KIND_ENUM",
+     8,
+     "id=S052 kind=---"
+    ],
+    [
+     "TIER_ENUM",
+     8,
+     "id=S052 tier=---"
+    ],
+    [
+     "STATUS_ENUM",
+     8,
+     "id=S052 status=---"
+    ],
+    [
+     "OPENED_INVALID",
+     8,
+     "id=S052 opened=---"
+    ],
+    [
+     "RECHECK_INVALID",
+     8,
+     "id=S052 recheck=---"
+    ]
+   ]
+  },
+  "census_validate": [
+   1,
+   [
+    "file\tE05\tS052 kind=---",
+    "file\tE06\tS052 tier=---",
+    "file\tE07\tS052 status=---",
+    "file\tE08\tS052 opened=---",
+    "file\tE09\tS052 recheck=---"
+   ]
+  ],
+  "census_census": [
+   0,
+   [
+    "file\trows\t2",
+    "file\ttier.A\t1",
+    "file\ttier.invalid\t1",
+    "file\tstatus.invalid\t1",
+    "file\tstatus.queued\t1",
+    "FLEET\trows\t2",
+    "FLEET\ttier.A\t1",
+    "FLEET\ttier.B\t0",
+    "FLEET\ttier.C\t0",
+    "FLEET\ttier.invalid\t1",
+    "FLEET\tstatus.queued\t1",
+    "FLEET\tstatus.mined\t0",
+    "FLEET\tstatus.rejected\t0",
+    "FLEET\tstatus.invalid\t1",
+    "FLEET\tmissing\t0"
+   ]
+  ]
+ },
+ "heading-emsp": {
+  "base": {
+   "verdict": "DRIFT",
+   "counts": {
+    "rows": 0,
+    "tiers": {
+     "A": 0,
+     "B": 0,
+     "C": 0
+    },
+    "status": {
+     "queued": 0,
+     "mined": 0,
+     "rejected": 0
+    },
+    "entriesWithSource": 1,
+    "legacy": 0
+   },
+   "findings": [
+    [
+     "SECTION_MISSING",
+     null,
+     "missing ## Registry"
+    ],
+    [
+     "ROW_OUTSIDE_REGISTRY",
+     7,
+     "id=S061 row outside Registry section"
+    ],
+    [
+     "ENTRY_SOURCE_UNKNOWN",
+     1,
+     "source header cites unregistered S031"
+    ]
+   ]
+  },
+  "r99": {
+   "verdict": "DRIFT",
+   "counts": {
+    "rows": 0,
+    "tiers": {
+     "A": 0,
+     "B": 0,
+     "C": 0
+    },
+    "status": {
+     "queued": 0,
+     "mined": 0,
+     "rejected": 0
+    },
+    "entriesWithSource": 1,
+    "legacy": 0
+   },
+   "findings": [
+    [
+     "SECTION_MISSING",
+     null,
+     "missing ## Registry"
+    ],
+    [
+     "ROW_OUTSIDE_REGISTRY",
+     7,
+     "id=S061 row outside Registry section"
+    ],
+    [
+     "ENTRY_SOURCE_UNKNOWN",
+     1,
+     "source header cites unregistered S031"
+    ]
+   ]
+  },
+  "census_validate": [
+   1,
+   [
+    "file\tE12\tS061 row outside Registry section",
+    "file\tE11\tS061 missing used-by corpus/knowledge/missing.md"
+   ]
+  ],
+  "census_census": [
+   0,
+   [
+    "file\trows\t0",
+    "FLEET\trows\t0",
+    "FLEET\ttier.A\t0",
+    "FLEET\ttier.B\t0",
+    "FLEET\ttier.C\t0",
+    "FLEET\ttier.invalid\t0",
+    "FLEET\tstatus.queued\t0",
+    "FLEET\tstatus.mined\t0",
+    "FLEET\tstatus.rejected\t0",
+    "FLEET\tstatus.invalid\t0",
+    "FLEET\tmissing\t0"
+   ]
+  ]
+ }
+}

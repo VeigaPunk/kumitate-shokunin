@@ -1,0 +1,278 @@
+# K99Scout — inventory of every whitespace-class reader that reads SOURCES.md rows or cells
+# Round 99, seat K99Scout. Lane commit f480124b5216d66b8bd74162bc2f61eabaffb8b2 (base f9cd1bff).
+# Scope (as assigned): /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/*.mjs and
+#                       /home/vgpnk/Projects/shokunin/scripts/sources-census.sh
+#
+# CLASS LEGEND (the three classes that matter, all measured on this host, node v24.21.0):
+#
+#   [JS-TRIM]  ECMAScript String.prototype.trim()  (ECMA-262 S276, TrimString)
+#              = WhiteSpace (TAB VT FF SP NBSP Zs U+FEFF) + LineTerminators (LF CR U+2028 U+2029)
+#              = 25 code points. MEASURED IDENTICAL to the JS regex class \s
+#              (class-compare.mjs: "IDENTICAL SETS: true", both size 25).
+#              Strips: SP TAB VT FF CR NBSP U+1680 U+2000..U+200A U+2028 U+2029 U+202F U+205F
+#                      U+3000 U+FEFF LF
+#
+#   [BLANK]    POSIX blank class /[ \t]/  (the census `row_pass` gawk trim, gawk 5.4.1)
+#              = SP TAB only. 2 code points. MEASURED: gawk `gsub(/^[ \t]+|[ \t]+$/,"",s)`
+#              leaves U+00A0 intact (probe: "A<NBSP>B" -> "[A B]").
+#
+#   [SPACE]    POSIX space class /[[:space:]]/  (the census bash `trim_cell`)
+#              = LOCALE-DEPENDENT. MEASURED on this host:
+#                LANG=en_US.UTF-8 : SP TAB VT FF CR U+3000 are space; NBSP and U+FEFF are NOT.
+#                LC_ALL=C        : SP TAB VT FF CR are space; NBSP, U+3000 and U+FEFF are NOT.
+#              => a used-by path padded with U+3000 is trimmed under the host locale but not
+#                 under LC_ALL=C. This is the census-internal [[:space:]] vs [ \t] divergence the
+#                 plan routes as report-only (disclosed limit 2).
+#
+#   [JS-RE-\s] JS regex \s — identical set to [JS-TRIM] (25 code points, measured).
+#   [RE-BLANK] JS regex /[ \t]/ — identical set to [BLANK].
+#
+# =============================================================================================
+# A. THE CLAIM'S READER — kumitate-shokunin/scripts/sources-check.mjs
+# =============================================================================================
+#
+# A1. sources-check.mjs:134   [JS-TRIM]   the single trim helper under review
+#     function trim(value) { return value.trim(); }
+#     Feeds EVERY Registry cell read in the tool. Call sites:
+#       :158  splitUsedBy -> value.split(',').map(trim)      used-by path parts (comma-split)
+#       :232  id          = trim(fields[1] ?? '')            the id cell
+#       :240  fields.slice(2,-1).some((field) => trim(field) !== '')   empty-id guard
+#       :256  censusTier  = trim(fields[4] ?? '')            tier cell (count histogram)
+#       :257  censusStatus= trim(fields[8] ?? '')            status cell (count histogram)
+#       :269  source      = trim(fields[2])
+#       :270  kind        = trim(fields[3])
+#       :271  tier        = trim(fields[4])
+#       :272  scope       = trim(fields[5])
+#       :273  anchor      = trim(fields[6])
+#       :274  teaches     = trim(fields[7])
+#       :275  status      = trim(fields[8])
+#       :276  opened      = trim(fields[9])
+#       :277  recheck     = trim(fields[10])
+#       :278  usedBy      = trim(fields[11])
+#     => 15 uses of the helper: 11 distinct cells (id + the ten other cells), 2 derived values
+#     (censusTier, censusStatus), 1 empty-id guard (:240), 1 used-by path-part map (:158).
+#     NOTE: :158 splitUsedBy is the used-by path-part reader. Under R99 the ONE helper changes,
+#     so used-by parts are trimmed to [BLANK] as well (plan disclosed limit 2; ctl-splitjs
+#     shows the frozen counter does not judge that path).
+#
+# A2. sources-check.mjs:203  [RE-BLANK]   section-name trim (heading text, not a cell)
+#     activeSection = raw.replace(/^ {0,3}##/, '').replace(/^[ \t]+|[ \t]+$/g, '');
+#     Feeds: the Registry section membership test. Already [BLANK] — matches the census
+#     `row_pass` heading trim at :611. NOT a cell reader.
+#
+# A3. sources-check.mjs:234  [RE-BLANK]   the outside-row regex (r97 grammar)
+#     /^\|[ \t]*S\d{3,}[ \t]*\|/  — the id cell must be padded with ASCII SP/TAB only.
+#     Feeds: ROW_OUTSIDE_REGISTRY detection. Already [BLANK]. NOT a cell reader.
+#
+# A4. sources-check.mjs:191  n/a          sourceText.split(/\r?\n/).map(normalizeMarkdownIndent)
+#     Line splitting; :136 normalizeMarkdownIndent strips 1-3 ASCII-space indentation.
+#     A CR inside a line survives the split and would reach the cell readers — but a CR at a
+#     cell edge is stripped by [JS-TRIM] and NOT by [BLANK]. Measured: the fleet has zero CR
+#     bytes in any SOURCES.md (see pads.txt population C), so this is latent, not live.
+#
+# =============================================================================================
+# B. THE OTHER LANE READERS (kumitate-shokunin/scripts/*.mjs) — same file, different class
+# =============================================================================================
+#
+# B1. source-dupes.mjs:165  [JS-TRIM]   the duplicate-URL ratchet's cell reader
+#     const cells = line0.replace(/^ {0,3}/, '').split('|').map((c) => c.trim());
+#     Feeds: id (cells[1]), scope (cells[5]), source cell -> urlOf (cells[2]).
+#     Also gates on cells.length !== 13 (NF=13, the census shape).
+#
+# B2. source-dupes.mjs:158  [JS-TRIM]   heading trim
+#     const h = line0.replace(/^ {0,3}/, '').replace(/^##[ \t]+/, '').trim();
+#     Feeds: the Registry section test. Same class as A2 but via .trim() not a [ \t] regex.
+#
+# B3. source-dupes.mjs:167  [JS-RE-\s]   separator-row detection
+#     /^-+$/.test(cells[2].replace(/\s/g, ''))  ||  /^-+$/.test((cells[1]||'').replace(/\s/g,''))
+#     Feeds: skip-the-separator-row. Strips EVERY JS whitespace, so a separator cell padded with
+#     U+3000 is still recognised as a separator (the census's separator_row at :592/:595 uses
+#     [BLANK] + /^:?-+:?$/, which is a different test on a different class).
+#
+# B4. source-dupes.mjs:89   [JS-RE-\s]   urlOf URL extraction
+#     sourceCell.match(/https?:\/\/[^\s|]+/)  — \s stops the URL at whitespace.
+#     Feeds: the duplicate-group key. Mirrors the census url_of at :601 (which uses
+#     [^[:space:]|]+ — the [SPACE] class).
+#
+# B5. source-capture.mjs:157  [JS-RE-\s]  the row-id scanner (capture/exemption binding)
+#     for (const m of raw.matchAll(/^\s*\|\s*(S[0-9]{3,})\s*\|/gm))
+#     Feeds: the set of SOURCES row ids the capture registry may bind to.
+#     NOTE the class: \s* before AND after the id, so a row id padded with NBSP/VT/U+FEFF IS
+#     matched here, whereas sources-check's id cell would also match it (JS-TRIM) but the
+#     census's id cell would read it as padded-with-NBSP (so the census's id != "S###").
+#     => source-capture.mjs is a THIRD reader class, already JS-wide, already in the fleet.
+#     This is the "lane's two other \s row readers" the plan routes as measured-report-only.
+#
+# B6. cite-sources.mjs:36   [JS-RE-\s]   the registry-id scanner (cited-id ghost gate)
+#     const m = line.match(/^ {0,3}\|\s*(S[0-9]{3,})\s*\|/);
+#     Feeds: the set of valid source ids for the README citation gate.
+#     Same third class as B5: an id padded with a JS-whitespace-but-not-blank char is accepted
+#     here and (via A1) by sources-check, but NOT by the census (which reads it as a bad id).
+#
+# B7. cite-sources.mjs:45   [JS-RE-\s]   README table-row scan (reads corpus/README.md, not
+#     /^\s*\| /.test(line)   a SOURCES row) — listed for completeness; out of the Registry scope.
+#
+# B8. round-gate.mjs:411    [RE-BLANK]   the registry-row regex (the PIN reader)
+#     const SOURCES_ROW_RE = /^ {0,3}\|[ \t]*S\d{3,}[ \t]*\|/;
+#     Feeds: which SOURCES rows declare upstream pins. ALREADY [BLANK] — it was made
+#     census-shaped on purpose (round 94, d21decd2; the r98 arms at :1806-:1815 pin VT/FF/CR/
+#     NBSP/U+2003/U+FEFF/U+200B as "not a row"). This is the PRECEDENT: a lane reader that
+#     already reads the id cell with [BLANK], and the round-gate selftest holds it there.
+#
+# B9. round-gate.mjs:432    [RE-BLANK]   heading trim
+#     line.replace(/^ {0,3}##/, '').replace(/^[ \t]+|[ \t]+$/g, '') === 'Registry'
+#     Feeds: Registry section membership. Same class as A2.
+#
+# B10. round-gate.mjs:436   [JS-TRIM]   fields[1].trim() — id of an OUT-OF-REGISTRY row
+# B11. round-gate.mjs:437   [JS-TRIM]   fields[1].trim() — id of a MALFORMED row (NF!=13)
+#     Feeds: citations.outsideRows / citations.malformedRows (disclosure only, no gating).
+#     CLASS INCONSISTENCY inside one reader: the row is recognised by the [BLANK] regex B8 but
+#     its id is reported via [JS-TRIM] B10/B11. Report-only; the values are disclosure lists.
+#
+# B12. round-gate.mjs:438   [JS-TRIM]   status cell
+#     const status = (fields[8] ?? '').trim();
+#     Feeds: the "status cell is not rejected" filter that decides whether a row may declare a
+#     pin. CLASS MATTERS HERE: a status cell padded with NBSP reads as "mined" to [JS-TRIM] and
+#     as "mined<NBSP>" to [BLANK] — the census would call it E07 (bad status) while round-gate
+#     would treat the row as live. Same exposure shape as C1, in a second reader.
+#
+# B13. round-gate.mjs:413   [JS-RE-\s]   URL extraction for pin segments
+#     const SOURCES_URL_RE = /https?:\/\/[^\s|)`'"<>]+/g;
+#     Feeds: the 40-hex pin path segments. Mirrors the census url_of.
+#
+# B14. routed-ledger.mjs:166  [JS-TRIM]  cell reader, but for corpus/routed-ledger.md
+#     const cells = l.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map((c) => c.trim());
+#     Feeds: the routed-ledger row set. NOT a SOURCES row reader — listed because it is the same
+#     .trim()-per-cell pattern in the same directory (out of the R99 scope; report-only).
+#
+# B15. readme-map.mjs:161   [JS-TRIM]   first-cell reader, but for corpus/README.md
+#     const firstCell = line.split('|')[1];  (+ /^\s*`?(knowledge|lessons)\// at :162)
+#     Feeds: the "format-unmapped" note list. NOT a SOURCES row reader. Report-only.
+#
+# =============================================================================================
+# C. THE CENSUS READERS — /home/vgpnk/Projects/shokunin/scripts/sources-census.sh
+# =============================================================================================
+#
+# C1. sources-census.sh:581   [BLANK]   the gawk `trim` — the claim's reference class
+#     function trim(s) { gsub(/^[ \t]+|[ \t]+$/,"",s); return s }
+#     Feeds EVERY Registry cell read of the census's row_pass:
+#       :592  separator_row:  if (trim($2)=="id") return 1
+#       :595  separator_row:  c=trim($i) for i in 2..NF-1   (the :-:-only separator test)
+#       :611  in_registry=(trim(substr(line,3))=="Registry")   section name
+#       :620  id=trim($2)   (the E12 outside-row id)
+#       :626  id=trim($2); source=trim($3); kind=trim($4); tier=trim($5); scope=trim($6)
+#       :627  anchor=trim($7); teaches=trim($8); status=trim($9); opened=trim($10)
+#       :628  recheck=trim($11); usedby=trim($12)
+#     => the census's 11 cells are all read with [BLANK]. This is the class R99 aligns to.
+#
+# C2. sources-census.sh:531-536  [SPACE]  the bash `trim_cell` — the LOCALE-DEPENDENT reader
+#     trim_cell() { while [[ "$value" == [[:space:]]* ]]; do value=${value#?}; done
+#                   while [[ "$value" == *[[:space:]] ]]; do value=${value%?}; done
+#                   printf '%s' "$value"; }
+#     Feeds the used-by path check (usedby_findings, :539-571):
+#       :546  section=$(trim_cell "${line:2}")   section name
+#       :557  id=$(trim_cell "${cells[1]}")      id cell
+#       :558  status=$(trim_cell "${cells[8]}")  status cell
+#       :560  usedby=$(trim_cell "${cells[11]}") used-by cell
+#       :564  path=$(trim_cell "$path")          each comma-split used-by path part
+#     MEASURED DIVERGENCE vs C1: under LANG=en_US.UTF-8 the bash reader strips U+3000 (and
+#     VT/FF/CR) but NOT NBSP and NOT U+FEFF; under LC_ALL=C it strips only SP TAB VT FF CR.
+#     So a used-by path padded with U+3000 yields an E11 "missing used-by" under the host
+#     locale but not under LC_ALL=C. The census is internally inconsistent about which class
+#     a cell uses. Report-only per the plan (disclosed limit 2); the fleet script is not edited.
+#
+# C3. sources-census.sh:540   [SPACE]   the heading regexes in usedby_findings
+#     local heading_re='^ {0,3}##[[:space:]]' top_heading_re='^ {0,3}#[[:space:]]'
+#     Feeds: section detection in the used-by pass. NOTE the divergence from the gawk pass,
+#     which uses /^ {0,3}##[ \t]/ at :610 and :614 — [BLANK]. Same file, two classes.
+#
+# C4. sources-census.sh:601   [SPACE]   url_of URL extraction
+#     if (match(s,/https?:\/\/[^[:space:]|]+/)) { ...
+#     Feeds: the URL key for E04/W04 duplicate detection. Mirrors source-dupes.mjs:89 ([JS-RE-\s]).
+#
+# C5. sources-census.sh:470   [SPACE]   the shokunin.conf LANES parser (NOT a SOURCES reader)
+#     sed -n 's/^[[:space:]]*\([a-z0-9][a-z0-9-]*\)[[:space:]]*|[[:space:]]*\([^|[:space:]][^|]*\)|.*/.../'
+#     Reads the fleet roster, not a registry. Listed for completeness.
+#
+# C6. sources-census.sh:461   [SPACE]   roster trailing-space strip (NOT a SOURCES reader)
+#     while [[ "$repo" == *[[:space:]] ]]; do repo=${repo%?}; done
+#
+# =============================================================================================
+# D. SUMMARY — THE CLASS LANDSCAPE
+# =============================================================================================
+#
+#   class        | readers                                                     | reads a Registry cell?
+#   -------------+------------------------------------------------------------+------------------------
+#   [BLANK]      | census gawk trim (:581-628), round-gate SOURCES_ROW_RE        | YES — the reference
+#                | (:411), sources-check heading (:203) & outside-row (:234),   |
+#                | round-gate heading (:432)                                    |
+#   [JS-TRIM]    | sources-check trim helper (:134, 13 call sites), source-dupes  | YES — the claim's subject
+#                | cells (:165) & heading (:158), round-gate outside/malformed |
+#                | ids (:436,:437) & status (:438), routed-ledger (:166),      |
+#                | readme-map (:161)                                           |
+#   [JS-RE-\s]   | source-dupes separator (:167) & urlOf (:89), source-capture   | YES (id cell only, for the
+#                | id scan (:157), cite-sources id scan (:36), round-gate URL  | id: source-capture,
+#                | (:413)                                                      | cite-sources, source-dupes)
+#   [SPACE]      | census bash trim_cell (:531-536, 5 call sites), census       | YES (used-by path check only)
+#                | heading_re (:540), census url_of (:601), census conf (:470) |
+#
+#   The SAME cell is read by DIFFERENT classes:
+#     - id cell:            census [BLANK]  vs  sources-check [JS-TRIM]  vs  source-capture
+#                           [JS-RE-\s]  vs  cite-sources [JS-RE-\s]  vs  round-gate [BLANK].
+#                           => three classes on one cell, in one fleet.
+#     - status cell:        census [BLANK]  vs  sources-check [JS-TRIM]  vs  round-gate [JS-TRIM].
+#     - used-by cell:       census row_pass [BLANK]  vs  census usedby_findings [SPACE]  vs
+#                           sources-check [JS-TRIM].
+#     - heading text:       census gawk [BLANK]  vs  census bash [SPACE]  vs  sources-check
+#                           [RE-BLANK]  vs  source-dupes [JS-TRIM].
+#
+#   NET FINDING (report-only, outside R99's frozen scope — R99 changes the ONE helper in
+#   sources-check.mjs and nothing else):
+#     - R99 aligns sources-check's cell reads to the census's [BLANK]. That removes the
+#       census-vs-sources-check divergence on the id/kind/tier/status/opened/recheck cells.
+#     - It leaves the OTHER fleet divergences untouched, and they are the same shape:
+#       source-capture.mjs:157 and cite-sources.mjs:36 accept a JS-whitespace-padded id that
+#       the census calls a bad id; round-gate.mjs:438 reads a JS-TRIM status cell; the census
+#       itself reads the used-by cell twice with two classes.
+#     - Round-gate is the PRECEDENT that a lane reader can and does use [BLANK] on the id cell
+#       (round-gate.mjs:411, pinned by the r98 selftest arms at :1806-:1815). R99 makes
+#       sources-check follow the same precedent.
+#
+# =============================================================================================
+# E. MEASUREMENT COMMANDS FOR EVERY CLASS CLAIM ABOVE
+# =============================================================================================
+#
+# 1. JS trim set vs JS \s set vs POSIX blank (node v24.21.0):
+#      node .ufo/waves/round-99/K99Scout/class-compare.mjs
+#      -> "JS regex \s size = 25" / "JS trim() empty-string set size = 25"
+#         / "IDENTICAL SETS: true" / "\s set: U+0009 U+000A U+000B U+000C U+000D U+0020
+#          U+00A0 U+1680 U+2000..U+200A U+2028 U+2029 U+202F U+205F U+3000 U+FEFF"
+#
+# 2. The census gawk trim really is [BLANK] (gawk 5.4.1):
+#      printf 'A\xc2\xa0B\n' | gawk 'function trim(s) { gsub(/^[ \t]+|[ \t]+$/,"",s); return s }
+#                                   {print "["trim($0)"]"}'
+#      -> "[A B]"     (the NBSP survives: gawk does NOT strip U+00A0)
+#
+# 3. The census bash trim_cell is locale-dependent:
+#      bash .ufo/.../K99Scout/spaceclass.sh          (LANG=en_US.UTF-8)
+#      -> SP IS-space, TAB IS-space, VT IS-space, FF IS-space, CR IS-space,
+#         U+3000 IS-space, NBSP not-space, U+FEFF not-space
+#      LC_ALL=C bash .ufo/.../K99Scout/spaceclass.sh
+#      -> same, except U+3000 not-space
+#
+# 4. Used-by path trimming compared across the three classes (measured, not inferred):
+#      node .ufo/.../K99Scout/usedby.mjs
+#      -> JS trim      : "corpus/knowledge/alpha.md"     (NBSP stripped)
+#         JS split map : ["corpus/knowledge/alpha.md"]   (NBSP stripped)
+#         blank class  : "<NBSP>corpus/knowledge/alpha.md<NBSP>"  (NBSP kept)
+#      bash trim_cell on the same value -> "<NBSP>corpus/knowledge/alpha.md<NBSP>" (NBSP kept)
+#      bash trim_cell on a U+3000-padded value -> "corpus/knowledge/alpha.md" (U+3000 stripped,
+#         under the host locale; under LC_ALL=C it would be kept)
+#
+# 5. CRLF: the census reads a whole-CRLF registry as "no Registry section" (its heading trim is
+#    [BLANK], so "## Registry\r" != "Registry"), and sources-check does too. Both readers agree
+#    on that CRLF case (measured: a CRLF fixture gives E12 from the census and SECTION_MISSING +
+#    ROW_OUTSIDE_REGISTRY from sources-check). Note the asymmetry: sources-check splits on
+#    /\r?\n/ so its line text has no CR, while the census's gawk record keeps the CR — the two
+#    reach the same verdict for different reasons. The frozen counter's arm (f) is FIX-B
+#    (whole-CRLF, no Registry for either reader), so this is the pinned behaviour, not a defect.

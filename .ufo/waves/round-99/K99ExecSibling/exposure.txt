@@ -1,0 +1,61 @@
+K99ExecSibling — real-data exposure: non-blank whitespace in SOURCES row id cells / indents
+=============================================================================================
+Date 2026-11-07 · seat K99ExecSibling · read-only scan, no lane writes.
+
+METHOD (exposure.py, this seat dir)
+  For every /home/vgpnk/Projects/shokunin/*-shokunin/corpus/SOURCES.md (21 files):
+  a "row" = any line whose first '|' is preceded only by whitespace; the id cell is
+  the text between the 1st and 2nd '|'. A row is FLAGGED when its indent or id cell
+  contains any NON-BLANK whitespace, defined as:
+      ch.isspace() and ch not in {' ', '\t'}   OR   ch == U+FEFF
+  i.e. every JS \s / Unicode whitespace class the census blank class [ \t]
+  (sources-census.sh trim / row_pass gsub) does NOT strip: VT, FF, CR, NEL,
+  NBSP, every Zs, LS, PS, U+FEFF, and C0/C1 info separators Python counts.
+  Detector self-check: run against the padded fixture fx/SOURCES.md it flags
+  exactly the 10 rows carrying non-blank whitespace (U+00A0, U+2003, U+000B,
+  U+FEFF, U+0085, U+2028) and none of the blank-class (TAB/SP) or clean rows —
+  see "detector self-check" below.
+
+COMMAND
+  python3 exposure.py        # glob /home/vgpnk/Projects/shokunin/*-shokunin/corpus/SOURCES.md
+
+RESULT — raw/exposure-raw.txt (verbatim)
+---------------------------------------------------------------------------
+audio-shokunin	rows=17	flagged=0
+chousa-shokunin	rows=215	flagged=0
+game-dev-2d-shokunin	rows=33	flagged=0
+game-dev-3d-shokunin	rows=38	flagged=0
+kagi-shokunin	rows=114	flagged=0
+kaidoku-shokunin	rows=235	flagged=0
+kake-shokunin	rows=226	flagged=0
+kama-shokunin	rows=395	flagged=0
+kasegi-shokunin	rows=132	flagged=0
+kengaku-shokunin	rows=343	flagged=0
+kotoba-shokunin	rows=215	flagged=0
+kotodama-shokunin	rows=953	flagged=0
+kumitate-shokunin	rows=217	flagged=0
+lore-shokunin	rows=34	flagged=0
+mado-shokunin	rows=451	flagged=0
+mori-shokunin	rows=418	flagged=0
+revenger-shokunin	rows=511	flagged=0
+souji-shokunin	rows=251	flagged=0
+tabi-shokunin	rows=203	flagged=0
+tameshi-shokunin	rows=179	flagged=0
+tsukuroi-shokunin	rows=375	flagged=0
+TOTAL	files=21	rows=5555	flagged=0
+---------------------------------------------------------------------------
+
+TOTAL: 21 files, 5555 table rows scanned, 0 rows with non-blank whitespace in
+the id cell or indent — matches the expected 0. The cite-sources /
+source-capture \s-reader divergence measured in parity.txt is therefore LATENT
+on real data (same disclosed-limit class as the C1 plan: prospective, not a
+live incident).
+
+DETECTOR SELF-CHECK (proves the scanner is not vacuous)
+  Same predicate run over the hermetic fixture fixture/SOURCES.md flags exactly
+  the 10 padded rows and no others:
+    10 U+00A0   11 U+2003   12 U+000B   13 U+FEFF
+    17 U+00A0   19 U+00A0   20 U+0085   21 U+2028
+    22 U+00A0   23 U+000B        (fixture flagged rows: 10)
+  Blank-class pads (S906 TAB, S907 SP, S908 TAB indent, S910 4xSP indent) and
+  the clean control S901 are correctly NOT flagged.

@@ -1,0 +1,11 @@
+construction: k02-transparent-u0080
+fixture: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-99/K99CriticA/minfixtures/k02-transparent-u0080/corpus/SOURCES.md
+fixture-escaped: '# SOURCES — where min learns\n\n## Registry\n\n| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |\n|---|---|---|---|---|---|---|---|---|---|---|\n| \x80S123\x80 | https://example.org/a | docs | B | sc | § a | teaches a | queued | 2025-01-02 | on-release | — |\n\n## Paths\n\nnone\n\n## Search log\n\nnone\n\n## Leads (unopened)\n\n- none\n'
+tool: node minrun/k02-transparent-u0080/scripts/sources-check.mjs --self <fixture> --today 2026-11-07 --json
+tool-exit: 0
+tool-counts: {"rows": 1, "tiers": {"A": 0, "B": 1, "C": 0}, "status": {"queued": 1, "mined": 0, "rejected": 0}, "entriesWithSource": 0, "legacy": 0}
+tool-findings:
+census: bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file <fixture> --today 2026-11-07
+census-exit: 1
+census-output:
+  'file\tE02\t\x80S123\x80'

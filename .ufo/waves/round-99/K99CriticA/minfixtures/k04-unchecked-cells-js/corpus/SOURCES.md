@@ -1,0 +1,20 @@
+# SOURCES — where min learns
+
+## Registry
+
+| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |
+|---|---|---|---|---|---|---|---|---|---|---|
+| S001 | https://example.org/dup | docs | B | sc | § a | teaches a | mined | 2025-01-02 | on-release | — |
+| S002 | https://example.org/dup | docs | B |  sc  | § a | teaches a | mined | 2025-01-02 | on-release | — |
+
+## Paths
+
+none
+
+## Search log
+
+none
+
+## Leads (unopened)
+
+- none

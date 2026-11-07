@@ -290,6 +290,8 @@ fixture suite, `--strict` to fail on warnings.
 | `knowledge/round-gate-row-id-class.md` | Registry id-cell padding is ASCII SP/TAB only (R98); census E12/E02/valid E01 vs wider JS `\s`; nonce controls, prospective framing and inside-row checker divergence | S277, S276, S274; `.ufo/waves/round-98/` |
 | `lessons/round-98.md` | R98 row recogniser, M2 pad/id length and BOM arms, sources-check selftest path hygiene, Q92, counter gaps and routed inside-cell trim/count | LOG.md round 98; `.ufo/waves/round-98/` |
 | `lessons/round-98-verifier-spotcheck.md` | Non-author round-98 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
+| `knowledge/sources-check-cell-trim-class.md` | Registry cells trimmed with the census blank class `[ \t]` (R99), not JS `trim()` nor Unicode White_Space; 44-class table, cross-reader/locale matrix, per-kind effects, census-internal used-by split | S276, S277, S278, S279; `.ufo/waves/round-99/` |
+| `lessons/round-99.md` | R99 sources-check cell trim, M2 survivor arms, read-order log + Q93, used-by trade (24/44 vs 37/44 UTF-8), counter gaps, routed `\s` readers | LOG.md round 99; `.ufo/waves/round-99/` |
 
 ## Known gaps
 

@@ -1,0 +1,26 @@
+# K99CriticB receipts — command -> file (all paths relative to this seat dir)
+
+Frozen inputs (read-only): lane `kumitate-shokunin` at 206e13dd (plan frozen at f480124b, base f9cd1bff),
+counter `.ufo/waves/round-99/probe/probe99-c1.mjs`, controls `.ufo/waves/round-99/controls/`,
+rule text `.ufo/waves/round-99/plan.md` (R99). READY candidate sha 50b94567
+(`.ufo/waves/round-99/K99ExecTool/sources-check.mjs`).
+
+Reference rule copy (BASE + the R99 trim line only):
+  mkdir -p <scratch>/tool/scripts; git -C lane show f9cd1bff:scripts/{sources-check,cap-spawn,cap-run}.mjs
+  -> <scratch>/tool/scripts/*; then replace `function trim(value) { return value.trim(); }` with
+  `function trim(value) { return value.replace(/^[ \t]+|[ \t]+$/g, ''); }`
+  sha256 = 80b2f3f2f4092d92d1a6a9eadddf1e7dfdd36c7422f95d640e96fb46e93d23a1 == ctl-positive.
+
+| receipt | how it was produced |
+|---|---|
+| exposure.json | `python3 scan_exposure.py <this dir>` — every `*-shokunin/corpus/SOURCES.md` (21 lanes) + 359 `git rev-list --all -- corpus/SOURCES.md` blobs, exact bytes (`rb` read, no newline translation); compares ECMAScript trim vs `[ \t]` on every table cell |
+| lane-json-manifest.txt, lane-json-summary.txt, lane-json-diff.txt | BASE copy vs reference-rule copy `--json --self <lane> --today 2026-11-07` on all 21 lanes; sha256 per file, byte compare |
+| counter-replay.txt | frozen `probe99-c1.mjs --tool <BASE bytes> --work ... --seed 3d7e0d1c6f030355` and `--tool <ctl-positive bytes> --seed 58bd69006a4bbde4` |
+| controls-regenerated.sha256.txt, controls-reproduce.diff | `python3 .ufo/waves/round-99/probe/make-controls99.py <scratch>/genctl` then `diff` against `controls/controls-sha256.txt` (empty) |
+| final-attrib.out, e02-binary-check.out, e12-audit.out | independent cell-level re-derivation of the ctl-nothing FIX-A/FIX-B receipts (binary capture; census parsed with `split('\t', 2)` and no newline translation) |
+| fixtures.json, extra-fixtures.json | `fixtures.py` / `audit_more.py` (kept here): BASE vs reference-rule vs census on hand-built fixture lanes |
+| sweep.json, usedby-classes.out | `sweep.py`: the 44 frozen pad classes (read from the counter text) applied to the five cells the counter never pads (source, scope, anchor, teaches, used-by) |
+| bash-trimcell-classes.txt | `trimcell_probe.sh` — exact `trim_cell` from `scripts/sources-census.sh` under LC_ALL=C / C.UTF-8 / en_US.UTF-8 |
+| candidate-provenance.txt | READY sha, trim-line equality, diff scope, fixture equality, selftest count |
+
+Scratch `/fast/scratch/hyaku/kumitate-r99/K99CriticB` is removed before yield; every cited output lives here.

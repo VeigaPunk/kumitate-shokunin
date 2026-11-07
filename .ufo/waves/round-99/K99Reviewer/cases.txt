@@ -1,0 +1,51 @@
+# K99Reviewer hand-check: 20 single-cell pad cases (fixture lane, scratch)
+# R99 = ctl-positive (BASE f9cd1bff + blank trim helper, sha256 80b2f3f2...); BASE = f9cd1bff unmodified
+# columns: node finding kinds on the row | census validate code(s) attributed by the nonce id | agree?
+case cell pad side | id | R99 kinds | BASE kinds | census code(s) | agree
+ 1 id      NBSP both  | S901 | ID_FORM | CLEAN | E02 | yes
+ 2 id      EM   lead  | S902 | ID_FORM | CLEAN | E02 | yes
+ 3 id      VT   trail | S903 | ID_FORM | CLEAN | E02 | yes
+ 4 id      CR   both  | S904 | ID_FORM | CLEAN | E02 | yes
+ 5 id      BOM  lead  | S905 | ID_FORM | CLEAN | E02 | yes
+ 6 id      ZWSP trail | S906 | ID_FORM | ID_FORM | E02 | yes
+ 7 id      TAB  both  | S907 | CLEAN | CLEAN | clean | yes
+ 8 id      SP8  both  | S908 | CLEAN | CLEAN | clean | yes
+ 9 kind    NBSP both  | S909 | KIND_ENUM | CLEAN | E05 | yes
+10 kind    EM   both  | S910 | KIND_ENUM | CLEAN | E05 | yes
+11 kind    VT   both  | S911 | KIND_ENUM | CLEAN | E05 | yes
+12 kind    CR   both  | S912 | KIND_ENUM | CLEAN | E05 | yes
+13 tier    NBSP both  | S913 | TIER_ENUM | CLEAN | E06 | yes
+14 tier    EM   both  | S914 | TIER_ENUM | CLEAN | E06 | yes
+15 status  VT   both  | S915 | STATUS_ENUM | CLEAN | E07 | yes
+16 status  CR   both  | S916 | STATUS_ENUM | CLEAN | E07 | yes
+17 opened  NBSP both  | S917 | OPENED_INVALID | CLEAN | E08 | yes
+18 opened  EM   both  | S918 | OPENED_INVALID | CLEAN | E08 | yes
+19 recheck VT   both  | S919 | RECHECK_INVALID | CLEAN | E09 | yes
+20 recheck TAB  both  | S920 | CLEAN | CLEAN | clean | yes
+
+# probe fixture (fixtureprobe): NBSP-only and U+2003-only kind/used-by cells
+census E05 value='S930 kind=\xa0'
+census E05 value='S933 kind=\u2003'
+census E11 value='S932 missing used-by \xa0'
+base error ROW_FIELD_EMPTY line=6 detail='id=S930 field=kind'
+base error KIND_ENUM line=6 detail='id=S930 kind='
+base error ROW_FIELD_EMPTY line=7 detail='id=S931 field=used-by'
+base error MINED_UNUSED line=7 detail='id=S931 mined with no used-by path'
+base error ROW_FIELD_EMPTY line=8 detail='id=S932 field=used-by'
+base error MINED_UNUSED line=8 detail='id=S932 mined with no used-by path'
+base error ROW_FIELD_EMPTY line=9 detail='id=S933 field=kind'
+base error KIND_ENUM line=9 detail='id=S933 kind='
+base exit=1
+r99 error KIND_ENUM line=6 detail='id=S930 kind=\xa0'
+r99 error USED_BY_MISSING line=7 detail='id=S931 missing used-by \u2003'
+r99 error USED_BY_MISSING line=8 detail='id=S932 missing used-by \xa0'
+r99 error KIND_ENUM line=9 detail='id=S933 kind=\u2003'
+r99 exit=1
+
+# id-pad finding details (repr)
+case 1: detail='id=\xa0S901\xa0'
+case 2: detail='id=\u2003S902'
+case 3: detail='id=S903\x0b'
+case 4: detail='id=\rS904\r'
+case 5: detail='id=\ufeffS905'
+case 6: detail='id=S906\u200b'

@@ -1,0 +1,70 @@
+# Census Internal Reader Measurement: row_pass [ \t] vs usedby_findings [[:space:]]
+
+## Background & Mechanism
+The fleet census script `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh` contains two internal table cell readers:
+1. `row_pass()` (lines 574-695): Awk implementation using `trim(s) { gsub(/^[ \t]+|[ \t]+$/,"",s); return s }`.
+   - Trims strictly POSIX `blank` characters (ASCII SP 0x20 and TAB 0x09).
+   - Used for table header, section heading, row fields: id, source, kind, tier, scope, anchor, teaches, status, opened, recheck, usedby.
+2. `usedby_findings()` (lines 531-570): Bash implementation using `trim_cell()`:
+   ```bash
+   trim_cell() {
+     local value=$1
+     while [[ "$value" == [[:space:]]* ]]; do value=${value#?}; done
+     while [[ "$value" == *[[:space:]] ]]; do value=${value%?}; done
+     printf "%s" "$value"
+   }
+   ```
+   - Trims using bash pattern matching against POSIX bracket expression `[[:space:]]`.
+   - Crucially, `[[:space:]]` in bash pattern matching depends on `LC_CTYPE` / locale:
+     * Under `LANG=C`: matches only ASCII whitespace (SP, TAB, LF, VT, FF, CR). Does NOT match NBSP (0xA0) or UTF-8 multibyte characters (such as U+2003 EMSP).
+     * Under `LANG=C.UTF-8`: matches ASCII whitespace AND Unicode whitespace characters classified under `iswspace` (including U+2003 EMSP). Crucially, NBSP (`\u00a0`) is categorized as non-breaking space and is EXCLUDED from `iswspace` in glibc C.UTF-8!
+
+## Hermetic Fixture
+Fixture directory: /fast/scratch/hyaku/kumitate-r99/K99Connector/item2_fixture
+Target file on disk: /fast/scratch/hyaku/kumitate-r99/K99Connector/item2_fixture/corpus/knowledge/test-doc.md (exists)
+Registry in: /fast/scratch/hyaku/kumitate-r99/K99Connector/item2_fixture/corpus/SOURCES.md
+Rows defined:
+- S901 (mined): used-by padded with VT (\v): `\vcorpus/knowledge/test-doc.md\v`
+- S902 (mined): used-by padded with NBSP (\u00a0): `\u00a0corpus/knowledge/test-doc.md\u00a0`
+- S903 (mined): used-by padded with EMSP U+2003 (\u2003): `\u2003corpus/knowledge/test-doc.md\u2003`
+- S904 (mined): used-by clean reference: `corpus/knowledge/test-doc.md`
+
+## Measured Results per Locale
+
+### 1. Locale LANG=C.UTF-8
+Command: LANG=C.UTF-8 LC_ALL=C.UTF-8 bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file /fast/scratch/hyaku/kumitate-r99/K99Connector/item2_fixture/corpus/SOURCES.md --today 2026-11-07
+Exit code: 1
+Output:
+  file	E11	S902 missing used-by  corpus/knowledge/test-doc.md 
+E11 count: 1 line (S902 missing used-by)
+Analysis: VT is trimmed by [[:space:]]; U+2003 is trimmed by iswspace; NBSP (\u00a0) is NOT trimmed by iswspace -> path retains NBSP and fails existence check.
+
+### 2. Locale LANG=C
+Command: LANG=C LC_ALL=C bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file /fast/scratch/hyaku/kumitate-r99/K99Connector/item2_fixture/corpus/SOURCES.md --today 2026-11-07
+Exit code: 1
+Output:
+  file	E11	S902 missing used-by  corpus/knowledge/test-doc.md 
+  file	E11	S903 missing used-by  corpus/knowledge/test-doc.md 
+E11 count: 2 lines (S902 missing used-by and S903 missing used-by)
+Analysis: VT is trimmed as ASCII whitespace; neither NBSP nor U+2003 (multibyte UTF-8) are trimmed under C locale -> both paths fail existence check.
+
+## Dialect Comparison Matrix
+| Cell Reader | Language / Tool | VT (\v) Trimmed? | NBSP (\u00a0) Trimmed? | EMSP (\u2003) Trimmed? | Locale-dependent? |
+|---|---|---|---|---|---|
+| `sources-census.sh row_pass` | Awk `[ \t]` | NO | NO | NO | NO (portable POSIX blank) |
+| `sources-census.sh usedby_findings` (LANG=C.UTF-8) | Bash `[[:space:]]` | YES | NO | YES | YES |
+| `sources-census.sh usedby_findings` (LANG=C) | Bash `[[:space:]]` | YES | NO | NO | YES |
+| `sources-check.mjs` BASE (pre-R99) | ECMAScript `String.prototype.trim()` | YES | YES | YES | NO (all White_Space/LineTerminators) |
+| `sources-check.mjs` Candidate (R99) | POSIX `blank` `replace(/^[ \t]+|[ \t]+$/g, '')` | NO | NO | NO | NO (matches census `row_pass`) |
+
+## Recommendation for Fleet Scripts
+In `scripts/sources-census.sh`, `trim_cell()` should be harmonized with `row_pass()` by trimming POSIX blank `[ \t]` instead of bash `[[:space:]]`:
+```bash
+trim_cell() {
+  local value=$1
+  while [[ "$value" == [ \t]* ]]; do value=${value#?}; done
+  while [[ "$value" == *[ \t] ]]; do value=${value%?}; done
+  printf '%s' "$value"
+}
+```
+This removes the locale dependency between LANG=C.UTF-8 and LANG=C and eliminates the internal reader contradiction within `sources-census.sh`.

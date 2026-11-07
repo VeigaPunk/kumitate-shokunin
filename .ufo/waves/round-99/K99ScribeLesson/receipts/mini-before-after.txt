@@ -1,0 +1,60 @@
+== diff base -> r99 (must be exactly line 134)
+134c134
+< function trim(value) { return value.trim(); }
+---
+> function trim(value) { return value.replace(/^[ \t]+|[ \t]+$/g, ""); }
+== base sources-check (exit code on the next line)
+   exit=1
+   line 10 ROW_FIELD_EMPTY [id=S904 field=scope]
+   line 11 ID_FORM [id=S905]
+   line 14 ID_DUPLICATE [id=S907]
+   line 18 RECHECK_OVERDUE [id=S911 opened=2026-01-13 recheck=30d]
+   counts.rows=13 findings=4
+== r99 sources-check (exit code on the next line)
+   exit=1
+   line 7 ID_FORM [id= S901 ]
+   line 8 KIND_ENUM [id=S902 kind= docs]
+   line 9 OPENED_INVALID [id=S903 opened= 2026-01-04]
+   line 11 ID_FORM [id=S905]
+   line 12 ID_FORM [id=S906]
+   line 14 ID_FORM [id= S907 ]
+   line 16 TIER_ENUM [id=S909 tier= A]
+   line 17 STATUS_ENUM [id=S910 status=queued ]
+   line 18 RECHECK_INVALID [id=S911 recheck= 30d]
+   line 19 USED_BY_MISSING [id=S912 missing used-by corpus/knowledge/k.md ]
+   line 20 USED_BY_MISSING [id=S913 missing used-by corpus/knowledge/k.md ]
+   counts.rows=10 findings=11
+== census validate (live, same file; exit on the last line)
+   file	E02	 S901 
+   file	E05	S902 kind= docs
+   file	E08	S903 opened= 2026-01-04
+   file	E02	S905
+   file	E02	S906
+   file	E02	 S907 
+   file	E06	S909 tier= A
+   file	E07	S910 status=queued 
+   file	E09	S911 recheck= 30d
+   file	E11	S912 missing used-by corpus/knowledge/k.md 
+   exit=1
+== census validate again under LC_ALL=C (same file, E11 lines only): the used-by cell is read by trim_cell [[:space:]]
+   file	E11	S912 missing used-by corpus/knowledge/k.md 
+   file	E11	S913 missing used-by corpus/knowledge/k.md 
+   (C.UTF-8 run above is the class the frozen counter uses: LANG=C.UTF-8)
+== census census rows
+   file	rows	14
+   FLEET	rows	14
+== non-ASCII code points per fixture line
+   line 7: 0x2014 0xa0
+   line 8: 0x2014 0xa0
+   line 9: 0x2003 0x2014
+   line 10: 0x2014 0xa0
+   line 11: 0x2014 0x85
+   line 12: 0x2014
+   line 13: 0x2014
+   line 14: 0x2014 0xa0
+   line 15: 
+   line 16: 0x2014 0xa0
+   line 17: 0x2014 0xa0
+   line 18: 0x2003 0x2014
+   line 19: 0xa0
+   line 20: 0x2003

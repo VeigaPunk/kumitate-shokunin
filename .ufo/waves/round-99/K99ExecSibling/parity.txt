@@ -1,0 +1,165 @@
+K99ExecSibling — parity of the two remaining \s SOURCES row readers vs the census
+==============================================================================
+Date 2026-11-07 · seat K99ExecSibling · report-only (lane bytes untouched)
+Lane /home/vgpnk/Projects/shokunin/kumitate-shokunin (detached).
+
+MEASURED READERS (lane bytes, unmodified)
+  cite-sources.mjs:36    line.match(/^ {0,3}\|\s*(S[0-9]{3,})\s*\|/)
+  source-capture.mjs:157 raw.matchAll(/^\s*\|\s*(S[0-9]{3,})\s*\|/gm)
+GROUND-TRUTH READER
+  scripts/sources-census.sh row_pass (gawk -F'|'): row gate ^ {0,3}\| (0-3
+  ASCII SP only); cell trim gsub(/^[ \t]+|[ \t]+$/,"",s); id valid iff
+  ^S[0-9]{3,}$ else E02. Command: bash scripts/sources-census.sh validate
+  --file <fixture> --today 2026-11-07
+
+FIXTURE (hermetic; gen_fixture.py -> fx/SOURCES.md, 15 Registry rows)
+  S901..S915, one row per pad/indent class; all other cells valid
+  (kind=docs tier=B status=queued opened=2026-01-01 recheck=90d used-by=—).
+  cite-sources: per-id README map rows (README-S9xx.md) + README-all.md.
+  source-capture: reg.json binds only S901 to cap.txt (sha256+bytes correct).
+
+EXACT COMMANDS (run from /fast/scratch/hyaku/kumitate-r99/K99ExecSibling)
+  bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate \
+      --file fx/SOURCES.md --today 2026-11-07
+  node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/cite-sources.mjs \
+      --readme fx/README-<ID>.md --sources fx/SOURCES.md        # per id
+  node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/cite-sources.mjs \
+      --readme fx/README-all.md --sources fx/SOURCES.md
+  node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-capture.mjs \
+      --registry fx/reg.json --sources fx/SOURCES.md
+  # FIXED copies: same commands with node fixed/cite-sources.mjs and
+  # node fixed/source-capture.mjs (diffs: fix-*.diff in this seat dir)
+  node <tool> --selftest   # both tools have one
+
+RAW OUTPUTS (verbatim)
+------------------------------------------------------------------------------
+## census validate --file fx/SOURCES.md --today 2026-11-07   (exit 1)
+file	E02	 S902 
+file	E02	 S903 
+file	E02	S904
+file	E02	﻿S905﻿
+file	E02	S912
+file	E02	 S913
+
+## cite-sources BASE, per-id (exit 0 = id recognised as registry row)
+S901	exit=0	CITE_SOURCES: CLEAN cited=1
+S902	exit=0	CITE_SOURCES: CLEAN cited=1
+S903	exit=0	CITE_SOURCES: CLEAN cited=1
+S904	exit=0	CITE_SOURCES: CLEAN cited=1
+S905	exit=0	CITE_SOURCES: CLEAN cited=1
+S906	exit=0	CITE_SOURCES: CLEAN cited=1
+S907	exit=0	CITE_SOURCES: CLEAN cited=1
+S908	exit=1	CITE_SOURCES: DRIFT ghosts=1 first=S908
+S909	exit=1	CITE_SOURCES: DRIFT ghosts=1 first=S909
+S910	exit=1	CITE_SOURCES: DRIFT ghosts=1 first=S910
+S911	exit=1	CITE_SOURCES: DRIFT ghosts=1 first=S911
+S912	exit=1	CITE_SOURCES: DRIFT ghosts=1 first=S912
+S913	exit=0	CITE_SOURCES: CLEAN cited=1
+S914	exit=1	CITE_SOURCES: DRIFT ghosts=1 first=S914
+S915	exit=1	CITE_SOURCES: DRIFT ghosts=1 first=S915
+cite-all exit=1 CITE_SOURCES: DRIFT ghosts=7 first=S908
+
+## source-capture BASE --registry fx/reg.json --sources fx/SOURCES.md   (exit 1)
+SOURCE_CAPTURE: note S903:uncaptured
+SOURCE_CAPTURE: note S904:uncaptured
+SOURCE_CAPTURE: note S905:uncaptured
+SOURCE_CAPTURE: note S906:uncaptured
+SOURCE_CAPTURE: note S907:uncaptured
+SOURCE_CAPTURE: note S908:uncaptured
+SOURCE_CAPTURE: note S909:uncaptured
+SOURCE_CAPTURE: note S910:uncaptured
+SOURCE_CAPTURE: note S911:uncaptured
+SOURCE_CAPTURE: note S913:uncaptured
+SOURCE_CAPTURE: note S914:uncaptured
+SOURCE_CAPTURE: note S915:uncaptured
+SOURCE_CAPTURE: DRIFT captures=1 exemptions=0 bad=13 first=S902:uncaptured
+
+## cite-sources FIXED, per-id
+S901	exit=0	CITE_SOURCES: CLEAN cited=1
+S902	exit=1	CITE_SOURCES: DRIFT ghosts=1 first=S902
+S903	exit=1	CITE_SOURCES: DRIFT ghosts=1 first=S903
+S904	exit=1	CITE_SOURCES: DRIFT ghosts=1 first=S904
+S905	exit=1	CITE_SOURCES: DRIFT ghosts=1 first=S905
+S906	exit=0	CITE_SOURCES: CLEAN cited=1
+S907	exit=0	CITE_SOURCES: CLEAN cited=1
+S908	exit=1	CITE_SOURCES: DRIFT ghosts=1 first=S908
+S909	exit=1	CITE_SOURCES: DRIFT ghosts=1 first=S909
+S910	exit=1	CITE_SOURCES: DRIFT ghosts=1 first=S910
+S911	exit=1	CITE_SOURCES: DRIFT ghosts=1 first=S911
+S912	exit=1	CITE_SOURCES: DRIFT ghosts=1 first=S912
+S913	exit=1	CITE_SOURCES: DRIFT ghosts=1 first=S913
+S914	exit=1	CITE_SOURCES: DRIFT ghosts=1 first=S914
+S915	exit=1	CITE_SOURCES: DRIFT ghosts=1 first=S915
+cite-all exit=1 CITE_SOURCES: DRIFT ghosts=12 first=S902
+
+## source-capture FIXED
+SOURCE_CAPTURE: note S907:uncaptured
+SOURCE_CAPTURE: DRIFT captures=1 exemptions=0 bad=2 first=S906:uncaptured
+
+## selftests
+BASE  cite-sources exit=0  source-capture exit=0
+FIXED cite-sources exit=0 (CITE_SOURCES_SELFTEST: PASS (8/8), VERDICT: PASS)
+FIXED source-capture exit=0 (SOURCE_CAPTURE_SELFTEST: PASS (13/13), VERDICT: PASS)
+
+PARITY TABLE — SEES = tool treats the id as a SOURCES row id
+------------------------------------------------------------------------------
+id    row shape                  census                             cite BASE cite FIX sc BASE  sc FIX 
+-------------------------------------------------------------------------------------------------------
+S901  clean                      VALID row id                       SEES      SEES     SEES     SEES   
+S902  id pad NBSP                E02 invalid-id                     SEES      no       SEES     no     
+S903  id pad U+2003              E02 invalid-id                     SEES      no       SEES     no     
+S904  id pad VT                  E02 invalid-id                     SEES      no       SEES     no     
+S905  id pad U+FEFF              E02 invalid-id                     SEES      no       SEES     no     
+S906  id pad TAB                 VALID row id                       SEES      SEES     SEES     SEES   
+S907  id pad SP                  VALID row id                       SEES      SEES     SEES     SEES   
+S908  TAB indent                 NOT-A-ROW (indent fails census ^ {0,3}\|) no        no       SEES     no     
+S909  NBSP indent                NOT-A-ROW (indent fails census ^ {0,3}\|) no        no       SEES     no     
+S910  4xSP indent                NOT-A-ROW (indent fails census ^ {0,3}\|) no        no       SEES     no     
+S911  TAB indent + NBSP id       NOT-A-ROW (indent fails census ^ {0,3}\|) no        no       SEES     no     
+S912  id pad NEL                 E02 invalid-id                     no        no       no       no     
+S913  id pad LS U+2028           E02 invalid-id                     SEES      no       SEES     no     
+S914  NBSP indent + NBSP id      NOT-A-ROW (indent fails census ^ {0,3}\|) no        no       SEES     no     
+S915  4xSP indent + VT id        NOT-A-ROW (indent fails census ^ {0,3}\|) no        no       SEES     no     
+-------------------------------------------------------------------------------------------------------
+census-valid id set : ['S901', 'S906', 'S907']
+cite BASE sees      : ['S901', 'S902', 'S903', 'S904', 'S905', 'S906', 'S907', 'S913']
+cite FIXED sees     : ['S901', 'S906', 'S907']
+sc   BASE sees      : ['S901', 'S902', 'S903', 'S904', 'S905', 'S906', 'S907', 'S908', 'S909', 'S910', 'S911', 'S913', 'S914', 'S915']
+sc   FIXED sees     : ['S901', 'S906', 'S907']
+
+cite-sources BASE agrees with census : False
+cite-sources FIXED agrees with census: True
+source-capture BASE agrees           : False
+source-capture FIXED agrees          : True
+
+READING THE TABLE
+  census VALID ids are exactly the rows whose indent is 0-3 ASCII SP and
+  whose id cell trims to ^S[0-9]{3,}$ under [ \t]. Padded ids (NBSP, U+2003,
+  VT, U+FEFF, NEL, LS) draw E02; TAB/NBSP/4xSP-indented rows are not rows
+  at all (invisibility proven by S911/S914/S915: padded ids that would
+  E02 if the row were seen produce no E02 line).
+  cite-sources BASE over-recognises NBSP/U+2003/VT/U+FEFF/LS-padded ids
+  (JS \s strips them; census [ \t] does not) — 5 extra ids vs census.
+  Its indent gate ^ {0,3} already matches the census, so indent classes
+  agree; NEL-padded S912 is invisible to both (neither strips NEL).
+  source-capture BASE over-recognises everything cite does PLUS every
+  non-blank-indented row (TAB, NBSP, 4xSP) because ^\s* spans them —
+  11 extra ids vs census (all but NEL-padded S912).
+  FIXED copies recognise exactly the census-valid set {S901,S906,S907}.
+
+FIXES (diffs in this seat dir; applied to scratch copies only)
+  cite-sources.mjs:36
+    - /^ {0,3}\|\s*(S[0-9]{3,})\s*\|/
+    + /^ {0,3}\|[ \t]*(S[0-9]{3,})[ \t]*\|/
+  source-capture.mjs:157
+    - /^\s*\|\s*(S[0-9]{3,})\s*\|/gm
+    + /^ {0,3}\|[ \t]*(S[0-9]{3,})[ \t]*\|/gm
+  Note on source-capture indent: census row grammar is ^ {0,3}\| (ASCII SP,
+  max 3). A pure \s->[ \t] swap (^[ \t]*) would still over-recognise
+  TAB-indented and 4xSP-indented rows the census ignores, so the agreeing
+  minimal fix keeps the census indent grammar and narrows only cell padding.
+  cite-sources already had the census indent gate; only \s* -> [ \t]*.
+
+REAL-DATA NOTE: see exposure.txt — 0 of 5555 rows across 21 lanes carry
+non-blank whitespace in id cell or indent, so this divergence is latent,
+not live (same disclosed-limit class as the C1 plan item).

@@ -1,0 +1,21 @@
+--- /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-99/K99ExecHarm/base.txt	2026-11-07 03:35:17.226014237 -0300
++++ /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-99/K99ExecHarm/cand.txt	2026-11-07 03:46:55.353590367 -0300
+@@ -1,13 +1,15 @@
+-# battery at base (dir /fast/scratch/hyaku/kumitate-r99/K99ExecHarm/sandbox, rev f9cd1bff147508f0d787f9e0cc4d2191aabaf02a)
++# battery at cand (dir /fast/scratch/hyaku/kumitate-r99/K99ExecHarm/sandbox, rev f9cd1bff147508f0d787f9e0cc4d2191aabaf02a)
+ $ node scripts/proxy-check.mjs
+ PROXY  error  C2_DRIFT  C2: declared=254 computed=255 delta=+1
+ PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=254 computed=255 delta=+1
+-PROXY: DRIFT (C2_DRIFT term=C2 declared=254 computed=255 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=254 computed=255 delta=+1; src-rev=31c465f15669; source=snapshot)
++PROXY  error  GATE_PIN_DRIFT  pin.sources-check: declared=1def379fb98555c6a648f0585c0ff61faaf812218d688589e5c831bc16dd780b computed=50b94567905676cc31c78ca47e76fd3ba625a7ae0d933b597fca0e74e1463f31
++PROXY: DRIFT (C2_DRIFT term=C2 declared=254 computed=255 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=254 computed=255 delta=+1; GATE_PIN_DRIFT term=pin.sources-check declared=1def379fb98555c6a648f0585c0ff61faaf812218d688589e5c831bc16dd780b computed=50b94567905676cc31c78ca47e76fd3ba625a7ae0d933b597fca0e74e1463f31; src-rev=31c465f15669; source=snapshot)
+ exit=1
+ $ node scripts/proxy-check.mjs --strict
+ PROXY  error  C2_DRIFT  C2: declared=254 computed=255 delta=+1
+ PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=254 computed=255 delta=+1
+-PROXY: DRIFT (C2_DRIFT term=C2 declared=254 computed=255 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=254 computed=255 delta=+1; src-rev=31c465f15669; source=snapshot)
++PROXY  error  GATE_PIN_DRIFT  pin.sources-check: declared=1def379fb98555c6a648f0585c0ff61faaf812218d688589e5c831bc16dd780b computed=50b94567905676cc31c78ca47e76fd3ba625a7ae0d933b597fca0e74e1463f31
++PROXY: DRIFT (C2_DRIFT term=C2 declared=254 computed=255 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=254 computed=255 delta=+1; GATE_PIN_DRIFT term=pin.sources-check declared=1def379fb98555c6a648f0585c0ff61faaf812218d688589e5c831bc16dd780b computed=50b94567905676cc31c78ca47e76fd3ba625a7ae0d933b597fca0e74e1463f31; src-rev=31c465f15669; source=snapshot)
+ exit=1
+ $ node scripts/readme-map.mjs
+ README_MAP: CLEAN files=255 rows=255 covered=255
