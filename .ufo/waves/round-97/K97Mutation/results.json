@@ -1,0 +1,453 @@
+[
+ {
+  "id": "m01-crlfstrip",
+  "desc": "ctl-crlfstrip: section state from CR-stripped lines",
+  "expect": "KILLED",
+  "selftest_exit": 1,
+  "selftest_fails": [
+   "FAIL r97sec-crlf-heading: section grammar pinned",
+   "FAIL r97sec-census-parity: outside ids match census E12 when census present"
+  ],
+  "selftest_last": "VERDICT: FAIL",
+  "counter_exit": 1,
+  "counter_verdict": "C97_C1: UNMET a=0/1 b=0/1 c=0/1 d=1/1 e=1/1 f=0/1 tool_sha256=2db0ff94d692758ad2bd663178e407625d2ac8c7cae03b09d8da274a98e7bba9 seed=56ff05d24cda9661"
+ },
+ {
+  "id": "m02-spaceonly",
+  "desc": "ctl-spaceonly: `##` must be followed by SPACE only",
+  "expect": "KILLED",
+  "selftest_exit": 1,
+  "selftest_fails": [
+   "FAIL r97sec-tab-after-h2: section grammar pinned"
+  ],
+  "selftest_last": "VERDICT: FAIL",
+  "counter_exit": 1,
+  "counter_verdict": "C97_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=1/1 f=0/1 tool_sha256=f8c0120f10c8958c7bf5debbec146990caa5cb209010a004198390e007211a61 seed=ef0353f7cb513b6a"
+ },
+ {
+  "id": "m03-wsclass-h2",
+  "desc": "ctl-wsclass: JS \\s after `##`",
+  "expect": "KILLED",
+  "selftest_exit": 1,
+  "selftest_fails": [
+   "FAIL r97sec-vt-sep-h2: section grammar pinned"
+  ],
+  "selftest_last": "VERDICT: FAIL",
+  "counter_exit": 1,
+  "counter_verdict": "C97_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=1/1 f=0/1 tool_sha256=d97259cf24f1eeb765413ae5c1af4cb21582bb38c6165356e01a302291af2916 seed=0a3440a13cd65afd"
+ },
+ {
+  "id": "m04-wsclass-h1",
+  "desc": "ctl-wsclass: JS \\s after `#`",
+  "expect": "KILLED",
+  "selftest_exit": 1,
+  "selftest_fails": [
+   "FAIL r97sec-vt-h1: section grammar pinned"
+  ],
+  "selftest_last": "VERDICT: FAIL",
+  "counter_exit": 1,
+  "counter_verdict": "C97_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=1/1 f=0/1 tool_sha256=9325677ef69d35fd3810fc5b7f67dfd31169b7ca903ef24c1a53d06ff2025c94 seed=16effcdc10e2a2ad"
+ },
+ {
+  "id": "m05-jstrim",
+  "desc": "ctl-jstrim: heading text trimmed with \\s",
+  "expect": "KILLED",
+  "selftest_exit": 1,
+  "selftest_fails": [
+   "FAIL r97sec-crlf-heading: section grammar pinned",
+   "FAIL r97sec-vt-trail: section grammar pinned",
+   "FAIL r97sec-ff-trail: section grammar pinned",
+   "FAIL r97sec-nbsp: section grammar pinned",
+   "FAIL r97sec-cr-only-line: section grammar pinned",
+   "FAIL r97sec-census-parity: outside ids match census E12 when census present"
+  ],
+  "selftest_last": "VERDICT: FAIL",
+  "counter_exit": 1,
+  "counter_verdict": "C97_C1: UNMET a=0/1 b=0/1 c=0/1 d=1/1 e=1/1 f=0/1 tool_sha256=f40863607efcb0446935044d8406ed649a1e81005c321535a0dcbf9820984876 seed=019ea904f1c22e0c"
+ },
+ {
+  "id": "m06-trailcr",
+  "desc": "ctl-trailcr: trailing CR trimmed",
+  "expect": "KILLED",
+  "selftest_exit": 1,
+  "selftest_fails": [
+   "FAIL r97sec-crlf-heading: section grammar pinned",
+   "FAIL r97sec-cr-only-line: section grammar pinned",
+   "FAIL r97sec-census-parity: outside ids match census E12 when census present"
+  ],
+  "selftest_last": "VERDICT: FAIL",
+  "counter_exit": 1,
+  "counter_verdict": "C97_C1: UNMET a=0/1 b=0/1 c=0/1 d=1/1 e=1/1 f=0/1 tool_sha256=b106e441c374f7d1532da74c1d9e9c02ae545f8df5fdd927421644d390afc39e seed=572422c354a694b7"
+ },
+ {
+  "id": "m07-nbsp",
+  "desc": "ctl-nbsp: NBSP trimmed",
+  "expect": "KILLED",
+  "selftest_exit": 1,
+  "selftest_fails": [
+   "FAIL r97sec-nbsp: section grammar pinned"
+  ],
+  "selftest_last": "VERDICT: FAIL",
+  "counter_exit": 1,
+  "counter_verdict": "C97_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=1/1 f=0/1 tool_sha256=2d92a13a9f9bda3af269a1f9089994bc3d4ebb865341b451a5df9d162a3c5e0c seed=512553aa9e93c1de"
+ },
+ {
+  "id": "m08-h1loose",
+  "desc": "ctl-h1loose: bare `#` clears",
+  "expect": "KILLED",
+  "selftest_exit": 1,
+  "selftest_fails": [
+   "FAIL r97sec-bare-h1: section grammar pinned"
+  ],
+  "selftest_last": "VERDICT: FAIL",
+  "counter_exit": 1,
+  "counter_verdict": "C97_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=1/1 f=0/1 tool_sha256=70d35633d14d47d15f289eeaff97f59573e36dec8d6d0cfb9ca1f1b0092f1068 seed=a9106db6be3ffc41"
+ },
+ {
+  "id": "m09-h1keep",
+  "desc": "ctl-h1keep: `#` heading does not clear",
+  "expect": "KILLED",
+  "selftest_exit": 1,
+  "selftest_fails": [
+   "FAIL r97sec-h1-tab: section grammar pinned",
+   "FAIL r97sec-h1-clears: section grammar pinned"
+  ],
+  "selftest_last": "VERDICT: FAIL",
+  "counter_exit": 1,
+  "counter_verdict": "C97_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=1/1 f=0/1 tool_sha256=6d5a2c16cae38fc94017e5813cd0fd5e294f6535e8e8195063459bd11fcdfcad seed=5debde1fdfe3e7f3"
+ },
+ {
+  "id": "m10-emptyhead",
+  "desc": "ctl-emptyhead: empty `## ` keeps previous section",
+  "expect": "KILLED",
+  "selftest_exit": 1,
+  "selftest_fails": [
+   "FAIL r97sec-empty-h2: section grammar pinned",
+   "FAIL r97sec-empty-after-registry: section grammar pinned"
+  ],
+  "selftest_last": "VERDICT: FAIL",
+  "counter_exit": 1,
+  "counter_verdict": "C97_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=1/1 f=0/1 tool_sha256=8401cbaca028634b48fac30980a3154f135367b5ef2470e60754aa44ad9eca7f seed=8c5bd0cf3a49fac4"
+ },
+ {
+  "id": "m11-anyindent",
+  "desc": "ctl-anyindent: tab / 4-space headings accepted",
+  "expect": "KILLED",
+  "selftest_exit": 1,
+  "selftest_fails": [
+   "FAIL r97sec-tab-indent-h2: section grammar pinned",
+   "FAIL r97sec-4space-h2: section grammar pinned"
+  ],
+  "selftest_last": "VERDICT: FAIL",
+  "counter_exit": 1,
+  "counter_verdict": "C97_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=1/1 f=0/1 tool_sha256=796a86353623ef40b7355a94f820c4f8338a5e40fac02e735f20242d2f34da94 seed=17639789910ed044"
+ },
+ {
+  "id": "m12-casefold",
+  "desc": "ctl-casefold: `## registry` accepted",
+  "expect": "KILLED",
+  "selftest_exit": 1,
+  "selftest_fails": [
+   "FAIL r97sec-lowercase: section grammar pinned"
+  ],
+  "selftest_last": "VERDICT: FAIL",
+  "counter_exit": 1,
+  "counter_verdict": "C97_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=1/1 f=0/1 tool_sha256=37517b474026ebb48678356552b7bc4b5b7264ba5d0f96d656b20c0ce143ecff seed=85a76245b9f1bf53"
+ },
+ {
+  "id": "m13-closeseq",
+  "desc": "ctl-closeseq: CommonMark closing sequence stripped",
+  "expect": "KILLED",
+  "selftest_exit": 1,
+  "selftest_fails": [
+   "FAIL r97sec-closeseq: section grammar pinned"
+  ],
+  "selftest_last": "VERDICT: FAIL",
+  "counter_exit": 1,
+  "counter_verdict": "C97_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=1/1 f=0/1 tool_sha256=e0e2d18593bef504e1d4ef4d88f8ce6a7ca75dabda91e24e1a1ab13a202163dd seed=c58a6deaf0a55392"
+ },
+ {
+  "id": "m14-h3head",
+  "desc": "ctl-h3heading: `###` treated as a section heading",
+  "expect": "KILLED",
+  "selftest_exit": 1,
+  "selftest_fails": [
+   "FAIL r97sec-h3-inside: section grammar pinned"
+  ],
+  "selftest_last": "VERDICT: FAIL",
+  "counter_exit": 1,
+  "counter_verdict": "C97_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=1/1 f=0/1 tool_sha256=d88ec1749f1a23556071bbf079d3a8d7aed722a0cc3ea2bf8b628b26eaef9da8 seed=4605db92f631d01e"
+ },
+ {
+  "id": "m15-defaultin",
+  "desc": "ctl-defaultin: state starts inside the Registry",
+  "expect": "KILLED",
+  "selftest_exit": 1,
+  "selftest_fails": [
+   "FAIL r97sec-row-before-heading: section grammar pinned",
+   "FAIL r97sec-pre-heading-row: section grammar pinned"
+  ],
+  "selftest_last": "VERDICT: FAIL",
+  "counter_exit": 1,
+  "counter_verdict": "C97_C1: UNMET a=0/1 b=0/1 c=0/1 d=1/1 e=1/1 f=0/1 tool_sha256=c90174220267ff755aa7a0c3a95283e7d7404b3c843dd064d1622c07243af4fc seed=d79afd9753ac7480"
+ },
+ {
+  "id": "m16-nodisclose",
+  "desc": "ctl-nodisclose: outside rows never reported",
+  "expect": "KILLED",
+  "selftest_exit": 1,
+  "selftest_fails": [
+   "FAIL ROW_OUTSIDE_REGISTRY: fixture reports kind with expected exit",
+   "FAIL 1-3-space indented rows outside Registry are rejected",
+   "FAIL r97sec-crlf-heading: section grammar pinned",
+   "FAIL r97sec-vt-trail: section grammar pinned",
+   "FAIL r97sec-ff-trail: section grammar pinned",
+   "FAIL r97sec-nbsp: section grammar pinned",
+   "FAIL r97sec-h1-tab: section grammar pinned",
+   "FAIL r97sec-h1-clears: section grammar pinned",
+   "FAIL r97sec-empty-h2: section grammar pinned",
+   "FAIL r97sec-tab-indent-h2: section grammar pinned",
+   "FAIL r97sec-4space-h2: section grammar pinned",
+   "FAIL r97sec-lowercase: section grammar pinned",
+   "FAIL r97sec-closeseq: section grammar pinned",
+   "FAIL r97sec-row-before-heading: section grammar pinned",
+   "FAIL r97sec-cr-only-line: section grammar pinned",
+   "FAIL r97sec-pre-heading-row: section grammar pinned",
+   "FAIL r97sec-empty-after-registry: section grammar pinned",
+   "FAIL r97sec-census-parity: outside ids match census E12 when census present",
+   "FAIL every declared finding kind fires in a fixture"
+  ],
+  "selftest_last": "VERDICT: FAIL",
+  "counter_exit": 1,
+  "counter_verdict": "C97_C1: UNMET a=0/1 b=0/1 c=0/1 d=1/1 e=1/1 f=0/1 tool_sha256=71bab743c67f628796bd0083f655e486e6ec32d0fec7f505edafd6d78d841584 seed=2a664b9256e5a46f"
+ },
+ {
+  "id": "m17-indent2",
+  "desc": "`{0,3}` -> `{0,2}` on the h2 heading",
+  "expect": "KILLED",
+  "selftest_exit": 1,
+  "selftest_fails": [
+   "FAIL 1-3-space Markdown headings and rows are normalized; a 4-space row stays code"
+  ],
+  "selftest_last": "VERDICT: FAIL",
+  "counter_exit": 1,
+  "counter_verdict": "C97_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=1/1 f=0/1 tool_sha256=303ca951538c4e0062cdc7914bb21d0d737ef1d847ee2c716cc583baf16f4653 seed=3758a87da7f612cd"
+ },
+ {
+  "id": "m18-indent4",
+  "desc": "`{0,3}` -> `{0,4}` on the h2 heading",
+  "expect": "KILLED",
+  "selftest_exit": 0,
+  "selftest_fails": [],
+  "selftest_last": "VERDICT: PASS",
+  "counter_exit": 1,
+  "counter_verdict": "C97_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=1/1 f=1/1 tool_sha256=21aa2b81aa10a8b12f6ded05d40206b5420d29fd774230745a4fd1180e71dde2 seed=7f70ee0780101d3c"
+ },
+ {
+  "id": "m19-h1-indent4",
+  "desc": "`{0,3}` -> `{0,4}` on the h1 clearing heading",
+  "expect": "KILLED",
+  "selftest_exit": 0,
+  "selftest_fails": [],
+  "selftest_last": "VERDICT: PASS",
+  "counter_exit": 1,
+  "counter_verdict": "C97_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=1/1 f=1/1 tool_sha256=04efdb21f2acef3f4e3c7ba945e52cad4c16b47f4c7a2e9db43fbebbef9698cc seed=540ee70695982cb0"
+ },
+ {
+  "id": "m20-registry-neq",
+  "desc": "section test flipped: `!==` -> `===`",
+  "expect": "KILLED",
+  "selftest_exit": 1,
+  "selftest_fails": [
+   "FAIL clean fixture returns CLEAN",
+   "FAIL ROW_MALFORMED: fixture reports kind with expected exit",
+   "FAIL ID_FORM: fixture reports kind with expected exit",
+   "FAIL ID_DUPLICATE: fixture reports kind with expected exit",
+   "FAIL ROW_FIELD_EMPTY: fixture reports kind with expected exit",
+   "FAIL KIND_ENUM: fixture reports kind with expected exit",
+   "FAIL TIER_ENUM: fixture reports kind with expected exit",
+   "FAIL STATUS_ENUM: fixture reports kind with expected exit",
+   "FAIL TIER_INFLATION: fixture reports kind with expected exit",
+   "FAIL OPENED_INVALID: fixture reports kind with expected exit",
+   "FAIL RECHECK_INVALID: fixture reports kind with expected exit",
+   "FAIL USED_BY_MISSING: fixture reports kind with expected exit",
+   "FAIL MINED_UNUSED: fixture reports kind with expected exit",
+   "FAIL REJECTED_NO_REASON: fixture reports kind with expected exit",
+   "FAIL REJECTED_NO_FLIP: fixture reports kind with expected exit",
+   "FAIL USED_BY_ASYMMETRY: fixture reports kind with expected exit",
+   "FAIL RECHECK_OVERDUE: fixture reports kind with expected exit",
+   "FAIL 1-3-space Markdown headings and rows are normalized; a 4-space row stays code",
+   "FAIL 1-3-space indented invalid registry rows report their field and tier findings",
+   "FAIL 1-3-space indented rows outside Registry are rejected",
+   "FAIL r97sec-crlf-heading: section grammar pinned",
+   "FAIL r97sec-tab-after-h2: section grammar pinned",
+   "FAIL r97sec-double-space-heading: section grammar pinned",
+   "FAIL r97sec-vt-trail: section grammar pinned",
+   "FAIL r97sec-ff-trail: section grammar pinned",
+   "FAIL r97sec-nbsp: section grammar pinned",
+   "FAIL r97sec-bare-h1: section grammar pinned",
+   "FAIL r97sec-h1-tab: section grammar pinned",
+   "FAIL r97sec-h1-clears: section grammar pinned",
+   "FAIL r97sec-empty-h2: section grammar pinned",
+   "FAIL r97sec-tab-indent-h2: section grammar pinned",
+   "FAIL r97sec-4space-h2: section grammar pinned",
+   "FAIL r97sec-lowercase: section grammar pinned",
+   "FAIL r97sec-closeseq: section grammar pinned",
+   "FAIL r97sec-h3-inside: section grammar pinned",
+   "FAIL r97sec-vt-sep-h2: section grammar pinned",
+   "FAIL r97sec-vt-h1: section grammar pinned",
+   "FAIL r97sec-row-before-heading: section grammar pinned",
+   "FAIL r97sec-cr-only-line: section grammar pinned",
+   "FAIL r97sec-pre-heading-row: section grammar pinned",
+   "FAIL r97sec-empty-after-registry: section grammar pinned",
+   "FAIL r97sec-census-parity: outside ids match census E12 when census present",
+   "FAIL reflip: does not satisfy the rejected-row flip: marker",
+   "FAIL opened + Nd overdue uses a strict before-today boundary",
+   "FAIL opened + Nd exactly due today is not overdue",
+   "FAIL frozen base identity remains legacy and counted after append-only growth",
+   "FAIL ROW_MALFORMED: an over-wide row (an extra cell, 14 split fields) is flagged",
+   "FAIL ISO recheck exactly today is not overdue",
+   "FAIL every declared finding kind fires in a fixture",
+   "FAIL --strict promotes warnings to drift",
+   "FAIL --json prints one parseable contract object",
+   "FAIL S1000 is accepted and counted",
+   "FAIL frozen awk census parity: rows, malformed, duplicate ids"
+  ],
+  "selftest_last": "VERDICT: FAIL",
+  "counter_exit": 1,
+  "counter_verdict": "C97_C1: UNMET a=0/1 b=0/1 c=0/1 d=0/1 e=0/1 f=0/1 tool_sha256=8877b46eb3b1d6a8db8b6143f5e832d0673081fbdd91458e10d94513ca675b7b seed=07d768131305bd00"
+ },
+ {
+  "id": "m21-split-regex",
+  "desc": "`split('\\n')` -> `split(/\\n/)` (equivalent?)",
+  "expect": "EQUIVALENT",
+  "selftest_exit": 0,
+  "selftest_fails": [],
+  "selftest_last": "VERDICT: PASS",
+  "counter_exit": 0,
+  "counter_verdict": "C97_C1: HELD a=1/1 b=1/1 c=1/1 d=1/1 e=1/1 f=1/1 tool_sha256=070f840d6d711dc5c89f299721eb4fd3e89ebc8b78b13dc2ecaf443b1e77d0df seed=076fbdfe617a33fe"
+ },
+ {
+  "id": "m22-headings-raw",
+  "desc": "headings keyed on the raw line, not the section text",
+  "expect": "KILLED",
+  "selftest_exit": 1,
+  "selftest_fails": [
+   "FAIL clean fixture returns CLEAN",
+   "FAIL USED_BY_ASYMMETRY: fixture reports kind with expected exit",
+   "FAIL RECHECK_OVERDUE: fixture reports kind with expected exit",
+   "FAIL 1-3-space Markdown headings and rows are normalized; a 4-space row stays code",
+   "FAIL opened + Nd overdue uses a strict before-today boundary",
+   "FAIL opened + Nd exactly due today is not overdue",
+   "FAIL frozen base identity remains legacy and counted after append-only growth",
+   "FAIL ISO recheck exactly today is not overdue",
+   "FAIL --json prints one parseable contract object",
+   "FAIL S1000 is accepted and counted"
+  ],
+  "selftest_last": "VERDICT: FAIL",
+  "counter_exit": 1,
+  "counter_verdict": "C97_C1: UNMET a=1/1 b=1/1 c=1/1 d=0/1 e=1/1 f=0/1 tool_sha256=4c07def7b6136ae43188962029500261b32a2f63484d9514ab0d6a97c0336574 seed=1188495a2427f547"
+ },
+ {
+  "id": "m23-index-offbyone",
+  "desc": "sectionAtLine stored at index+1",
+  "expect": "KILLED",
+  "selftest_exit": 0,
+  "selftest_fails": [],
+  "selftest_last": "VERDICT: PASS",
+  "counter_exit": 0,
+  "counter_verdict": "C97_C1: HELD a=1/1 b=1/1 c=1/1 d=1/1 e=1/1 f=1/1 tool_sha256=64725e63195338977fa48f417ee83c6eb53af54a0b8353c27cb26de1e127e487 seed=ae4615aedcb146d9"
+ },
+ {
+  "id": "m24-sourcelines-h1",
+  "desc": "h1 branch reads sourceLines (CR-stripped) instead of rawLines",
+  "expect": "KILLED",
+  "selftest_exit": 0,
+  "selftest_fails": [],
+  "selftest_last": "VERDICT: PASS",
+  "counter_exit": 0,
+  "counter_verdict": "C97_C1: HELD a=1/1 b=1/1 c=1/1 d=1/1 e=1/1 f=1/1 tool_sha256=f985689b4132723193bf38d18878dd527b31b023747e830c6b68ef88ed721499 seed=290128374d58ba75"
+ },
+ {
+  "id": "m25-trim-lead-only",
+  "desc": "heading text trims leading spaces/tabs only",
+  "expect": "KILLED",
+  "selftest_exit": 0,
+  "selftest_fails": [],
+  "selftest_last": "VERDICT: PASS",
+  "counter_exit": 1,
+  "counter_verdict": "C97_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=1/1 f=1/1 tool_sha256=50f8b2395571c8187735687109dbcb7376785006729d840b28b2a42986e493c3 seed=b39b284b02d290c1"
+ },
+ {
+  "id": "m26-trim-trail-only",
+  "desc": "heading text trims trailing spaces/tabs only",
+  "expect": "KILLED",
+  "selftest_exit": 1,
+  "selftest_fails": [
+   "FAIL clean fixture returns CLEAN",
+   "FAIL ROW_MALFORMED: fixture reports kind with expected exit",
+   "FAIL ID_FORM: fixture reports kind with expected exit",
+   "FAIL ID_DUPLICATE: fixture reports kind with expected exit",
+   "FAIL ROW_FIELD_EMPTY: fixture reports kind with expected exit",
+   "FAIL KIND_ENUM: fixture reports kind with expected exit",
+   "FAIL TIER_ENUM: fixture reports kind with expected exit",
+   "FAIL STATUS_ENUM: fixture reports kind with expected exit",
+   "FAIL TIER_INFLATION: fixture reports kind with expected exit",
+   "FAIL OPENED_INVALID: fixture reports kind with expected exit",
+   "FAIL RECHECK_INVALID: fixture reports kind with expected exit",
+   "FAIL USED_BY_MISSING: fixture reports kind with expected exit",
+   "FAIL MINED_UNUSED: fixture reports kind with expected exit",
+   "FAIL REJECTED_NO_REASON: fixture reports kind with expected exit",
+   "FAIL REJECTED_NO_FLIP: fixture reports kind with expected exit",
+   "FAIL USED_BY_ASYMMETRY: fixture reports kind with expected exit",
+   "FAIL RECHECK_OVERDUE: fixture reports kind with expected exit",
+   "FAIL 1-3-space Markdown headings and rows are normalized; a 4-space row stays code",
+   "FAIL 1-3-space indented invalid registry rows report their field and tier findings",
+   "FAIL 1-3-space indented rows outside Registry are rejected",
+   "FAIL r97sec-tab-after-h2: section grammar pinned",
+   "FAIL r97sec-double-space-heading: section grammar pinned",
+   "FAIL r97sec-bare-h1: section grammar pinned",
+   "FAIL r97sec-h3-inside: section grammar pinned",
+   "FAIL r97sec-vt-sep-h2: section grammar pinned",
+   "FAIL r97sec-vt-h1: section grammar pinned",
+   "FAIL r97sec-row-before-heading: section grammar pinned",
+   "FAIL r97sec-pre-heading-row: section grammar pinned",
+   "FAIL reflip: does not satisfy the rejected-row flip: marker",
+   "FAIL opened + Nd overdue uses a strict before-today boundary",
+   "FAIL opened + Nd exactly due today is not overdue",
+   "FAIL frozen base identity remains legacy and counted after append-only growth",
+   "FAIL ROW_MALFORMED: an over-wide row (an extra cell, 14 split fields) is flagged",
+   "FAIL ISO recheck exactly today is not overdue",
+   "FAIL every declared finding kind fires in a fixture",
+   "FAIL --strict promotes warnings to drift",
+   "FAIL --json prints one parseable contract object",
+   "FAIL S1000 is accepted and counted",
+   "FAIL frozen awk census parity: rows, malformed, duplicate ids"
+  ],
+  "selftest_last": "VERDICT: FAIL",
+  "counter_exit": 1,
+  "counter_verdict": "C97_C1: UNMET a=0/1 b=1/1 c=0/1 d=0/1 e=0/1 f=0/1 tool_sha256=55844e92a9a2eb5f1e711a387c95eae69cd5c0010369f65eac70c0a07b0661b4 seed=97314c44505bae23"
+ },
+ {
+  "id": "m27-strip-slice",
+  "desc": "heading strip uses raw.slice(2) (drops 0-3 indent removal)",
+  "expect": "KILLED",
+  "selftest_exit": 1,
+  "selftest_fails": [
+   "FAIL 1-3-space Markdown headings and rows are normalized; a 4-space row stays code"
+  ],
+  "selftest_last": "VERDICT: FAIL",
+  "counter_exit": 1,
+  "counter_verdict": "C97_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=1/1 f=0/1 tool_sha256=2d658d412c6c048bb1bfbca5d00ffbf05cccda27b4d229531465a5ba71ef0e1a seed=68ee86aa4c2a457d"
+ },
+ {
+  "id": "m28-loop-bound",
+  "desc": "loop bounds on sourceLines.length, reads rawLines",
+  "expect": "KILLED",
+  "selftest_exit": 0,
+  "selftest_fails": [],
+  "selftest_last": "VERDICT: PASS",
+  "counter_exit": 0,
+  "counter_verdict": "C97_C1: HELD a=1/1 b=1/1 c=1/1 d=1/1 e=1/1 f=1/1 tool_sha256=1a872962380ec4f967c61ded87cdbefca7f1df960017015af9b9ffd3228cf338 seed=afc8132f268e319f"
+ }
+]

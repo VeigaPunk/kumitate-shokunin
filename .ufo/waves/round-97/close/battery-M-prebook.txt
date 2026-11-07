@@ -1,0 +1,41 @@
+# battery at M 69fb6943dd0d87165cbb73954a952ce9cb6753ec (pre-bookkeeping) (dir /home/vgpnk/Projects/shokunin/kumitate-shokunin, rev 69fb6943dd0d87165cbb73954a952ce9cb6753ec)
+$ node scripts/proxy-check.mjs
+PROXY  error  C2_DRIFT  C2: declared=248 computed=249 delta=+1
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=248 computed=249 delta=+1
+PROXY  error  GATE_PIN_DRIFT  pin.sources-check: declared=5402b2103bb9e3ccd76f7bf3f5880f2249f809c78cee4766a75e3cf30b69f434 computed=ccbf1619baec74b32d7a2607652d3f9772a245af3b424c487da7275cf56971c4
+PROXY: DRIFT (A_WAVE_DRIFT term=A_wave declared=1595 computed=1649 delta=+54; C2_DRIFT term=C2 declared=248 computed=249 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=248 computed=249 delta=+1; GATE_PIN_DRIFT term=pin.sources-check declared=5402b2103bb9e3ccd76f7bf3f5880f2249f809c78cee4766a75e3cf30b69f434 computed=ccbf1619baec74b32d7a2607652d3f9772a245af3b424c487da7275cf56971c4; src-rev=31c465f15669; source=snapshot)
+exit=1
+$ node scripts/proxy-check.mjs --strict
+PROXY  error  C2_DRIFT  C2: declared=248 computed=249 delta=+1
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=248 computed=249 delta=+1
+PROXY  error  GATE_PIN_DRIFT  pin.sources-check: declared=5402b2103bb9e3ccd76f7bf3f5880f2249f809c78cee4766a75e3cf30b69f434 computed=ccbf1619baec74b32d7a2607652d3f9772a245af3b424c487da7275cf56971c4
+PROXY: DRIFT (A_WAVE_DRIFT term=A_wave declared=1595 computed=1649 delta=+54; C2_DRIFT term=C2 declared=248 computed=249 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=248 computed=249 delta=+1; GATE_PIN_DRIFT term=pin.sources-check declared=5402b2103bb9e3ccd76f7bf3f5880f2249f809c78cee4766a75e3cf30b69f434 computed=ccbf1619baec74b32d7a2607652d3f9772a245af3b424c487da7275cf56971c4; src-rev=31c465f15669; source=snapshot)
+exit=1
+$ node scripts/readme-map.mjs
+README_MAP: CLEAN files=249 rows=249 covered=249
+exit=0
+$ node scripts/sources-check.mjs
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/round-gate-registry-shape.md:1  S269 used-by omits corpus/knowledge/round-gate-registry-shape.md
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/self-asserted-instants.md:1  S237 used-by omits corpus/knowledge/self-asserted-instants.md
+SOURCES  info  LEGACY_NO_HEADER  count=38
+SOURCES_CHECK: CLEAN (rows=213 tiers=A:181,B:22,C:10 status=queued:14,mined:171,rejected:28 entries_with_source=50 legacy=38)
+exit=0
+$ node scripts/counter-pins.mjs
+COUNTER_PINS: CLEAN pins=50
+exit=0
+$ node scripts/spotcheck-adopt.mjs --check
+SPOTCHECK_COVERAGE: CLEAN spotchecks=63 uncovered=0
+MAP: CLEAN
+exit=0
+$ node scripts/round-gate.mjs --tracked --reports-dir /home/vgpnk/Projects/shokunin/.ufo/reports --main-repo /home/vgpnk/Projects/shokunin
+ROUND_GATE: CLEAN (mode=tracked checked=79 errors=0 warnings=0)
+exit=0
+$ node scripts/round-gate.mjs --round 96 --reports-dir /home/vgpnk/Projects/shokunin/.ufo/reports --main-repo /home/vgpnk/Projects/shokunin
+ROUND_GATE: CLEAN (round=96 lane=kumitate checks=10 errors=0 warnings=0)
+exit=0
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file corpus/SOURCES.md
+file	W04	S126 duplicate url docs.temporal.io/encyclopedia/detecting-activity-failures across scopes
+file	W04	S247 duplicate url arxiv.org/abs/2212.06118 across scopes
+file	W04	S271 duplicate url git-scm.com/docs/gitrevisions across scopes
+file	ok	/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
+exit=0

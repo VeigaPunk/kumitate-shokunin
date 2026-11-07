@@ -1,0 +1,58 @@
+# K97ScribeLesson — BASE vs census on one example line per departure
+# base: git show 477afff790787cd2ce48ccf976afafcb5aef0cbc:scripts/sources-check.mjs (sha256 5402b2103bb9e3ccd76f7bf3f5880f2249f809c78cee4766a75e3cf30b69f434)
+# census: /home/vgpnk/Projects/shokunin/scripts/sources-census.sh (sha256 3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30)
+# fixture: /fast/scratch/hyaku/kumitate-r97/K97ScribeLesson/fx/corpus/SOURCES.md sha256 d549ae62ab989596bab02d163ae13783bd907ded5aacc8572a9e661b1ff63934 today=2026-11-07
+# fixture lines (1-based; \r, \v, \t shown escaped):
+#   1 # Title
+#   2 ## Registry
+#   3 | S010 | https://example.test/s010 | spec | A | scope | anchor | teaches | mined | 2026-01-01 | on-release | corpus/knowledge/foo.md |
+#   4 # Title
+#   5 ##\tRegistry
+#   6 | S011 | https://example.test/s011 | spec | A | scope | anchor | teaches | mined | 2026-01-01 | on-release | corpus/knowledge/foo.md |
+#   7 # Title
+#   8 ## Registry\r
+#   9 | S012 | https://example.test/s012 | spec | A | scope | anchor | teaches | mined | 2026-01-01 | on-release | corpus/knowledge/foo.md |
+#  10 # Title
+#  11 ## Registry\v
+#  12 | S013 | https://example.test/s013 | spec | A | scope | anchor | teaches | mined | 2026-01-01 | on-release | corpus/knowledge/foo.md |
+#  13 # Title
+#  14 ## Registry
+#  15 #
+#  16 | S014 | https://example.test/s014 | spec | A | scope | anchor | teaches | mined | 2026-01-01 | on-release | corpus/knowledge/foo.md |
+#  17 # Title
+#  18 ##  Registry
+#  19 | S015 | https://example.test/s015 | spec | A | scope | anchor | teaches | mined | 2026-01-01 | on-release | corpus/knowledge/foo.md |
+#  20 
+
+## census validate rc=1
+file	E12	S012 row outside Registry section
+file	E12	S013 row outside Registry section
+file	E11	S010 missing used-by corpus/knowledge/foo.md
+file	E11	S011 missing used-by corpus/knowledge/foo.md
+file	E11	S012 missing used-by corpus/knowledge/foo.md
+file	E11	S013 missing used-by corpus/knowledge/foo.md
+file	E11	S014 missing used-by corpus/knowledge/foo.md
+file	E11	S015 missing used-by corpus/knowledge/foo.md
+
+## census census rc=0 (rows line)
+file	rows	4
+file	tier.A	4
+file	status.mined	4
+FLEET	rows	4
+
+## BASE --json rc=1 verdict=DRIFT counts.rows=3
+## BASE ROW_OUTSIDE_REGISTRY (line, detail):
+   (6, 'id=S011 row outside Registry section')
+   (16, 'id=S014 row outside Registry section')
+   (19, 'id=S015 row outside Registry section')
+
+## verdict per case
+  S010  control (no departure)                               census=inside base=inside
+  S011  D2 literal-space heading regex                       census=inside base=outside
+  S012  D1 CR split (\r?\n)                                  census=E12 base=inside
+  S013  D3 JS \s trim (VT)                                   census=E12 base=inside
+  S014  D4 bare '#' clears                                   census=inside base=outside
+  S015  D2 twin: '##  Registry' keeps a leading space        census=inside base=outside
+
+SUMMARY census_e12=['S012', 'S013'] base_outside=['S011', 'S014', 'S015']
+SUMMARY agree=1/6 cases (S010); divergent=5/6

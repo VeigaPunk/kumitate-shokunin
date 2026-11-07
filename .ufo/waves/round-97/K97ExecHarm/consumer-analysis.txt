@@ -1,0 +1,7 @@
+Consumer analysis: lane `scripts/sources-check.mjs` (sha256 5402b210... = SCORECARD pin.sources-check in kumitate-gate-pins-v1 block)
+Files referencing sources-check:
+1. scripts/proxy-check.mjs — GATE_PINS['pin.sources-check']='scripts/sources-check.mjs' (line 551): proxy-check verifies the pinned sha256 (GATE_PIN_DRIFT if mismatch). After swapping in the candidate bytes, proxy-check will report GATE_PIN_DRIFT for pin.sources-check unless SCORECARD.md is re-pinned in the sandbox. NO re-pin = proxy-check output CHANGES (drift + possibly exit). Re-pin in sandbox only.
+2. scripts/harm-matrix-gates.json — invokes `node scripts/sources-check.mjs` and `--selftest` as harm-matrix gates: consumes OUTPUT (verdict regex ^SOURCES_CHECK: (\w+) and ^SOURCES_SELFTEST: \d+/\d+ (\w+)), not bytes. Swap effect: only if candidate changes verdicts on real registry/selftest. Expected unchanged on real LF registry (plan d/e arms); selftest case count may grow (new section-rule cases) — verdict regex tolerates n/m changes, clean value "pass" unchanged.
+3. SKILL.md:614,730-731 — documents `node scripts/sources-check.mjs [--strict]` -> SOURCES_CHECK: CLEAN|DRIFT and --selftest -> VERDICT: PASS. Consumes output text contract only. Swap effect: none if verdict lines preserved.
+4. scripts/sources-check.mjs itself — tool + selftest, no byte self-pin.
+counter-pins.mjs, round-gate.mjs, readme-map.mjs, spotcheck-adopt.mjs, .ufo/pins/*: NO reference to sources-check bytes.

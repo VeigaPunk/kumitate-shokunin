@@ -1,0 +1,198 @@
+[
+ {
+  "id": "m01-crlfstrip",
+  "desc": "ctl-crlfstrip: section state from CR-stripped lines",
+  "find": "  const rawLines = sourceText.split('\\n');",
+  "replace": "  const rawLines = sourceText.split(/\\r?\\n/);",
+  "expect": "KILLED"
+ },
+ {
+  "id": "m02-spaceonly",
+  "desc": "ctl-spaceonly: `##` must be followed by SPACE only",
+  "find": "if (/^ {0,3}##[ \\t]/.test(raw)) {",
+  "replace": "if (/^ {0,3}## /.test(raw)) {",
+  "expect": "KILLED"
+ },
+ {
+  "id": "m03-wsclass-h2",
+  "desc": "ctl-wsclass: JS \\s after `##`",
+  "find": "if (/^ {0,3}##[ \\t]/.test(raw)) {",
+  "replace": "if (/^ {0,3}##\\s/.test(raw)) {",
+  "expect": "KILLED"
+ },
+ {
+  "id": "m04-wsclass-h1",
+  "desc": "ctl-wsclass: JS \\s after `#`",
+  "find": "} else if (/^ {0,3}#[ \\t]/.test(raw)) {",
+  "replace": "} else if (/^ {0,3}#\\s/.test(raw)) {",
+  "expect": "KILLED"
+ },
+ {
+  "id": "m05-jstrim",
+  "desc": "ctl-jstrim: heading text trimmed with \\s",
+  "find": "      activeSection = raw.replace(/^ {0,3}##/, '').replace(/^[ \\t]+|[ \\t]+$/g, '');",
+  "replace": "      activeSection = raw.replace(/^ {0,3}##/, '').replace(/^\\s+|\\s+$/g, '');",
+  "expect": "KILLED"
+ },
+ {
+  "id": "m06-trailcr",
+  "desc": "ctl-trailcr: trailing CR trimmed",
+  "find": "      activeSection = raw.replace(/^ {0,3}##/, '').replace(/^[ \\t]+|[ \\t]+$/g, '');",
+  "replace": "      activeSection = raw.replace(/^ {0,3}##/, '').replace(/^[ \\t]+|[ \\t\\r]+$/g, '');",
+  "expect": "KILLED"
+ },
+ {
+  "id": "m07-nbsp",
+  "desc": "ctl-nbsp: NBSP trimmed",
+  "find": "      activeSection = raw.replace(/^ {0,3}##/, '').replace(/^[ \\t]+|[ \\t]+$/g, '');",
+  "replace": "      activeSection = raw.replace(/^ {0,3}##/, '').replace(/^[ \\t\\u00a0]+|[ \\t\\u00a0]+$/g, '');",
+  "expect": "KILLED"
+ },
+ {
+  "id": "m08-h1loose",
+  "desc": "ctl-h1loose: bare `#` clears",
+  "find": "} else if (/^ {0,3}#[ \\t]/.test(raw)) {",
+  "replace": "} else if (/^ {0,3}#(?:[ \\t]|$)/.test(raw)) {",
+  "expect": "KILLED"
+ },
+ {
+  "id": "m09-h1keep",
+  "desc": "ctl-h1keep: `#` heading does not clear",
+  "find": "} else if (/^ {0,3}#[ \\t]/.test(raw)) {\n      activeSection = null;",
+  "replace": "} else if (/^ {0,3}#[ \\t]/.test(raw)) {\n      /* h1 keeps the section */",
+  "expect": "KILLED"
+ },
+ {
+  "id": "m10-emptyhead",
+  "desc": "ctl-emptyhead: empty `## ` keeps previous section",
+  "find": "      activeSection = raw.replace(/^ {0,3}##/, '').replace(/^[ \\t]+|[ \\t]+$/g, '');\n      headings[activeSection] = true;",
+  "replace": "      activeSection = raw.replace(/^ {0,3}##/, '').replace(/^[ \\t]+|[ \\t]+$/g, '');\n      if (activeSection === '') activeSection = sectionAtLine[index - 1] ?? null;\n      headings[activeSection] = true;",
+  "expect": "KILLED"
+ },
+ {
+  "id": "m11-anyindent",
+  "desc": "ctl-anyindent: tab / 4-space headings accepted",
+  "find": "    if (/^ {0,3}##[ \\t]/.test(raw)) {\n      activeSection = raw.replace(/^ {0,3}##/, '').replace(/^[ \\t]+|[ \\t]+$/g, '');\n      headings[activeSection] = true;\n    } else if (/^ {0,3}#[ \\t]/.test(raw)) {",
+  "replace": "    if (/^[ \\t]*##[ \\t]/.test(raw)) {\n      activeSection = raw.replace(/^[ \\t]*##/, '').replace(/^[ \\t]+|[ \\t]+$/g, '');\n      headings[activeSection] = true;\n    } else if (/^[ \\t]*#[ \\t]/.test(raw)) {",
+  "expect": "KILLED"
+ },
+ {
+  "id": "m12-casefold",
+  "desc": "ctl-casefold: `## registry` accepted",
+  "find": "      activeSection = raw.replace(/^ {0,3}##/, '').replace(/^[ \\t]+|[ \\t]+$/g, '');",
+  "replace": "      activeSection = raw.replace(/^ {0,3}##/, '').replace(/^[ \\t]+|[ \\t]+$/g, '').replace(/^registry$/, 'Registry');",
+  "expect": "KILLED"
+ },
+ {
+  "id": "m13-closeseq",
+  "desc": "ctl-closeseq: CommonMark closing sequence stripped",
+  "find": "      activeSection = raw.replace(/^ {0,3}##/, '').replace(/^[ \\t]+|[ \\t]+$/g, '');",
+  "replace": "      activeSection = raw.replace(/^ {0,3}##/, '').replace(/^[ \\t]+|[ \\t]+$/g, '').replace(/[ \\t]+#+$/, '');",
+  "expect": "KILLED"
+ },
+ {
+  "id": "m14-h3head",
+  "desc": "ctl-h3heading: `###` treated as a section heading",
+  "find": "if (/^ {0,3}##[ \\t]/.test(raw)) {",
+  "replace": "if (/^ {0,3}##+[ \\t]/.test(raw)) {",
+  "expect": "KILLED"
+ },
+ {
+  "id": "m15-defaultin",
+  "desc": "ctl-defaultin: state starts inside the Registry",
+  "find": "  let activeSection = null;",
+  "replace": "  let activeSection = 'Registry';",
+  "expect": "KILLED"
+ },
+ {
+  "id": "m16-nodisclose",
+  "desc": "ctl-nodisclose: outside rows never reported",
+  "find": "        add('error', 'ROW_OUTSIDE_REGISTRY', 'corpus/SOURCES.md', index + 1, `id=${id} row outside Registry section`);",
+  "replace": "        if (false) add('error', 'ROW_OUTSIDE_REGISTRY', 'corpus/SOURCES.md', index + 1, `id=${id} row outside Registry section`);",
+  "expect": "KILLED"
+ },
+ {
+  "id": "m17-indent2",
+  "desc": "`{0,3}` -> `{0,2}` on the h2 heading",
+  "find": "if (/^ {0,3}##[ \\t]/.test(raw)) {",
+  "replace": "if (/^ {0,2}##[ \\t]/.test(raw)) {",
+  "expect": "KILLED"
+ },
+ {
+  "id": "m18-indent4",
+  "desc": "`{0,3}` -> `{0,4}` on the h2 heading",
+  "find": "if (/^ {0,3}##[ \\t]/.test(raw)) {",
+  "replace": "if (/^ {0,4}##[ \\t]/.test(raw)) {",
+  "expect": "KILLED"
+ },
+ {
+  "id": "m19-h1-indent4",
+  "desc": "`{0,3}` -> `{0,4}` on the h1 clearing heading",
+  "find": "} else if (/^ {0,3}#[ \\t]/.test(raw)) {",
+  "replace": "} else if (/^ {0,4}#[ \\t]/.test(raw)) {",
+  "expect": "KILLED"
+ },
+ {
+  "id": "m20-registry-neq",
+  "desc": "section test flipped: `!==` -> `===`",
+  "find": "    if (sectionAtLine[index] !== 'Registry') {",
+  "replace": "    if (sectionAtLine[index] === 'Registry') {",
+  "expect": "KILLED"
+ },
+ {
+  "id": "m21-split-regex",
+  "desc": "`split('\\n')` -> `split(/\\n/)` (equivalent?)",
+  "find": "  const rawLines = sourceText.split('\\n');",
+  "replace": "  const rawLines = sourceText.split(/\\n/);",
+  "expect": "EQUIVALENT"
+ },
+ {
+  "id": "m22-headings-raw",
+  "desc": "headings keyed on the raw line, not the section text",
+  "find": "      headings[activeSection] = true;",
+  "replace": "      headings[raw] = true;",
+  "expect": "KILLED"
+ },
+ {
+  "id": "m23-index-offbyone",
+  "desc": "sectionAtLine stored at index+1",
+  "find": "    sectionAtLine[index] = activeSection;",
+  "replace": "    sectionAtLine[index + 1] = activeSection;",
+  "expect": "KILLED"
+ },
+ {
+  "id": "m24-sourcelines-h1",
+  "desc": "h1 branch reads sourceLines (CR-stripped) instead of rawLines",
+  "find": "} else if (/^ {0,3}#[ \\t]/.test(raw)) {",
+  "replace": "} else if (/^ {0,3}#[ \\t]/.test(sourceLines[index])) {",
+  "expect": "KILLED"
+ },
+ {
+  "id": "m25-trim-lead-only",
+  "desc": "heading text trims leading spaces/tabs only",
+  "find": "      activeSection = raw.replace(/^ {0,3}##/, '').replace(/^[ \\t]+|[ \\t]+$/g, '');",
+  "replace": "      activeSection = raw.replace(/^ {0,3}##/, '').replace(/^[ \\t]+/g, '');",
+  "expect": "KILLED"
+ },
+ {
+  "id": "m26-trim-trail-only",
+  "desc": "heading text trims trailing spaces/tabs only",
+  "find": "      activeSection = raw.replace(/^ {0,3}##/, '').replace(/^[ \\t]+|[ \\t]+$/g, '');",
+  "replace": "      activeSection = raw.replace(/^ {0,3}##/, '').replace(/^[ \\t]+$/g, '');",
+  "expect": "KILLED"
+ },
+ {
+  "id": "m27-strip-slice",
+  "desc": "heading strip uses raw.slice(2) (drops 0-3 indent removal)",
+  "find": "      activeSection = raw.replace(/^ {0,3}##/, '').replace(/^[ \\t]+|[ \\t]+$/g, '');",
+  "replace": "      activeSection = raw.slice(2).replace(/^[ \\t]+|[ \\t]+$/g, '');",
+  "expect": "KILLED"
+ },
+ {
+  "id": "m28-loop-bound",
+  "desc": "loop bounds on sourceLines.length, reads rawLines",
+  "find": "for (let index = 0; index < rawLines.length; index += 1) {",
+  "replace": "for (let index = 0; index < sourceLines.length; index += 1) {",
+  "expect": "KILLED"
+ }
+]

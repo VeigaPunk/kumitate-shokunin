@@ -1,0 +1,17 @@
+# r96 integration commit M vs the q88 receipt label (r96 spot-check §5 item 1)
+## corpus/lessons/round-96.md naming
+7:M = `09de67917b5b7731aa06ae019c7e9b94359981c9` (`scripts/round-gate.mjs` sha256
+
+## grep -n "M=" .ufo/waves/round-96/close/q88-r96.txt
+2:Q88: PASS round=96 M=4a57390d6f71a603c25588cffe9762c403b98c9d gate_sha256=edaa115fa053798665b2694d05bf8cc8389a9cdfae74930eab33398776bea135
+
+## both revs are commits
+commit
+commit
+## round-gate.mjs sha256 at each rev
+edaa115fa053798665b2694d05bf8cc8389a9cdfae74930eab33398776bea135  09de67917b5b7731aa06ae019c7e9b94359981c9
+edaa115fa053798665b2694d05bf8cc8389a9cdfae74930eab33398776bea135  4a57390d6f71a603c25588cffe9762c403b98c9d
+## is 09de6791 an ancestor of 4a57390d?
+yes
+## 4a57390d is a later round-96 commit (subject)
+4a57390d round-96: proxy stanza re-declared (A_wave 1532->1595, C2/C2_total 245->248) + battery at M receipt and battery runner

@@ -1,0 +1,36 @@
+CMD: node scripts/proxy-check.mjs
+  BASE: exit=1
+  CAND: exit=1
+  verdict: DIFFERS (expected: pin bookkeeping only)
+CMD: node scripts/proxy-check.mjs --strict
+  BASE: exit=1
+  CAND: exit=1
+  verdict: DIFFERS (expected: pin bookkeeping only)
+CMD: node scripts/readme-map.mjs
+  BASE: exit=0
+  CAND: exit=0
+  verdict: SAME
+CMD: node scripts/sources-check.mjs
+  BASE: exit=0
+  CAND: exit=0
+  verdict: SAME
+CMD: node scripts/counter-pins.mjs
+  BASE: exit=0
+  CAND: exit=0
+  verdict: SAME
+CMD: node scripts/spotcheck-adopt.mjs --check
+  BASE: exit=0
+  CAND: exit=0
+  verdict: SAME
+CMD: node scripts/round-gate.mjs --tracked --reports-dir /home/vgpnk/Projects/shokunin/.ufo/reports --main-repo /home/vgpnk/Projects/shokunin
+  BASE: exit=0
+  CAND: exit=0
+  verdict: SAME
+CMD: node scripts/round-gate.mjs --round 96 --reports-dir /home/vgpnk/Projects/shokunin/.ufo/reports --main-repo /home/vgpnk/Projects/shokunin
+  BASE: exit=0
+  CAND: exit=0
+  verdict: SAME
+CMD: /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file corpus/SOURCES.md
+  BASE: exit=0
+  CAND: exit=0
+  verdict: SAME

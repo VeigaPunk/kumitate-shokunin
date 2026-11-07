@@ -1,0 +1,12 @@
+# source-dupes.mjs (SKILL gate row) on unmutated lane and on the all-CRLF copy; census on the same bytes
+== unmutated lane
+SOURCE_DUPES: DRIFT groups=8 known=7 bad=1 first=new-duplicate:git-scm.com/docs/gitrevisions ids=S253,S271
+exit=1
+== all-crlf copy (/fast/scratch/hyaku/kumitate-r97/K97CriticB/mutate/all-crlf/corpus/SOURCES.md)
+SOURCE_DUPES: DRIFT groups=8 known=7 bad=1 first=new-duplicate:git-scm.com/docs/gitrevisions ids=S253,S271
+exit=1
+== census rows on all-crlf copy (validate E12 + census rows)
+E12=213 
+file	rows	0
+FLEET	rows	0
+# source-dupes heading extraction: line0.replace(/^ {0,3}/,"").replace(/^##[ \t]+/,"").trim() -> JS \s trim removes CR (source-dupes.mjs:154-164)

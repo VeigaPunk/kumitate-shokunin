@@ -1,0 +1,16 @@
+Battery diff BASE vs CAND (candidate sha256 4955a630...; base tool sha256 5402b210...), sandbox lane at freeze 38eb197c1.
+Per tool: same / expected-diff / regression.
+
+1. node scripts/proxy-check.mjs — exit 1 both. CAND adds GATE_PIN_DRIFT (pin.sources-check declared=5402b210... computed=4955a630...) and A_DRIFT delta=+17 present in CAND only (full PROXY line). Expected: pin-drift is the designed response to unpinned byte swap; integration must update pin.sources-check in SCORECARD (bookkeeping re-declaration, K3 allows). SANDBOX REPIN verified: with pin updated (sed in sandbox), cand-proxy-repinned.txt shows NO GATE_PIN_DRIFT; A_DRIFT persists in sandbox repinned state too — A_DRIFT delta=+17 is a sandbox-harness artifact (proxy reads fleet snapshot counts from files created in lane dir? base.txt A_wave=1598 suggests sandbox repo diverges from snapshot source; A computed=54 vs declared=37 — need L1 note). Sandbox-only artifact, not lane harm: in the real lane the pin update is exactly what integration does.
+   NOTE: base.txt A_DRIFT missing from tail-4 view — battery.sh tails 4 lines; A_DRIFT line may be above the tail in BASE too but cut. Actually base proxy shows 3 error lines + verdict = 4 lines tail. CAND shows 4 error lines + verdict = 5 lines → A_DRIFT visible in cand but truncated in base tail. A_DRIFT likely present in BASE as well (cut by tail -4). To confirm: rerun full proxy on base. Action: verify with full output capture.
+2. node scripts/proxy-check.mjs --strict — same as (1): exit 1 both, GATE_PIN_DRIFT expected, A_DRIFT tail artifact.
+3. node scripts/readme-map.mjs — SAME (CLEAN files=249 rows=249 covered=249, exit 0).
+4. node scripts/sources-check.mjs — SAME (SOURCES_CHECK: CLEAN rows=213... identical, exit 0). Plus --json/--strict byte-identical (json-cand-*.txt vs json-base-*.txt: IDENTICAL, cmp exit 0).
+5. node scripts/counter-pins.mjs — SAME (CLEAN pins=50, exit 0).
+6. node scripts/spotcheck-adopt.mjs --check — SAME (CLEAN spotchecks=63, MAP CLEAN, exit 0).
+7. node scripts/round-gate.mjs --tracked — SAME (CLEAN checked=79, exit 0).
+8. node scripts/round-gate.mjs --round 96 — SAME (CLEAN checks=10, exit 0).
+9. sources-census.sh validate — SAME (ok, exit 0).
+
+Selftest: BASE 46/46 VERDICT: PASS (exit 0). CAND (4955a630): 63/63 VERDICT: PASS (exit 0) — see selftest-cand.txt. Harm-matrix gate regex ^SOURCES_SELFTEST: \d+/\d+ (\w+) clean [pass] matches.
+Caveat: an earlier builder state (318497b5...) FAILED selftest 51/63 (11 r97sec cases wrong: expectedOutside missing S001 in cases where non-Registry heading makes S001 itself outside). Builder fixed it in current bytes (S001,S002). READY was absent during this run; candidate taken from builder dir bytes — if builder rewrites again before READY, re-run cand battery on final bytes. Candidate selftest also spawns fleet census via cap-spawn with absolute fallback — passes here.

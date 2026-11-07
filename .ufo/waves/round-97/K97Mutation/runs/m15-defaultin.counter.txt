@@ -1,0 +1,14 @@
+exit=1
+# probe97-c1 freeze=38eb197c17de7ce0dc562539f2f31f41bea037ec rev=38eb197c17de7ce0dc562539f2f31f41bea037ec seed=d79afd9753ac7480 today=2026-11-07
+# tool_sha256=c90174220267ff755aa7a0c3a95283e7d7404b3c843dd064d1622c07243af4fc base_sha256=5402b2103bb9e3ccd76f7bf3f5880f2249f809c78cee4766a75e3cf30b69f434 census_sha256=3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30
+# battery cases=19459 lines=58357 F_A_sha256=00c5e926da9841c805c9591db672fbaf7b191a844e6c5b69fefb5864e0d9d4d3
+a: FAIL F_A-lf agree=19458/19459 census_e12=13837 cand_outside=13836 census_rows=5616 cand_rows=5617
+  disagree "row before any heading" census=out cand=in
+b: FAIL F_B-crlf agree=19458/19459 census_e12=19453 cand_outside=19452 census_rows=0 cand_rows=1
+  disagree "row before any heading" census=out cand=in
+c: FAIL F_C-mixed agree=19458/19459 census_e12=16670 cand_outside=16669 census_rows=2783 cand_rows=2784
+  disagree "row before any heading" census=out cand=in
+d: PASS lane@38eb197c17de base_exit=1 cand_exit=1 text_equal=true json_equal=true base_last=SOURCES_CHECK: DRIFT (USED_BY_MISSING)
+e: PASS historical blobs agree=76/76
+f: FAIL selftest exit=1 SOURCES_SELFTEST: 66/68 pass VERDICT: FAIL
+C97_C1: UNMET a=0/1 b=0/1 c=0/1 d=1/1 e=1/1 f=0/1 tool_sha256=c90174220267ff755aa7a0c3a95283e7d7404b3c843dd064d1622c07243af4fc seed=d79afd9753ac7480

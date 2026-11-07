@@ -1,0 +1,16 @@
+$ awk -F"|" "/^ {0,3}\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ && NF!=13" mirror/corpus/SOURCES.md
+(no output = every row line has NF=13)
+
+$ awk -F"|" "NR==231 {print \"NF=\"NF}" mirror/corpus/SOURCES.md
+NF=13
+
+$ sed -n "230,232p" mirror/corpus/SOURCES.md | cut -c1-100
+| S275 | CommonMark spec 0.31.2 — https://spec.commonmark.org/0.31.2/ | spec | A | the ATX heading
+| S276 | ECMAScript 2025 Language Specification (ECMA-262) — https://tc39.es/ecma262/2025/ | spec 
+
+
+$ bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file mirror/corpus/SOURCES.md
+  -> see census.txt (exit=0; 8 pre-existing W04 lines, identical to the lane baseline run on corpus/SOURCES.md)
+
+$ grep -n S276 census.txt
+(no output, exit 1 = no finding names S276)

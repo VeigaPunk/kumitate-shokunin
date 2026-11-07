@@ -1,0 +1,100 @@
+
+    12.2 White Space
+    White space code points are used to improve source text readability and to separate tokens (indivisible lexical units) from each other, but are otherwise insignificant. White space code points may occur between any two tokens and at the start or end of input. White space code points may occur within a StringLiteral, a RegularExpressionLiteral, a Template, or a TemplateSubstitutionTail where they are considered significant code points forming part of a literal value. They may also occur within a Comment, but cannot appear within any other kind of token.
+    The ECMAScript white space code points are listed in Table 35.
+    Table 35: White Space Code Points
+      
+        
+          
+            
+              Code Points
+            
+            
+              Name
+            
+            
+              Abbreviation
+            
+          
+        
+        
+          
+            U+0009
+          
+          
+            CHARACTER TABULATION
+          
+          
+            <TAB>
+          
+        
+        
+          
+            U+000B
+          
+          
+            LINE TABULATION
+          
+          
+            <VT>
+          
+        
+        
+          
+            U+000C
+          
+          
+            FORM FEED (FF)
+          
+          
+            <FF>
+          
+        
+        
+          
+            U+FEFF
+          
+          
+            ZERO WIDTH NO-BREAK SPACE
+          
+          
+            <ZWNBSP>
+          
+        
+        
+          
+            any code point in general category “Space_Separator”
+          
+          
+          
+          
+            <USP>
+          
+        
+      
+    
+    Note 1
+      U+0020 (SPACE) and U+00A0 (NO-BREAK SPACE) code points are part of <USP>.
+    
+    Note 2
+      Other than for the code points listed in Table 35, ECMAScript WhiteSpace intentionally excludes all code points that have the Unicode “White_Space” property but which are not classified in general category “Space_Separator” (“Zs”).
+    
+    Syntax
+    
+    WhiteSpace :: 
+        <TAB>
+    
+    
+        <VT>
+    
+    
+        <FF>
+    
+    
+        <ZWNBSP>
+    
+    
+        <USP>
+    
+
+  

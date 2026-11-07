@@ -1,0 +1,60 @@
+# Receipt: Row Padding Character Class Measurement
+# Tests round-gate SOURCES_ROW_RE (/^ {0,3}\|\s*S\d{3,}\s*\|/) vs sources-check (/^\|[ \t]*S\d{3,}[ \t]*\|/) vs census awk
+
+## 1. Battery row-pad cases (seed=c0ffee97feed1501)
+id=S7316561 label=["## Leads (unopened)","row-pad:|\tS"] rowPad="|\tS"
+  F_A: census_in=false cand_in=false rg_in=false (agree=true)
+  F_B: census_in=false cand_in=false rg_in=false (agree=true)
+  F_C: census_in=false cand_in=false rg_in=false (agree=true)
+id=S5880118 label=["## Leads (unopened)","row-pad:|  S"] rowPad="|  S"
+  F_A: census_in=false cand_in=false rg_in=false (agree=true)
+  F_B: census_in=false cand_in=false rg_in=false (agree=true)
+  F_C: census_in=false cand_in=false rg_in=false (agree=true)
+id=S6416551 label=["## Registry","row-pad:|  S"] rowPad="|  S"
+  F_A: census_in=true cand_in=true rg_in=true (agree=true)
+  F_B: census_in=false cand_in=false rg_in=false (agree=true)
+  F_C: census_in=false cand_in=false rg_in=false (agree=true)
+id=S6406690 label=["## Registry","row-pad:|S"] rowPad="|S"
+  F_A: census_in=true cand_in=true rg_in=true (agree=true)
+  F_B: census_in=false cand_in=false rg_in=false (agree=true)
+  F_C: census_in=true cand_in=true rg_in=true (agree=true)
+id=S5305453 label=["## Leads (unopened)","row-pad:|S"] rowPad="|S"
+  F_A: census_in=false cand_in=false rg_in=false (agree=true)
+  F_B: census_in=false cand_in=false rg_in=false (agree=true)
+  F_C: census_in=false cand_in=false rg_in=false (agree=true)
+id=S546746 label=["## Registry","row-pad:|\tS"] rowPad="|\tS"
+  F_A: census_in=true cand_in=true rg_in=true (agree=true)
+  F_B: census_in=false cand_in=false rg_in=false (agree=true)
+  F_C: census_in=false cand_in=false rg_in=false (agree=true)
+
+## 2. Character class measurement on leading cell padding (|<pad>S1234 |)
+PadName             	RoundGate(SOURCES_ROW_RE)	SourcesCheck	Census(awk)
+empty               	true                     	true        	true
+SP (\x20)           	true                     	true        	true
+2SP                 	true                     	true        	true
+TAB (\t)            	true                     	true        	true
+SP+TAB              	true                     	true        	true
+VT (\v)             	true                     	false       	false
+FF (\f)             	true                     	false       	false
+CR (\r)             	true                     	false       	false
+NBSP (\u00a0)       	true                     	false       	false
+LS (\u2028)         	true                     	false       	false
+PS (\u2029)         	true                     	false       	false
+MMSP (\u205f)       	true                     	false       	false
+IDSP (\u3000)       	true                     	false       	false
+
+## 3. Character class measurement on trailing cell padding (| S1234<pad>|)
+PadName             	RoundGate(SOURCES_ROW_RE)	SourcesCheck	Census(awk)
+empty               	true                     	true        	true
+SP (\x20)           	true                     	true        	true
+2SP                 	true                     	true        	true
+TAB (\t)            	true                     	true        	true
+SP+TAB              	true                     	true        	true
+VT (\v)             	true                     	false       	false
+FF (\f)             	true                     	false       	false
+CR (\r)             	true                     	false       	false
+NBSP (\u00a0)       	true                     	false       	false
+LS (\u2028)         	true                     	false       	false
+PS (\u2029)         	true                     	false       	false
+MMSP (\u205f)       	true                     	false       	false
+IDSP (\u3000)       	true                     	false       	false

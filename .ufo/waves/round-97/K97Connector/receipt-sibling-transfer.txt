@@ -1,0 +1,26 @@
+# Receipt: Sibling Transfer (SOURCES.md section readers across fleet lanes)
+# Command: grep -ln 'SOURCES.md' /home/vgpnk/Projects/shokunin/*-shokunin/scripts/* 2>/dev/null
+# Audit criterion: departure from census section reader (literal-space heading regex, \s trim, CR strip)
+
+## Tools reading SOURCES.md sections that depart from the census:
+
+- kumitate-shokunin, scripts/sources-check.mjs:191-207: BASE departs from census: splits on /\r?\n/ (CR stripped, accepts CRLF '## Registry\r'), heading regex /^## (.+?)\s*$/ requires literal space after ## (rejects '##\tRegistry'), trims heading with \s (VT/FF/NBSP stripped), and clears section on bare '#' via /^#(?=\s|$)/. Shipped candidate R97 aligns with census.
+- kumitate-shokunin, scripts/round-gate.mjs:410,430-432: Section heading logic (lines 430-432) matches census R97 grammar on LF/CRLF/mixed (100% battery agreement), but row detector SOURCES_ROW_RE (line 410) departs from census: uses \s* instead of [ \t]* around row id, accepting VT/FF/CR/NBSP/Unicode space in row padding that census rejects.
+- kumitate-shokunin, scripts/source-dupes.mjs:156-163: Departs from census: line 158 strips leading/trailing with JS .trim() (\s including \r, VT, FF, NBSP), accepting CRLF '## Registry\r' which census rejects, and uses replace(/^##[ \t]+/, '') which strips multiple spaces/tabs unlike census substr(line,3).
+- kake-shokunin, scripts/id_resolver.py:59-60,198-232: Departs from census: strips CR via splitlines() / rstrip('\r') (accepts CRLF '## Registry\r'), heading regex REGISTRY_HEADING_RE = re.compile(r'^##\s+Registry\s*$') rejects 1-3 space indents (' ## Registry') and accepts \s (VT/FF) after ##, enforces CommonMark code fences, HTML comments, and setext underlines (which census ignores), and SECTION_END_RE = re.compile(r'^#{1,2}\s') rejects 1-3 space indented section enders.
+- tabi-shokunin, scripts/check-sources.mjs:249-262: Departs from census: heading regex /^## / requires literal space (rejects '##\tRegistry' and ' ## Registry'), line.trim() strips \s including \r (accepts CRLF '## Registry\r'), and crucially NEVER clears on '#' (has no H1 section clear logic, so H1 headings leave inRegistry active).
+- tabi-shokunin, scripts/check-bidi-runtime.mjs:471-482: Departs from census: parseRegistry has NO section reader (parses any row matching /^ {0,3}\|[ \t]*S[0-9]{3,}[ \t]*\|/ across the entire file regardless of whether inside ## Registry).
+- tabi-shokunin, scripts/check-decision-table.mjs:119-130: Departs from census: parseRegistry has NO section reader (parses any row matching /^ {0,3}\|[ \t]*S[0-9]{3,}[ \t]*\|/ across the entire file regardless of whether inside ## Registry).
+- tabi-shokunin, scripts/check-frontier-admission.mjs:123-134: Departs from census: parseRegistry has NO section reader (parses any row matching /^ {0,3}\|[ \t]*S[0-9]{3,}[ \t]*\|/ across the entire file regardless of whether inside ## Registry).
+- tabi-shokunin, scripts/check-release-pins.mjs:115-128: Departs from census: parseRegistry has NO section reader (parses any row matching /^ {0,3}\|[ \t]*S[0-9]{3,}[ \t]*\|/ across the entire file regardless of whether inside ## Registry).
+
+## Tools referencing SOURCES.md without reading sections (row scanner, hash, or comment only):
+- kake-shokunin, scripts/sitemap_audit.py:5: Comment reference only
+- kake-shokunin, scripts/sitemap_audit_selftest.py:5: Comment reference only
+- kumitate-shokunin, scripts/cite-sources.mjs:33-40: Scans row IDs across whole file without section check (/^ {0,3}\|\s*(S[0-9]{3,})\s*\|/)
+- kumitate-shokunin, scripts/omp-census.mjs:60: Comment reference only
+- kumitate-shokunin, scripts/source-capture.mjs:156-162: Scans row IDs across whole file without section check (/^\s*\|\s*(S[0-9]{3,})\s*\|/gm)
+- kumitate-shokunin, scripts/wave-census.mjs:9: Comment reference only
+- tabi-shokunin, scripts/aria-loopback-round13.mjs:192: Hashes file and checks text presence, does not parse sections
+- tabi-shokunin, scripts/check-c2-knowledge-round41.mjs:45: Regex find on specific row ID in whole file, does not parse sections
+- tabi-shokunin, scripts/check-source-reopen-receipt.mjs:108: Regex search for single S-id row across file without section check

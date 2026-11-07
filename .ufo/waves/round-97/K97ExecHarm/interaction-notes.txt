@@ -1,0 +1,22 @@
+BASE runCheck section-state (scripts/sources-check.mjs:191-208 at freeze):
+  sourceLines = sourceText.split(/\r?\n/).map(normalizeMarkdownIndent)   // CR stripped, 1-3 space indent stripped before \S
+  heading: /^## (.+?)\s*$/ on the normalized line; capture group = heading text (trailing \s removed, leading space NOT removed beyond the one consumed)
+  clear: /^#(?:\s|$)/ on normalized line -> activeSection = null
+  rows/other checks iterate sourceLines (CR-stripped, indent-normalized bytes). sectionAtLine[index] compared === 'Registry'.
+
+R97 section-state (per plan + ctl-positive reference):
+  rawLines = sourceText.split('\n')  (CR KEPT); NO normalizeMarkdownIndent on raw lines
+  h2: /^ {0,3}##[ \t]/ -> section = raw.replace(/^ {0,3}##/,'').replace(/^[ \t]+|[ \t]+$/g,''); record headings[section]
+  else h1: /^ {0,3}#[ \t]/ -> clear; else keep. Start null. Inside iff section === 'Registry'.
+  Rows keep CR-stripped bytes (sourceLines), so row detection/per-row checks unchanged.
+
+Harm-relevant interactions (candidate must preserve; verify on cand run):
+1. normalizeMarkdownIndent applies to sourceLines only; rawLines must NOT be normalized, else leading 1-3 spaces are double-handled but also 3-space+heading semantics change (normalize strips before \S only; a line "   ## Registry" normalizes to "## Registry" — same result here; but "    ## Registry" (4 spaces) does NOT normalize, and R97 rejects it since ^ {0,3}## fails at 4 spaces — consistent. Edge: "  ##\tRegistry" raw vs normalized: both match h2 since regex allows 0-3 spaces.)
+2. CR handling: R97 keeps CR in heading text unless followed by only spaces/tabs (trim is [ \t] only) — a CRLF file's "## Registry\r" yields section text "Registry\r" != 'Registry' => rows count as outside. This is INTENTIONAL census-mirror behavior (whole-CRLF fixture: census rows=0 per plan pre-data note). Real lane corpus/SOURCES.md is LF → no change on real registry (must verify byte-identical --json).
+3. Tab separators: "##\tRegistry" now a heading (BASE: not a heading). "##  Registry" now 'Registry' (BASE: ' Registry' != Registry). Real registry uses single-space column-zero headings → no change expected (verify).
+4. H1 clear: BASE /^#(?:\s|$)/ clears on bare '#' and '#<any-ws>'; R97 /^ {0,3}#[ \t]/ requires [ \t] after #, allows 0-3 leading spaces, and does NOT clear on bare '#' alone, '#', or '#\r' / '#\x0b'. Real registry: check if corpus/SOURCES.md contains bare '#' lines after ## Registry with rows following — grep needed in cand step.
+5. ### headings: R97 `^ {0,3}##[ \t]` — "### Registry" starts '##' then requires [ \t] but finds '#' => NOT a heading (keeps previous section). BASE: /^## (.+?)/ also requires space after ##, "### ..." fails too (### then space: '^## ' needs '## ' literally; '### ' is '##' + '#' != space) => same. But "## #foo" type lines: both treat as h2. OK.
+6. Indented '#' vs '##' precedence: R97 checks h2 first; a line "  # Title" matches h1 clear; "  ## Registry" h2. BASE normalized first. Equivalent on real file.
+7. headings recorded only via h2 rule → SECTION_MISSING uses R97 texts. Real file has plain '## Registry' → seen in both. OK.
+8. Line-index alignment: rawLines (split '\n') length == sourceLines (split /\r?\n/) length? For text with lone '\r' (not before \n): /\r?\n/ splits only on \n (with optional preceding \r), so count is same (n \n = n+1 pieces considering trailing). For '\r\r\n': /\r?\n/ consumes the last '\r' before '\n' only; split('\n') keeps one '\r' — same piece count. sectionAtLine index aligns 1:1 with sourceLines index. No misalignment.
+9. Empty heading '## ' / '##\t': R97 sets section '' and records headings['']; SECTION_MISSING still fires for 'Registry' if absent. BASE: /^## (.+?)\s*$/ needs \S? (.+?) — '## ' alone doesn't match (needs at least 1 char). Behavioral diff only on weird fixtures, census-mirrored.

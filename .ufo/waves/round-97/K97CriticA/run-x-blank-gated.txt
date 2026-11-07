@@ -1,0 +1,36 @@
+# probe97-c1 freeze=38eb197c17de7ce0dc562539f2f31f41bea037ec rev=38eb197c17de7ce0dc562539f2f31f41bea037ec seed=749c258bf14f7c91 today=2026-11-07
+# tool_sha256=9f19f6c536df10376665d28450b6dc844a10493a4906a872f89e6551d0ad2977 base_sha256=5402b2103bb9e3ccd76f7bf3f5880f2249f809c78cee4766a75e3cf30b69f434 census_sha256=3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30
+# battery cases=19459 lines=58357 F_A_sha256=a396c0ec077179db33b0478ddcd3bdf601e71f1d89fe50896b02e31029f597a1
+a: FAIL F_A-lf agree=13843/19459 census_e12=13837 cand_outside=19453 census_rows=5616 cand_rows=0
+  disagree ["## Registry","###Registry ## \r"] census=in cand=out
+  disagree ["## Registry","\t### \tRegistry\u000b"] census=in cand=out
+  disagree ["## Registry"," \t### registry\r"] census=in cand=out
+  disagree ["## Registry"," \t#\tLeads\u000b"] census=in cand=out
+  disagree ["## Registry"," ###\fRegistry"] census=in cand=out
+  disagree ["## Registry","\t###Leads\r"] census=in cand=out
+  disagree ["## Registry","    ##\tLeads\t"] census=in cand=out
+  disagree ["## Registry","\t##\tRegistry \r"] census=in cand=out
+  disagree ["## Registry","   ###  Registry "] census=in cand=out
+  disagree ["## Registry","\t###\tRegistry ##\t"] census=in cand=out
+  disagree ["## Registry"," \t## Registry\f"] census=in cand=out
+  disagree ["## Registry"," \t#\t\t"] census=in cand=out
+  … 5604 more disagreeing cases
+b: PASS F_B-crlf agree=19459/19459 census_e12=19453 cand_outside=19453 census_rows=0 cand_rows=0
+c: FAIL F_C-mixed agree=16663/19459 census_e12=16657 cand_outside=19453 census_rows=2796 cand_rows=0
+  disagree ["## Registry","\t### \tRegistry\u000b"] census=in cand=out
+  disagree ["## Registry"," \t### registry\r"] census=in cand=out
+  disagree ["## Registry"," \t#\tLeads\u000b"] census=in cand=out
+  disagree ["## Registry"," ###\fRegistry"] census=in cand=out
+  disagree ["## Registry","\t###Leads\r"] census=in cand=out
+  disagree ["## Registry","    ##\tLeads\t"] census=in cand=out
+  disagree ["## Registry","   ###  Registry "] census=in cand=out
+  disagree ["## Registry"," \t#\t\t"] census=in cand=out
+  disagree ["## Registry","   ### registry \r"] census=in cand=out
+  disagree ["## Registry","\t#\tLeads\t"] census=in cand=out
+  disagree ["## Registry"," \t###\rregistry\u000b"] census=in cand=out
+  disagree ["## Registry","\t###\u000bregistry "] census=in cand=out
+  … 2784 more disagreeing cases
+d: PASS lane@38eb197c17de base_exit=1 cand_exit=1 text_equal=true json_equal=true base_last=SOURCES_CHECK: DRIFT (USED_BY_MISSING)
+e: PASS historical blobs agree=76/76
+f: PASS selftest exit=0 SOURCES_SELFTEST: 46/46 pass VERDICT: PASS
+C97_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=1/1 f=1/1 tool_sha256=9f19f6c536df10376665d28450b6dc844a10493a4906a872f89e6551d0ad2977 seed=749c258bf14f7c91

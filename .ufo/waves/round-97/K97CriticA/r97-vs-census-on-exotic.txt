@@ -1,0 +1,9 @@
+# K97CriticA: on the six exotic-input fixtures, the R97 reference (ctl-positive) agrees with the census
+# while the six R97-violating constructions do not. census = E12 count from 'sources-census.sh validate';
+# tool = ctl-positive --json ROW_OUTSIDE_REGISTRY count / counts.rows. Fixtures under scratch div/<name>/.
+x-bom-strip      census_e12=1 ctlpos_outside=1 ctlpos_rows=0
+x-zwnbsp-trim    census_e12=1 ctlpos_outside=1 ctlpos_rows=0
+x-u2003-trim     census_e12=1 ctlpos_outside=1 ctlpos_rows=0
+x-zwsp-strip     census_e12=1 ctlpos_outside=1 ctlpos_rows=0
+x-u2028-split    census_e12=1 ctlpos_outside=1 ctlpos_rows=0
+x-fence-aware    census_e12=1 ctlpos_outside=1 ctlpos_rows=0
