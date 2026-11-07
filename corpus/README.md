@@ -289,6 +289,7 @@ fixture suite, `--strict` to fail on warnings.
 | `lessons/round-97-verifier-spotcheck.md` | Non-author round-97 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 | `knowledge/round-gate-row-id-class.md` | Registry id-cell padding is ASCII SP/TAB only (R98); census E12/E02/valid E01 vs wider JS `\s`; nonce controls, prospective framing and inside-row checker divergence | S277, S276, S274; `.ufo/waves/round-98/` |
 | `lessons/round-98.md` | R98 row recogniser, M2 pad/id length and BOM arms, sources-check selftest path hygiene, Q92, counter gaps and routed inside-cell trim/count | LOG.md round 98; `.ufo/waves/round-98/` |
+| `lessons/round-98-verifier-spotcheck.md` | Non-author round-98 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 
 ## Known gaps
 
