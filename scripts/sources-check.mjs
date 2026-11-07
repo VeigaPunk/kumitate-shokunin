@@ -7,6 +7,8 @@
  * It does not use the network or modify the live tree. `--selftest` creates
  * and removes isolated fixtures under the operating-system temporary directory.
  * Section membership follows the fleet census `row_pass` grammar (R97).
+ * Every Registry cell is trimmed with the census `row_pass` trim class — POSIX `blank`, ASCII space
+ * and tab only, both ends (R99); the wider ECMAScript `String.prototype.trim()` is deliberately not used.
  * Findings (fleet `sources-census.sh validate` correspondence):
  *   error ROW_MALFORMED       E01  a `| S[0-9]{3,} |` row has split-field count != 13
  *         ID_FORM             E02  a registry row id is not `S[0-9]{3,}`
@@ -131,7 +133,8 @@ findings: ${FINDING_KINDS.join(' ')}
 exit map: 0 clean · 1 drift (warnings too under --strict) · 2 fail-closed · 64 usage
 `;
 
-function trim(value) { return value.trim(); }
+/** R99: strip the census `row_pass` trim class — POSIX `blank` [ \t] — from both ends; JS `trim()` is wider. */
+function trim(value) { return value.replace(/^[ \t]+|[ \t]+$/g, ''); }
 /** Strip Markdown's 1–3 ASCII-space indentation without consuming 4-space code blocks. */
 function normalizeMarkdownIndent(line) {
   return line.replace(/^ {1,3}(?=\S)/u, '');
@@ -816,6 +819,203 @@ function selfTest() {
       if (out.status !== 0 && out.status !== 1) return { ok: false, detail: `census exit=${out.status}` };
       const censusIds = String(out.stdout ?? '').split('\n').filter((l) => l.includes('\tE12\t')).map((l) => (l.split('\t')[2] ?? '').trim().split(' ')[0]);
       return { ok: JSON.stringify(outsideIds) === JSON.stringify(censusIds), detail: `tool=[${outsideIds}] census=[${censusIds}]` };
+    });
+    // R99 cell-trim teeth: every Registry cell is trimmed with the census `row_pass` trim class — POSIX
+    // `blank` [ \t] from both ends — never the wider ECMAScript String.prototype.trim(). Each r99trim-*
+    // arm pins one pad class or shape on a hermetic fixture; every violating trim rewrite (the round-99
+    // ctl-* shapes, BASE JS `trim()` included) must fail at least one of these arms.
+    const R99_PADS = [
+      ['nbsp', '\u00a0'], ['vt', '\u000b'], ['ff', '\u000c'], ['cr', '\r'], ['nel', '\u0085'],
+      ['emsp', '\u2003'], ['bom', '\ufeff'], ['zwsp', '\u200b'], ['soh', '\u0001'], ['hfill', '\u3164'],
+    ];
+    const r99Row = (id, kind = 'docs', tier = 'A', status = 'queued', opened = FIXTURE_TODAY, recheck = 'on-release') =>
+      `| ${[id, 'Fixture — https://example.test/source', kind, tier, 'fixture scope', '§ Fixture; r1', 'fixture teaches', status, opened, recheck, '—'].join(' | ')} |`;
+    const r99Assert = (run, want) => {
+      let parsed; try { parsed = JSON.parse(run.stdout); } catch { return { ok: false, detail: `exit=${run.status} stdout unparsable: ${run.stdout.slice(0, 80)}` }; }
+      const got = (parsed.findings ?? []).map((f) => `${f.kind}:${f.detail}`).sort();
+      const expected = (want.findings ?? []).map((f) => `${f.kind}:${f.detail}`).sort();
+      const ok = run.status === (want.status ?? 1) && parsed.counts?.rows === want.rows
+        && got.length === expected.length && got.every((g, i) => g === expected[i]);
+      return { ok, detail: `exit=${run.status} rows=${parsed.counts?.rows}/${want.rows} got=[${got}] want=[${expected}]` };
+    };
+    for (const [name, pad] of R99_PADS) {
+      check(`r99trim-id-${name}: lead/trail ${name} pads keep the id invalid (ID_FORM, not counted)`, () => {
+        const root = makeDefault(`r99trim-id-${name}`, {
+          rows: [
+            makeRow({ id: 'S001', status: 'mined', usedBy: 'corpus/knowledge/alpha.md' }),
+            r99Row(`${pad}S123`),
+            r99Row(`S124${pad}`),
+          ],
+        });
+        return r99Assert(runTool(tmp, ['--self', root, '--today', FIXTURE_TODAY, '--json']), {
+          rows: 1,
+          findings: [
+            { kind: 'ID_FORM', detail: `id=${pad}S123` },
+            { kind: 'ID_FORM', detail: `id=S124${pad}` },
+          ],
+        });
+      });
+    }
+    check('r99trim-kind-cell: NBSP lead and VT trail pads break the kind enum (KIND_ENUM)', () => {
+      const root = makeDefault('r99trim-kind-cell', {
+        rows: [
+          makeRow({ id: 'S001', status: 'mined', usedBy: 'corpus/knowledge/alpha.md' }),
+          r99Row('S002', '\u00a0docs'),
+          r99Row('S003', 'docs\v'),
+        ],
+      });
+      return r99Assert(runTool(tmp, ['--self', root, '--today', FIXTURE_TODAY, '--json']), {
+        rows: 3,
+        findings: [
+          { kind: 'KIND_ENUM', detail: 'id=S002 kind=\u00a0docs' },
+          { kind: 'KIND_ENUM', detail: 'id=S003 kind=docs\v' },
+        ],
+      });
+    });
+    check('r99trim-tier-cell: FF lead and CR trail pads break the tier enum (TIER_ENUM)', () => {
+      const root = makeDefault('r99trim-tier-cell', {
+        rows: [
+          makeRow({ id: 'S001', status: 'mined', usedBy: 'corpus/knowledge/alpha.md' }),
+          r99Row('S002', 'docs', '\fA'),
+          r99Row('S003', 'docs', 'A\r'),
+        ],
+      });
+      return r99Assert(runTool(tmp, ['--self', root, '--today', FIXTURE_TODAY, '--json']), {
+        rows: 3,
+        findings: [
+          { kind: 'TIER_ENUM', detail: 'id=S002 tier=\fA' },
+          { kind: 'TIER_ENUM', detail: 'id=S003 tier=A\r' },
+        ],
+      });
+    });
+    check('r99trim-status-cell: EMSP lead and FF trail pads break the status enum (STATUS_ENUM)', () => {
+      const root = makeDefault('r99trim-status-cell', {
+        rows: [
+          makeRow({ id: 'S001', status: 'mined', usedBy: 'corpus/knowledge/alpha.md' }),
+          r99Row('S002', 'docs', 'A', '\u2003queued'),
+          r99Row('S003', 'docs', 'A', 'queued\f'),
+        ],
+      });
+      return r99Assert(runTool(tmp, ['--self', root, '--today', FIXTURE_TODAY, '--json']), {
+        rows: 3,
+        findings: [
+          { kind: 'STATUS_ENUM', detail: 'id=S002 status=\u2003queued' },
+          { kind: 'STATUS_ENUM', detail: 'id=S003 status=queued\f' },
+        ],
+      });
+    });
+    check('r99trim-opened-cell: BOM lead and NBSP trail pads break the opened date (OPENED_INVALID)', () => {
+      const root = makeDefault('r99trim-opened-cell', {
+        rows: [
+          makeRow({ id: 'S001', status: 'mined', usedBy: 'corpus/knowledge/alpha.md' }),
+          r99Row('S002', 'docs', 'A', 'queued', '\ufeff2026-10-19'),
+          r99Row('S003', 'docs', 'A', 'queued', '2026-10-19\u00a0'),
+        ],
+      });
+      return r99Assert(runTool(tmp, ['--self', root, '--today', FIXTURE_TODAY, '--json']), {
+        rows: 3,
+        findings: [
+          { kind: 'OPENED_INVALID', detail: 'id=S002 opened=\ufeff2026-10-19' },
+          { kind: 'OPENED_INVALID', detail: 'id=S003 opened=2026-10-19\u00a0' },
+        ],
+      });
+    });
+    check('r99trim-recheck-cell: CR lead and EMSP trail pads break the recheck (RECHECK_INVALID)', () => {
+      const root = makeDefault('r99trim-recheck-cell', {
+        rows: [
+          makeRow({ id: 'S001', status: 'mined', usedBy: 'corpus/knowledge/alpha.md' }),
+          r99Row('S002', 'docs', 'A', 'queued', FIXTURE_TODAY, '\ron-release'),
+          r99Row('S003', 'docs', 'A', 'queued', FIXTURE_TODAY, 'on-release\u2003'),
+        ],
+      });
+      return r99Assert(runTool(tmp, ['--self', root, '--today', FIXTURE_TODAY, '--json']), {
+        rows: 3,
+        findings: [
+          { kind: 'RECHECK_INVALID', detail: 'id=S002 recheck=\ron-release' },
+          { kind: 'RECHECK_INVALID', detail: 'id=S003 recheck=on-release\u2003' },
+        ],
+      });
+    });
+    check('r99trim-duplicate: NBSP-padded repeat is ID_FORM, TAB-padded repeat is ID_DUPLICATE', () => {
+      const root = makeDefault('r99trim-duplicate', {
+        rows: [
+          makeRow({ id: 'S001', status: 'mined', usedBy: 'corpus/knowledge/alpha.md' }),
+          r99Row(' \u00a0S001\u00a0'),
+          r99Row('S002'),
+          r99Row('\tS002\t'),
+        ],
+      });
+      return r99Assert(runTool(tmp, ['--self', root, '--today', FIXTURE_TODAY, '--json']), {
+        rows: 3,
+        findings: [
+          { kind: 'ID_FORM', detail: 'id=\u00a0S001\u00a0' },
+          { kind: 'ID_DUPLICATE', detail: 'id=S002' },
+        ],
+      });
+    });
+    check('r99trim-counts: counts.rows equals the blank-trim-valid ids only', () => {
+      const root = makeDefault('r99trim-counts', {
+        rows: [
+          makeRow({ id: 'S001', status: 'mined', usedBy: 'corpus/knowledge/alpha.md' }),
+          r99Row('\u00a0S123'),
+          r99Row('S124\v'),
+          r99Row('\u2003S125'),
+          r99Row('S126'),
+        ],
+      });
+      return r99Assert(runTool(tmp, ['--self', root, '--today', FIXTURE_TODAY, '--json']), {
+        rows: 2,
+        findings: [
+          { kind: 'ID_FORM', detail: 'id=\u00a0S123' },
+          { kind: 'ID_FORM', detail: 'id=S124\v' },
+          { kind: 'ID_FORM', detail: 'id=\u2003S125' },
+        ],
+      });
+    });
+    check('r99trim-blank-accepted: blank pads of length 1, 4, 8 (SP, TAB, mixed) on every cell stay clean', () => {
+      const cells = ['Fixture — https://example.test/source', 'docs', 'A', 'fixture scope', '§ Fixture; r1', 'fixture teaches', 'queued', FIXTURE_TODAY, 'on-release', '—'];
+      const rows = [];
+      let n = 0;
+      for (const padUnit of [' ', '\t', ' \t']) {
+        for (const padLen of [1, 4, 8]) {
+          n += 1;
+          const pad = padUnit.repeat(padLen);
+          rows.push(`| ${[`${pad}S10${n}${pad}`, ...cells.map((value) => `${pad}${value}${pad}`)].join(' | ')} |`);
+        }
+      }
+      const root = makeDefault('r99trim-blank-accepted', { rows, entry: null });
+      return r99Assert(runTool(tmp, ['--self', root, '--today', FIXTURE_TODAY, '--json']), { status: 0, rows: 9, findings: [] });
+    });
+    check('r99trim-census-parity: padded-id findings match census E02 when census present', () => {
+      const derivedRoot = process.env.SHOKUNIN_ROOT ? resolve(process.env.SHOKUNIN_ROOT) : resolve(HERE, '..', '..');
+      const censusCandidates = [
+        join(derivedRoot, 'scripts', 'sources-census.sh'),
+        join(HERE, '..', '..', 'scripts', 'sources-census.sh'),
+      ];
+      const censusPath = censusCandidates.find((p) => existsSync(p));
+      if (!censusPath) return { skip: true, detail: `census script absent (tried ${censusCandidates.join(', ')})` };
+      const root = makeDefault('r99trim-census-parity', {
+        rows: [
+          makeRow({ id: 'S001', status: 'queued', usedBy: '—' }),
+          r99Row('\u00a0S123'), r99Row('S124\v'), r99Row('\u2003S125'), r99Row('S126\ufeff'),
+          r99Row('\tS127\t'),
+        ],
+      });
+      const run = runTool(tmp, ['--self', root, '--today', FIXTURE_TODAY, '--json']);
+      let parsed; try { parsed = JSON.parse(run.stdout); } catch { return { ok: false, detail: `exit=${run.status} stdout unparsable` }; }
+      const formIds = (parsed.findings ?? []).filter((f) => f.kind === 'ID_FORM').map((f) => f.detail.replace(/^id=/u, '')).sort();
+      const wantIds = ['\u00a0S123', 'S124\v', '\u2003S125', 'S126\ufeff'].sort();
+      if (run.status !== 1 || parsed.counts?.rows !== 2 || JSON.stringify(formIds) !== JSON.stringify(wantIds)) {
+        return { ok: false, detail: `exit=${run.status} rows=${parsed.counts?.rows} ids=[${formIds}]` };
+      }
+      const out = capSpawnSync('bash', [censusPath, 'validate', '--file', join(root, 'corpus', 'SOURCES.md'), '--today', FIXTURE_TODAY], {
+        env: { SHOKUNIN_ROOT: derivedRoot }, bind: [tmp], timeout: 10_000,
+      });
+      if (out.status !== 0 && out.status !== 1) return { ok: false, detail: `census exit=${out.status} stderr=${String(out.stderr ?? '').slice(0, 120)}` };
+      const e02 = String(out.stdout ?? '').split('\n').filter((l) => l.includes('\tE02\t'));
+      const cores = ['S123', 'S124', 'S125', 'S126'];
+      const ok = e02.length === 4 && e02.every((l) => cores.filter((c) => l.includes(c)).length === 1);
+      return { ok, detail: `census E02=${e02.length}/4 tool ID_FORM=${formIds.length}/4` };
     });
     check('reflip: does not satisfy the rejected-row flip: marker', () => {
       const root = makeDefault('reflip-is-not-flip', {
