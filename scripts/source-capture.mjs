@@ -27,7 +27,9 @@
  * Sources document (default `corpus/SOURCES.md`, same base as the registry): the GFM
  * table rows are parsed for `| S### |` row ids; every row id must resolve to exactly
  * one binding — a capture entry or an exemption — and no binding may name a row that
- * does not exist.
+ * does not exist. A row id is read as the census `row_pass` reads it (rule R100): one
+ * LF-delimited record per line, 0-3 leading ASCII SP before the `|`, the id cell
+ * padded with ASCII SP/TAB only, and the id is `S` + 3+ ASCII digits closed by `|`.
  *
  * Rules:
  *   - `path` is resolved against the LANE ROOT for the default registry (paths are
@@ -154,7 +156,7 @@ function loadSourceIds(srcPath) {
     return { ok: false, reason: `sources doc unreadable: ${e.code || 'EIO'}` };
   }
   const ids = new Set();
-  for (const m of raw.matchAll(/^\s*\|\s*(S[0-9]{3,})\s*\|/gm)) {
+  for (const m of raw.split('\n').map((l) => l.match(/^ {0,3}\|[ \t]*(S[0-9]{3,})[ \t]*\|/)).filter(Boolean)) {
     if (ids.has(m[1])) {
       return { ok: false, reason: `sources doc has duplicate row id ${m[1]}` };
     }
@@ -417,6 +419,129 @@ function selftest() {
       const r = run(['--registry', f.reg, '--sources', f.src]);
       pass('sources-absent', r.status === 2 && /FAIL-CLOSED/.test(last(r)),
         `exit=${r.status} last=${JSON.stringify(last(r))}`);
+    }
+
+    // --- rule R100 (round 100): row ids read as the census row_pass reads them —
+    // one LF record per line, 0-3 leading ASCII SP, id cell padded with ASCII
+    // SP/TAB only, id = `S` + 3+ ASCII digits closed by `|`. Each case asserts the
+    // exact verdict line; an id the census refuses is an orphan-exemption.
+    const CAPB = 'R100 capture bytes\n';
+    const mkR100 = (name, sourcesText, capIds, exIds) => {
+      const d = join(root, 'r100-' + name);
+      mkdirSync(d, { recursive: true });
+      writeFileSync(join(d, 'cap.txt'), CAPB);
+      writeFileSync(join(d, 'sources.md'), sourcesText);
+      const reg = {
+        version: 1,
+        captures: capIds.map((id) => ({ sourceId: id, path: 'cap.txt', sha256: shaHex(CAPB), bytes: CAPB.length, captured: '2026-11-07' })),
+        exemptions: exIds.length ? [{ ids: exIds, reason: 'r100 selftest' }] : [],
+      };
+      writeFileSync(join(d, 'reg.json'), JSON.stringify(reg));
+      return run(['--registry', join(d, 'reg.json'), '--sources', join(d, 'sources.md')]);
+    };
+    const cleanLine = (r, c, e) => r.status === 0 && last(r) === `SOURCE_CAPTURE: CLEAN captures=${c} exemptions=${e}`;
+    const orphanLine = (r, id) => r.status === 1
+      && last(r) === `SOURCE_CAPTURE: DRIFT captures=1 exemptions=1 bad=1 first=${id}:orphan-exemption`;
+
+    // Non-blank JS-\s pads on the id are NOT rows → the exempt binding orphans.
+    {
+      const r = mkR100('pad-nbsp', '| S001 | alpha |\n|\u00A0S801\u00A0| x |\n', ['S001'], ['S801']);
+      pass('r100-pad-nbsp-not-row', orphanLine(r, 'S801'), `exit=${r.status} last=${JSON.stringify(last(r))}`);
+    }
+    {
+      const r = mkR100('pad-u2003', '| S001 | alpha |\n|\u2003S802\u2003| x |\n', ['S001'], ['S802']);
+      pass('r100-pad-u2003-not-row', orphanLine(r, 'S802'), `exit=${r.status} last=${JSON.stringify(last(r))}`);
+    }
+    {
+      const r = mkR100('pad-vt', '| S001 | alpha |\n|\u000BS803\u000B| x |\n', ['S001'], ['S803']);
+      pass('r100-pad-vt-not-row', orphanLine(r, 'S803'), `exit=${r.status} last=${JSON.stringify(last(r))}`);
+    }
+    {
+      const r = mkR100('pad-cr', '| S001 | alpha |\n|\rS804\r| x |\n', ['S001'], ['S804']);
+      pass('r100-pad-cr-not-row', orphanLine(r, 'S804'), `exit=${r.status} last=${JSON.stringify(last(r))}`);
+    }
+    {
+      const r = mkR100('pad-feff', '| S001 | alpha |\n|\uFEFFS805\uFEFF| x |\n', ['S001'], ['S805']);
+      pass('r100-pad-feff-not-row', orphanLine(r, 'S805'), `exit=${r.status} last=${JSON.stringify(last(r))}`);
+    }
+    {
+      const r = mkR100('pad-u2028', '| S001 | alpha |\n|\u2028S806\u2028| x |\n', ['S001'], ['S806']);
+      pass('r100-pad-u2028-not-row', orphanLine(r, 'S806'), `exit=${r.status} last=${JSON.stringify(last(r))}`);
+    }
+
+    // A single-sided JS-\s pad is enough to leave the census's row class.
+    {
+      const r = mkR100('leadpad', '| S001 | alpha |\n|\u00A0S807| x |\n', ['S001'], ['S807']);
+      pass('r100-leadpad-not-row', orphanLine(r, 'S807'), `exit=${r.status} last=${JSON.stringify(last(r))}`);
+    }
+    {
+      const r = mkR100('trailpad', '| S001 | alpha |\n|S808\u00A0| x |\n', ['S001'], ['S808']);
+      pass('r100-trailpad-not-row', orphanLine(r, 'S808'), `exit=${r.status} last=${JSON.stringify(last(r))}`);
+    }
+
+    // SP/TAB pads of length 1, 4 and 8 ARE rows.
+    {
+      const r = mkR100('blankpad-rows',
+        '| S001 | alpha |\n'
+        + '|\tS811\t| x |\n|\t\t\t\tS812\t\t\t\t| x |\n|\t\t\t\t\t\t\t\tS813\t\t\t\t\t\t\t\t| x |\n'
+        + '| S814 | x |\n|    S815    | x |\n|        S816        | x |\n',
+        ['S001'], ['S811', 'S812', 'S813', 'S814', 'S815', 'S816']);
+      pass('r100-blankpad-rows', cleanLine(r, 1, 6), `exit=${r.status} last=${JSON.stringify(last(r))}`);
+    }
+
+    // Indents of 0-3 SP are rows; 4 SP / TAB / NBSP are not.
+    {
+      const r = mkR100('indent-rows', '| S001 | alpha |\n| S861 | x |\n | S862 | x |\n  | S863 | x |\n   | S864 | x |\n',
+        ['S001'], ['S861', 'S862', 'S863', 'S864']);
+      pass('r100-indent-rows', cleanLine(r, 1, 4), `exit=${r.status} last=${JSON.stringify(last(r))}`);
+    }
+    {
+      const r = mkR100('indent4', '| S001 | alpha |\n    | S865 | x |\n', ['S001'], ['S865']);
+      pass('r100-indent4-not-row', orphanLine(r, 'S865'), `exit=${r.status} last=${JSON.stringify(last(r))}`);
+    }
+    {
+      const r = mkR100('indent-tab', '| S001 | alpha |\n\t| S866 | x |\n', ['S001'], ['S866']);
+      pass('r100-indent-tab-not-row', orphanLine(r, 'S866'), `exit=${r.status} last=${JSON.stringify(last(r))}`);
+    }
+    {
+      const r = mkR100('indent-nbsp', '| S001 | alpha |\n\u00A0| S867 | x |\n', ['S001'], ['S867']);
+      pass('r100-indent-nbsp-not-row', orphanLine(r, 'S867'), `exit=${r.status} last=${JSON.stringify(last(r))}`);
+    }
+
+    // A row after a CR / U+2028 on the same LF record is NOT a row (census RS = LF).
+    {
+      const r = mkR100('samerecord-cr', '| S001 | alpha |\ntext before\r| S868 | x |\n', ['S001'], ['S868']);
+      pass('r100-samerecord-cr-not-row', orphanLine(r, 'S868'), `exit=${r.status} last=${JSON.stringify(last(r))}`);
+    }
+    {
+      const r = mkR100('samerecord-cr-bare', '| S001 | alpha |\n\r| S869 | x |\n', ['S001'], ['S869']);
+      pass('r100-samerecord-cr-bare-not-row', orphanLine(r, 'S869'), `exit=${r.status} last=${JSON.stringify(last(r))}`);
+    }
+    {
+      const r = mkR100('samerecord-u2028', '| S001 | alpha |\ntext before\u2028| S870 | x |\n', ['S001'], ['S870']);
+      pass('r100-samerecord-u2028-not-row', orphanLine(r, 'S870'), `exit=${r.status} last=${JSON.stringify(last(r))}`);
+    }
+
+    // A CRLF row is still one LF record ending in CR — a row.
+    {
+      const r = mkR100('crlf-row', '| S001 | alpha |\n| S876 | x |\r\n', ['S001'], ['S876']);
+      pass('r100-crlf-row', cleanLine(r, 1, 1), `exit=${r.status} last=${JSON.stringify(last(r))}`);
+    }
+
+    // The id is `S` + 3+ ASCII digits closed by `|`: S873x and a two-id cell are not rows.
+    {
+      const r = mkR100('s123x', '| S001 | alpha |\n| S873x | junk |\n| S874 S875 | two |\n', ['S001'], []);
+      pass('r100-s123x-not-row', cleanLine(r, 1, 0), `exit=${r.status} last=${JSON.stringify(last(r))}`);
+    }
+
+    // Lowercase `s` and non-ASCII digits are not rows (the ASCII rows stay readable).
+    {
+      const r = mkR100('lowercase', '| S001 | alpha |\n| S845 | x |\n| s845 | lower |\n', ['S001', 'S845'], []);
+      pass('r100-lowercase-not-row', cleanLine(r, 2, 0), `exit=${r.status} last=${JSON.stringify(last(r))}`);
+    }
+    {
+      const r = mkR100('fullwidth', '| S001 | alpha |\n| S８４６ | fw |\n', ['S001'], []);
+      pass('r100-fullwidth-not-row', cleanLine(r, 1, 0), `exit=${r.status} last=${JSON.stringify(last(r))}`);
     }
   } finally {
     rmSync(root, { recursive: true, force: true });

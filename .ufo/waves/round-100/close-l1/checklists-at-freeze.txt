@@ -1,0 +1,97 @@
+CHECKLIST  PASS SKILL.md:719 exit=1 expected=0|1 substring=hit wall=31.614 load1=164.91 — Citation gate verdict
+CHECKLIST  PASS SKILL.md:720 exit=0 expected=0 substring=hit wall=7.174 load1=179.94 — Citation gate hermetic suite
+CHECKLIST  PASS SKILL.md:721 exit=0 expected=0 substring=hit wall=1.364 load1=178.75 — Live sighting-surface conformance
+CHECKLIST  PASS SKILL.md:722 exit=0 expected=0 substring=hit wall=10.046 load1=178.75 — Surface-probe hermetic suite
+CHECKLIST  PASS SKILL.md:723 exit=0 expected=0 substring=hit wall=85.453 load1=177.15 — Round-gate hermetic suite
+CHECKLIST  FAIL SKILL.md:724 exit=2 expected=0 substring=miss wall=0.103 load1=171.26 — Round-close artifact audit
+  | ROUND_GATE: FAIL-CLOSED (REPORTS_DIR_MISSING) --reports-dir /fast/scratch/hyaku/kumitate-r100/L1/.ufo/reports is absent
+  | round-gate: fail-closed — REPORTS_DIR_MISSING: --reports-dir /fast/scratch/hyaku/kumitate-r100/L1/.ufo/reports is absent
+CHECKLIST  FAIL SKILL.md:725 exit=2 expected=0 substring=miss wall=0.148 load1=171.26 — Filed-report tracking
+  | ROUND_GATE: FAIL-CLOSED (REPORTS_DIR_MISSING) --reports-dir /fast/scratch/hyaku/kumitate-r100/L1/.ufo/reports is absent
+  | round-gate: fail-closed — REPORTS_DIR_MISSING: --reports-dir /fast/scratch/hyaku/kumitate-r100/L1/.ufo/reports is absent
+CHECKLIST  FAIL SKILL.md:726 exit=1 expected=0 substring=miss wall=0.897 load1=171.26 — Proxy recompute (`--strict` since round 42: a missing or renamed `kumitate-gate-pins-v1` block re-raises `PIN_UNPINNED`, which strict mode fails)
+  | PROXY  error  A_WAVE_DRIFT  A_wave: declared=1755 computed=1758 delta=+3
+  | PROXY  error  C2_DRIFT  C2: declared=257 computed=258 delta=+1
+  | PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=257 computed=258 delta=+1
+  | PROXY: DRIFT (A_WAVE_DRIFT term=A_wave declared=1755 computed=1758 delta=+3; C2_DRIFT term=C2 declared=257 computed=258 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=257 computed=258 delta=+1; src-rev=31c465f15669; source=snapshot)
+CHECKLIST  PASS SKILL.md:727 exit=0 expected=0 substring=hit wall=64.147 load1=171.26 — Proxy-check hermetic suite
+CHECKLIST  PASS SKILL.md:728 exit=0 expected=0 substring=hit wall=0.079 load1=153.30 — Member-claims gate
+CHECKLIST  PASS SKILL.md:729 exit=0 expected=0 substring=hit wall=0.024 load1=153.30 — Kimi-substrate census
+CHECKLIST  PASS SKILL.md:730 exit=0 expected=0 substring=hit wall=0.041 load1=153.30 — Sources-registry gate
+CHECKLIST  PASS SKILL.md:731 exit=0 expected=0 substring=hit wall=12.900 load1=153.30 — Sources-check hermetic suite
+CHECKLIST  PASS SKILL.md:732 exit=0 expected=0 substring=hit wall=4.939 load1=146.57 — Per-anchor truth burn-down
+CHECKLIST  PASS SKILL.md:733 exit=0 expected=0 substring=hit wall=60.562 load1=145.72 — Anchor-truth hermetic suite
+CHECKLIST  PASS SKILL.md:734 exit=0 expected=0 substring=hit wall=0.365 load1=159.73 — Wave census of round 40's committed payloads (payload counts and findings; a payload proves validation, not dispatch)
+CHECKLIST  PASS SKILL.md:735 exit=0 expected=0 substring=hit wall=16.522 load1=159.73 — Wave-census hermetic suite
+CHECKLIST  FAIL SKILL.md:736 exit=2 expected=0 substring=miss wall=16.410 load1=166.85 — Gate-mutants battery over the lane's own suites (contract `kumitate-gate-mutants-v2`, kill predicate K43: an evaluable run exiting numeric non-zero with an exact `VERDICT: FAIL` line, confirmed by an immediate rerun with the same sorted `FAIL ` case names; controls re-run after the mutants; 41 frozen mutants of cite-check and wave-census, exit 0 only when every mutant is killed; temp parent `$KUMITATE_GATE_MUTANTS_TMP`, else `~/.cache/kumitate-gate-mutants`)
+  | GATE_MUTANTS_HEADER rev=working-copy cite-check=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2 wave-census=76447250f9de1f7e9258d0dfe9544feba18d6c8723db37e77e6ca422235f45f4 manifest=8486506f859b79ced4865adc34594a3111321e16821a54b1ee114e8d863bb12f
+  | CONTROL cite-check FAIL exit=1 verdict=none group_clean=true fail_lines=0 overflow=false cases=not-run/not-run floor=75
+  | CONTROL wave-census PASS exit=0 verdict=PASS group_clean=true fail_lines=0 overflow=false cases=32/32 floor=31
+  | GATE_MUTANTS: ERROR (mutants=0 killed=0 frozen=0/41 drift=0 targets=2 rev=working-copy manifest=8486506f859b79ced4865adc34594a3111321e16821a54b1ee114e8d863bb12f leftovers=0) drift=0 nomatch=0 crash=0 unstable=0 timeout=0 overflow=0 control-fail=1
+CHECKLIST  FAIL SKILL.md:737 exit=1 expected=0 substring=hit wall=5.458 load1=163.30 — Gate-mutants hermetic suite
+  | PASS polluted-git-env-does-not-write-sentinel control=PASS head_unchanged=true 
+  | PASS missing-frozen-manifest-exits-2 cite-check:warn-total
+  | PASS manifest-has-41-frozen-and-two-extras rows=43 extras=2 missing=0 duplicates=0 invalid=0
+  | PASS all-manifest-literals-apply-once unapplicable=none
+  | PASS mutated-byte-header-digest GATE_MUTANTS_HEADER rev=selftest fixture=2474883e05994c6ebb298be93e912abe7289b8ffcf9db9f9aeb4b811e0d931a3 manifest=8486506f859b79ced4865adc34594a3111321e16821a54b1ee114e8d863bb12f
+  | PASS selftest-leftovers leftovers=0
+  | GATE_MUTANTS_SELFTEST: 40/41 pass leftovers=0
+  | VERDICT: FAIL
+CHECKLIST  FAIL SKILL.md:738 exit=1 expected=0 substring=miss wall=0.150 load1=160.31 — OMP agent-root census
+  | INFO chain mcp-rea-backup-recovery has no generation
+  | UNLISTED agent.db.reset-a37b64321d6cc959
+  | UNLISTED config.yml.pre-run15-devin-unavailable-20261104.Qfa62SXH.bak
+  | UNLISTED models.yml.pre-amr-rotation-20261106
+  | UNLISTED models.yml.pre-mistral-20261105
+  | UNLISTED models.yml.pre-mistral-keyorder-20261106
+  | UNLISTED models.yml.pre-mistral-setup-20261105T231506
+  | OMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=126 findings=6)
+CHECKLIST  PASS SKILL.md:739 exit=0 expected=0 substring=hit wall=0.338 load1=160.31 — OMP-census hermetic suite
+CHECKLIST  PASS SKILL.md:740 exit=0 expected=0 substring=hit wall=14.133 load1=160.31 — Cap-run hermetic suite (round 46; contract `kumitate-cap-run-v1`; needs `systemd-run --user` and unprivileged bwrap)
+CHECKLIST  PASS SKILL.md:741 exit=0 expected=0 substring=hit wall=4.974 load1=158.60 — Receipt-attest hermetic suite (round 53; contract `kumitate-receipt-attest-v3`; hermetic; the final line is `ATTEST_SELFTEST: PASS (n/n)`)
+CHECKLIST  PASS SKILL.md:742 exit=0 expected=0 substring=hit wall=0.059 load1=147.90 — Frozen-counter registry gate (round 54; contract `kumitate-counter-pins-v1`)
+CHECKLIST  FAIL SKILL.md:743 exit=1 expected=0 substring=miss wall=0.058 load1=147.90 — Opened-source byte-persistence gate (round 55; contract `kumitate-source-capture-v1`)
+  | SOURCE_CAPTURE: note S273:uncaptured
+  | SOURCE_CAPTURE: note S274:uncaptured
+  | SOURCE_CAPTURE: note S275:uncaptured
+  | SOURCE_CAPTURE: note S276:uncaptured
+  | SOURCE_CAPTURE: note S277:uncaptured
+  | SOURCE_CAPTURE: note S278:uncaptured
+  | SOURCE_CAPTURE: note S279:uncaptured
+  | SOURCE_CAPTURE: DRIFT captures=95 exemptions=111 bad=11 first=S269:uncaptured
+CHECKLIST  FAIL SKILL.md:744 exit=1 expected=0 substring=miss wall=0.041 load1=147.90 — SOURCES duplicate-URL ratchet (round 56; contract `kumitate-source-dupes-v1`)
+  | SOURCE_DUPES: DRIFT groups=8 known=7 bad=1 first=new-duplicate:git-scm.com/docs/gitrevisions ids=S253,S271
+CHECKLIST  PASS SKILL.md:745 exit=0 expected=0 substring=hit wall=0.040 load1=147.90 — Corpus coverage-map bimap gate (round 86; contract `kumitate-readme-map-v3`, section membership plus v2 regular-file checks)
+CHECKLIST  PASS SKILL.md:746 exit=0 expected=0 substring=hit wall=0.066 load1=147.90 — Spotcheck-map check (round 76; contract `kumitate-spotcheck-adopt-v3` (v3.1 since 2026-11-04; the `--selftest` suite is 34 cases) since round 80 — the spotcheck set (`SPOTCHECK_COVERAGE:`) and the map (`MAP:`) are separate readings, so a green spotcheck set on an unrelated red map is readable; the repair arm is the registry row's `--adopt` command)
+CHECKLIST  PASS SKILL.md:747 exit=0 expected=0 substring=hit wall=15.184 load1=147.90 — Spotcheck-adopt hermetic suite (round 76; every refusal, both half-states and idempotency)
+CHECKLIST  PASS SKILL.md:748 exit=0 expected=0 substring=hit wall=0.556 load1=151.95 — OMP shape receipt offline re-derivation (round 77; contract `kumitate-omp-shape-v2` since round 81 — `captured_at` beside `entries`, `--shape` discloses `captured=<date> age_days=<n>`; the receipt is committed at .ufo/pins/omp-shape.json and the offline score is the coverage:omp term)
+CHECKLIST  PASS SKILL.md:749 exit=0 expected=0 substring=hit wall=24.619 load1=151.95 — Spotcheck-adopt two-reading split + crash recovery (round 80; contract `kumitate-spotcheck-adopt-v3` (v3.1 since 2026-11-04; the `--selftest` suite is 34 cases); the split readings, delta-scoped `--adopt` on a red map, duplicate refusal, byte-exact rollback and the journal's three SIGKILL windows ride the tool's 34-case suite; the round-77 probe's label arms (`SPOTCHECK_MAP:`, `v2`) are superseded history and read `held=9/13` at round 80 — its semantic arms c2.5–c2.13 pass)
+CHECKLIST  PASS SKILL.md:750 exit=0 expected=0 substring=hit wall=17.791 load1=157.99 — Receipt-evidence reproduction and sweep gate (round 58; contract `kumitate-receipt-evidence-v1`)
+CHECKLIST  PASS SKILL.md:751 exit=0 expected=0 substring=hit wall=0.291 load1=161.19 — README source-id citation gate (round 59; contract `kumitate-cite-sources-v1`)
+CHECKLIST  PASS SKILL.md:752 exit=0 expected=0 substring=hit wall=0.070 load1=161.19 — Round dispatch-evidence gate (round 60; contract `kumitate-dispatch-evidence-v1`; the real run over a round's committed launcher record is the registry row's command, --root <lane> --round <N> --wave <w>)
+CHECKLIST  PASS SKILL.md:753 exit=0 expected=0 substring=hit wall=25.920 load1=161.19 — Report-vs-receipt diff suite (round 64; contract `kumitate-report-receipt-diff-v4` since round 79 — thirteen finding ids, `POINTER_DEAD` included; the real diff before filing a round report is the registry row's command, --lane . --round N [--rev <lane-tip>] --report <round report>)
+CHECKLIST  PASS SKILL.md:754 exit=0 expected=0 substring=hit wall=10.069 load1=165.78 — jj seat-containment demo re-run (round 64; contract `kumitate-jj-seat-demo-v2`; 27 keys; exits 0 done or 2 fail-closed and never 1, so it is a demo and not a gate; re-ground the entry on any jj version change)
+CHECKLIST  PASS SKILL.md:755 exit=0 expected=0 substring=hit wall=13.072 load1=168.85 — Plan-before-ready map-arm suite (round 64; the readme-map arm judges readme-map inside git archive PLAN, epoch PBR_MAP_FROM default 65; the real run is the registry row's command, --round N --rev REV)
+CHECKLIST  FAIL SKILL.md:756 exit=1 expected=0 substring=miss wall=67.395 load1=164.26 — Kimi composite score derivation (round 79; the proxy still imports the census decision and the score is now the product of the documentation and census-health factors, with the de-named-heading arm discriminating)
+  |   "verdict": "DRIFT",
+  |   "exitCode": 1,
+  |   "self": "/fast/scratch/hyaku/kumitate-r100/L1/sp",
+  |   "scorecard": "/fast/scratch/hyaku/kumitate-r100/L1/sp/SCORECARD.md",
+  |   "src": "/fast/scra
+  | C79_C1 arm selftests ok proxy=0 census=0
+  | C79_C1 arm content-blind ok shape-only
+  | C79_C1: HELD held=9/11
+CHECKLIST  FAIL SKILL.md:757 exit=1 expected=0 substring=miss wall=0.224 load1=152.12 — OMP shape receipt live comparison (round 78; contract `kumitate-omp-shape-v1` receipt, host-bound, shape-only and non-scoring; a moved live root is a real DRIFT, never an accepted clean exit; round 79 classifies `agent.db-{shm,wal,journal}` as transient in this diagnostic only, reported as `transient=<n>` and never a drift by itself)
+  | OMP_SHAPE_COMPARE: DRIFT entries=126 receipt=65 added=59 removed=0 changed=0 first=agent.db.corrupt-1793901417900-e3335237-e837-4ae0-85c7-7bb309d604f4 transient=2 receipt_captured=2026-11-04 age_days=2
+CHECKLIST  PASS SKILL.md:758 exit=0 expected=0 substring=hit wall=0.308 load1=152.12 — READY handoff admission (round 83; contract `kumitate-ready-handoff-v3`; the real run names this round's own handoff — `--lane . --round 83 --wave w1 --policy /home/vgpnk/Projects/shokunin/scripts/hyaku/ufo-wave-policy.json` — and reads READY only for a dispatcher-banded (spawns + resumes), cap-legal, attack-legal, bound handoff)
+CHECKLIST  PASS SKILL.md:759 exit=0 expected=0 substring=hit wall=0.427 load1=152.12 — OMP shape compare age (round 82 (carried by round 83's clock predicate); the compare path discloses `receipt_captured=<date> age_days=<n>`, `--max-age DAYS` gates it (`SHAPE_STALE_RECEIPT` exit 1) and refuses a legacy receipt that carries no instant (`SHAPE_AGE_UNKNOWN` exit 2); the age never scores)
+CHECKLIST  PASS SKILL.md:760 exit=0 expected=0 substring=hit wall=0.301 load1=152.12 — OMP compare receipt clock (round 83; contract `kumitate-omp-shape-v2`; the compare path refuses a future self-asserted instant with `SHAPE_CLOCK` even without `--max-age`, one predicate with `--shape`)
+CHECKLIST  PASS SKILL.md:761 exit=0 expected=0 substring=hit wall=0.154 load1=152.12 — OMP shape receipt age (round 81; contract `kumitate-omp-shape-v2`; the receipt carries `captured_at`, `--shape` discloses `captured=<date> age_days=<n>`, and `--max-age` is the opt-in staleness gate that never moves the score)
+CHECKLIST  PASS SKILL.md:762 exit=0 expected=0 substring=hit wall=9.706 load1=152.12 — Counter-receipt reconciliation (round 84; grammar and limits in `corpus/knowledge/counter-transcript-reconciliation.md` and, since v2, `corpus/knowledge/counter-receipt-discrimination.md`; actual task judges the unchanged r83 red and repair receipts)
+CHECKLIST  PASS SKILL.md:763 exit=0 expected=0 substring=hit wall=3.628 load1=153.89 — Counter-receipt source binding (round 86; contract `kumitate-counter-receipt-v3`; frozen randomized 24-arm probe asserts exact exit and receipt/source byte-derived lines; old round-85 probe remains frozen historical evidence, not a current-v3 checklist)
+CHECKLIST  PASS SKILL.md:764 exit=0 expected=0 substring=hit wall=17.923 load1=155.34 — Receipt-subject binding (round 87, v2 round 88, v3 round 89, v4 round 90, v5 round 91; contract `kumitate-receipt-bind-v5`; the claim predicates are the frozen scorers at `.ufo/waves/round-87/probe/probe87-c1.mjs` … `.ufo/waves/round-90/probe/probe90-c1.mjs` (47 arms) and `.ufo/waves/round-91/probe/probe91-c1.mjs` (56 arms); this item is the hermetic selftest, 84 cases including each v2 boundary with a positive twin, the v3 behaviours, the v4 invisible-prefix field lines and the v5 bounded external reads)
+CHECKLIST  PASS SKILL.md:765 exit=0 expected=0 substring=hit wall=1.706 load1=155.63 — Seat-route transcript reading (round 92; contract `kumitate-seat-route-v2` since round 93, 63 selftest arms; the real run names a wave's `<wave>-results.json` and the sessions root, e.g. `node scripts/seat-route.mjs --results .ufo/waves/round-92/w1-results.json --json`; the selftest is this item)
+CHECKLIST_SKIPPED: 0
+CHECKLIST: 37/47 pass
+VERDICT: FAIL
+exit=1
