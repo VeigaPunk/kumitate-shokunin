@@ -1,0 +1,10 @@
+# entry frontmatter vs the lane validator, on a scratch root (corpus/SOURCES.md copy + a fixture S275
+# row inserted before "## Paths", the three knowledge entries the header cites, and this entry copied as
+# corpus/knowledge/knowledge-round-gate-registry-section.md). USED_BY_MISSING (249) is a fixture artefact:
+# the scratch root holds only 3 of the lane s knowledge files.
+$ node scripts/sources-check.mjs --self <scratch>/fx-entry --json | grep -o "\"kind\":\"[A-Z_]*\"" | sort | uniq -c
+     11 "kind":"USED_BY_ASYMMETRY"
+    249 "kind":"USED_BY_MISSING"
+$ node scripts/sources-check.mjs --self <scratch>/fx-entry --json | grep -o "ENTRY_[A-Z_]*|HEADER_INCOMPLETE|SECTION_MISSING|ROW_OUTSIDE_REGISTRY" | sort | uniq -c
+(empty above = no entry-header finding: source/verified-at/recheck present, all cited ids registered with S275 in the Registry)
+exit=0

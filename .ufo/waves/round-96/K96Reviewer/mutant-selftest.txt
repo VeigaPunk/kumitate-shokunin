@@ -1,0 +1,26 @@
+K2 probe — mutant selftest sweep (K96Reviewer, round 96, C1)
+
+Tool under test: .ufo/waves/round-96/K96ExecTool/round-gate.mjs
+  snapshot A (intermediate, header only, 113954 B, sha256 ac92d7f2…) : no R96 selftest arms
+  snapshot B (final bytes on disk, 120748 B, sha256 9975be54…)        : arms (xxiii)(xxiv)(xxv) at :1703,:1713,:1734
+
+Each mutant = one-line substitution applied to snapshot bytes, copied beside cap-run.mjs/cap-spawn.mjs in a
+scratch dir, run as `TMPDIR=<scratch> prlimit --as=4294967296 node round-gate.mjs --selftest`.
+
+SNAPSHOT A (no arms):
+  m1-trimdot      heading trim `.replace(/^[ \t]+|[ \t]+$/g,'')` -> `.trim()`      => VERDICT: PASS   (SURVIVOR)
+  (job was killed after m1; A is superseded by B)
+
+SNAPSHOT B (final):
+  m1-trimdot      same substitution                                     => FAIL [53/92] (xxiii): declared gained
+      a0000026 (pinS025) and outsideRows lost "S025" — i.e. `## Registry\r` was accepted. 91/92 pass, VERDICT FAIL
+  m2-nostate      `##` branch no longer assigns inReg                    => FAIL  75-76/92, VERDICT FAIL
+  m3-nopush       outside rows not appended to outsideRows               => FAIL [53/92] (xxiii) outside=[]  AND
+                                                                           FAIL [55/92] (xxv) no outside line; 89-90/92
+  m4-countfirst   field-count test moved before the section test         => FAIL  90-91/92, VERDICT FAIL
+  m5-h1keep       `#` branch deleted (state never cleared)               => FAIL  90-91/92, VERDICT FAIL
+  m6-defaultin    `let inReg = true`                                     => FAIL [53/92] (xxiii): declared gained
+      a0000001 (S901, line 1); 91/92 pass, VERDICT FAIL
+
+Reading: the final arms kill all six R96-violating shapes tried here, including the ctl-crlftrim shape that
+passed the arm-less intermediate. This is a probe, not the K2 control battery (mutation-tester seat owns that).

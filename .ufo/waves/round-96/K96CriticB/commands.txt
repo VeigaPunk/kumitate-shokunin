@@ -1,0 +1,17 @@
+# K96CriticB commands (scratch S=/fast/scratch/hyaku/kumitate-r96/K96CriticB, removed before yield)
+# clone (read-only on lane; probe technique)
+git clone -q --shared --no-checkout /home/vgpnk/Projects/shokunin/kumitate-shokunin S/lane
+git -C S/lane rev-parse --show-toplevel   # = S/lane
+git -C S/lane checkout -q --detach f5873bff
+# controls regenerated from BASE bytes
+python3 kumitate-shokunin/.ufo/waves/round-96/probe/make-controls96.py kumitate-shokunin/scripts/round-gate.mjs S/controls
+cp kumitate-shokunin/scripts/cap-spawn.mjs kumitate-shokunin/scripts/cap-run.mjs S/controls/
+# gates: <TOOL> is BASE (S/lane/scripts/round-gate.mjs), ctl-positive (S/controls/ctl-positive.mjs) or the draft
+node <TOOL> --round 93 --lane kumitate --repo S/lane --reports-dir /home/vgpnk/Projects/shokunin/.ufo/reports \
+  --main-repo /home/vgpnk/Projects/shokunin --origin /home/vgpnk/Projects/ufo-fsd-alpha --json
+# census / sibling gate on the same bytes
+bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file S/lane/corpus/SOURCES.md
+node S/lane/scripts/sources-check.mjs
+# variants: A one row S266 under Leads; A3 five rows S266/S267/S268/S269/S272 (only declarers of 79fa222e...)
+# B whole-CRLF; C only "## Registry" line CRLF; D LF-only empty "## " line right after "## Registry"
+# harm differential rounds 90-95: BASE vs ctl-positive and vs draft, JSON diff drops citations.outsideRows

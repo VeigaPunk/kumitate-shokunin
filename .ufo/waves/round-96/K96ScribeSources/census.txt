@@ -1,0 +1,41 @@
+# Census validation receipt — round 96, row S275
+
+## Environment
+scratch copy: /fast/scratch/hyaku/kumitate-r96/K96ScribeSources/corpus (cp -a of /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus, row inserted after line 229 '| S274 |', S275 at line 230)
+used-by target created: corpus/knowledge/round-gate-registry-section.md (0 bytes) in the copy
+census: /home/vgpnk/Projects/shokunin/scripts/sources-census.sh (read-only use)
+
+## 1. validate on the copy with the row
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file /fast/scratch/hyaku/kumitate-r96/K96ScribeSources/corpus/SOURCES.md --today 2026-11-07
+file	W04	S034 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics across scopes
+file	W04	S068 duplicate url github.com/can1357/oh-my-pi/tree/45c35e40c46166dc726ccc52f5d27f40f2449f99 across scopes
+file	W04	S084 duplicate url infection.github.io/guide across scopes
+file	W04	S095 duplicate url raw.githubusercontent.com/containers/bubblewrap/v0.13.1/bwrap.xml across scopes
+file	W04	S123 duplicate url docs.langchain.com/oss/python/langgraph/checkpointers across scopes
+file	W04	S126 duplicate url docs.temporal.io/encyclopedia/detecting-activity-failures across scopes
+file	W04	S247 duplicate url arxiv.org/abs/2212.06118 across scopes
+file	W04	S271 duplicate url git-scm.com/docs/gitrevisions across scopes
+file	ok	/fast/scratch/hyaku/kumitate-r96/K96ScribeSources/corpus/SOURCES.md
+EXIT=0
+
+## 2. validate on the same copy with the S275 row removed (baseline)
+$ diff <(validate without row) <(validate with row)
+IDENTICAL output, baseline EXIT=0 -> the row adds no E- or W-finding (the 8 W04 lines are pre-existing)
+S275 occurrences in validate output: 0
+
+## 3. field-count check (no pipe inside any cell)
+$ awk -F'|' '/^ {0,3}\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ && NF!=13' <copy>
+bytes printed: 0  (empty = every S-row has NF=13)
+$ awk -F'|' '/^\| S275 \|/{print "S275_NF="NF}' <copy>
+S275_NF=13
+
+## 4. E12 / E01 lines for the whole copy (must be none)
+$ validate --file <copy> | grep -E 'E12|E01'
+(no E12/E01 lines)
+
+## 5. disclosed first run (superseded, kept for honesty)
+The first validate run copied only corpus/ into scratch, so 22 E11 findings fired for used-by
+paths that live outside corpus/ (scripts/*.mjs, SKILL.md, .ufo/waves/...). That run exited 1
+and is NOT the receipt: the copy was completed with those referenced paths copied from the lane
+(scripts/, SKILL.md, .ufo/waves/round-47|48|71|72|73), after which the same command exits 0.
+Receipt of the superseded run: census-validate-superseded-corpusonly-copy.out in this directory.

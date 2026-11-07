@@ -1,0 +1,37 @@
+# Provenance for row S275 (round 96)
+
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin rev-parse HEAD
+f5873bff899d2ac271e05fde90252a19660bd664
+
+$ grep -n 'commonmark' /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
+(no match, rc=1)
+
+$ grep -n 'spec.commonmark.org' /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
+(no match, rc=1)
+
+$ grep -n '^| S275 ' /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
+(no match, rc=1: S275 free)
+
+$ grep -c "^| S[0-9]" /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
+212
+
+$ grep -n "^| S27[0-9] " ... | cut -d: -f1
+225
+226
+227
+228
+229
+
+$ git -C <lane> diff --quiet 617e80cd -- corpus/SOURCES.md ; echo rc
+rc=0  (0 = corpus/SOURCES.md identical at freeze 617e80cd and in the working tree)
+
+$ git -C <lane> show 617e80cd:corpus/SOURCES.md | grep -c '^| S275 '
+0
+(0: S275 free at the freeze too)
+
+$ git -C <lane> show 617e80cd:corpus/SOURCES.md | grep -c 'commonmark'
+0
+(0: no commonmark row at the freeze)
+
+$ sha256sum corpus/SOURCES.md (working tree)
+064316a938599f8903c3a62eb32bad69aac873d1aeec33f56e2fea576fa93fa5  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md

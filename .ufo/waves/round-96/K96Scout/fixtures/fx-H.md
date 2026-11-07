@@ -1,0 +1,5 @@
+```
+## Registry
+| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | usedby | x | y |
+| S15 | https://example.com/15 | web | A | scope | anc | teaches | queued | 2026-01-01 | 2026-12-01 | corpus/x.md | z | w |
+```

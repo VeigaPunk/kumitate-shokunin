@@ -1,0 +1,373 @@
+{
+ "candidate_sha256": "9975be54617a9cb943abc680a35ee04977e2c253d6d852d86324fffc497bdb1c",
+ "candidate_lines": 2168,
+ "baseline_counter": "C96_C1: HELD a=1/1 b=1/1 c=1/1 d=1/1 e=79/79 f=1/1",
+ "mutants": {
+  "b19-indent4": {
+   "note": "{0,3} -> {0,4}",
+   "mutant_sha256": "5c23374013f4aec1f3c5fc3983e472fdeae627cc3bf819fcd64609ac4bb2ec84",
+   "lines_changed": 2,
+   "selftest_exit": 1,
+   "selftest_verdict": "FAIL",
+   "selftest_total": "90/92",
+   "selftest_fail_arms": [
+    "(xxiii) R96 battery: only inside 13-field non-rejected rows declare; outside rows listed in file order with repeats; inside short row is malformed",
+    "hermeticity: --selftest passes under a polluted env and bogus dir flags"
+   ],
+   "counter_exit": 1,
+   "counter_line": "C96_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=79/79 f=0/1 tool_sha256=5c23374013f4aec1f3c5fc3983e472fdeae627cc3bf819fcd64609ac4bb2ec84"
+  },
+  "b20-spaceclass": {
+   "note": "[ \\t] -> \\s",
+   "mutant_sha256": "de06a8c11ceb8d0a79058cdc5afdfc2961e63f78d0990c73866180d8dd8083e2",
+   "lines_changed": 1,
+   "selftest_exit": 0,
+   "selftest_verdict": "PASS",
+   "selftest_total": "92/92",
+   "selftest_fail_arms": [],
+   "counter_exit": 0,
+   "counter_line": "C96_C1: HELD a=1/1 b=1/1 c=1/1 d=1/1 e=79/79 f=1/1 tool_sha256=de06a8c11ceb8d0a79058cdc5afdfc2961e63f78d0990c73866180d8dd8083e2"
+  },
+  "b21-not-eq": {
+   "note": "=== -> !==",
+   "mutant_sha256": "3c0affe1aa3308c899c4ac956980fc2c589275b5b0da182f872b0e3a9a355134",
+   "lines_changed": 1,
+   "selftest_exit": 1,
+   "selftest_verdict": "FAIL",
+   "selftest_total": "75/92",
+   "selftest_fail_arms": [
+    "(i) an 8-hex prefix of a 40-hex URL segment on a mined registry row \u2192 declared, no finding",
+    "(ii) a cited full 40-hex pin that is a complete URL segment \u2192 declared, no finding",
+    "(iii) pin followed by `#fragment` (`/commit/<pin>#diff`) \u2192 declared, no finding",
+    "text mode: COMMIT_CITED_UNRESOLVED detail carries `declared=<n>` beside the unresolved list",
+    "text mode: a green round with a declared pin prints one `info COMMIT_CITED_DECLARED` line, no finding",
+    "(xv) unescaped `|` shifting a truly `rejected` status \u2192 unresolved, id in malformedRows",
+    "(xvi) escaped `\\|` row (naive split yields 14 fields) \u2192 unresolved, id in malformedRows",
+    "(xvii) 12-field short row \u2192 unresolved, id in malformedRows (kills lenient12/gt13-only)",
+    "(xviii) 14-field long row \u2192 unresolved, id in malformedRows",
+    "(xix) a well-formed row next to a malformed one still declares, only the malformed token is unresolved (kills dropall)",
+    "(xx) malformedRows exact order/content in file order (kills nodisclose)",
+    "(xxi) URL-less, 3-space-indented, repeated and low-sorting malformed rows are each listed in file order; a CRLF 13-field row and an off-enum status still declare",
+    "(xxii) a 12-field row whose index-8 cell reads `rejected` is still listed in malformedRows (shape before status)",
+    "text mode: malformed rows get one `info SOURCES_ROWS_MALFORMED` line; the r94 declared line keeps its format",
+    "(xxiii) R96 battery: only inside 13-field non-rejected rows declare; outside rows listed in file order with repeats; inside short row is malformed",
+    "(xxv) text mode: outside rows get one `info SOURCES_ROWS_OUTSIDE` line right after the malformed line (kills notext)",
+    "hermeticity: --selftest passes under a polluted env and bogus dir flags"
+   ],
+   "counter_exit": 1,
+   "counter_line": "C96_C1: UNMET a=0/1 b=0/1 c=0/1 d=1/1 e=71/79 f=0/1 tool_sha256=3c0affe1aa3308c899c4ac956980fc2c589275b5b0da182f872b0e3a9a355134"
+  },
+  "b22-start-true": {
+   "note": "initial state flipped (dup of m09)",
+   "mutant_sha256": "2d567674b1752f7b9672fa9baf1afb732e08c54ce76a5f23a3f239875127c6df",
+   "lines_changed": 1,
+   "selftest_exit": 1,
+   "selftest_verdict": "FAIL",
+   "selftest_total": "90/92",
+   "selftest_fail_arms": [
+    "(xxiii) R96 battery: only inside 13-field non-rejected rows declare; outside rows listed in file order with repeats; inside short row is malformed",
+    "hermeticity: --selftest passes under a polluted env and bogus dir flags"
+   ],
+   "counter_exit": 1,
+   "counter_line": "C96_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=79/79 f=0/1 tool_sha256=2d567674b1752f7b9672fa9baf1afb732e08c54ce76a5f23a3f239875127c6df"
+  },
+  "b23-unshift": {
+   "note": "push -> unshift",
+   "mutant_sha256": "21a69b5fa42160d42478093bbec4262adee187e440e10e28363a8026ae018447",
+   "lines_changed": 1,
+   "selftest_exit": 1,
+   "selftest_verdict": "FAIL",
+   "selftest_total": "90/92",
+   "selftest_fail_arms": [
+    "(xxiii) R96 battery: only inside 13-field non-rejected rows declare; outside rows listed in file order with repeats; inside short row is malformed",
+    "hermeticity: --selftest passes under a polluted env and bogus dir flags"
+   ],
+   "counter_exit": 1,
+   "counter_line": "C96_C1: UNMET a=0/1 b=0/1 c=0/1 d=1/1 e=79/79 f=0/1 tool_sha256=21a69b5fa42160d42478093bbec4262adee187e440e10e28363a8026ae018447"
+  },
+  "b24-id-field2": {
+   "note": "id fields[1] -> fields[2]",
+   "mutant_sha256": "6ee81d0cd8181277e4feae52d7a54dbc4f10d40000cc48cb8bf59a9d9afdc320",
+   "lines_changed": 1,
+   "selftest_exit": 1,
+   "selftest_verdict": "FAIL",
+   "selftest_total": "89/92",
+   "selftest_fail_arms": [
+    "(xxiii) R96 battery: only inside 13-field non-rejected rows declare; outside rows listed in file order with repeats; inside short row is malformed",
+    "(xxv) text mode: outside rows get one `info SOURCES_ROWS_OUTSIDE` line right after the malformed line (kills notext)",
+    "hermeticity: --selftest passes under a polluted env and bogus dir flags"
+   ],
+   "counter_exit": 1,
+   "counter_line": "C96_C1: UNMET a=0/1 b=0/1 c=0/1 d=1/1 e=79/79 f=0/1 tool_sha256=6ee81d0cd8181277e4feae52d7a54dbc4f10d40000cc48cb8bf59a9d9afdc320"
+  },
+  "b25-outside-after-rejected": {
+   "note": "outside check after rejected",
+   "mutant_sha256": "9d5895a0eb302321a27a51b30884ec17dda138bab240a41ce4f590b72ccbd8cd",
+   "lines_changed": 2,
+   "selftest_exit": 1,
+   "selftest_verdict": "FAIL",
+   "selftest_total": "90/92",
+   "selftest_fail_arms": [
+    "(xxiii) R96 battery: only inside 13-field non-rejected rows declare; outside rows listed in file order with repeats; inside short row is malformed",
+    "hermeticity: --selftest passes under a polluted env and bogus dir flags"
+   ],
+   "counter_exit": 1,
+   "counter_line": "C96_C1: UNMET a=0/1 b=0/1 c=0/1 d=1/1 e=79/79 f=0/1 tool_sha256=9d5895a0eb302321a27a51b30884ec17dda138bab240a41ce4f590b72ccbd8cd"
+  },
+  "m01-ctl-h3exits": {
+   "note": "any ##+ heading switches the section",
+   "mutant_sha256": "0637261f7685bcf8606d18e99ff8f60642354b8441bc128503ed8e0b0bd7dc60",
+   "lines_changed": 1,
+   "selftest_exit": 1,
+   "selftest_verdict": "FAIL",
+   "selftest_total": "90/92",
+   "selftest_fail_arms": [
+    "(xxiii) R96 battery: only inside 13-field non-rejected rows declare; outside rows listed in file order with repeats; inside short row is malformed",
+    "hermeticity: --selftest passes under a polluted env and bogus dir flags"
+   ],
+   "counter_exit": 1,
+   "counter_line": "C96_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=79/79 f=0/1 tool_sha256=0637261f7685bcf8606d18e99ff8f60642354b8441bc128503ed8e0b0bd7dc60"
+  },
+  "m02-ctl-firstonly": {
+   "note": "later ## headings ignored",
+   "mutant_sha256": "888e7ffef7324ca5b8cff75deab92421771c8dc48e6b5503c4f1abddd1b43872",
+   "lines_changed": 1,
+   "selftest_exit": 1,
+   "selftest_verdict": "FAIL",
+   "selftest_total": "89/92",
+   "selftest_fail_arms": [
+    "(xxiii) R96 battery: only inside 13-field non-rejected rows declare; outside rows listed in file order with repeats; inside short row is malformed",
+    "(xxv) text mode: outside rows get one `info SOURCES_ROWS_OUTSIDE` line right after the malformed line (kills notext)",
+    "hermeticity: --selftest passes under a polluted env and bogus dir flags"
+   ],
+   "counter_exit": 1,
+   "counter_line": "C96_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=79/79 f=0/1 tool_sha256=888e7ffef7324ca5b8cff75deab92421771c8dc48e6b5503c4f1abddd1b43872"
+  },
+  "m03-ctl-closeseq": {
+   "note": "CommonMark closing sequence stripped",
+   "mutant_sha256": "1c1aa32d071ca205924c041b480fda677c196d87dbe3aa5d87fea003585bca70",
+   "lines_changed": 1,
+   "selftest_exit": 1,
+   "selftest_verdict": "FAIL",
+   "selftest_total": "90/92",
+   "selftest_fail_arms": [
+    "(xxiii) R96 battery: only inside 13-field non-rejected rows declare; outside rows listed in file order with repeats; inside short row is malformed",
+    "hermeticity: --selftest passes under a polluted env and bogus dir flags"
+   ],
+   "counter_exit": 1,
+   "counter_line": "C96_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=79/79 f=0/1 tool_sha256=1c1aa32d071ca205924c041b480fda677c196d87dbe3aa5d87fea003585bca70"
+  },
+  "m04-ctl-crlftrim": {
+   "note": "JS .trim() strips \\r",
+   "mutant_sha256": "c054db4582b7ac3b93b483509b10d055e1ca8def9cde800e4c8d5927faf521d0",
+   "lines_changed": 1,
+   "selftest_exit": 1,
+   "selftest_verdict": "FAIL",
+   "selftest_total": "90/92",
+   "selftest_fail_arms": [
+    "(xxiii) R96 battery: only inside 13-field non-rejected rows declare; outside rows listed in file order with repeats; inside short row is malformed",
+    "hermeticity: --selftest passes under a polluted env and bogus dir flags"
+   ],
+   "counter_exit": 1,
+   "counter_line": "C96_C1: UNMET a=0/1 b=0/1 c=0/1 d=1/1 e=79/79 f=0/1 tool_sha256=c054db4582b7ac3b93b483509b10d055e1ca8def9cde800e4c8d5927faf521d0"
+  },
+  "m05-ctl-casefold": {
+   "note": "case-insensitive",
+   "mutant_sha256": "3b1aa19a1bc117662530eae14bcd86d502eb7e9cabc629e8d2836093bf3b71f6",
+   "lines_changed": 1,
+   "selftest_exit": 1,
+   "selftest_verdict": "FAIL",
+   "selftest_total": "90/92",
+   "selftest_fail_arms": [
+    "(xxiii) R96 battery: only inside 13-field non-rejected rows declare; outside rows listed in file order with repeats; inside short row is malformed",
+    "hermeticity: --selftest passes under a polluted env and bogus dir flags"
+   ],
+   "counter_exit": 1,
+   "counter_line": "C96_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=79/79 f=0/1 tool_sha256=3b1aa19a1bc117662530eae14bcd86d502eb7e9cabc629e8d2836093bf3b71f6"
+  },
+  "m06-ctl-anyindent": {
+   "note": "any indentation",
+   "mutant_sha256": "f12af50ac99e501d140f1fd73d1e18bd15984fc6697e1531befa8fc3800bfed4",
+   "lines_changed": 2,
+   "selftest_exit": 1,
+   "selftest_verdict": "FAIL",
+   "selftest_total": "90/92",
+   "selftest_fail_arms": [
+    "(xxiii) R96 battery: only inside 13-field non-rejected rows declare; outside rows listed in file order with repeats; inside short row is malformed",
+    "hermeticity: --selftest passes under a polluted env and bogus dir flags"
+   ],
+   "counter_exit": 1,
+   "counter_line": "C96_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=79/79 f=0/1 tool_sha256=f12af50ac99e501d140f1fd73d1e18bd15984fc6697e1531befa8fc3800bfed4"
+  },
+  "m07-ctl-nospace": {
+   "note": "no space/tab needed after ##",
+   "mutant_sha256": "9821b9a4b0ae8ad8016ac683988ba34eec543484c3ff4508d66e0f8c78f8f951",
+   "lines_changed": 1,
+   "selftest_exit": 1,
+   "selftest_verdict": "FAIL",
+   "selftest_total": "90/92",
+   "selftest_fail_arms": [
+    "(xxiii) R96 battery: only inside 13-field non-rejected rows declare; outside rows listed in file order with repeats; inside short row is malformed",
+    "hermeticity: --selftest passes under a polluted env and bogus dir flags"
+   ],
+   "counter_exit": 1,
+   "counter_line": "C96_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=79/79 f=0/1 tool_sha256=9821b9a4b0ae8ad8016ac683988ba34eec543484c3ff4508d66e0f8c78f8f951"
+  },
+  "m08-ctl-fence": {
+   "note": "fence-aware heading scan",
+   "mutant_sha256": "0e084ba212a347ed6fa7c7cfe32271240aadaf7ee91535a5a0cb974967d1ea0c",
+   "lines_changed": 3,
+   "selftest_exit": 1,
+   "selftest_verdict": "FAIL",
+   "selftest_total": "90/92",
+   "selftest_fail_arms": [
+    "(xxiii) R96 battery: only inside 13-field non-rejected rows declare; outside rows listed in file order with repeats; inside short row is malformed",
+    "hermeticity: --selftest passes under a polluted env and bogus dir flags"
+   ],
+   "counter_exit": 1,
+   "counter_line": "C96_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=79/79 f=0/1 tool_sha256=0e084ba212a347ed6fa7c7cfe32271240aadaf7ee91535a5a0cb974967d1ea0c"
+  },
+  "m09-ctl-defaultin": {
+   "note": "state starts inside",
+   "mutant_sha256": "2d567674b1752f7b9672fa9baf1afb732e08c54ce76a5f23a3f239875127c6df",
+   "lines_changed": 1,
+   "selftest_exit": 1,
+   "selftest_verdict": "FAIL",
+   "selftest_total": "90/92",
+   "selftest_fail_arms": [
+    "(xxiii) R96 battery: only inside 13-field non-rejected rows declare; outside rows listed in file order with repeats; inside short row is malformed",
+    "hermeticity: --selftest passes under a polluted env and bogus dir flags"
+   ],
+   "counter_exit": 1,
+   "counter_line": "C96_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=79/79 f=0/1 tool_sha256=2d567674b1752f7b9672fa9baf1afb732e08c54ce76a5f23a3f239875127c6df"
+  },
+  "m10-ctl-h1keep": {
+   "note": "# heading does not clear",
+   "mutant_sha256": "e94448fda88a8ffc912afa99a56a4c7cb7c90d9ffd80dc78e5a0eb77039e815c",
+   "lines_changed": 1,
+   "selftest_exit": 1,
+   "selftest_verdict": "FAIL",
+   "selftest_total": "90/92",
+   "selftest_fail_arms": [
+    "(xxiii) R96 battery: only inside 13-field non-rejected rows declare; outside rows listed in file order with repeats; inside short row is malformed",
+    "hermeticity: --selftest passes under a polluted env and bogus dir flags"
+   ],
+   "counter_exit": 1,
+   "counter_line": "C96_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=79/79 f=0/1 tool_sha256=e94448fda88a8ffc912afa99a56a4c7cb7c90d9ffd80dc78e5a0eb77039e815c"
+  },
+  "m11-ctl-nodisclose": {
+   "note": "outsideRows never filled",
+   "mutant_sha256": "2e2ab517c13fa2d5f1c76d7ea5bf2a02052b958b67e15e355622fb6d913d7f5a",
+   "lines_changed": 1,
+   "selftest_exit": 1,
+   "selftest_verdict": "FAIL",
+   "selftest_total": "89/92",
+   "selftest_fail_arms": [
+    "(xxiii) R96 battery: only inside 13-field non-rejected rows declare; outside rows listed in file order with repeats; inside short row is malformed",
+    "(xxv) text mode: outside rows get one `info SOURCES_ROWS_OUTSIDE` line right after the malformed line (kills notext)",
+    "hermeticity: --selftest passes under a polluted env and bogus dir flags"
+   ],
+   "counter_exit": 1,
+   "counter_line": "C96_C1: UNMET a=0/1 b=0/1 c=0/1 d=1/1 e=79/79 f=0/1 tool_sha256=2e2ab517c13fa2d5f1c76d7ea5bf2a02052b958b67e15e355622fb6d913d7f5a"
+  },
+  "m12-ctl-dedupe": {
+   "note": "repeats collapsed",
+   "mutant_sha256": "a980cbfc7a7a760a2b8d09febb8e58043d93d4d5248097cb48aad4ebf180deea",
+   "lines_changed": 1,
+   "selftest_exit": 1,
+   "selftest_verdict": "FAIL",
+   "selftest_total": "90/92",
+   "selftest_fail_arms": [
+    "(xxiii) R96 battery: only inside 13-field non-rejected rows declare; outside rows listed in file order with repeats; inside short row is malformed",
+    "hermeticity: --selftest passes under a polluted env and bogus dir flags"
+   ],
+   "counter_exit": 1,
+   "counter_line": "C96_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=79/79 f=0/1 tool_sha256=a980cbfc7a7a760a2b8d09febb8e58043d93d4d5248097cb48aad4ebf180deea"
+  },
+  "m13-ctl-sorted": {
+   "note": "outsideRows sorted",
+   "mutant_sha256": "7c5fe8a624e974684b4791a82899a55c19efe03852cf256ad7029fd9ae4116cd",
+   "lines_changed": 1,
+   "selftest_exit": 1,
+   "selftest_verdict": "FAIL",
+   "selftest_total": "90/92",
+   "selftest_fail_arms": [
+    "(xxiii) R96 battery: only inside 13-field non-rejected rows declare; outside rows listed in file order with repeats; inside short row is malformed",
+    "hermeticity: --selftest passes under a polluted env and bogus dir flags"
+   ],
+   "counter_exit": 1,
+   "counter_line": "C96_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=79/79 f=0/1 tool_sha256=7c5fe8a624e974684b4791a82899a55c19efe03852cf256ad7029fd9ae4116cd"
+  },
+  "m14-ctl-urlonly": {
+   "note": "URL-less rows unlisted",
+   "mutant_sha256": "9ccd5cfc8432f9512bfc125e05ccbbcdf52a2f4ca16022f4b3605a293c3240a3",
+   "lines_changed": 1,
+   "selftest_exit": 1,
+   "selftest_verdict": "FAIL",
+   "selftest_total": "90/92",
+   "selftest_fail_arms": [
+    "(xxiii) R96 battery: only inside 13-field non-rejected rows declare; outside rows listed in file order with repeats; inside short row is malformed",
+    "hermeticity: --selftest passes under a polluted env and bogus dir flags"
+   ],
+   "counter_exit": 1,
+   "counter_line": "C96_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=79/79 f=0/1 tool_sha256=9ccd5cfc8432f9512bfc125e05ccbbcdf52a2f4ca16022f4b3605a293c3240a3"
+  },
+  "m15-ctl-countfirst": {
+   "note": "field count before section",
+   "mutant_sha256": "6a8bc9bb961650178e465b71bc423658cc0d7d0c86499a0e6fcc2d9b9787e86b",
+   "lines_changed": 2,
+   "selftest_exit": 1,
+   "selftest_verdict": "FAIL",
+   "selftest_total": "90/92",
+   "selftest_fail_arms": [
+    "(xxiii) R96 battery: only inside 13-field non-rejected rows declare; outside rows listed in file order with repeats; inside short row is malformed",
+    "hermeticity: --selftest passes under a polluted env and bogus dir flags"
+   ],
+   "counter_exit": 1,
+   "counter_line": "C96_C1: UNMET a=0/1 b=1/1 c=0/1 d=1/1 e=79/79 f=0/1 tool_sha256=6a8bc9bb961650178e465b71bc423658cc0d7d0c86499a0e6fcc2d9b9787e86b"
+  },
+  "m16-ctl-dropall": {
+   "note": "outside row silences registry",
+   "mutant_sha256": "ef2bfe6a1dd176c18237e1d89758b345e90897ddbe6906d8dab79a1ea9e285f4",
+   "lines_changed": 1,
+   "selftest_exit": 1,
+   "selftest_verdict": "FAIL",
+   "selftest_total": "89/92",
+   "selftest_fail_arms": [
+    "(xxiii) R96 battery: only inside 13-field non-rejected rows declare; outside rows listed in file order with repeats; inside short row is malformed",
+    "(xxv) text mode: outside rows get one `info SOURCES_ROWS_OUTSIDE` line right after the malformed line (kills notext)",
+    "hermeticity: --selftest passes under a polluted env and bogus dir flags"
+   ],
+   "counter_exit": 1,
+   "counter_line": "C96_C1: UNMET a=0/1 b=1/1 c=1/1 d=1/1 e=79/79 f=0/1 tool_sha256=ef2bfe6a1dd176c18237e1d89758b345e90897ddbe6906d8dab79a1ea9e285f4"
+  },
+  "m17-ctl-nofailclosed": {
+   "note": "fail-closed citations lacks key",
+   "mutant_sha256": "95fb85fb0ad6ff94e8844eb3e2ca21be7633bc3d1347663b8d7c4051c6c717ce",
+   "lines_changed": 1,
+   "selftest_exit": 1,
+   "selftest_verdict": "FAIL",
+   "selftest_total": "90/92",
+   "selftest_fail_arms": [
+    "(xxiv) fail-closed (missing --reports-dir) citations carries outsideRows=[] on every path (kills nofailclosed)",
+    "hermeticity: --selftest passes under a polluted env and bogus dir flags"
+   ],
+   "counter_exit": 1,
+   "counter_line": "C96_C1: UNMET a=1/1 b=1/1 c=1/1 d=0/1 e=79/79 f=0/1 tool_sha256=95fb85fb0ad6ff94e8844eb3e2ca21be7633bc3d1347663b8d7c4051c6c717ce"
+  },
+  "m18-ctl-notext": {
+   "note": "no text-mode line",
+   "mutant_sha256": "93289687e05a50f03779cb4d2222d4904ed892644e833238c72541a5640f4341",
+   "lines_changed": 1,
+   "selftest_exit": 1,
+   "selftest_verdict": "FAIL",
+   "selftest_total": "90/92",
+   "selftest_fail_arms": [
+    "(xxv) text mode: outside rows get one `info SOURCES_ROWS_OUTSIDE` line right after the malformed line (kills notext)",
+    "hermeticity: --selftest passes under a polluted env and bogus dir flags"
+   ],
+   "counter_exit": 1,
+   "counter_line": "C96_C1: UNMET a=1/1 b=1/1 c=0/1 d=1/1 e=79/79 f=0/1 tool_sha256=93289687e05a50f03779cb4d2222d4904ed892644e833238c72541a5640f4341"
+  }
+ }
+}

@@ -1,0 +1,75 @@
+== core.autocrlf (rc=1 = unset) ==
+lane: rc=1
+fleet: rc=1
+== .gitattributes in lane history ==
+0
+== 21 lane registries CR count ==
+audio-shokunin           CR=0
+chousa-shokunin          CR=0
+game-dev-2d-shokunin     CR=0
+game-dev-3d-shokunin     CR=0
+kagi-shokunin            CR=0
+kaidoku-shokunin         CR=0
+kake-shokunin            CR=0
+kama-shokunin            CR=0
+kasegi-shokunin          CR=0
+kengaku-shokunin         CR=0
+kotoba-shokunin          CR=0
+kotodama-shokunin        CR=0
+kumitate-shokunin        CR=0
+lore-shokunin            CR=0
+mado-shokunin            CR=0
+mori-shokunin            CR=0
+revenger-shokunin        CR=0
+souji-shokunin           CR=0
+tabi-shokunin            CR=0
+tameshi-shokunin         CR=0
+tsukuroi-shokunin        CR=0
+== kumitate SOURCES history CR scan ==
+checked=342/342 crlf_revs=0 (full first-parent+all refs list of corpus/SOURCES.md)
+== Windows host round 70 (report line 3) ==
+Lane: kumitate-shokunin · branch `master` · integration `3b1483801fe67eadc3cf48874a5a8f8150d1b72f`, budget commit `89cbd998ff956965634b14368231c6d117d6437e`, measured at M = `89cbd998ff956965634b14368231c6d117d6437e`, close commit `648c6876c07912246fb211f8150948462bd7c3d6`. Attempt 2 ended in an honest stop with C1 unlanded and the frozen counter's print-stub hole routed (K70AttackPrintStub); th
+
+== r72/r73 close commit messages ==
+census end exit 0
+census end exit 0
+== kagi r30 l0 note (.ufo/l0-questions.md:266) ==
+kagi | round-30 | Fleet-owned defect, report only: scripts/sources-census.sh:581 trim() strips space/tab, not CR, so one CR in a SOURCES.md `## Registry` heading makes every row E12 for any CRLF lane. Kagi repaired its own bytes (LF + .gitattributes) and did not patch the fleet script.
+== SKILL checklist order (lines 723-731) ==
+- [ ] Round-gate hermetic suite — `node scripts/round-gate.mjs --selftest` → exit 0 + `VERDICT: PASS`
+- [ ] Round-close artifact audit — `node scripts/round-gate.mjs` → exit 0 + `ROUND_GATE: CLEAN`
+- [ ] Filed-report tracking — `node scripts/round-gate.mjs --tracked` → exit 0 + `ROUND_GATE: CLEAN`
+- [ ] Proxy recompute (`--strict` since round 42: a missing or renamed `kumitate-gate-pins-v1` block re-raises `PIN_UNPINNED`, which strict mode fails) — `node scripts/proxy-check.mjs --strict` → exit 0 + `PROXY: MATCH`
+- [ ] Proxy-check hermetic suite — `node scripts/proxy-check.mjs --selftest` → exit 0 + `VERDICT: PASS`
+- [ ] Member-claims gate — `node scripts/claims-check.mjs` → exit 0 + `CLAIMS: MATCH`
+- [ ] Kimi-substrate census — `node scripts/kimi-census.mjs` → exit 0 + `KIMI_CENSUS: CLEAN`
+- [ ] Sources-registry gate — `node scripts/sources-check.mjs` → exit 0 + `SOURCES_CHECK: CLEAN`
+- [ ] Sources-check hermetic suite — `node scripts/sources-check.mjs --selftest` → exit 0 + `VERDICT: PASS`
+== census row_pass section rule (lines 609-624) ==
+      if (line ~ /^ {0,3}##[ \t]/) {
+        sub(/^ {0,3}/,"",line)
+        in_registry=(trim(substr(line,3))=="Registry")
+        next
+      }
+      if (line ~ /^ {0,3}#[ \t]/) { in_registry=0; next }
+      if (line !~ /^ {0,3}\|/) next
+      sub(/^ {0,3}/,"",line)
+      $0=line
+      if (!in_registry) {
+        if (mode=="validate" && $0 ~ /^\|[ \t]*S[0-9]{3,}[ \t]*\|/) {
+          id=trim($2)
+          printf "%s\tE12\t%s row outside Registry section\n",lane,id
+        }
+        next
+      }
+== sources-check line splitting ==
+191:  const sourceLines = sourceText.split(/\r?\n/).map(normalizeMarkdownIndent);
+== sources-check heading rule ==
+200:    const match = /^## (.+?)\s*$/.exec(sourceLines[index]);
+202:      activeSection = match[1];
+== pin.round-gate ==
+208: *     pin.cite-check pin.surface-probe pin.round-gate pin.proxy-check
+542:  'pin.round-gate': 'scripts/round-gate.mjs',
+== round-gate citations consumers (lane scripts) ==
+25
+(hits above are cite-check's own prose, not round-gate JSON reads)

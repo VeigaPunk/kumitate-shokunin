@@ -1,0 +1,58 @@
+--- base.mjs	2026-11-06 22:36:43.405918875 -0300
++++ /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-96/K96ExecTool/round-gate.mjs	2026-11-06 22:36:38.011064952 -0300
+@@ -411,12 +411,16 @@
+  * (8th column, 1-based) reads `rejected` declare nothing; a non-URL digest in a
+  * cell declares nothing (it is not a path segment).
+  */
+-function declaredPins(sourcesText, malformed = []) {
++function declaredPins(sourcesText, malformed = [], outside = []) {
+   const pins = new Set();
+   if (typeof sourcesText !== 'string') return pins;
++  let inReg = false;
+   for (const line of sourcesText.split('\n')) {
++    if (/^ {0,3}##[ \t]/.test(line)) { inReg = line.replace(/^ {0,3}##/, '').replace(/^[ \t]+|[ \t]+$/g, '') === 'Registry'; continue; }
++    if (/^ {0,3}#[ \t]/.test(line)) { inReg = false; continue; }
+     if (!SOURCES_ROW_RE.test(line)) continue;
+     const fields = line.split('|');
++    if (!inReg) { outside.push(fields[1].trim()); continue; }
+     if (fields.length !== 13) { malformed.push(fields[1].trim()); continue; }
+     const status = (fields[8] ?? '').trim();
+     if (status.toLowerCase() === 'rejected') continue;
+@@ -437,7 +441,7 @@
+   const items = [];
+   const add = (id, severity, ok, detail) => { items.push({ id, severity, ok, detail }); };
+   const citations = {
+-    checked: 0, external: [], declared: [], malformedRows: [], unresolved: [], notAncestor: [], unverifiable: [],
++    checked: 0, external: [], declared: [], malformedRows: [], outsideRows: [], unresolved: [], notAncestor: [], unverifiable: [],
+     mainProbeable: null, originProbeable: null,
+   };
+   let mainProbeable = null;
+@@ -473,7 +477,7 @@
+        probeable repo, never touches corpus/SOURCES.md. */
+     let sourcesPins = null;
+     const declaredPinsNow = () => {
+-      if (sourcesPins === null) sourcesPins = declaredPins(readRegistry(join(repo, 'corpus', 'SOURCES.md')), citations.malformedRows);
++      if (sourcesPins === null) sourcesPins = declaredPins(readRegistry(join(repo, 'corpus', 'SOURCES.md')), citations.malformedRows, citations.outsideRows);
+       return sourcesPins;
+     };
+     const isCommit = (dir, t) => git(dir, ['cat-file', '-e', `${t}^{commit}`]).status === 0;
+@@ -729,7 +733,7 @@
+     errors: 1,
+     warnings: 0,
+     citations: {
+-      checked: 0, external: [], declared: [], malformedRows: [], unresolved: [], notAncestor: [], unverifiable: [],
++      checked: 0, external: [], declared: [], malformedRows: [], outsideRows: [], unresolved: [], notAncestor: [], unverifiable: [],
+       mainProbeable: null, originProbeable: null,
+     },
+     durationMs: Math.max(0, Date.now() - started),
+@@ -808,6 +812,10 @@
+         lines.push(`ROUND_GATE  info  SOURCES_ROWS_MALFORMED  malformed=${citations.malformedRows.length}`
+           + ` [${citations.malformedRows.join(' ')}]`);
+       }
++      if (citations.outsideRows.length) {
++        lines.push(`ROUND_GATE  info  SOURCES_ROWS_OUTSIDE  outside=${citations.outsideRows.length}`
++          + ` [${citations.outsideRows.join(' ')}]`);
++      }
+       lines.push(`ROUND_GATE: ${verdict} (round=${round} lane=${opts.lane} checks=${items.length}`
+         + ` errors=${errors} warnings=${warnings})`);
+       process.stdout.write(`${lines.join('\n')}\n`);

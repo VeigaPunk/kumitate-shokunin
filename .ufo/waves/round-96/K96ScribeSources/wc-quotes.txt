@@ -1,0 +1,15 @@
+# wc -w per quote (round 96, S275 row)
+$ printf %s "The opening sequence of # characters must be followed by spaces or tabs, or by the end of line." | wc -w
+19
+$ printf %s "The optional closing sequence of #s must be preceded by spaces or tabs and may be followed by spaces or tabs only." | wc -w
+22
+$ printf %s "The opening # character may be preceded by up to three spaces of indentation." | wc -w
+14
+$ printf %s "The content of a code fence is treated as literal text, not parsed as inlines." | wc -w
+15
+$ printf %s "Up to three spaces of indentation are allowed:" | wc -w
+8
+$ printf %s "Four spaces of indentation is too many:" | wc -w
+7
+$ printf %s "A line ending is a line feed (U+000A), a carriage return (U+000D) not followed by a line feed, or a carriage return and a following line feed." | wc -w
+27

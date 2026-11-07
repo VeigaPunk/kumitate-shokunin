@@ -1,0 +1,193 @@
+--- scripts/round-gate.mjs	2026-11-06 22:04:53.578750853 -0300
++++ .ufo/waves/round-96/K96ExecTool/round-gate.mjs	2026-11-06 22:39:15.924390085 -0300
+@@ -116,7 +116,19 @@
+  *   in `--json` `citations.declared`) iff it is a prefix of a 40-hex string that
+  *   is a complete path segment (URL split on `/`, `?`, `#`) of an `http(s)://`
+  *   URL on a `corpus/SOURCES.md` registry row (`^ {0,3}\|\s*S\d{3,}\s*\|`) whose
+- *   status cell (8th column) is not `rejected`. Round 95: a registry row
++ *   status cell (8th column) is not `rejected`. Round 96 (rule R96, contract
++ *   still `kumitate-round-gate-v1`): a registry row declares pins only inside
++ *   the census `## Registry` section (`declaredPins()` walks with the census
++ *   section state: `^ {0,3}##[ \t]` sets in-Registry iff the `[ \t]`-trimmed
++ *   heading text equals exactly `Registry` — no closing-sequence stripping,
++ *   no fence awareness, `\r` kept — otherwise `^ {0,3}#[ \t]` clears it; the
++ *   state starts outside). A row-shaped line outside that section declares
++ *   nothing, gets no field-count check, and its id is appended, in file order
++ *   with repeats kept, to `--json` `citations.outsideRows` (always present,
++ *   on the fail-closed path too; empty when the registry was not read or
++ *   holds no such row); in text mode the rows are disclosed by one
++ *   non-finding line `ROUND_GATE  info  SOURCES_ROWS_OUTSIDE  outside=<n>
++ *   [<ids>]`, printed only when n > 0. Round 95: a registry row
+  *   declares pins only when `line.split('|')` yields exactly 13 fields (the
+  *   CORPUS.md census `NF==13`); a registry row with any other field count
+  *   declares nothing and its id (field 1, trimmed) is appended, in file order,
+@@ -411,12 +423,16 @@
+  * (8th column, 1-based) reads `rejected` declare nothing; a non-URL digest in a
+  * cell declares nothing (it is not a path segment).
+  */
+-function declaredPins(sourcesText, malformed = []) {
++function declaredPins(sourcesText, malformed = [], outside = []) {
+   const pins = new Set();
+   if (typeof sourcesText !== 'string') return pins;
++  let inReg = false;
+   for (const line of sourcesText.split('\n')) {
++    if (/^ {0,3}##[ \t]/.test(line)) { inReg = line.replace(/^ {0,3}##/, '').replace(/^[ \t]+|[ \t]+$/g, '') === 'Registry'; continue; }
++    if (/^ {0,3}#[ \t]/.test(line)) { inReg = false; continue; }
+     if (!SOURCES_ROW_RE.test(line)) continue;
+     const fields = line.split('|');
++    if (!inReg) { outside.push(fields[1].trim()); continue; }
+     if (fields.length !== 13) { malformed.push(fields[1].trim()); continue; }
+     const status = (fields[8] ?? '').trim();
+     if (status.toLowerCase() === 'rejected') continue;
+@@ -437,7 +453,7 @@
+   const items = [];
+   const add = (id, severity, ok, detail) => { items.push({ id, severity, ok, detail }); };
+   const citations = {
+-    checked: 0, external: [], declared: [], malformedRows: [], unresolved: [], notAncestor: [], unverifiable: [],
++    checked: 0, external: [], declared: [], malformedRows: [], outsideRows: [], unresolved: [], notAncestor: [], unverifiable: [],
+     mainProbeable: null, originProbeable: null,
+   };
+   let mainProbeable = null;
+@@ -473,7 +489,7 @@
+        probeable repo, never touches corpus/SOURCES.md. */
+     let sourcesPins = null;
+     const declaredPinsNow = () => {
+-      if (sourcesPins === null) sourcesPins = declaredPins(readRegistry(join(repo, 'corpus', 'SOURCES.md')), citations.malformedRows);
++      if (sourcesPins === null) sourcesPins = declaredPins(readRegistry(join(repo, 'corpus', 'SOURCES.md')), citations.malformedRows, citations.outsideRows);
+       return sourcesPins;
+     };
+     const isCommit = (dir, t) => git(dir, ['cat-file', '-e', `${t}^{commit}`]).status === 0;
+@@ -729,7 +745,7 @@
+     errors: 1,
+     warnings: 0,
+     citations: {
+-      checked: 0, external: [], declared: [], malformedRows: [], unresolved: [], notAncestor: [], unverifiable: [],
++      checked: 0, external: [], declared: [], malformedRows: [], outsideRows: [], unresolved: [], notAncestor: [], unverifiable: [],
+       mainProbeable: null, originProbeable: null,
+     },
+     durationMs: Math.max(0, Date.now() - started),
+@@ -808,6 +824,10 @@
+         lines.push(`ROUND_GATE  info  SOURCES_ROWS_MALFORMED  malformed=${citations.malformedRows.length}`
+           + ` [${citations.malformedRows.join(' ')}]`);
+       }
++      if (citations.outsideRows.length) {
++        lines.push(`ROUND_GATE  info  SOURCES_ROWS_OUTSIDE  outside=${citations.outsideRows.length}`
++          + ` [${citations.outsideRows.join(' ')}]`);
++      }
+       lines.push(`ROUND_GATE: ${verdict} (round=${round} lane=${opts.lane} checks=${items.length}`
+         + ` errors=${errors} warnings=${warnings})`);
+       process.stdout.write(`${lines.join('\n')}\n`);
+@@ -1616,6 +1636,113 @@
+         detail: `exit=${tClause.status} lines=${JSON.stringify(out)}`,
+       };
+     });
++    /* 24t-24v — round-96 registry-section rule (R96) ---------------------- */
++    // Frozen rule: only rows inside the census `## Registry` section declare;
++    // row-shaped lines outside declare nothing, get no field-count check, and
++    // land in citations.outsideRows (file order, repeats kept). Arm (xxiii)
++    // is the clause battery: one fixture per section clause (pre-heading,
++    // `###` inside, 4-space / space-less non-headings, fence heading,
++    // re-opened registry, repeated / low-sorting / URL-less / rejected /
++    // short outside rows, closing sequence, case, CRLF heading, tab and
++    // 3-space headings, `#` exit). Arm (xxiv) pins the fail-closed key;
++    // arm (xxv) pins the text-mode line.
++    const outOf = (j) => (j && j.citations && Array.isArray(j.citations.outsideRows) ? j.citations.outsideRows : null);
++    const R96_HDR = ['| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |',
++      '|---|---|---|---|---|---|---|---|---|---|---|'];
++    const r96Row = (id, pin, status = 'mined') => fxRow(id, `x.ts — https://github.com/o/r/blob/${pin}/x.ts`, status);
++    const r96Short = (id, pin) => `| ${id} | x.ts — https://github.com/o/r/blob/${pin}/x.ts | code | A | scope | anchor | teaches | mined | 2026-11-07 | 30d |`;
++    const fxCustom = (name, lines, cite) => {
++      const f = fxCited(name, { rows: [], cite });
++      writeFileSync(join(f.laneRepo, 'corpus', 'SOURCES.md'), lines.join('\n'));
++      return f;
++    };
++    const pinS901 = pin40('a0000001'), pinS008 = pin40('a0000002'), pinS002 = pin40('a0000003');
++    const pinS020a = pin40('a0000020'), pinS020b = pin40('a0000021'), pinS021 = pin40('a0000022'),
++      pinS022 = pin40('a0000023'), pinS023 = pin40('a0000024'), pinS024 = pin40('a0000025'),
++      pinS025 = pin40('a0000026'), pinS026 = pin40('a0000027'), pinS027 = pin40('a0000028'),
++      pinS028 = pin40('a0000029');
++    const r96Lines = [
++      r96Row('S901', pinS901), // line 1, before any heading: outside (kills defaultin)
++      '# SOURCES — fixture r96 battery', '',
++      '## Registry', '', ...R96_HDR,
++      r96Row('S001', PIN_A), // inside: declares
++      '### Sub-band (a level-3 heading stays inside)', '',
++      r96Row('S004', PIN_B), // inside: declares (kills h3exits)
++      '    ## Leads (4-space indent: not a heading)',
++      r96Row('S005', PIN_C), // inside: declares (kills anyindent)
++      '##Leads (no space: not a heading)',
++      r96Row('S006', PIN_D), // inside: declares (kills nospace)
++      '```text', '## Leads (inside a fence: a heading to the census)', '```',
++      r96Row('S007', PIN_E), // outside (kills fence, firstonly)
++      '## Registry', '',
++      '   ' + r96Row('S008', pinS008), // re-opened, 3-space row: declares
++      r96Short('S002', pinS002), // inside, 12 fields: malformed
++      '## Leads (unopened)', '',
++      r96Row('S020', pinS020a), // outside
++      '| S011 | no url here | code | A | scope | anchor | teaches | mined | 2026-11-07 | 30d |', // outside, URL-less (kills urlonly, countfirst)
++      r96Row('S020', pinS020b), // outside, repeated id (kills dedupe)
++      r96Row('S021', pinS021, 'rejected'), // outside, rejected
++      r96Short('S022', pinS022), // outside, 12 fields (kills countfirst)
++      '## Registry ##', '',
++      r96Row('S023', pinS023), // outside (kills closeseq)
++      '## registry', '',
++      r96Row('S024', pinS024), // outside (kills casefold)
++      '## Registry\r', '',
++      r96Row('S025', pinS025), // outside, census keeps \r (kills crlftrim)
++      '##\tRegistry', '',
++      r96Row('S026', pinS026), // inside: declares
++      '   ## Registry  ', '',
++      r96Row('S027', pinS027), // inside: declares
++      '# Appendix', '',
++      r96Row('S028', pinS028), // outside (kills h1keep)
++      '',
++    ];
++    const r96Pins = [pinS901, PIN_A, PIN_B, PIN_C, PIN_D, PIN_E, pinS008, pinS002, pinS020a, pinS020b,
++      pinS021, pinS022, pinS023, pinS024, pinS025, pinS026, pinS027, pinS028];
++    const dBatt = citedJson(fxCustom('registry-section-battery', r96Lines, citeAll(...r96Pins.map((p) => p.slice(0, 8)))));
++    check('(xxiii) R96 battery: only inside 13-field non-rejected rows declare; outside rows listed in file order with repeats; inside short row is malformed', () => {
++      const r = resolvedOnly(dBatt, true);
++      const wantDecl = [PIN_A, PIN_B, PIN_C, PIN_D, pinS008, pinS026, pinS027].map((p) => p.slice(0, 8)).sort();
++      return {
++        ok: r.ok && JSON.stringify([...r.decl].sort()) === JSON.stringify(wantDecl)
++          && JSON.stringify(outOf(dBatt.j)) === '["S901","S007","S020","S011","S020","S021","S022","S023","S024","S025","S028"]'
++          && JSON.stringify(malOf(dBatt.j)) === '["S002"]',
++        detail: `exit=${dBatt.g.status} declared=${JSON.stringify(r.decl)} outside=${JSON.stringify(outOf(dBatt.j))} malformed=${JSON.stringify(malOf(dBatt.j))}`,
++      };
++    });
++    check('(xxiv) fail-closed (missing --reports-dir) citations carries outsideRows=[] on every path (kills nofailclosed)', () => {
++      const g = runGate(['--json', '--round', '5', '--repo', clean.laneRepo, '--reports-dir', join(clean.base, 'nope')]);
++      let j = null; try { j = JSON.parse(g.stdout); } catch { j = null; }
++      const c = j ? (j.citations ?? {}) : {};
++      return {
++        ok: g.status === 2 && j !== null && j.verdict === 'FAIL-CLOSED'
++          && Array.isArray(c.outsideRows) && c.outsideRows.length === 0
++          && Array.isArray(c.malformedRows) && c.malformedRows.length === 0,
++        detail: `exit=${g.status} citations=${j ? JSON.stringify(c) : 'unparseable'}`,
++      };
++    });
++    const pinTxtIn = pin40('a0000101'), pinTxtOut = pin40('a0000102'), pinTxtMal = pin40('a0000103');
++    const tOut = runGate(auditArgs(fxCustom('registry-text-info', [
++      '# SOURCES — fixture r96 text', '',
++      '## Registry', '', ...R96_HDR,
++      r96Row('S001', pinTxtIn),
++      r96Short('S040', pinTxtMal),
++      '## Leads (unopened)', '',
++      r96Row('S050', pinTxtOut),
++      '',
++    ], citeAll(pinTxtIn.slice(0, 8)))));
++    check('(xxv) text mode: outside rows get one `info SOURCES_ROWS_OUTSIDE` line right after the malformed line (kills notext)', () => {
++      const out = String(tOut.stdout ?? '').trim().split('\n');
++      const want = ['ROUND_GATE  info  COMMIT_CITED_DECLARED  declared=1 [' + pinTxtIn.slice(0, 8) + ']',
++        'ROUND_GATE  info  SOURCES_ROWS_MALFORMED  malformed=1 [S040]',
++        'ROUND_GATE  info  SOURCES_ROWS_OUTSIDE  outside=1 [S050]'];
++      return {
++        ok: tOut.status === 0 && parseFindings(tOut.stdout).length === 0 && out.length === 4
++          && out[0] === want[0] && out[1] === want[1] && out[2] === want[2] && /^ROUND_GATE: CLEAN /u.test(out[3]),
++        detail: `exit=${tOut.status} lines=${JSON.stringify(out)}`,
++      };
++    });
++
+ 
+     /* 25/26 ─ close clean + TREE_DIRTY ------------------------------------- */
+     const closeClean = fxCloseFixture('close-clean');

@@ -1,0 +1,28 @@
+primitive FULL_BODY: 1 match(es)
+primitive TEXT: 1 match(es)
+primitive INIT: candidate form x2 (fail-closed drop = last occurrence)
+m01-ctl-h3exits                0637261f7685bcf8 lines_changed=1  any ##+ heading switches the section
+m02-ctl-firstonly              888e7ffef7324ca5 lines_changed=1  later ## headings ignored
+m03-ctl-closeseq               1c1aa32d071ca205 lines_changed=1  CommonMark closing sequence stripped
+m04-ctl-crlftrim               c054db4582b7ac3b lines_changed=1  JS .trim() strips \r
+m05-ctl-casefold               3b1aa19a1bc11766 lines_changed=1  case-insensitive
+m06-ctl-anyindent              f12af50ac99e501d lines_changed=2  any indentation
+m07-ctl-nospace                9821b9a4b0ae8ad8 lines_changed=1  no space/tab needed after ##
+m08-ctl-fence                  0e084ba212a347ed lines_changed=1740  fence-aware heading scan
+m09-ctl-defaultin              2d567674b1752f7b lines_changed=1  state starts inside
+m10-ctl-h1keep                 e94448fda88a8ffc lines_changed=1  # heading does not clear
+m11-ctl-nodisclose             2e2ab517c13fa2d5 lines_changed=1  outsideRows never filled
+m12-ctl-dedupe                 a980cbfc7a7a760a lines_changed=1  repeats collapsed
+m13-ctl-sorted                 7c5fe8a624e97468 lines_changed=1725  outsideRows sorted
+m14-ctl-urlonly                9ccd5cfc8432f951 lines_changed=1  URL-less rows unlisted
+m15-ctl-countfirst             6a8bc9bb96165017 lines_changed=2  field count before section
+m16-ctl-dropall                ef2bfe6a1dd176c1 lines_changed=1725  outside row silences registry
+m17-ctl-nofailclosed           95fb85fb0ad6ff94 lines_changed=1  fail-closed citations lacks key
+m18-ctl-notext                 93289687e05a50f0 lines_changed=1333  no text-mode line
+b19-indent4                    5c23374013f4aec1 lines_changed=2  {0,3} -> {0,4}
+b20-spaceclass                 de06a8c11ceb8d0a lines_changed=1  [ \t] -> \s
+b21-not-eq                     3c0affe1aa3308c8 lines_changed=1  === -> !==
+b22-start-true                 2d567674b1752f7b lines_changed=1  initial state flipped (dup of m09)
+b23-unshift                    21a69b5fa42160d4 lines_changed=1  push -> unshift
+b24-id-field2                  6ee81d0cd8181277 lines_changed=1  id fields[1] -> fields[2]
+b25-outside-after-rejected     9d5895a0eb302321 lines_changed=4  outside check after rejected

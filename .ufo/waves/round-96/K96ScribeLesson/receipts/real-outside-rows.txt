@@ -1,0 +1,4 @@
+$ awk -F"|" (census row_pass section state) corpus/SOURCES.md
+  (state: ^ {0,3}##[ \t] -> text after ## , 0-3 spaces removed, spaces/tabs trimmed, == Registry; ^ {0,3}#[ \t] -> false; start false)
+rows=212 malformed=0 outside=0 ids:
+exit=0

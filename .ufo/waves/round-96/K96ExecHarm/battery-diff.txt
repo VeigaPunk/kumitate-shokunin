@@ -1,0 +1,14 @@
+proxy-check: cand adds PIN_DRIFT (declared aba737dc computed 8793e0d9) vs base — EXPECTED-PIN
+proxy-check (re-pinned cand): identical to base (A_WAVE/C2/C2_total DRIFT, exit=1) — SAME after pin
+readme-map: SAME (CLEAN exit=0)
+sources-check: SAME (CLEAN exit=0)
+counter-pins: SAME (CLEAN exit=0)
+spotcheck-adopt --check: SAME verdict (CLEAN exit=0; only header line differs)
+round-gate --tracked: SAME (CLEAN exit=0)
+round-gate --round 95 (json): same verdict (CLEAN exit=0); sole delta = citations.outsideRows: [] added — EXPECTED (rule R96)
+round-gate --round 95 (text): SAME (CLEAN exit=0)
+round-gate --selftest: SAME (89/89 PASS exit=0)
+sources-census validate: SAME (ok exit=0; 8 W04 dup-url lines identical)
+real-reg 93/94/95: declared unchanged vs BASE, malformedRows [], outsideRows [] (BASE: key absent=None) — EXPECTED
+No regression found. Candidate used: regenerated ctl-positive (READY absent >10min; generator output), sha256 8793e0d905ed690c329c884f6f6071409785fa1bb1594d7adaf0ae35071fbe6c.
+Old-sha (aba737dc) live carriers: SCORECARD.md:321 pin.round-gate only. All other hits = historical receipts/controls (r95 close, r96 controls) — not live pins.

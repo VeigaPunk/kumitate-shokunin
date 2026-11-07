@@ -1,0 +1,60 @@
+K96Reviewer — hand-computation of fixture A (probe96-c1.mjs FA) against R96 + census row_pass
+(scripts/sources-census.sh:609-624, trim()=[ \t]-only at :581).
+Frozen lists: EXP_DECL_A=[okA h3D ind4E nospF reopenH tabP ind3Q] EXP_OUT_A=[S901 S007 S020 S011 S020 S021 S022 S023 S024 S025 S028]
+EXP_MALF_A=[S002].
+
+line-by-line (state starts OUTSIDE):
+ 1  | S901 | ...                          row, outside            -> outside S901
+ 2  # SOURCES — fixture r96 A              ^#{0,3}#[ \t] -> state 0
+ 3  (blank)                               -
+ 4  prose mention with URL                 not row-shaped          -> nothing (no E12: census requires ^|)
+ 5  ## Registry                           -> state 1
+ 6-7 header + separator                   not row-shaped          -> nothing
+ 8  | S001 | ...                          inside 13f mined        -> declares okA
+ 9  | S002 | ... (11 cells, 12 fields)    inside 13f FAIL         -> malformed S002 (E01/S002 census agrees)
+10  | S003 | ... rejected                 inside rejected         -> nothing
+11  ### Sub-band ...                      matches neither ^##[ \t] (3rd char '#') nor ^#[ \t] (2nd char '#')
+                                          -> state unchanged 1
+12  | S004 | ...                          inside                  -> declares h3D
+13  "    ## Leads ..." (4 spaces)         ^ {0,3}## fails          -> not a heading, state stays 1
+14  | S005 | ...                          inside                  -> declares ind4E
+15  ##Leads (no space)                   ^##[ \t] fails, ^#[ \t] fails -> not a heading, state 1
+16  | S006 | ...                          inside                  -> declares nospF
+17  ```text                              not a heading           -> state 1
+18  ## Leads (inside a fence)            ^##[ \t] -> state 0 (census has no fence awareness)
+19  ```                                  not a heading           -> state 0
+20  | S007 | ...                          outside                 -> outside S007
+21  ## Registry                           -> state 1
+22  "   " + | S008 | ... (3-space row)    row regex allows 0-3 sp  -> inside -> declares reopenH
+23  ## Leads (unopened)                  -> state 0
+24  | S020 | ...                          outside                 -> outside S020
+25  | S011 | ... no URL                   outside                 -> outside S011
+26  | S020 | ...                          outside (repeat kept)   -> outside S020
+27  | S021 | ... rejected                 outside: no status test -> outside S021
+28  | S022 | ... 12 fields                outside: no field-count -> outside S022 (NOT malformed)
+29  ## Registry ##                       text after ## = "Registry ##" != Registry -> state 0
+30  | S023 | ...                          outside                 -> outside S023
+31  ## registry                           case-sensitive -> state 0
+32  | S024 | ...                          outside                 -> outside S024
+33  "## Registry\r"                       [ \t]-trim keeps \r -> "Registry\r" != Registry -> state 0
+34  | S025 | ...                          outside                 -> outside S025
+35  "##\tRegistry"                        substr after ## = "\tRegistry" -> [ \t]-trim -> Registry -> state 1
+36  | S026 | ...                          inside                  -> declares tabP
+37  "   ## Registry  "                    3 spaces + ## + text " Registry  " -> trim -> Registry -> state 1
+38  | S027 | ...                          inside                  -> declares ind3Q
+39  # Appendix                            ^#[ \t] -> state 0
+40  | S028 | ...                          outside                 -> outside S028
+
+=> declared (inside, 13 fields, non-rejected): okA h3D ind4E nospF reopenH tabP ind3Q  == EXP_DECL_A (7)
+=> outsideRows in file order: S901 S007 S020 S011 S020 S021 S022 S023 S024 S025 S028     == EXP_OUT_A (11) == census E12
+=> malformedRows: S002 only (S022 outside gets no field-count check)                     == EXP_MALF_A
+BASE (no section state): declares the same 7 + pre S901, fenceG S007, leadI/leadJ S020, closeM S023,
+lowerN S024, crO S025, h1R S028 = 15 tokens; malformedRows [S002,S022].
+Observed in controls/ctl-nothing.txt and controls/ctl-positive.txt (BASE line: declared 15, malformedRows ["S002","S022"]).
+
+FIX-B (whole-file CRLF): line 3 = "## Registry\r" -> state 0 for the whole file -> declared [] ; the three rows are
+outside -> outsideRows [S101 S102 S103] (S103 rejected-but-outside still listed; no status test outside);
+malformedRows [] (no inside row). == EXP_OUT_B. Census B E12=[S101 S102 S103] E01=[].
+
+Frozen counter self-consistency: fixture B on disk is CRLF (>=8 '\r\n'), census is run live and must reproduce the
+frozen lists or the counter exits 2 SETUP (probe96-c1.mjs:155-160).

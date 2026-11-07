@@ -1,0 +1,79 @@
+--- base.mjs	2026-11-06 22:36:43.405918875 -0300
++++ snap-2238.mjs	2026-11-06 22:38:23.566228322 -0300
+@@ -116,7 +116,19 @@
+  *   in `--json` `citations.declared`) iff it is a prefix of a 40-hex string that
+  *   is a complete path segment (URL split on `/`, `?`, `#`) of an `http(s)://`
+  *   URL on a `corpus/SOURCES.md` registry row (`^ {0,3}\|\s*S\d{3,}\s*\|`) whose
+- *   status cell (8th column) is not `rejected`. Round 95: a registry row
++ *   status cell (8th column) is not `rejected`. Round 96 (rule R96, contract
++ *   still `kumitate-round-gate-v1`): a registry row declares pins only inside
++ *   the census `## Registry` section (`declaredPins()` walks with the census
++ *   section state: `^ {0,3}##[ \t]` sets in-Registry iff the `[ \t]`-trimmed
++ *   heading text equals exactly `Registry` — no closing-sequence stripping,
++ *   no fence awareness, `\r` kept — otherwise `^ {0,3}#[ \t]` clears it; the
++ *   state starts outside). A row-shaped line outside that section declares
++ *   nothing, gets no field-count check, and its id is appended, in file order
++ *   with repeats kept, to `--json` `citations.outsideRows` (always present,
++ *   on the fail-closed path too; empty when the registry was not read or
++ *   holds no such row); in text mode the rows are disclosed by one
++ *   non-finding line `ROUND_GATE  info  SOURCES_ROWS_OUTSIDE  outside=<n>
++ *   [<ids>]`, printed only when n > 0. Round 95: a registry row
+  *   declares pins only when `line.split('|')` yields exactly 13 fields (the
+  *   CORPUS.md census `NF==13`); a registry row with any other field count
+  *   declares nothing and its id (field 1, trimmed) is appended, in file order,
+@@ -411,12 +423,16 @@
+  * (8th column, 1-based) reads `rejected` declare nothing; a non-URL digest in a
+  * cell declares nothing (it is not a path segment).
+  */
+-function declaredPins(sourcesText, malformed = []) {
++function declaredPins(sourcesText, malformed = [], outside = []) {
+   const pins = new Set();
+   if (typeof sourcesText !== 'string') return pins;
++  let inReg = false;
+   for (const line of sourcesText.split('\n')) {
++    if (/^ {0,3}##[ \t]/.test(line)) { inReg = line.replace(/^ {0,3}##/, '').replace(/^[ \t]+|[ \t]+$/g, '') === 'Registry'; continue; }
++    if (/^ {0,3}#[ \t]/.test(line)) { inReg = false; continue; }
+     if (!SOURCES_ROW_RE.test(line)) continue;
+     const fields = line.split('|');
++    if (!inReg) { outside.push(fields[1].trim()); continue; }
+     if (fields.length !== 13) { malformed.push(fields[1].trim()); continue; }
+     const status = (fields[8] ?? '').trim();
+     if (status.toLowerCase() === 'rejected') continue;
+@@ -437,7 +453,7 @@
+   const items = [];
+   const add = (id, severity, ok, detail) => { items.push({ id, severity, ok, detail }); };
+   const citations = {
+-    checked: 0, external: [], declared: [], malformedRows: [], unresolved: [], notAncestor: [], unverifiable: [],
++    checked: 0, external: [], declared: [], malformedRows: [], outsideRows: [], unresolved: [], notAncestor: [], unverifiable: [],
+     mainProbeable: null, originProbeable: null,
+   };
+   let mainProbeable = null;
+@@ -473,7 +489,7 @@
+        probeable repo, never touches corpus/SOURCES.md. */
+     let sourcesPins = null;
+     const declaredPinsNow = () => {
+-      if (sourcesPins === null) sourcesPins = declaredPins(readRegistry(join(repo, 'corpus', 'SOURCES.md')), citations.malformedRows);
++      if (sourcesPins === null) sourcesPins = declaredPins(readRegistry(join(repo, 'corpus', 'SOURCES.md')), citations.malformedRows, citations.outsideRows);
+       return sourcesPins;
+     };
+     const isCommit = (dir, t) => git(dir, ['cat-file', '-e', `${t}^{commit}`]).status === 0;
+@@ -729,7 +745,7 @@
+     errors: 1,
+     warnings: 0,
+     citations: {
+-      checked: 0, external: [], declared: [], malformedRows: [], unresolved: [], notAncestor: [], unverifiable: [],
++      checked: 0, external: [], declared: [], malformedRows: [], outsideRows: [], unresolved: [], notAncestor: [], unverifiable: [],
+       mainProbeable: null, originProbeable: null,
+     },
+     durationMs: Math.max(0, Date.now() - started),
+@@ -808,6 +824,10 @@
+         lines.push(`ROUND_GATE  info  SOURCES_ROWS_MALFORMED  malformed=${citations.malformedRows.length}`
+           + ` [${citations.malformedRows.join(' ')}]`);
+       }
++      if (citations.outsideRows.length) {
++        lines.push(`ROUND_GATE  info  SOURCES_ROWS_OUTSIDE  outside=${citations.outsideRows.length}`
++          + ` [${citations.outsideRows.join(' ')}]`);
++      }
+       lines.push(`ROUND_GATE: ${verdict} (round=${round} lane=${opts.lane} checks=${items.length}`
+         + ` errors=${errors} warnings=${warnings})`);
+       process.stdout.write(`${lines.join('\n')}\n`);

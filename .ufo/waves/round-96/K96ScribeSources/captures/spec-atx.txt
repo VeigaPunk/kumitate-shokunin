@@ -1,0 +1,94 @@
+id="atx-headings" class="definition">
+4.2ATX headings
+An ATX heading
+consists of a string of characters, parsed as inline content, between an
+opening sequence of 1–6 unescaped # characters and an optional
+closing sequence of any number of unescaped # characters.
+The opening sequence of # characters must be followed by spaces or tabs, or
+by the end of line. The optional closing sequence of #s must be preceded by
+spaces or tabs and may be followed by spaces or tabs only.  The opening
+# character may be preceded by up to three spaces of indentation.  The raw
+contents of the heading are stripped of leading and trailing space or tabs
+before being parsed as inline content.  The heading level is equal to the number
+of # characters in the opening sequence.
+Simple headings:
+Example 62Try It
+>>
+>>
+More than six # characters is not a heading:
+Example 63Try It
+>>
+>>
+At least one space or tab is required between the # characters and the
+heading’s contents, unless the heading is empty.  Note that many
+implementations currently do not require the space.  However, the
+space was required by the
+original ATX implementation,
+and it helps prevent things like the following from being parsed as
+headings:
+Example 64Try It
+>>
+>>
+This is not a heading, because the first # is escaped:
+Example 65Try It
+>>
+>>
+Contents are parsed as inlines:
+Example 66Try It
+>>
+>>
+Leading and trailing spaces or tabs are ignored in parsing inline content:
+Example 67Try It
+>>
+>>
+Up to three spaces of indentation are allowed:
+Example 68Try It
+>>
+>>
+Four spaces of indentation is too many:
+Example 69Try It
+>>
+>>
+Example 70Try It
+>>
+>>
+A closing sequence of # characters is optional:
+Example 71Try It
+>>
+>>
+It need not be the same length as the opening sequence:
+Example 72Try It
+>>
+>>
+Spaces or tabs are allowed after the closing sequence:
+Example 73Try It
+>>
+>>
+A sequence of # characters with anything but spaces or tabs following it
+is not a closing sequence, but counts as part of the contents of the
+heading:
+Example 74Try It
+>>
+>>
+The closing sequence must be preceded by a space or tab:
+Example 75Try It
+>>
+>>
+Backslash-escaped # characters do not count as part
+of the closing sequence:
+Example 76Try It
+>>
+>>
+ATX headings need not be separated from surrounding content by blank
+lines, and they can interrupt paragraphs:
+Example 77Try It
+>>
+>>
+Example 78Try It
+>>
+>>
+ATX headings can be empty:
+Example 79Try It
+>>
+>>
+<h2

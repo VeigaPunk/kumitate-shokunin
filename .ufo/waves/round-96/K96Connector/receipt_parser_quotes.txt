@@ -1,0 +1,62 @@
+=== Parser (i): census gawk row_pass (/home/vgpnk/Projects/shokunin/scripts/sources-census.sh:608-624) ===
+    {
+      line=$0
+      if (line ~ /^ {0,3}##[ \t]/) {
+        sub(/^ {0,3}/,"",line)
+        in_registry=(trim(substr(line,3))=="Registry")
+        next
+      }
+      if (line ~ /^ {0,3}#[ \t]/) { in_registry=0; next }
+      if (line !~ /^ {0,3}\|/) next
+      sub(/^ {0,3}/,"",line)
+      $0=line
+      if (!in_registry) {
+        if (mode=="validate" && $0 ~ /^\|[ \t]*S[0-9]{3,}[ \t]*\|/) {
+          id=trim($2)
+          printf "%s\tE12\t%s row outside Registry section\n",lane,id
+        }
+        next
+      }
+
+=== Parser (ii): census bash usedby_findings (/home/vgpnk/Projects/shokunin/scripts/sources-census.sh:540-552) ===
+  local heading_re='^ {0,3}##[[:space:]]' top_heading_re='^ {0,3}#[[:space:]]'
+  local table_re='^ {0,3}\|'
+  local -a cells=() paths=()
+  while IFS= read -r line; do
+    if [[ "$line" =~ $heading_re ]]; then
+      line="${line#"${line%%[! ]*}"}"
+      section=$(trim_cell "${line:2}")
+      [ "$section" = Registry ] && in_registry=1 || in_registry=0
+      continue
+    fi
+    if [[ "$line" =~ $top_heading_re ]]; then in_registry=0; continue; fi
+    [ "$in_registry" = 1 ] || continue
+    [[ "$line" =~ $table_re ]] || continue
+
+=== Parser (iii): lane sources-check.mjs (/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/sources-check.mjs:191,197-208,228-236) ===
+  const sourceLines = sourceText.split(/\r?\n/).map(normalizeMarkdownIndent);
+...
+  const headings = Object.create(null);
+  const sectionAtLine = [];
+  let activeSection = null;
+  for (let index = 0; index < sourceLines.length; index += 1) {
+    const match = /^## (.+?)\s*$/.exec(sourceLines[index]);
+    if (match) {
+      activeSection = match[1];
+      headings[activeSection] = true;
+    } else if (/^#(?:\s|$)/.test(sourceLines[index])) {
+      activeSection = null;
+    }
+    sectionAtLine[index] = activeSection;
+  }
+...
+    const line = sourceLines[index];
+    if (!line.startsWith('|')) continue;
+    const fields = line.split('|');
+    const id = trim(fields[1] ?? '');
+    if (sectionAtLine[index] !== 'Registry') {
+      if (/^\|[ \t]*S\d{3,}[ \t]*\|/.test(line)) {
+        add('error', 'ROW_OUTSIDE_REGISTRY', 'corpus/SOURCES.md', index + 1, `id=${id} row outside Registry section`);
+      }
+      continue;
+    }

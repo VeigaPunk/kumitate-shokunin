@@ -1,0 +1,20 @@
+# census row_pass section state vs lane sources-check section state on two exotic headings
+# fixture base: corpus/SOURCES.md at lane HEAD f5873bff (212 rows), copied to scratch; one transform each:
+$ cp corpus/SOURCES.md <scratch>/fx-crlf/corpus/SOURCES.md; awk "{printf \"%s\\r\\n\",\$0}" corpus/SOURCES.md > <scratch>/fx-crlf/corpus/SOURCES.md
+$ cp corpus/SOURCES.md <scratch>/fx-tab/corpus/SOURCES.md;  sed -i "s/^## Registry\$/##\\tRegistry/" <scratch>/fx-tab/corpus/SOURCES.md
+$ mkdir -p <scratch>/fx-{crlf,tab}/corpus/knowledge
+
+## whole-CRLF registry
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file <scratch>/fx-crlf/corpus/SOURCES.md kumitate | awk -F'\t' '{print $2}' | sort | uniq -c
+    259 E11
+    212 E12
+$ node scripts/sources-check.mjs --self <scratch>/fx-crlf --json  | grep -o "\"kind\":\"[A-Z_]*\"" | sort | uniq -c
+    259 "kind":"USED_BY_MISSING"
+
+## ##<TAB>Registry heading
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file <scratch>/fx-tab/corpus/SOURCES.md kumitate | awk -F'\t' '{print $2}' | sort | uniq -c
+    259 E11
+      8 W04
+$ node scripts/sources-check.mjs --self <scratch>/fx-tab --json | grep -o ROW_OUTSIDE_REGISTRY | wc -l
+212
+exit=0

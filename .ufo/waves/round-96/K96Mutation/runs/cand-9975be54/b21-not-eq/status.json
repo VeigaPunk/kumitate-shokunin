@@ -1,0 +1,30 @@
+{
+ "name": "b21-not-eq",
+ "selftest_exit": 1,
+ "selftest_verdict": "FAIL",
+ "selftest_total": "75/92",
+ "selftest_fail_arms": [
+  "(i) an 8-hex prefix of a 40-hex URL segment on a mined registry row \u2192 declared, no finding",
+  "(ii) a cited full 40-hex pin that is a complete URL segment \u2192 declared, no finding",
+  "(iii) pin followed by `#fragment` (`/commit/<pin>#diff`) \u2192 declared, no finding",
+  "text mode: COMMIT_CITED_UNRESOLVED detail carries `declared=<n>` beside the unresolved list",
+  "text mode: a green round with a declared pin prints one `info COMMIT_CITED_DECLARED` line, no finding",
+  "(xv) unescaped `|` shifting a truly `rejected` status \u2192 unresolved, id in malformedRows",
+  "(xvi) escaped `\\|` row (naive split yields 14 fields) \u2192 unresolved, id in malformedRows",
+  "(xvii) 12-field short row \u2192 unresolved, id in malformedRows (kills lenient12/gt13-only)",
+  "(xviii) 14-field long row \u2192 unresolved, id in malformedRows",
+  "(xix) a well-formed row next to a malformed one still declares, only the malformed token is unresolved (kills dropall)",
+  "(xx) malformedRows exact order/content in file order (kills nodisclose)",
+  "(xxi) URL-less, 3-space-indented, repeated and low-sorting malformed rows are each listed in file order; a CRLF 13-field row and an off-enum status still declare",
+  "(xxii) a 12-field row whose index-8 cell reads `rejected` is still listed in malformedRows (shape before status)",
+  "text mode: malformed rows get one `info SOURCES_ROWS_MALFORMED` line; the r94 declared line keeps its format",
+  "(xxiii) R96 battery: only inside 13-field non-rejected rows declare; outside rows listed in file order with repeats; inside short row is malformed",
+  "(xxv) text mode: outside rows get one `info SOURCES_ROWS_OUTSIDE` line right after the malformed line (kills notext)",
+  "hermeticity: --selftest passes under a polluted env and bogus dir flags"
+ ],
+ "selftest_secs": 100.3,
+ "counter_exit": 1,
+ "counter_line": "C96_C1: UNMET a=0/1 b=0/1 c=0/1 d=1/1 e=71/79 f=0/1 tool_sha256=3c0affe1aa3308c899c4ac956980fc2c589275b5b0da182f872b0e3a9a355134",
+ "counter_secs": 169.6,
+ "tool_sha256": "3c0affe1aa3308c899c4ac956980fc2c589275b5b0da182f872b0e3a9a355134"
+}
