@@ -116,12 +116,19 @@
  *   in `--json` `citations.declared`) iff it is a prefix of a 40-hex string that
  *   is a complete path segment (URL split on `/`, `?`, `#`) of an `http(s)://`
  *   URL on a `corpus/SOURCES.md` registry row (`^ {0,3}\|\s*S\d{3,}\s*\|`) whose
- *   status cell (8th column) is not `rejected`. No SOURCES.md -> no declared
+ *   status cell (8th column) is not `rejected`. Round 95: a registry row
+ *   declares pins only when `line.split('|')` yields exactly 13 fields (the
+ *   CORPUS.md census `NF==13`); a registry row with any other field count
+ *   declares nothing and its id (field 1, trimmed) is appended, in file order,
+ *   to `--json` `citations.malformedRows` (always present; empty when the
+ *   registry was not read or holds no malformed row). No SOURCES.md -> no declared
  *   pins. The registry is read lazily, once per run, and only when some token
  *   reached the declared step; in text mode the COMMIT_CITED_UNRESOLVED detail
  *   may carry `declared=<n>`, and any declared token is disclosed by one
  *   non-finding line `ROUND_GATE  info  COMMIT_CITED_DECLARED  declared=<n>
- *   [<tokens>]` printed before the verdict line. The read is bounded: opened
+ *   [<tokens>]` printed before the verdict line; malformed registry rows met
+ *   on that read are disclosed by one non-finding line
+ *   `ROUND_GATE  info  SOURCES_ROWS_MALFORMED  malformed=<n> [<ids>]`. The read is bounded: opened
  *   O_RDONLY|O_NOFOLLOW|O_NONBLOCK and judged by fstat on the descriptor; only
  *   a regular file of at most 8 MiB is read — a FIFO, device, directory,
  *   symlink, oversized or unreadable SOURCES.md declares nothing.
@@ -397,16 +404,21 @@ const SOURCES_PIN_RE = /^[0-9a-f]{40}$/;
 const SOURCES_SEGMENT_RE = /[/?#]/;
 
 /**
- * The 40-hex pins a SOURCES.md registry declares, from its text. Rows whose
- * status cell (8th column, 1-based) reads `rejected` declare nothing; a
- * non-URL digest in a cell declares nothing (it is not a path segment).
+ * The 40-hex pins a SOURCES.md registry declares, from its text. A registry row
+ * declares pins only when `line.split('|')` yields exactly 13 fields (the census
+ * `NF==13` shape); any other field count declares nothing and its id (field 1,
+ * trimmed) is appended, in file order, to `malformed`. Rows whose status cell
+ * (8th column, 1-based) reads `rejected` declare nothing; a non-URL digest in a
+ * cell declares nothing (it is not a path segment).
  */
-function declaredPins(sourcesText) {
+function declaredPins(sourcesText, malformed = []) {
   const pins = new Set();
   if (typeof sourcesText !== 'string') return pins;
   for (const line of sourcesText.split('\n')) {
     if (!SOURCES_ROW_RE.test(line)) continue;
-    const status = (line.split('|')[8] ?? '').trim();
+    const fields = line.split('|');
+    if (fields.length !== 13) { malformed.push(fields[1].trim()); continue; }
+    const status = (fields[8] ?? '').trim();
     if (status.toLowerCase() === 'rejected') continue;
     for (const m of line.matchAll(SOURCES_URL_RE)) {
       for (const seg of m[0].split(SOURCES_SEGMENT_RE)) if (SOURCES_PIN_RE.test(seg)) pins.add(seg);
@@ -425,7 +437,7 @@ function runChecks({ repo, reportsDir, round, lane, close, mainRepo, origin }) {
   const items = [];
   const add = (id, severity, ok, detail) => { items.push({ id, severity, ok, detail }); };
   const citations = {
-    checked: 0, external: [], declared: [], unresolved: [], notAncestor: [], unverifiable: [],
+    checked: 0, external: [], declared: [], malformedRows: [], unresolved: [], notAncestor: [], unverifiable: [],
     mainProbeable: null, originProbeable: null,
   };
   let mainProbeable = null;
@@ -461,7 +473,7 @@ function runChecks({ repo, reportsDir, round, lane, close, mainRepo, origin }) {
        probeable repo, never touches corpus/SOURCES.md. */
     let sourcesPins = null;
     const declaredPinsNow = () => {
-      if (sourcesPins === null) sourcesPins = declaredPins(readRegistry(join(repo, 'corpus', 'SOURCES.md')));
+      if (sourcesPins === null) sourcesPins = declaredPins(readRegistry(join(repo, 'corpus', 'SOURCES.md')), citations.malformedRows);
       return sourcesPins;
     };
     const isCommit = (dir, t) => git(dir, ['cat-file', '-e', `${t}^{commit}`]).status === 0;
@@ -717,7 +729,7 @@ function failClosed(opts, mode, token, detail, checks, started) {
     errors: 1,
     warnings: 0,
     citations: {
-      checked: 0, external: [], declared: [], unresolved: [], notAncestor: [], unverifiable: [],
+      checked: 0, external: [], declared: [], malformedRows: [], unresolved: [], notAncestor: [], unverifiable: [],
       mainProbeable: null, originProbeable: null,
     },
     durationMs: Math.max(0, Date.now() - started),
@@ -789,6 +801,12 @@ function main() {
       if (citations.declared.length) {
         lines.push(`ROUND_GATE  info  COMMIT_CITED_DECLARED  declared=${citations.declared.length}`
           + ` [${citations.declared.join(' ')}]`);
+      }
+      // Round-95 integration (K95Reviewer non-blocker 2): the r94 line keeps its exact format;
+      // malformed registry rows get their own info line, printed only when there are some.
+      if (citations.malformedRows.length) {
+        lines.push(`ROUND_GATE  info  SOURCES_ROWS_MALFORMED  malformed=${citations.malformedRows.length}`
+          + ` [${citations.malformedRows.join(' ')}]`);
       }
       lines.push(`ROUND_GATE: ${verdict} (round=${round} lane=${opts.lane} checks=${items.length}`
         + ` errors=${errors} warnings=${warnings})`);
@@ -1511,6 +1529,81 @@ function selfTest() {
         detail: `exit=${dRejCase.g.status} kinds=${JSON.stringify(r.kinds)} declared=${JSON.stringify(r.decl)}`,
       };
     });
+    /* 24t-24z — round-95 malformed registry rows (NF!==13 declares nothing) ----- */
+    const malOf = (j) => (j && j.citations && Array.isArray(j.citations.malformedRows) ? j.citations.malformedRows : null);
+    const shiftedRow = `| S010 | x.ts — https://github.com/o/r/blob/${PIN_B}/x.ts | code | A | scope | anchor | teaches | ${PIN_B} | rejected | 2026-11-06 | 30d | — | extra`;
+    const dShift = citedJson(fxCited('malformed-shifted', { rows: [shiftedRow], cite: citeAll(PIN_B.slice(0, 8)) }));
+    check('(xv) unescaped `|` shifting a truly `rejected` status → unresolved, id in malformedRows', () => {
+      const r = resolvedOnly(dShift, true);
+      return { ok: r.ok && r.decl.length === 0 && r.unres.length === 1 && JSON.stringify(malOf(dShift.j)) === '["S010"]',
+        detail: `exit=${dShift.g.status} declared=${JSON.stringify(r.decl)} malformed=${JSON.stringify(malOf(dShift.j))}` };
+    });
+    const escRow = `| S011 | x.ts \\| https://github.com/o/r/blob/${PIN_C}/x.ts | code | A | scope | anchor | teaches | mined | 2026-11-06 | 30d | — |`;
+    const dEsc = citedJson(fxCited('malformed-escaped', { rows: [escRow], cite: citeAll(PIN_C.slice(0, 8)) }));
+    check('(xvi) escaped `\\|` row (naive split yields 14 fields) → unresolved, id in malformedRows', () => {
+      const r = resolvedOnly(dEsc, true);
+      return { ok: r.ok && r.decl.length === 0 && r.unres.length === 1 && JSON.stringify(malOf(dEsc.j)) === '["S011"]',
+        detail: `exit=${dEsc.g.status} declared=${JSON.stringify(r.decl)} malformed=${JSON.stringify(malOf(dEsc.j))}` };
+    });
+    const shortRow = `| S012 | x.ts — https://github.com/o/r/blob/${PIN_D}/x.ts | code | A | scope | anchor | teaches | mined | 2026-11-06 | 30d — |`;
+    const dShortRow = citedJson(fxCited('malformed-short', { rows: [shortRow], cite: citeAll(PIN_D.slice(0, 8)) }));
+    check('(xvii) 12-field short row → unresolved, id in malformedRows (kills lenient12/gt13-only)', () => {
+      const r = resolvedOnly(dShortRow, true);
+      return { ok: r.ok && r.decl.length === 0 && r.unres.length === 1 && JSON.stringify(malOf(dShortRow.j)) === '["S012"]',
+        detail: `exit=${dShortRow.g.status} declared=${JSON.stringify(r.decl)} malformed=${JSON.stringify(malOf(dShortRow.j))}` };
+    });
+    const longRow = fxRow('S013', `x.ts — https://github.com/o/r/blob/${PIN_E}/x.ts`, 'mined') + ' extra |';
+    const dLongRow = citedJson(fxCited('malformed-long', { rows: [longRow], cite: citeAll(PIN_E.slice(0, 8)) }));
+    check('(xviii) 14-field long row → unresolved, id in malformedRows', () => {
+      const r = resolvedOnly(dLongRow, true);
+      return { ok: r.ok && r.decl.length === 0 && r.unres.length === 1 && JSON.stringify(malOf(dLongRow.j)) === '["S013"]',
+        detail: `exit=${dLongRow.g.status} declared=${JSON.stringify(r.decl)} malformed=${JSON.stringify(malOf(dLongRow.j))}` };
+    });
+    const goodRow = fxRow('S014', `x.ts — https://github.com/o/r/blob/${PIN_A}/x.ts`, 'mined');
+    const dMixed = citedJson(fxCited('malformed-mixed', { rows: [goodRow, shortRow.replace('S012', 'S015')], cite: citeAll(PIN_A.slice(0, 8), PIN_D.slice(0, 8)) }));
+    check('(xix) a well-formed row next to a malformed one still declares, only the malformed token is unresolved (kills dropall)', () => {
+      const r = resolvedOnly(dMixed, true);
+      return { ok: r.ok && r.decl.length === 1 && r.decl[0] === PIN_A.slice(0, 8) && r.unres.length === 1 && r.unres[0] === PIN_D.slice(0, 8) && JSON.stringify(malOf(dMixed.j)) === '["S015"]',
+        detail: `exit=${dMixed.g.status} declared=${JSON.stringify(r.decl)} unresolved=${JSON.stringify(r.unres)} malformed=${JSON.stringify(malOf(dMixed.j))}` };
+    });
+    const dOrder = citedJson(fxCited('malformed-order', { rows: [longRow.replace('S013', 'S020'), escRow.replace('S011', 'S021'), shortRow.replace('S012', 'S022')], cite: citeAll(PIN_E.slice(0, 8)) }));
+    check('(xx) malformedRows exact order/content in file order (kills nodisclose)', () => {
+      const r = resolvedOnly(dOrder, true);
+      return { ok: r.ok && r.decl.length === 0 && JSON.stringify(malOf(dOrder.j)) === '["S020","S021","S022"]',
+        detail: `exit=${dOrder.g.status} malformed=${JSON.stringify(malOf(dOrder.j))}` };
+    });
+    // Round-95 integration (K95CriticA: nine wrong gates reached HELD on clauses the frozen
+    // fixture never exercises). One registry carries every such clause at once.
+    const fieldsOf = (row) => row.split('|').length;
+    const urlLess = '| S030 | no url here | code | A | scope | anchor | teaches | mined | 2026-11-07 | 30d |';
+    const indented12 = '   ' + shortRow.replace('S012', 'S031');
+    const dup = shortRow.replace('S012', 'S032');
+    const low = shortRow.replace('S012', 'S000');
+    const crlf13 = fxRow('S033', `x.ts — https://github.com/o/r/blob/${PIN_A}/x.ts`, 'mined') + '\r';
+    const offEnum = fxRow('S034', `x.ts — https://github.com/o/r/blob/${PIN_B}/x.ts`, 'superseded');
+    const clauseRows = [urlLess, indented12, dup, crlf13, dup, offEnum, low];
+    const dClause = citedJson(fxCited('malformed-clauses', { rows: clauseRows, cite: citeAll(PIN_A.slice(0, 8), PIN_B.slice(0, 8)) }));
+    check('(xxi) URL-less, 3-space-indented, repeated and low-sorting malformed rows are each listed in file order; a CRLF 13-field row and an off-enum status still declare', () => {
+      const r = resolvedOnly(dClause, false);
+      const shapes = [urlLess, indented12, dup, crlf13, offEnum, low].map(fieldsOf).join(',');
+      return {
+        ok: r.ok && shapes === '12,12,12,13,13,12'
+          && JSON.stringify([...r.decl].sort()) === JSON.stringify([PIN_A.slice(0, 8), PIN_B.slice(0, 8)].sort())
+          && JSON.stringify(malOf(dClause.j)) === '["S030","S031","S032","S032","S000"]',
+        detail: `exit=${dClause.g.status} fields=${shapes} declared=${JSON.stringify(r.decl)} malformed=${JSON.stringify(malOf(dClause.j))}`,
+      };
+    });
+    const tClause = runGate(auditArgs(fxCited('malformed-text-info', { rows: [shortRow.replace('S012', 'S040'), fxRow('S041', `x.ts — https://github.com/o/r/blob/${PIN_A}/x.ts`, 'mined')], cite: citeAll(PIN_A.slice(0, 8)) })));
+    check('text mode: malformed rows get one `info SOURCES_ROWS_MALFORMED` line; the r94 declared line keeps its format', () => {
+      const out = String(tClause.stdout ?? '').trim().split('\n');
+      const want = ['ROUND_GATE  info  COMMIT_CITED_DECLARED  declared=1 [' + PIN_A.slice(0, 8) + ']',
+        'ROUND_GATE  info  SOURCES_ROWS_MALFORMED  malformed=1 [S040]'];
+      return {
+        ok: tClause.status === 0 && parseFindings(tClause.stdout).length === 0 && out.length === 3
+          && out[0] === want[0] && out[1] === want[1] && /^ROUND_GATE: CLEAN /u.test(out[2]),
+        detail: `exit=${tClause.status} lines=${JSON.stringify(out)}`,
+      };
+    });
 
     /* 25/26 ─ close clean + TREE_DIRTY ------------------------------------- */
     const closeClean = fxCloseFixture('close-clean');
@@ -1678,6 +1771,14 @@ function selfTest() {
       return {
         ok: jFc.status === 2 && Array.isArray(c.declared) && c.declared.length === 0
           && Array.isArray(c.unresolved) && Array.isArray(c.external),
+        detail: `exit=${jFc.status} citations=${JSON.stringify(c)}`,
+      };
+    });
+    check('--json fail-closed: citations carries `malformedRows: []` on every path', () => {
+      const j = JSON.parse(jFc.stdout);
+      const c = j.citations ?? {};
+      return {
+        ok: jFc.status === 2 && Array.isArray(c.malformedRows) && c.malformedRows.length === 0,
         detail: `exit=${jFc.status} citations=${JSON.stringify(c)}`,
       };
     });

@@ -1,0 +1,101 @@
+--- .ufo/waves/round-95/K95ExecTool/round-gate.mjs	2026-11-06 21:38:30.129472556 -0300
++++ scripts/round-gate.mjs	2026-11-06 21:56:48.828169344 -0300
+@@ -116,12 +116,19 @@
+  *   in `--json` `citations.declared`) iff it is a prefix of a 40-hex string that
+  *   is a complete path segment (URL split on `/`, `?`, `#`) of an `http(s)://`
+  *   URL on a `corpus/SOURCES.md` registry row (`^ {0,3}\|\s*S\d{3,}\s*\|`) whose
+- *   status cell (8th column) is not `rejected`. A registry row declares pins only when `line.split('|')` yields exactly 13 fields; a registry row with any other field count declares nothing and its id (field 1, trimmed) is appended, in file order, to `--json` `citations.malformedRows`. No SOURCES.md -> no declared
++ *   status cell (8th column) is not `rejected`. Round 95: a registry row
++ *   declares pins only when `line.split('|')` yields exactly 13 fields (the
++ *   CORPUS.md census `NF==13`); a registry row with any other field count
++ *   declares nothing and its id (field 1, trimmed) is appended, in file order,
++ *   to `--json` `citations.malformedRows` (always present; empty when the
++ *   registry was not read or holds no malformed row). No SOURCES.md -> no declared
+  *   pins. The registry is read lazily, once per run, and only when some token
+  *   reached the declared step; in text mode the COMMIT_CITED_UNRESOLVED detail
+  *   may carry `declared=<n>`, and any declared token is disclosed by one
+- *   non-finding line `ROUND_GATE  info  COMMIT_CITED_DECLARED  declared=<n> malformed=<n>
+- *   [<tokens>]` printed before the verdict line. The read is bounded: opened
++ *   non-finding line `ROUND_GATE  info  COMMIT_CITED_DECLARED  declared=<n>
++ *   [<tokens>]` printed before the verdict line; malformed registry rows met
++ *   on that read are disclosed by one non-finding line
++ *   `ROUND_GATE  info  SOURCES_ROWS_MALFORMED  malformed=<n> [<ids>]`. The read is bounded: opened
+  *   O_RDONLY|O_NOFOLLOW|O_NONBLOCK and judged by fstat on the descriptor; only
+  *   a regular file of at most 8 MiB is read — a FIFO, device, directory,
+  *   symlink, oversized or unreadable SOURCES.md declares nothing.
+@@ -791,10 +798,16 @@
+       const lines = findings.map((f) => `ROUND_GATE  ${f.severity}  ${f.kind}  ${f.detail}`);
+       // Round-94 integration (K94CriticB 1c): a declared pin is never a finding, so a green round
+       // would hide it in text mode; one info line discloses it (JSON: `citations.declared`).
+-      if (citations.declared.length || citations.malformedRows.length) {
+-        lines.push(`ROUND_GATE  info  COMMIT_CITED_DECLARED  declared=${citations.declared.length} malformed=${citations.malformedRows.length}`
++      if (citations.declared.length) {
++        lines.push(`ROUND_GATE  info  COMMIT_CITED_DECLARED  declared=${citations.declared.length}`
+           + ` [${citations.declared.join(' ')}]`);
+       }
++      // Round-95 integration (K95Reviewer non-blocker 2): the r94 line keeps its exact format;
++      // malformed registry rows get their own info line, printed only when there are some.
++      if (citations.malformedRows.length) {
++        lines.push(`ROUND_GATE  info  SOURCES_ROWS_MALFORMED  malformed=${citations.malformedRows.length}`
++          + ` [${citations.malformedRows.join(' ')}]`);
++      }
+       lines.push(`ROUND_GATE: ${verdict} (round=${round} lane=${opts.lane} checks=${items.length}`
+         + ` errors=${errors} warnings=${warnings})`);
+       process.stdout.write(`${lines.join('\n')}\n`);
+@@ -1474,7 +1487,7 @@
+     const tInfo = runGate(auditArgs(infoFx));
+     check('text mode: a green round with a declared pin prints one `info COMMIT_CITED_DECLARED` line, no finding', () => {
+       const out = String(tInfo.stdout ?? '').trim().split('\n');
+-      const want = `ROUND_GATE  info  COMMIT_CITED_DECLARED  declared=1 malformed=0 [${PIN_A.slice(0, 8)}]`;
++      const want = `ROUND_GATE  info  COMMIT_CITED_DECLARED  declared=1 [${PIN_A.slice(0, 8)}]`;
+       return {
+         ok: tInfo.status === 0 && parseFindings(tInfo.stdout).length === 0 && out.length === 2 && out[0] === want
+           && /^ROUND_GATE: CLEAN /u.test(out[1]),
+@@ -1539,7 +1552,7 @@
+       return { ok: r.ok && r.decl.length === 0 && r.unres.length === 1 && JSON.stringify(malOf(dShortRow.j)) === '["S012"]',
+         detail: `exit=${dShortRow.g.status} declared=${JSON.stringify(r.decl)} malformed=${JSON.stringify(malOf(dShortRow.j))}` };
+     });
+-    const longRow = fxRow('S013', `x.ts — https://github.com/o/r/blob/${PIN_E}/x.ts`, 'mined') + ' extra | tail |';
++    const longRow = fxRow('S013', `x.ts — https://github.com/o/r/blob/${PIN_E}/x.ts`, 'mined') + ' extra |';
+     const dLongRow = citedJson(fxCited('malformed-long', { rows: [longRow], cite: citeAll(PIN_E.slice(0, 8)) }));
+     check('(xviii) 14-field long row → unresolved, id in malformedRows', () => {
+       const r = resolvedOnly(dLongRow, true);
+@@ -1559,6 +1572,38 @@
+       return { ok: r.ok && r.decl.length === 0 && JSON.stringify(malOf(dOrder.j)) === '["S020","S021","S022"]',
+         detail: `exit=${dOrder.g.status} malformed=${JSON.stringify(malOf(dOrder.j))}` };
+     });
++    // Round-95 integration (K95CriticA: nine wrong gates reached HELD on clauses the frozen
++    // fixture never exercises). One registry carries every such clause at once.
++    const fieldsOf = (row) => row.split('|').length;
++    const urlLess = '| S030 | no url here | code | A | scope | anchor | teaches | mined | 2026-11-07 | 30d |';
++    const indented12 = '   ' + shortRow.replace('S012', 'S031');
++    const dup = shortRow.replace('S012', 'S032');
++    const low = shortRow.replace('S012', 'S000');
++    const crlf13 = fxRow('S033', `x.ts — https://github.com/o/r/blob/${PIN_A}/x.ts`, 'mined') + '\r';
++    const offEnum = fxRow('S034', `x.ts — https://github.com/o/r/blob/${PIN_B}/x.ts`, 'superseded');
++    const clauseRows = [urlLess, indented12, dup, crlf13, dup, offEnum, low];
++    const dClause = citedJson(fxCited('malformed-clauses', { rows: clauseRows, cite: citeAll(PIN_A.slice(0, 8), PIN_B.slice(0, 8)) }));
++    check('(xxi) URL-less, 3-space-indented, repeated and low-sorting malformed rows are each listed in file order; a CRLF 13-field row and an off-enum status still declare', () => {
++      const r = resolvedOnly(dClause, false);
++      const shapes = [urlLess, indented12, dup, crlf13, offEnum, low].map(fieldsOf).join(',');
++      return {
++        ok: r.ok && shapes === '12,12,12,13,13,12'
++          && JSON.stringify([...r.decl].sort()) === JSON.stringify([PIN_A.slice(0, 8), PIN_B.slice(0, 8)].sort())
++          && JSON.stringify(malOf(dClause.j)) === '["S030","S031","S032","S032","S000"]',
++        detail: `exit=${dClause.g.status} fields=${shapes} declared=${JSON.stringify(r.decl)} malformed=${JSON.stringify(malOf(dClause.j))}`,
++      };
++    });
++    const tClause = runGate(auditArgs(fxCited('malformed-text-info', { rows: [shortRow.replace('S012', 'S040'), fxRow('S041', `x.ts — https://github.com/o/r/blob/${PIN_A}/x.ts`, 'mined')], cite: citeAll(PIN_A.slice(0, 8)) })));
++    check('text mode: malformed rows get one `info SOURCES_ROWS_MALFORMED` line; the r94 declared line keeps its format', () => {
++      const out = String(tClause.stdout ?? '').trim().split('\n');
++      const want = ['ROUND_GATE  info  COMMIT_CITED_DECLARED  declared=1 [' + PIN_A.slice(0, 8) + ']',
++        'ROUND_GATE  info  SOURCES_ROWS_MALFORMED  malformed=1 [S040]'];
++      return {
++        ok: tClause.status === 0 && parseFindings(tClause.stdout).length === 0 && out.length === 3
++          && out[0] === want[0] && out[1] === want[1] && /^ROUND_GATE: CLEAN /u.test(out[2]),
++        detail: `exit=${tClause.status} lines=${JSON.stringify(out)}`,
++      };
++    });
+ 
+     /* 25/26 ─ close clean + TREE_DIRTY ------------------------------------- */
+     const closeClean = fxCloseFixture('close-clean');
