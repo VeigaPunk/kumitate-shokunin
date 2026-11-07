@@ -1,0 +1,28 @@
+$ node scripts/proxy-check.mjs
+PROXY  error  A_WAVE_DRIFT  A_wave: declared=1503 computed=1505 delta=+2
+PROXY  error  C2_DRIFT  C2: declared=242 computed=243 delta=+1
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=242 computed=243 delta=+1
+PROXY: DRIFT (A_WAVE_DRIFT term=A_wave declared=1503 computed=1505 delta=+2; C2_DRIFT term=C2 declared=242 computed=243 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=242 computed=243 delta=+1; src-rev=31c465f15669; source=snapshot)
+exit=1
+$ node scripts/readme-map.mjs
+README_MAP: CLEAN files=243 rows=243 covered=243
+exit=0
+$ node scripts/sources-check.mjs
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/round-gate-declared-pins.md:1  S268 used-by omits corpus/knowledge/round-gate-declared-pins.md
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/self-asserted-instants.md:1  S237 used-by omits corpus/knowledge/self-asserted-instants.md
+SOURCES  info  LEGACY_NO_HEADER  count=38
+SOURCES_CHECK: CLEAN (rows=210 tiers=A:178,B:22,C:10 status=queued:14,mined:168,rejected:28 entries_with_source=48 legacy=38)
+exit=0
+$ node scripts/counter-pins.mjs
+COUNTER_PINS: CLEAN pins=50
+exit=0
+$ node scripts/spotcheck-adopt.mjs --check
+SPOTCHECK_COVERAGE: CLEAN spotchecks=61 uncovered=0
+MAP: CLEAN
+exit=0
+$ node scripts/round-gate.mjs --tracked
+ROUND_GATE: CLEAN (mode=tracked checked=77 errors=0 warnings=0)
+exit=0
+$ node scripts/round-gate.mjs --round 94
+ROUND_GATE: CLEAN (round=94 lane=kumitate checks=10 errors=0 warnings=0)
+exit=0
