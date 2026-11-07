@@ -1,0 +1,12 @@
+# K95Mutation survivor checkafterreject (shape check after the rejected decision) vs M2 selftest arm (xxii)
+mutant: /fast/scratch scratch copy of M2 with the field-count check moved after 'if (status === rejected) continue'
+FAIL  [51/89]  (xxii) a 12-field row whose index-8 cell reads `rejected` is still listed in malformedRows (shape before status) — exit=1 declared=[] malformed=[]
+FAIL  [79/89]  hermeticity: --selftest passes under a polluted env and bogus dir flags — exit=1 tail=ROUND_GATE_SELFTEST: 88/89 pass | VERDICT: FAIL
+ROUND_GATE_SELFTEST: 87/89 pass
+VERDICT: FAIL
+mutant_exit=1
+PASS  [51/89]  (xxii) a 12-field row whose index-8 cell reads `rejected` is still listed in malformedRows (shape before status) — exit=1 declared=[] malformed=["S035"]
+PASS  [79/89]  hermeticity: --selftest passes under a polluted env and bogus dir flags — exit=0 tail=ROUND_GATE_SELFTEST: 89/89 pass | VERDICT: PASS
+ROUND_GATE_SELFTEST: 89/89 pass
+VERDICT: PASS
+shipped_exit=0 sha256=aba737dc41ffbed44b486fc27f9375f6c100608c45431a41d95041ad4e5c4da3

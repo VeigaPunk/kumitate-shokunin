@@ -1593,6 +1593,18 @@ function selfTest() {
         detail: `exit=${dClause.g.status} fields=${shapes} declared=${JSON.stringify(r.decl)} malformed=${JSON.stringify(malOf(dClause.j))}`,
       };
     });
+    // Round-95 M2 (K95Mutation survivor `checkafterreject`): the shape check precedes the
+    // `rejected` decision, so a malformed row whose index-8 cell reads `rejected` is still listed.
+    const rej12 = '| S035 | x.ts — https://github.com/o/r/blob/' + PIN_C + '/x.ts | code | A | scope | anchor | teaches | rejected | 2026-11-07 | 30d |';
+    const dRej12 = citedJson(fxCited('malformed-rejected-cell', { rows: [rej12], cite: citeAll(PIN_C.slice(0, 8)) }));
+    check('(xxii) a 12-field row whose index-8 cell reads `rejected` is still listed in malformedRows (shape before status)', () => {
+      const r = resolvedOnly(dRej12, true);
+      return {
+        ok: r.ok && fieldsOf(rej12) === 12 && (rej12.split('|')[8] ?? '').trim() === 'rejected'
+          && r.decl.length === 0 && JSON.stringify(malOf(dRej12.j)) === '["S035"]',
+        detail: `exit=${dRej12.g.status} declared=${JSON.stringify(r.decl)} malformed=${JSON.stringify(malOf(dRej12.j))}`,
+      };
+    });
     const tClause = runGate(auditArgs(fxCited('malformed-text-info', { rows: [shortRow.replace('S012', 'S040'), fxRow('S041', `x.ts — https://github.com/o/r/blob/${PIN_A}/x.ts`, 'mined')], cite: citeAll(PIN_A.slice(0, 8)) })));
     check('text mode: malformed rows get one `info SOURCES_ROWS_MALFORMED` line; the r94 declared line keeps its format', () => {
       const out = String(tClause.stdout ?? '').trim().split('\n');
