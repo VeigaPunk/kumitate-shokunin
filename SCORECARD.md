@@ -292,12 +292,12 @@ The K census decision supplies both members and findings; the score is now
 
 <!-- kumitate-proxy-v1
 A=37
-A_wave=1595
+A_wave=1650
 C=47
 C1=19
 C1_total=19
-C2=248
-C2_total=248
+C2=251
+C2_total=251
 S_members=88
 S_sections=88
 R_members=92
@@ -325,7 +325,7 @@ pin.kimi-census=7ea6b793028e2918ca920f0a5d225382bf687740d4cbee4545db963e50572439
 -->
 <!-- kumitate-gate-pins-v1
 pin.anchor-truth=43c37865a5b3ea5912c5be0e1243fa222642b6be0ef6a1103ee03a287614b23d
-pin.sources-check=5402b2103bb9e3ccd76f7bf3f5880f2249f809c78cee4766a75e3cf30b69f434
+pin.sources-check=acccb0d792fe79b88f8d2cb10dfe20f72f2eb30bfbebafb3b8c3218eb22cf9ec
 pin.wave-census=76447250f9de1f7e9258d0dfe9544feba18d6c8723db37e77e6ca422235f45f4
 pin.gate-mutants=177f6cbbd70d7503263d00c77357893658a0e393ac722d43034ebd7e429bb717
 pin.omp-census=a080652c7bc3beb638349e2a15bfb069e7a42f5d2dd474c9fd6860d1e2bee208
@@ -4671,3 +4671,43 @@ class, first-vs-last `##`, fenced rows, section-less registry) with nonce fixtur
 `##<TAB>` headings (K96Connector findings 2–3). (3) Carried: M93-3 counter repair, M93-5 `--close` probe-receipt
 requirement, R93-D1 seat-route human-mode redaction, F93 fixtures; fleet census gawk/bash `\r` disagreement is an
 L0 question (`kumitate | round-96`).
+
+## Round 97 — declaration and measured disposition (2026-11-07, attempt 1)
+
+One claim: **C1 operability** (lowest non-retired axis; integer 9, terminal under `f_O`): `scripts/sources-check.mjs`
+computes `## Registry` membership from `sourceText.split('\n')` (CR kept) with the census `row_pass` grammar
+(`^ {0,3}##[ \t]` sets the section to its `[ \t]`-trimmed text, exact `Registry`; `^ {0,3}#[ \t]` clears; starts
+outside); rows and per-row checks unchanged. Taken from the round-97 pre-registration: items (1) (grammar-derived
+battery with nonce ids — the counter) and (2) (the tool). Sourced on S276 (ECMA-262 2025), opened this round. Frozen at
+`38eb197c17de7ce0dc562539f2f31f41bea037ec`; wave spec + validated dispatch `8535793d`; M =
+`69fb6943dd0d87165cbb73954a952ce9cb6753ec`; M2 = `f33786f0354bcda8fdd09f95cee487f14bf4e49c`.
+
+| item | measured |
+|---|---|
+| do-nothing control | `C97_C1: UNMET a=0/1 b=0/1 c=0/1 d=1/1 e=1/1 f=1/1` — 738 / 5 220 / 2 999 disagreeing battery cases (`controls/ctl-nothing.txt`) |
+| other pre-data controls | 15 one-clause violations UNMET, each on the arm its clause feeds; positive `HELD a..f=1/1` (`controls/`) |
+| predicate at M | `C97_C1: HELD a=1/1 b=1/1 c=1/1 d=1/1 e=1/1 f=1/1 tool_sha256=ccbf1619…` twice (`close/probe1.txt`, `close/probe2.txt`) |
+| predicate at M2 (final bytes) | same line, `tool_sha256=acccb0d7…` twice (`close/probe-m2-1.txt`, `close/probe-m2-2.txt`) = `pin.sources-check` |
+| kill rules | K1 no (HELD); K2 the shipped selftest kills all 15 violating section shapes (`close-l1/integration-remut.txt`, 15/15, reference 71/71) + K97Mutation 16/16 control shapes; K3 battery per revision in `close/battery-M-prebook.txt` and `close/battery-final.txt`; K4 plan/probe/controls/open unchanged since the freeze |
+| counter caveat | K97CriticA: six readers outside the class grid (U+FEFF, U+2003, U+200B, U+2028, fences) reach HELD; routed to round 98 |
+| framing | K97CriticB *sound*: the CRLF class is live in six sibling lanes (13 blobs, 2026-11-01..04); kumitate 0/819 blobs — prospective here |
+
+**Verdict (lane's reading): C1 HELD.** Axes: operability 9 unchanged (terminal), every coverage row 10 unchanged; no
+axis harmed (battery receipts). Selftest 46 → 71; SOURCES 213 → 214 (S276); QUALITY Q91; knowledge
+`sources-check-registry-section.md`; SKILL sources-check row. No capability row (an instrument repair). Wave w1: 11
+seats, 0 dead (`w1-results.json`).
+
+**Round 97 proxy bookkeeping (close).** The `kumitate-proxy-v1` stanza re-declares `A_wave` 1595 → 1650 (wave seat
+scripts, probe, generator, close helpers), `C2`/`C2_total` 248 → 251 (r96 spot-check + `sources-check-registry-section.md`
++ `lessons/round-97.md` rows); `pin.sources-check` 5402b210… → acccb0d7… at M2. Battery at the final lane commit:
+`close/battery-final.txt`.
+
+## Round 98 pre-registration (written by round 97). Candidates, not commitments
+
+(1) Counter grid: draw Unicode `White_Space`/`Zs`/`Cf` (U+FEFF, U+200B), U+2028/U+2029 and fenced headings so
+K97CriticA's six HELD constructions read UNMET. (2) Row-id class: `round-gate` `SOURCES_ROW_RE` `\s` padding vs
+`[ \t]` in `sources-check` and the census (K97Connector: 13/13 vs 5/13). (3) Census `rows` vs lane `counts.rows`
+row definition (K97CriticC, 5 probes). (4) Carried: M93-3 counter repair, M93-5 `--close` probe-receipt requirement,
+R93-D1 redaction, F93 fixtures; census gawk/bash `\r` disagreement (L0 `kumitate | round-96`); sibling transfer
+(9 tools in kumitate/kake/tabi, report only).
+

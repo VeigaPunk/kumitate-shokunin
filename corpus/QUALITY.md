@@ -1546,3 +1546,38 @@ Q39–Q41 were added in round 50 (r49 verifier-spotcheck defects 4–5 and the R
   declaration shapes are read best-effort (round 45's range bullets `S062–S074` are not expanded, so it reads
   `NONE`); a URL can appear in the lesson for a different reason (another row citing the same URL) and still
   satisfy the substring test. A lint, not a registered lane gate.
+
+### Q91 — a frozen counter draws its fixture identities per run and prints the seed (round 97)
+
+- **Rule.** A counter that decides a claim scores at least one fixture whose **identities** — row ids, URLs,
+  titles, case order, and any other token the rule does not fix — are drawn at run time from an
+  entropy source, and it prints the seed so the run is replayable (`--seed <hex>`). A construction keyed on
+  one run's identities must read `UNMET` on a fresh seed. Clause batteries (Q84/Q85/Q86) constrain what is
+  *scored*; this rule constrains what is *constant* while scoring it.
+- **Grounding.** Rounds 94–96 counters were fixed arrays (`probe9{4,5,6}-c1.mjs`: no `--seed`, no entropy
+  source), so `hardcode-fixtures` — a wrong gate that replays the counter's canned lists — read
+  `C96_C1: HELD` (`.ufo/waves/round-96/K96CriticA/receipts/hardcode-fixtures.txt`) and survived the r96
+  re-mutation (`close-l1/integration-remut.txt`: 30/31). Q85/Q86 sampled the clause axis and never sampled
+  input identity.
+- **Who checks.** The L1 before the freeze: run the counter twice on the same tool at a fresh seed each
+  time and confirm the printed seed and the fixture digest differ; confirm `--seed <s>` replays run `s`
+  byte-identically. A critic seat then builds the replay construction.
+- **Command.**
+  `node .ufo/waves/round-97/probe/probe97-c1.mjs --tool <T> --work <scratch>/a --freeze <FREEZE> --rev <M>`
+  twice (two printed `seed=` / `F_A_sha256=` pairs, both verdicts unchanged); then
+  `... --seed <seed-of-run-a> --work <scratch>/b` reproduces run `a`'s `F_A_sha256`; and a construction
+  keyed on run `a`'s ids must print `C97_C1: UNMET` at a fresh seed.
+- **Fails when.** The counter's fixture ids/titles/order are source constants; a seed is printed but not
+  consumed; `--seed` does not replay; or a construction keyed on one run's identities reads `HELD`.
+- **Shown able to fail.** K97CriticA `x-replay` (same bytes `8cadd99d…`): own seed `0f8f19a3…` `C97_C1: HELD`, fresh seed `UNMET` (`.ufo/waves/round-97/K97CriticA/run-x-replay-seed0f8f19a3532ed236.txt`, `run-x-replay.txt`). r94/r95/r96 counters, by construction (`grep -n 'seed\|randomBytes'` over the three
+  probes: only a per-token `hex(seed)` helper; no `randomBytes`, no `--seed`), with the r96
+  `hardcode-fixtures` receipt as the observed HELD. Round-97 evidence of the fix:
+  `.ufo/waves/round-97/K97ScribeLesson/receipts-counter-nonce.txt` — same BASE bytes, two explicit seeds, different `F_A_sha256`
+  (`cc86a956…` / `5d80fb64…`), disjoint printed disagreement sets, a C-arm agreement 16478 vs 16475, while
+  `C97_C1` stays `UNMET` for BASE in both. Caveat, observed: the a/b agreement counts coincide across seeds
+  (18721 / 14239) because the class grid is frozen — the digest and the case lists, not the totals, are the
+  nonce evidence.
+- **Limit.** A nonce bounds the token space a construction can key on; it does not enumerate it. The class
+  grid itself stays frozen plan text (a construction keyed on the grid rather than on an identity survives
+  by design). Nonce identities also mean a verdict is only reproducible with its seed — the receipt must
+  carry `seed=` (this seat's receipts do).
