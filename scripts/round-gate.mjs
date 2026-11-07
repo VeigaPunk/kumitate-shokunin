@@ -1476,6 +1476,41 @@ function selfTest() {
         detail: `exit=${tInfo.status} lines=${JSON.stringify(out)}`,
       };
     });
+    /* 24q-24s ─ round-94 survivors of K94Mutation (m07, m08, m10) ------------ */
+    const shortSeg = PIN_A.slice(0, 8);
+    const dShort = citedJson(fxCited('declared-short-segment', {
+      rows: [fxRow('S001', `x.ts — https://github.com/o/r/blob/${shortSeg}/x.ts`, 'mined')],
+      cite: citeAll(shortSeg),
+    }));
+    check('(xii) an 8-hex URL path segment is not a pin (pins are exactly 40 hex) → unresolved', () => {
+      const r = resolvedOnly(dShort, true);
+      return {
+        ok: r.ok && r.decl.length === 0 && r.unres.length === 1,
+        detail: `exit=${dShort.g.status} kinds=${JSON.stringify(r.kinds)} declared=${JSON.stringify(r.decl)}`,
+      };
+    });
+    const dShortId = citedJson(fxCited('declared-short-row-id', {
+      rows: [fxRow('S1', `x.ts — https://github.com/o/r/blob/${PIN_A}/x.ts`, 'mined')],
+      cite: citeAll(PIN_A.slice(0, 8)),
+    }));
+    check('(xiii) a `| S1 |` row is not a registry row (ids are S + 3 or more digits) → unresolved', () => {
+      const r = resolvedOnly(dShortId, true);
+      return {
+        ok: r.ok && r.decl.length === 0 && r.unres.length === 1,
+        detail: `exit=${dShortId.g.status} kinds=${JSON.stringify(r.kinds)} declared=${JSON.stringify(r.decl)}`,
+      };
+    });
+    const dRejCase = citedJson(fxCited('declared-rejected-case', {
+      rows: [fxRow('S001', `x.ts — https://github.com/o/r/blob/${PIN_E}/x.ts`, 'Rejected')],
+      cite: citeAll(PIN_E.slice(0, 8)),
+    }));
+    check('(xiv) status `Rejected` (any case) is a rejected row → unresolved', () => {
+      const r = resolvedOnly(dRejCase, true);
+      return {
+        ok: r.ok && r.decl.length === 0 && r.unres.length === 1,
+        detail: `exit=${dRejCase.g.status} kinds=${JSON.stringify(r.kinds)} declared=${JSON.stringify(r.decl)}`,
+      };
+    });
 
     /* 25/26 ─ close clean + TREE_DIRTY ------------------------------------- */
     const closeClean = fxCloseFixture('close-clean');
@@ -1635,6 +1670,15 @@ function selfTest() {
         ok: jFc.status === 2 && j.contract === CONTRACT && j.verdict === 'FAIL-CLOSED'
           && j.findings.length === 1 && j.findings[0].kind === 'REPORTS_DIR_MISSING' && j.errors === 1,
         detail: `exit=${jFc.status} verdict=${j.verdict} kind=${j.findings[0] && j.findings[0].kind}`,
+      };
+    });
+    check('--json fail-closed: citations carries an empty `declared` array (round-94 key on every path; K94Mutation m16)', () => {
+      const j = JSON.parse(jFc.stdout);
+      const c = j.citations ?? {};
+      return {
+        ok: jFc.status === 2 && Array.isArray(c.declared) && c.declared.length === 0
+          && Array.isArray(c.unresolved) && Array.isArray(c.external),
+        detail: `exit=${jFc.status} citations=${JSON.stringify(c)}`,
       };
     });
 
