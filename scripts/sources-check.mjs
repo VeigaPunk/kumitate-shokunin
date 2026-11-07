@@ -1017,6 +1017,80 @@ function selfTest() {
       const ok = e02.length === 4 && e02.every((l) => cores.filter((c) => l.includes(c)).length === 1);
       return { ok, detail: `census E02=${e02.length}/4 tool ID_FORM=${formIds.length}/4` };
     });
+    // M2 (round-99 integration): arms for the shapes the wave found surviving M's suite — an unanchored
+    // trim (K99Mutation m15), an id cell that is only a non-blank pad (m23), pad classes and lengths the
+    // counter grid omits, text cells, empty ids and a file-start BOM (K99CriticA k01-k04, k08, k09).
+    check('r99trim-inner-runs: blank runs inside a cell are kept (only the two ends are trimmed)', () => {
+      const root = makeDefault('r99trim-inner-runs', {
+        rows: [
+          makeRow({ id: 'S001', status: 'mined', usedBy: 'corpus/knowledge/alpha.md' }),
+          r99Row('S002', 'doc s'),
+          r99Row('S12 3'),
+        ],
+      });
+      return r99Assert(runTool(tmp, ['--self', root, '--today', FIXTURE_TODAY, '--json']), {
+        rows: 2,
+        findings: [
+          { kind: 'KIND_ENUM', detail: 'id=S002 kind=doc s' },
+          { kind: 'ID_FORM', detail: 'id=S12 3' },
+        ],
+      });
+    });
+    check('r99trim-id-pad-only: an id cell holding only NBSP is a non-empty invalid id', () => {
+      const root = makeDefault('r99trim-id-pad-only', {
+        rows: [makeRow({ id: 'S001', status: 'mined', usedBy: 'corpus/knowledge/alpha.md' }), r99Row('\u00a0')],
+      });
+      return r99Assert(runTool(tmp, ['--self', root, '--today', FIXTURE_TODAY, '--json']), {
+        rows: 1, findings: [{ kind: 'ID_FORM', detail: 'id=\u00a0' }],
+      });
+    });
+    check('r99trim-exotic-pads: NUL and U+0080 pads keep the id invalid', () => {
+      const root = makeDefault('r99trim-exotic-pads', {
+        rows: [makeRow({ id: 'S001', status: 'mined', usedBy: 'corpus/knowledge/alpha.md' }), r99Row('\u0000S123'), r99Row('S124\u0080')],
+      });
+      return r99Assert(runTool(tmp, ['--self', root, '--today', FIXTURE_TODAY, '--json']), {
+        rows: 1,
+        findings: [{ kind: 'ID_FORM', detail: 'id=\u0000S123' }, { kind: 'ID_FORM', detail: 'id=S124\u0080' }],
+      });
+    });
+    check('r99trim-long-blank: 20-character SP and TAB pads are trimmed in full', () => {
+      const sp = ' '.repeat(20);
+      const tab = '\t'.repeat(20);
+      const root = makeDefault('r99trim-long-blank', {
+        rows: [
+          makeRow({ id: 'S001', status: 'mined', usedBy: 'corpus/knowledge/alpha.md' }),
+          r99Row(`${sp}S002${tab}`, `${tab}docs${sp}`, `${sp}A`, `queued${tab}`),
+        ],
+      });
+      return r99Assert(runTool(tmp, ['--self', root, '--today', FIXTURE_TODAY, '--json']), { status: 0, rows: 2, findings: [] });
+    });
+    check('r99trim-text-cells: NBSP-only and EMSP-only scope/teaches cells are not empty', () => {
+      const root = makeDefault('r99trim-text-cells', {
+        rows: [
+          makeRow({ id: 'S001', status: 'mined', usedBy: 'corpus/knowledge/alpha.md' }),
+          makeRow({ id: 'S002', scope: '\u00a0', teaches: '\u2003' }),
+        ],
+      });
+      return r99Assert(runTool(tmp, ['--self', root, '--today', FIXTURE_TODAY, '--json']), { status: 0, rows: 2, findings: [] });
+    });
+    check('r99trim-empty-id: a blank-only id cell with content is ID_FORM (empty) and not counted', () => {
+      const root = makeDefault('r99trim-empty-id', {
+        rows: [makeRow({ id: 'S001', status: 'mined', usedBy: 'corpus/knowledge/alpha.md' }), r99Row(' \t ')],
+      });
+      return r99Assert(runTool(tmp, ['--self', root, '--today', FIXTURE_TODAY, '--json']), {
+        rows: 1, findings: [{ kind: 'ID_FORM', detail: 'id=(empty)' }],
+      });
+    });
+    check('r99trim-bom-file: a file-start BOM does not change the cell trim class', () => {
+      const root = makeDefault('r99trim-bom-file', {
+        rows: [makeRow({ id: 'S001', status: 'mined', usedBy: 'corpus/knowledge/alpha.md' }), r99Row('\u00a0S123')],
+      });
+      const path = join(root, 'corpus', 'SOURCES.md');
+      writeFileSync(path, `\ufeff${readFileSync(path, 'utf8')}`);
+      return r99Assert(runTool(tmp, ['--self', root, '--today', FIXTURE_TODAY, '--json']), {
+        rows: 1, findings: [{ kind: 'ID_FORM', detail: 'id=\u00a0S123' }],
+      });
+    });
     check('reflip: does not satisfy the rejected-row flip: marker', () => {
       const root = makeDefault('reflip-is-not-flip', {
         rows: [
