@@ -3214,3 +3214,13 @@ mines M100-1 (read order after the claim; frozen log fails the r99 checker), M10
 M100-3 (plan prose count), M100-4. Q94, Q95, S280/S281, knowledge, SKILL and map updated.
 
 - 2026-11-07 — round 100: C1 operability R100 HELD at M/M2; axis 9→9 terminal; coverage unchanged; one v1 wave 12 seats; S280/S281; QUALITY Q94/Q95; lesson `corpus/lessons/round-100.md`.
+
+
+## 2026-11-12: publish reviewed curation notes
+
+Published 4 independently reviewed original reading note(s) from the saved curation copies. The note text and source/rights boundaries are preserved exactly. Notes carrying publication holds were excluded. This entry records publication only, not source-code reuse, capability admission, training, or assimilation. No private receipts or source captures are included.
+
+- `considerthese/2026-11-11-serial-comparison-boundary.md`: source `Shokunin-Kumitate-Serial-Comparison-Boundary-2026-11-11.md`; SHA-256 `679a6ca7cc2e9680fb3c19b35d4ad853794591103cdf7c7dbb5dd3c673d2c23e`.
+- `considerthese/2026-11-12-coordination-delivery-and-cancellation.md`: source `Shokunin-Kumitate-Coordination-Delivery-and-Cancellation-2026-11-12.md`; SHA-256 `9c3b2c6374bc33f106689157751a21143b5501ee4ad691e28b15e2d91064cf9f`.
+- `considerthese/2026-11-11-extraction-residue.md`: source `Shokunin-Kumitate-Extraction-Residue-2026-11-11.md`; SHA-256 `e58b08e04a427c3e126a3f868c2f81d09b433660a0cfacb4f18ef4ddfd45a5b4`.
+- `considerthese/2026-11-11-mutex-ownership-recovery.md`: source `Shokunin-Kumitate-Mutex-Ownership-Recovery-2026-11-11.md`; SHA-256 `880670532079b6b656e395f4d734dd7682610226c4aabda0d394d7f623c6d276`.
